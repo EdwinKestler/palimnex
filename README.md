@@ -11,13 +11,16 @@ development now belongs here. No live Redis data, SQLite ledger, credentials,
 wallet material, atomic-swap implementation, or repository-specific rollback
 snapshot was copied.
 
-The initial independent release line is `2.6.0-rc.1`.
+The Python distribution version is `2.7.0`, with public SDK and extension API v1.
+See [the SDK guide](docs/SDK.md) for installation, typed interfaces, source
+resolvers, derivative adapters, signed checkpoints, pack identity and MCP.
 
 ## Quick start
 
 Requirements are Python 3.11+, Redis server/CLI for cache-backed integration,
-and the distribution `cryptography` package for encrypted packs. The full test
-gate also requires the `jsonschema` package for Draft 2020-12 conformance.
+and the distribution `cryptography` package for encrypted packs and signatures.
+Install development dependencies with `python3 -m pip install -e '.[test,mcp]'`
+inside a virtual environment to run the full gate, including MCP integration.
 
 ```bash
 ./scripts/palimnex_redis.sh start

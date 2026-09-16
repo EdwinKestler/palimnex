@@ -29,7 +29,7 @@ from typing import Any
 from urllib.parse import parse_qs, quote, unquote, urlparse
 
 SCHEMA = "project-memory:v2"
-BUNDLE_VERSION = "2.6.0-rc.1"
+BUNDLE_VERSION = "2.7.0"
 GRAPH_SCHEMA = "project-memory:code-graph:v3"
 GRAPH_RECORD_SCHEMA = "project-memory:graph-record:v1"
 CONTENT_ADDRESSED_GRAPH_BUNDLE_SERIES = ("2.3", "2.4")
@@ -57,7 +57,7 @@ DEFAULT_PATH_MAX_DEPTH = 8
 MAX_PATH_DEPTH = 100
 CHUNK_LINES = 80
 CHUNK_OVERLAP = 16
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(os.environ.get("PALIMNEX_ROOT", os.getcwd())).resolve()
 TOKEN_RE = re.compile(r"[A-Za-z0-9_]+", re.UNICODE)
 CONFIG_FILE = ".palimnex.json"
 LEGACY_CONFIG_FILE = ".project-memory.json"

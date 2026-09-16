@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://palimnex.dev/schemas/source-locator.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "scheme",
+    "source_id",
+    "version",
+    "range",
+    "digest"
+  ],
+  "properties": {
+    "scheme": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9+.-]{0,31}$"
+    },
+    "source_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2048
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2048
+    },
+    "range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "unit",
+        "start",
+        "end"
+      ],
+      "properties": {
+        "unit": {
+          "enum": [
+            "lines",
+            "bytes"
+          ]
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "unit": {
+                "const": "lines"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "start": {
+                "minimum": 1
+              },
+              "end": {
+                "minimum": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

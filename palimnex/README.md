@@ -1,7 +1,8 @@
-# Portable Palimnex v2.6.0-rc.1 bundle
+# Portable Palimnex v2.7.0 bundle and Python SDK
 
-Status: release candidate for the portable Palimnex bundle only. This
-promotes the explicit local retention and authorized-erasure functionality; it
+Status: version 2.7.0 package implementation; see `docs/SDK.md` for public API v1
+and publication requirements. This includes explicit local retention and
+authorized-erasure functionality; it
 does not activate a live retention policy, migrate or delete a live ledger, or
 claim deletion from external copies.
 Existing SQLite schema v1, Redis cache v3 and encrypted pack v2 formats remain
@@ -15,7 +16,9 @@ palimnex/
 .palimnex.json
 ```
 
-The root entrypoint discovers the repository from the copied package location.
+The copied root entrypoint discovers the repository from its script location.
+Installed console/module entrypoints use the current directory. `PALIMNEX_ROOT`
+can explicitly override either; SDK clients always receive an explicit root.
 Source indexing and the ledger use Python 3.11+ standard-library modules.
 Pack v2 additionally requires the reviewed distribution
 `python3-cryptography` package for ChaCha20-Poly1305. SQLite is the durable

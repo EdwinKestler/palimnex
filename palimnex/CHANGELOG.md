@@ -7,6 +7,24 @@ operator-facing behavior; cache and graph schemas are versioned independently.
 
 No changes yet.
 
+## 2.7.0 - 2026-09-16
+
+- Installable Python distribution, console scripts, PEP 561 types and public
+  SDK v1 with explicit repository roots and write guards.
+- Versioned derivative adapter protocol and namespaced SQLite reference
+  backend with generation checks, projection invalidation and verified receipts.
+- Structured source locators and explicitly registered version-aware resolvers.
+- Signed predecessor-linked Merkle checkpoints with keyed commitments and
+  external-tip verification, without a live ledger migration.
+- Ed25519 identities, injectable signer protocol, and optional detached pack
+  signatures verified against operator-configured public keys.
+- Optional MCP stdio tools over the SDK, read-only by default with session-bound
+  evidence recording when explicitly enabled.
+
+Existing `project-memory:*` storage formats and frozen fixtures remain intact.
+External derivative coordination does not clear legacy retention blockers.
+See `docs/SDK.md` for protocol semantics and deployment limitations.
+
 ## 2.6.0-rc.1 - 2026-09-15
 
 Release candidate for the portable Palimnex bundle only. SQLite schema

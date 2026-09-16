@@ -45,7 +45,7 @@
           <a class="button button-secondary" href="https://github.com/EdwinKestler/palimnex/blob/main/docs/DESIGN.md">Read the design</a>
         </div>
         <dl class="hero-stats" aria-label="Project status">
-          <div><dt>Release line</dt><dd>2.6.0-rc.1</dd></div>
+          <div><dt>Package / API</dt><dd>2.7.0 / v1</dd></div>
           <div><dt>Frozen gate</dt><dd>20 / 20</dd></div>
           <div><dt>Recall@5</dt><dd>1.0</dd></div>
         </dl>
@@ -243,10 +243,13 @@
           <span role="cell"><strong>SQLite</strong><small>Embedded database</small></span><span role="cell"><b class="pill bundled">Python bundled</b></span><span role="cell">Durable historical-memory ledger</span><span role="cell">Local file; no database server</span>
         </div>
         <div class="dependency-row" role="row">
-          <span role="cell"><strong>cryptography</strong><small>Python distribution</small></span><span role="cell"><b class="pill capability">Pack operations</b></span><span role="cell">ChaCha20-Poly1305 authenticated encryption</span><span role="cell">Only required to import/export encrypted packs</span>
+          <span role="cell"><strong>cryptography</strong><small>Python distribution</small></span><span role="cell"><b class="pill capability">Packs + identity</b></span><span role="cell">ChaCha20-Poly1305 encryption and Ed25519 signatures</span><span role="cell">Optional crypto extra for packs and signed checkpoints</span>
         </div>
         <div class="dependency-row" role="row">
           <span role="cell"><strong>jsonschema</strong><small>Python distribution</small></span><span role="cell"><b class="pill optional">Test gate</b></span><span role="cell">Draft 2020-12 schema-conformance validation</span><span role="cell">Development and CI only; not a runtime dependency</span>
+        </div>
+        <div class="dependency-row" role="row">
+          <span role="cell"><strong>mcp</strong><small>Official Python SDK</small></span><span role="cell"><b class="pill optional">Optional transport</b></span><span role="cell">Local stdio tools over public SDK v1</span><span role="cell">Read-only by default; no HTTP listener</span>
         </div>
         <div class="dependency-row" role="row">
           <span role="cell"><strong>Git</strong><small>Source control</small></span><span role="cell"><b class="pill optional">Recommended</b></span><span role="cell">Repository provenance and rollback workflow</span><span role="cell">Never authorized by recalled memory</span>

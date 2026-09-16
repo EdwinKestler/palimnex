@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "palimnex"
+version = "2.7.0"
+description = "Repository-local evidence, historical memory, and explicit retention controls"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name = "Palimnex contributors"}]
+dependencies = []
+
+[project.optional-dependencies]
+crypto = ["cryptography>=41"]
+mcp = ["mcp>=1.12,<2"]
+test = ["cryptography>=41", "jsonschema>=4.18", "referencing>=0.28", "build>=1.2", "twine>=6", "mypy>=1.10"]
+
+[project.scripts]
+palimnex = "palimnex:main"
+palimnex-mcp = "palimnex.mcp_server:main"
+
+[project.urls]
+Homepage = "https://edwinkestler.github.io/palimnex/"
+Repository = "https://github.com/EdwinKestler/palimnex"
+
+[tool.setuptools]
+packages = ["palimnex", "palimnex.tests"]
+include-package-data = false
+
+[tool.setuptools.package-data]
+palimnex = ["py.typed", "README.md", "CHANGELOG.md", "schemas/*.json", "evaluation/*.json"]
+
+[tool.mypy]
+python_version = "3.11"
+follow_imports = "silent"
+files = ["palimnex/api.py", "palimnex/locators.py", "palimnex/adapters.py", "palimnex/identity.py", "palimnex/integrity.py"]
+check_untyped_defs = true
+disallow_untyped_defs = true

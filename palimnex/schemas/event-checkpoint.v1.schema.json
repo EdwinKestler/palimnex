@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://palimnex.dev/schemas/event-checkpoint.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "body",
+    "signature"
+  ],
+  "properties": {
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "project_id",
+        "ledger_schema",
+        "sequence",
+        "created_at",
+        "previous",
+        "event_count",
+        "event_root",
+        "ledger_commitment",
+        "commitment_key_id"
+      ],
+      "properties": {
+        "schema": {
+          "const": "palimnex:event-checkpoint:v1"
+        },
+        "project_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "ledger_schema": {
+          "type": "string"
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "previous": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "event_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "event_root": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "ledger_commitment": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "commitment_key_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "signature": {
+      "$ref": "signature.v1.schema.json"
+    }
+  }
+}

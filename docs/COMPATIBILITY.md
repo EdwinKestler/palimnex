@@ -13,3 +13,11 @@ retention plans, and tombstones are not silently reinterpreted.
 `PALIMNEX_URL` is preferred. New state defaults to `.palimnex/` and new
 repositories use `.palimnex.json`. Renaming a format identifier requires a
 new schema version and an explicit migration, not a search-and-replace.
+
+Version 2.7.0 adds Python SDK v1, derivative/source/signer protocols v1,
+`palimnex:source-locator:v1`, `palimnex:event-checkpoint:v1`, and detached
+`palimnex:signature:v1` attestations. Existing ledger and encrypted pack bytes
+keep their original formats. Structured locators occupy the existing string
+field; old readers abstain from verifying their unknown prefix. SDK import
+requires a signature by default; legacy CLI import remains explicitly v2.
+See `docs/SDK.md` for trust roots, downgrade behavior and checkpoint limitations.

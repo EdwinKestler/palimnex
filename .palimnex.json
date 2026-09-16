@@ -9,6 +9,7 @@
     ".palimnex.json",
     "README.md",
     "LICENSE",
+    "pyproject.toml",
     "AGENTS.md",
     ".agents/skills/**/SKILL.md",
     "docs/**/*.md",

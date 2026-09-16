@@ -569,7 +569,7 @@ class RetentionLedger(d.MemoryLedger):
 
 
 def as_retention(ledger):
-    return RetentionLedger(ledger.path,project_id=ledger.project_id_text,project_slug=ledger.project_slug,root=ledger.root)
+    return RetentionLedger(ledger.path,project_id=ledger.project_id_text,project_slug=ledger.project_slug,root=ledger.root,source_resolvers=ledger.source_resolvers)
 
 def open_ledger(ledger):
     if not ledger.path.exists():return ledger

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://palimnex.dev/schemas/signature.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "algorithm",
+    "purpose",
+    "key_id",
+    "sha256",
+    "signature"
+  ],
+  "properties": {
+    "schema": {
+      "const": "palimnex:signature:v1"
+    },
+    "algorithm": {
+      "const": "Ed25519"
+    },
+    "purpose": {
+      "enum": [
+        "encrypted-pack",
+        "ledger-checkpoint",
+        "adapter-receipt"
+      ]
+    },
+    "key_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$"
+    }
+  }
+}

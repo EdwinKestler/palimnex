@@ -584,7 +584,9 @@ class MemoryLedger:
     schema = LEDGER_SCHEMA
     table_columns = TABLE_COLUMNS
 
-    def __init__(self, path: Path, *, project_id: str, project_slug: str, root: Path):
+    def __init__(self, path: Path, *, project_id: str, project_slug: str, root: Path,
+                 source_resolvers=None):
+        self.source_resolvers = dict(source_resolvers or {})
         self.root = root.resolve()
         candidate = path if path.is_absolute() else root / path
         self.path = candidate.absolute()
@@ -1567,6 +1569,9 @@ class MemoryLedger:
         }
 
     def _prepare_evidence(self, item: dict[str, Any]) -> dict[str, Any]:
+        from .locators import SourceLocator
+        if isinstance(item, dict) and isinstance(item.get("locator"), dict):
+            item = {**item, "locator": SourceLocator.from_dict(item["locator"]).encode()}
         if not isinstance(item, dict) or not isinstance(item.get("locator"), str):
             raise ValueError("evidence requires a string locator")
         kind_name = item.get("kind", "source")
@@ -1599,6 +1604,10 @@ class MemoryLedger:
         }
 
     def _source_evidence_digest(self, locator: str) -> bytes:
+        from .locators import LOCATOR_PREFIX, SourceLocator, resolve_locator
+        if locator.startswith(LOCATOR_PREFIX):
+            raw = resolve_locator(SourceLocator.decode(locator), self.root, self.source_resolvers)
+            return hashlib.sha256(raw).digest()
         match = re.fullmatch(r"([^:]+):(\d+)(?:-(\d+))?", locator)
         if match is None:
             raise ValueError("source evidence must be path:start or path:start-end")

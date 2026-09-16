@@ -17,8 +17,8 @@ Mission:
   authorization for consequential writes.
 
 Current product baseline to verify, never merely assume:
-  - Release line: 2.6.0-rc.1.
-  - Public surface: palimnex.py, palimnex/, .palimnex.json, docs/, scripts/.
+  - Release line: 2.7.0.
+  - Public surface: palimnex.py, palimnex/, .palimnex.json, pyproject.toml, docs/, scripts/.
   - Storage-format identifiers beginning with project-memory: are retained
     compatibility identifiers, not stale product branding.
   - Redis cache v3 is disposable discovery state.

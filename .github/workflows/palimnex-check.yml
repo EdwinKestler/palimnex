@@ -34,7 +34,22 @@ jobs:
           sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends redis-server
           python3 -m pip install --upgrade pip
-          python3 -m pip install cryptography jsonschema
+          python3 -m pip install -e '.[test,mcp]'
 
       - name: Run standalone gate
         run: ./scripts/palimnex_check.sh
+
+      - name: Type check and build distributions
+        run: |
+          python3 -m mypy
+          python3 -m build
+          python3 -m twine check dist/*
+
+      - name: Test installed wheel outside checkout
+        run: |
+          python3 -m venv "$RUNNER_TEMP/palimnex-wheel"
+          "$RUNNER_TEMP/palimnex-wheel/bin/pip" install dist/*.whl
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/palimnex-wheel/bin/python" "$GITHUB_WORKSPACE/scripts/package_smoke.py" --core-only
+          "$RUNNER_TEMP/palimnex-wheel/bin/pip" install cryptography
+          "$RUNNER_TEMP/palimnex-wheel/bin/python" "$GITHUB_WORKSPACE/scripts/package_smoke.py"

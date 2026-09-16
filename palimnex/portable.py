@@ -514,7 +514,7 @@ def _rescan_portable_content(document: dict[str, Any]) -> None:
             raise ValueError(f"{label} rejected by current export privacy policy: {summary}")
 
 
-def export_pack(ledger: MemoryLedger, output: Path, key: bytes) -> dict[str, Any]:
+def export_pack(ledger: MemoryLedger, output: Path, key: bytes, *, signer=None) -> dict[str, Any]:
     """Export authenticated encrypted durable history; secret-class records stay local."""
     status = ledger.status()
     if status["status"] != "ready":
@@ -560,12 +560,18 @@ def export_pack(ledger: MemoryLedger, output: Path, key: bytes) -> dict[str, Any
     body = associated_data + ciphertext
     if len(body) > MAX_PACK_BYTES:
         raise ValueError("memory pack exceeds the total size limit")
+    from .identity import sign_artifact
+    signature = sign_artifact(body, "encrypted-pack", signer) if signer is not None else None
     output = _write_new_private_file(output, body, "memory pack")
-    return {"status": "exported", "path": str(output), **manifest}
+    result = {"status": "exported", "path": str(output), **manifest}
+    if signature is not None:
+        result["signature"] = signature
+    return result
 
 
 def validate_pack(
-    ledger: MemoryLedger, pack: Path, key: bytes
+    ledger: MemoryLedger, pack: Path, key: bytes, *, signature=None,
+    trusted_signers=None, require_signature: bool = False
 ) -> tuple[dict[str, Any], dict[str, Any], str]:
     pack = pack.absolute()
     descriptor, metadata = _open_private_input(
@@ -585,6 +591,11 @@ def validate_pack(
         os.close(descriptor)
     if len(raw) > MAX_PACK_BYTES or not raw.startswith(MAGIC):
         raise ValueError("memory pack magic or total size is invalid")
+    if require_signature and signature is None:
+        raise ValueError("a trusted pack signature is required")
+    if signature is not None:
+        from .identity import verify_artifact
+        verify_artifact(raw, "encrypted-pack", signature, trusted_signers or {})
     offset = len(MAGIC)
     if len(raw) < offset + 4:
         raise ValueError("memory pack is truncated before its manifest")
@@ -868,10 +879,15 @@ def import_pack(
     *,
     activate: bool = False,
     replace: bool = False,
+    signature=None,
+    trusted_signers=None,
+    require_signature: bool = False,
 ) -> dict[str, Any]:
     """Validate first; explicit activation logically rebuilds an untrusted ledger."""
     recover_import(ledger)
-    manifest, document, logical_digest = validate_pack(ledger, pack, key)
+    manifest, document, logical_digest = validate_pack(
+        ledger, pack, key, signature=signature, trusted_signers=trusted_signers,
+        require_signature=require_signature)
     if not activate:
         return {
             "status": "validated_quarantined",

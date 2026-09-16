@@ -8,6 +8,9 @@ operator-facing behavior; cache and graph schemas are versioned independently.
 - Replicable `palimnex:audit-graph:v1` export of eligible memory and
   non-reconstructive erasure residue, with optional signature and a sibling
   file from `memory-export --include-audit-graph`. Pack v2 bytes are unchanged.
+- Optional Semantica audit-graph projector with TTL disabled, local
+  `semantica:` resolvers, and derivative registration. The Semantica package
+  is not imported by core Palimnex.
 
 ## 2.7.0 - 2026-09-16
 

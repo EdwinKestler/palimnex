@@ -195,6 +195,23 @@ leaves pack v2 bytes unchanged and writes a sibling `.audit-graph.json`.
 CLI: `python3 palimnex.py audit-graph` and `memory-export --include-audit-graph`.
 The graph is historical evidence and never permission to act.
 
+## Semantica projection
+
+`palimnex.semantica` projects an audit graph into a duck-typed Semantica
+`ContextGraph` as untrusted historical copies. It does not import the Semantica
+package. Callers construct `AgentContext(..., retention_days=None)` or a graph
+and pass it in; `bind_semantica()` only checks that TTL is disabled and that
+`add_node`/`add_edge`/`has_node` exist. Default 30-day retention is refused.
+
+Projected nodes carry `authority: historical_only`, `authorizes_actions: false`,
+and `valid_until=None`. `SemanticaResolver` reads only the local projection
+index; a `semantica:` locator never opens a network URL. Register it explicitly
+on `Palimnex(..., source_resolvers={"semantica": resolver})`.
+
+Install extra `palimnex[semantica]` only when using the real library. Tests use
+in-process fakes. Coordinated fail-closed erasure across Semantica stores is a
+later adapter slice; this projector can remove its own projected nodes.
+
 ## MCP
 
 Install the `mcp` extra, then launch:

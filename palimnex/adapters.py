@@ -78,6 +78,9 @@ class AdapterRegistry:
             raise ValueError("adapter already registered")
         self._adapters[adapter.adapter_id] = adapter
 
+    def get(self, adapter_id: str) -> DerivativeAdapter | None:
+        return self._adapters.get(adapter_id)
+
     def _enumerate(self, adapter: DerivativeAdapter, ids: Sequence[str]) -> tuple[Derivative, ...]:
         rows = adapter.enumerate_derivatives(ids)
         if len(rows) > 1000:

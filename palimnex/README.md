@@ -94,7 +94,8 @@ Exit `0` means success/fresh, `2` means missing/stale or a failed quality gate,
 and `1` means operational or validation error.
 
 Frozen evaluation passes only when every critical case passes, aggregate
-Recall@limit is at least 0.95, and `forbidden_clear` is true.
+Recall@limit is at least 0.95, and `forbidden_clear` is true. Reported MRR is
+diagnostic, not a pass/fail threshold. See `docs/DESIGN.md` section 10.
 
 The v3 namespace includes the stable project UUID. Index builds scan source
 content before deriving anything, stage an immutable generation, activate it

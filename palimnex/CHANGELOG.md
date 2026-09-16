@@ -39,6 +39,14 @@ writes; this release does not claim distributed or forensic erasure.
   schemas, tests and operator documentation while excluding source-project
   runtime state and domain-specific rollback history.
 
+### Documentation
+
+- Recorded that this repository's frozen evaluation is 20/20 with Recall@5
+  `1.0`. Baseline commit `6bb9c72` reported MRR `0.8333` from overlapping
+  relevant gold labels, not a miss or scorer regression. Historical exception
+  `PM-ACCEPT-001` is bound to the prior corpus only. The frozen fixture and
+  scorer are unchanged. Reported MRR remains diagnostic.
+
 ## 2.5.0 - 2026-09-04
 
 ### Added

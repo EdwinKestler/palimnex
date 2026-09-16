@@ -8,10 +8,13 @@ execution permission. Installation and testing do not activate a live policy,
 migrate a ledger, delete records, publish Git state, or authorize external
 actions.
 
-The previously accepted v2.5 plus additive memory capabilities remain accepted
-with exception `PM-ACCEPT-001`. This document covers new retention controls and
-physical cleanup separately. It does not relabel the accepted noncritical
-retrieval miss as a passing test.
+The previously accepted v2.5 plus additive memory capabilities remain accepted.
+Historical exception `PM-ACCEPT-001` named a noncritical retrieval miss on the
+prior atomic-swap corpus; it does not apply to this repository's frozen
+evaluation, which reports 20/20 cases and Recall@5 `1.0`. This document covers
+new retention controls and physical cleanup separately. Do not treat a sub-1.0
+frozen MRR on this corpus as a retrieval miss or as a passing-test relabel of
+that old exception. See `docs/DESIGN.md` section 10.
 
 ## Repository profile
 

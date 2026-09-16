@@ -329,6 +329,37 @@ pin. Acceptance requires:
 - no forbidden path hit;
 - reported mean reciprocal rank.
 
+Reported MRR is diagnostic, not a pass/fail threshold. This repository's
+`2.6.0-rc.1` frozen fixture is 20/20 cases with Recall@5 `1.0`. Those two
+figures are the acceptance result. On baseline commit `6bb9c72` the reported
+MRR was `0.8333`; that value is not a retrieval miss and is not a scorer
+regression. Five gold paths are found inside the limit but not ranked first
+because other relevant files in the same corpus outrank a narrower label.
+Documenting this overlap in indexed files can move reported MRR slightly
+without changing recall. BM25 determines those five orderings; removing the
+small cosine, overlap, and symbol additions would not change their winners.
+Fixed 80-line chunks with 16-line overlap favor concise summaries and schemas
+over longer chapters that use the same terminology. Ranks below are from
+`6bb9c72`; later indexed documentation of this overlap can change them.
+
+| Case | Rank-1 path | Gold rank | Classification |
+|---|---|---:|---|
+| `authorized-erasure` | `docs/V26.md` | 3 | Overlap; denser V26 summary |
+| `redis-owner-socket` | `palimnex/core.py` | 3 | Mixed: ownership spans client and launcher; query `zero` vs script `0` |
+| `document-extractor` | `palimnex/README.md` | 2 | Overlap; README contains the query terms |
+| `pack-encryption` | pack-manifest schema | 4 | Gold-label; schema is the cipher/manifest contract |
+| `audit-tombstone` | deletion-contract schema | 4 | Gold-label; schema is the tombstone contract |
+
+`expected_paths` requires every listed path for recall/pass and uses the
+best-ranked listed path for MRR. Adding current winners as extra gold paths
+would raise MRR without adjudicating relevance. The `2.6.0-rc.1` scorer and
+frozen fixture are unchanged. Numeric token normalization (`zero` vs `0`) and
+intent-specific gold labels remain later evaluation-design work. Historical
+exception `PM-ACCEPT-001` named a noncritical miss on the prior atomic-swap
+corpus; it does not describe this repository's 20/20 frozen result. The
+development challenge paraphrase case remains a separate non-regression
+observation, not an RC ranking blocker.
+
 Cache migration has two additional hard gates on the same equal corpus. All
 three retained v3 generations together must use at most `0.60x` the Redis
 bytes of the active v2 baseline, and v3 p95 must be at most `10.0x` v2 on the

@@ -47,6 +47,10 @@ equal-corpus v2 baseline. This repository's reviewed configuration is `on`.
 The evaluation fixture is excluded from indexing and pinned by
 `evaluation_fixture_sha256`. Do not update the fixture or its pin merely to
 make a regression pass; review the intended case change separately.
+Reported MRR is diagnostic. Do not treat a sub-1.0 MRR with complete recall as
+a miss, and do not add overlapping winners to `expected_paths` solely to raise
+MRR. See `docs/DESIGN.md` section 10 for this repository's `2.6.0-rc.1`
+ranking interpretation.
 
 Expected command exit meanings:
 

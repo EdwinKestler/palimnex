@@ -3,7 +3,8 @@
 Status: implementation contract for the approved memory follow-up. Executable
 coverage and measured results must be recorded below before this document is
 used as evidence of completion. This document does not reopen the accepted
-PM2.5 slice or its narrow exception `PM-ACCEPT-001`.
+PM2.5 slice. Historical exception `PM-ACCEPT-001` applied to the prior
+atomic-swap corpus and is not a live retrieval miss on this repository.
 
 ## Purpose and evidence boundary
 

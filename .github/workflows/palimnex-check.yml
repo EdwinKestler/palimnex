@@ -29,12 +29,12 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install Redis and cryptography
+      - name: Install Redis and Python test dependencies
         run: |
           sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends redis-server
           python3 -m pip install --upgrade pip
-          python3 -m pip install cryptography
+          python3 -m pip install cryptography jsonschema
 
       - name: Run standalone gate
         run: ./scripts/palimnex_check.sh

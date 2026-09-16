@@ -16,7 +16,8 @@ The initial independent release line is `2.6.0-rc.1`.
 ## Quick start
 
 Requirements are Python 3.11+, Redis server/CLI for cache-backed integration,
-and the distribution `cryptography` package for encrypted packs.
+and the distribution `cryptography` package for encrypted packs. The full test
+gate also requires the `jsonschema` package for Draft 2020-12 conformance.
 
 ```bash
 ./scripts/palimnex_redis.sh start

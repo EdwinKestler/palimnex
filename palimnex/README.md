@@ -20,7 +20,8 @@ Source indexing and the ledger use Python 3.11+ standard-library modules.
 Pack v2 additionally requires the reviewed distribution
 `python3-cryptography` package for ChaCha20-Poly1305. SQLite is the durable
 memory authority; Redis is an optional, rebuildable discovery and hot-projection
-cache.
+cache. The full test gate also requires the `jsonschema` distribution for
+Draft 2020-12 schema-conformance tests.
 
 Release and schema compatibility are recorded in [CHANGELOG.md](CHANGELOG.md).
 This repository's full design and operator guide are

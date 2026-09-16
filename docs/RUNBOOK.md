@@ -6,8 +6,9 @@ chain, creates a wallet, installs WDK/MCP, or contacts a public network.
 Run every command from the repository root. Do not paste secrets into event
 payloads, task names, workflow files, evidence locators, Redis URLs, or shell
 history. Pack operations additionally require the reviewed
-distribution-provided `python3-cryptography` package; install and
-probes ChaCha20-Poly1305 support.
+distribution-provided `python3-cryptography` package and probe
+ChaCha20-Poly1305 support. The full gate additionally requires the `jsonschema`
+distribution for Draft 2020-12 conformance tests.
 
 ## 1. Start and verify
 
@@ -403,8 +404,8 @@ not install or enable a provider.
 The memory gate uses temporary files and an isolated local Redis process or
 test double. It must not alter the live ledger or configured cache namespaces.
 GitHub Actions runs the same script on pull requests and pushes to `main`.
-That job installs Redis and `cryptography`, uses a temporary Unix socket, and
-makes no model call.
+That job installs Redis, `cryptography`, and `jsonschema`, uses a temporary
+Unix socket, and makes no model call.
 
 ## 14. Code rollback without memory loss
 

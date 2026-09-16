@@ -26,6 +26,9 @@ writes; this release does not claim distributed or forensic erasure.
   tombstone schema. Receipts retain pseudonymous identifiers, keyed record
   commitments, policy/authorization metadata, verification state, counts and
   retention-control hash-chain continuity, never deleted payloads.
+- MIT license for the independent Palimnex repository.
+- GitHub Actions workflow that runs `scripts/palimnex_check.sh` on isolated
+  temporary Redis with no live-ledger write or model call.
 
 ### Changed
 

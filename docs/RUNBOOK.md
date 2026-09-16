@@ -402,6 +402,9 @@ not install or enable a provider.
 
 The memory gate uses temporary files and an isolated local Redis process or
 test double. It must not alter the live ledger or configured cache namespaces.
+GitHub Actions runs the same script on pull requests and pushes to `main`.
+That job installs Redis and `cryptography`, uses a temporary Unix socket, and
+makes no model call.
 
 ## 14. Code rollback without memory loss
 

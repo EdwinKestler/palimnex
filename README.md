@@ -43,6 +43,8 @@ historical evidence, never authorization to execute external actions.
 - `docs/` — design, operations, retention, and evaluation contracts.
 - `scripts/palimnex_redis.sh` — owner-only Unix-socket Redis launcher.
 - `.palimnex.json` — this repository's safe local configuration.
+- `LICENSE` — MIT license.
+- `.github/workflows/palimnex-check.yml` — CI for the standalone gate.
 
 See [the operator runbook](docs/RUNBOOK.md), [retention policy](docs/RETENTION.md),
 [compatibility policy](docs/COMPATIBILITY.md), [maintainer initialization prompt](docs/AGENT_INIT_PROMPT.md),
@@ -56,3 +58,7 @@ eligible local content and indexes, recomputes dependent facts, verifies local
 stores, and writes a non-reconstructive audit tombstone. It does not claim
 forensic deletion from SSDs, backups, snapshots, third-party systems, or
 unmanaged exported copies.
+
+## License
+
+Palimnex is released under the MIT License. See [LICENSE](LICENSE).

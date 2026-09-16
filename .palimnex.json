@@ -8,6 +8,7 @@
   "include_patterns": [
     ".palimnex.json",
     "README.md",
+    "LICENSE",
     "AGENTS.md",
     ".agents/skills/**/SKILL.md",
     "docs/**/*.md",

@@ -1,0 +1,19 @@
+{
+  "schema": "project-memory:challenge:v1",
+  "description": "Synthetic development challenge suite; not a held-out model benchmark. Source files only are admitted to isolated retrieval.",
+  "documents": {
+    "docs/recovery.md": "# Quasar recovery\n\nFor the quasar incident, consult the [manual](manual.md).\n",
+    "docs/manual.md": "# Orchard manual\n\nRestore the amber orchard snapshot after checking the manifest digest.\n",
+    "docs/policy.md": "# Admission policy\n\nChanged evidence must be rechecked before reuse.\n",
+    "docs/process.md": "# Process\n\nThe sentinel workflow refuses repeated dispatch.\n",
+    "docs/noise.md": "# Notes\n\nRoutine observations carry no authorization.\n"
+  },
+  "cases": [
+    {"id": "literal", "query": "amber orchard snapshot", "expected_paths": ["docs/manual.md"]},
+    {"id": "graph-procedure", "query": "quasar", "expected_paths": ["docs/recovery.md", "docs/manual.md"]},
+    {"id": "symbol-heading", "query": "Admission policy", "expected_paths": ["docs/policy.md"]},
+    {"id": "failure-rule", "query": "sentinel repeated dispatch", "expected_paths": ["docs/process.md"]},
+    {"id": "unanswerable", "query": "xylophonicnothing", "expected_paths": []},
+    {"id": "unresolved-paraphrase", "query": "repair fruit grove backup", "expected_paths": ["docs/manual.md"]}
+  ]
+}

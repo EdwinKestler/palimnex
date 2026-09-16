@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:palimnex:project-memory:memory-event:v1",
+  "title": "Palimnex portable event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_id",
+    "session_id",
+    "sequence",
+    "kind",
+    "subject_digest",
+    "term_digests",
+    "observed_at",
+    "valid_from",
+    "supersedes",
+    "contradicts",
+    "sensitivity",
+    "retention",
+    "payload",
+    "evidence"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$"
+    },
+    "session_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$"
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "kind": {
+      "enum": [
+        "session_started",
+        "task",
+        "decision",
+        "failure",
+        "outcome",
+        "workflow",
+        "fact",
+        "evidence",
+        "correction",
+        "revocation",
+        "session_closed"
+      ]
+    },
+    "subject_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "term_digests": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32768,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$"
+      }
+    },
+    "observed_at": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "valid_from": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "supersedes": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{32}$"
+        }
+      ]
+    },
+    "contradicts": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{32}$"
+        }
+      ]
+    },
+    "sensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "restricted",
+        "secret"
+      ]
+    },
+    "retention": {
+      "enum": [
+        "volatile",
+        "session",
+        "durable"
+      ]
+    },
+    "payload": {},
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidence"
+      }
+    }
+  },
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_id",
+        "kind",
+        "locator",
+        "content_digest"
+      ],
+      "properties": {
+        "evidence_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{32}$"
+        },
+        "kind": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_digest": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

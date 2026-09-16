@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "retention-policy.v1.schema.json",
+  "title": "retention-policy.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "policy_id",
+    "version",
+    "mode",
+    "clock",
+    "rules",
+    "grace_after_close_seconds",
+    "plan_ttl_seconds"
+  ],
+  "properties": {
+    "schema": {
+      "const": "project-memory:retention-policy:v1"
+    },
+    "policy_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "mode": {
+      "const": "manual"
+    },
+    "clock": {
+      "const": "tx_at"
+    },
+    "rules": {
+      "type": "array",
+      "maxItems": 128,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "retention",
+          "kinds",
+          "ttl_seconds"
+        ],
+        "properties": {
+          "retention": {
+            "enum": [
+              "volatile",
+              "session"
+            ]
+          },
+          "kinds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "task",
+                "decision",
+                "failure",
+                "outcome",
+                "workflow",
+                "fact",
+                "evidence",
+                "correction",
+                "revocation"
+              ]
+            }
+          },
+          "ttl_seconds": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "grace_after_close_seconds": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "plan_ttl_seconds": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 86400
+    }
+  }
+}

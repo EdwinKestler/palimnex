@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:palimnex:project-memory:memory-pack-manifest:v2",
+  "title": "Palimnex v2.5 encrypted pack manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "pack_schema",
+    "ledger_schema",
+    "project_id",
+    "project_slug",
+    "scanner_policy_digest",
+    "ciphertext_bytes",
+    "authenticated",
+    "encrypted",
+    "cipher",
+    "nonce",
+    "key_id",
+    "key_format",
+    "sensitivity_ceiling",
+    "selection",
+    "authority",
+    "authorizes_actions"
+  ],
+  "properties": {
+    "pack_schema": {
+      "const": "project-memory:pack:v2"
+    },
+    "ledger_schema": {
+      "const": "project-memory:ledger:v1"
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "project_slug": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scanner_policy_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "ciphertext_bytes": {
+      "type": "integer",
+      "minimum": 17,
+      "maximum": 134217728
+    },
+    "authenticated": {
+      "const": true
+    },
+    "encrypted": {
+      "const": true
+    },
+    "cipher": {
+      "const": "chacha20-poly1305"
+    },
+    "nonce": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{24}$"
+    },
+    "key_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "key_format": {
+      "const": "raw-32-byte:v1"
+    },
+    "sensitivity_ceiling": {
+      "const": "restricted"
+    },
+    "selection": {
+      "const": "retention-durable-closed-sessions:v1"
+    },
+    "authority": {
+      "const": "historical_only"
+    },
+    "authorizes_actions": {
+      "const": false
+    }
+  }
+}

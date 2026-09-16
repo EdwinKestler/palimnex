@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "deletion-contract.v2.schema.json",
+  "title": "Palimnex orchestrated erasure contract v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "mode", "digest_kind", "keep_tombstone", "audit_residue",
+    "derived_data", "caches", "packs", "security_audit_log"
+  ],
+  "properties": {
+    "schema": {"const": "project-memory:deletion-contract:v2"},
+    "mode": {"const": "forget"},
+    "digest_kind": {"const": "hmac-sha256"},
+    "keep_tombstone": {"const": true},
+    "audit_residue": {"const": "non-reconstructive-hash-chained-tombstone"},
+    "derived_data": {"const": "recompute-or-withdraw"},
+    "caches": {"const": "require-verified-invalidation"},
+    "packs": {"const": "require-verified-retirement"},
+    "security_audit_log": {"const": "protected"}
+  }
+}

@@ -1,0 +1,264 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cleanup-plan.v1.schema.json",
+  "title": "Palimnex local cleanup plan v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "project_id",
+    "status",
+    "proposed_at",
+    "expires_at",
+    "scope",
+    "bindings",
+    "contract",
+    "affected",
+    "exclusions",
+    "dependencies",
+    "packs",
+    "bytes",
+    "caveats",
+    "plan_digest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "project-memory:cleanup-plan:v1"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "proposed",
+        "refused"
+      ]
+    },
+    "proposed_at": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "expires_at": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "scope": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{32}$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      ]
+    },
+    "bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ledger_digest",
+        "policy_digest",
+        "hold_set_digest",
+        "session_pin_digest",
+        "pack_manifest_digest",
+        "control_digest"
+      ],
+      "properties": {
+        "ledger_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "policy_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "hold_set_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "session_pin_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "pack_manifest_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "control_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "contract": {
+      "$ref": "deletion-contract.v1.schema.json"
+    },
+    "affected": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_id",
+          "action",
+          "retention",
+          "logical_bytes",
+          "stores"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{32}$"
+          },
+          "action": {
+            "const": "forget"
+          },
+          "retention": {
+            "enum": [
+              "volatile",
+              "session"
+            ]
+          },
+          "logical_bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "stores": {
+            "const": [
+              "sqlite_payload",
+              "sqlite_terms",
+              "sqlite_graph",
+              "sqlite_outbox"
+            ]
+          }
+        }
+      }
+    },
+    "exclusions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_id",
+          "reason"
+        ],
+        "properties": {
+          "event_id": {
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9a-f]{32}$"
+              },
+              {
+                "const": "*"
+              }
+            ]
+          },
+          "reason": {
+            "enum": [
+              "policy_unconfigured",
+              "preservation_hold",
+              "active_session",
+              "durable_record",
+              "not_expired",
+              "dependency_guard",
+              "audit_minimum_retention",
+              "store_not_adapted",
+              "pack_sealed"
+            ]
+          }
+        }
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_id",
+          "effect",
+          "kind"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{32}$"
+          },
+          "effect": {
+            "const": "block"
+          },
+          "kind": {
+            "const": "temporal_relation"
+          }
+        }
+      }
+    },
+    "packs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "pack_id",
+          "event_id",
+          "decision"
+        ],
+        "properties": {
+          "pack_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "event_id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{32}$"
+          },
+          "decision": {
+            "const": "exclude_fact"
+          }
+        }
+      }
+    },
+    "bytes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "recoverable_now",
+        "logical_payload_bytes",
+        "recoverable_after_compact"
+      ],
+      "properties": {
+        "recoverable_now": {
+          "const": 0
+        },
+        "logical_payload_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "recoverable_after_compact": {
+          "type": "null"
+        }
+      }
+    },
+    "caveats": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "plan_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

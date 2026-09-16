@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "deletion-contract.v1.schema.json",
+  "title": "deletion-contract.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "mode",
+    "digest_kind",
+    "keep_tombstone",
+    "caches",
+    "packs"
+  ],
+  "properties": {
+    "schema": {
+      "const": "project-memory:deletion-contract:v1"
+    },
+    "mode": {
+      "const": "forget"
+    },
+    "digest_kind": {
+      "const": "hmac-sha256"
+    },
+    "keep_tombstone": {
+      "const": true
+    },
+    "caches": {
+      "const": "invalidate"
+    },
+    "packs": {
+      "const": "exclude"
+    }
+  }
+}

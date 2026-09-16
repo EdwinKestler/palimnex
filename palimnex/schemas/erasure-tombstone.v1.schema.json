@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "erasure-tombstone.v1.schema.json",
+  "title": "Palimnex non-reconstructive erasure tombstone v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "receipt_id", "plan_digest", "events", "record_classes", "operation",
+    "requested_at", "completed_at", "authorized_by", "policy_id", "reason_codes",
+    "scope", "affected_artifact_count", "verification_status", "previous_audit_hash",
+    "legal_hold_exceptions", "record_commitments", "derived", "authority",
+    "authorizes_actions"
+  ],
+  "properties": {
+    "receipt_id": {"type": "string", "pattern": "^[0-9a-f]{32}$"},
+    "plan_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "events": {"type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[0-9a-f]{32}$"}},
+    "record_classes": {"type": "object"},
+    "operation": {"const": "erased"},
+    "requested_at": {"type": "integer", "minimum": 0},
+    "completed_at": {"type": "integer", "minimum": 0},
+    "authorized_by": {"type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}},
+    "policy_id": {"type": "string", "minLength": 1},
+    "reason_codes": {"type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"enum": [
+        "AUTHORIZED_ERASURE", "RETENTION_EXPIRED", "SOURCE_DELETED",
+        "SOURCE_SYNCHRONIZATION", "PRIVACY_REQUEST", "LEGAL_ERASURE"
+      ]}},
+    "scope": {"type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}},
+    "affected_artifact_count": {"type": "integer", "minimum": 1},
+    "verification_status": {"const": "verified"},
+    "previous_audit_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "legal_hold_exceptions": {"type": "array", "items": {"type": "object"}},
+    "record_commitments": {"type": "object"},
+    "derived": {"type": "array", "items": {"type": "object"}},
+    "authority": {"const": "historical_only"},
+    "authorizes_actions": {"const": false}
+  }
+}

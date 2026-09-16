@@ -1,0 +1,45 @@
+{
+  "project_slug": "palimnex",
+  "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8",
+  "redis_url_envs": [
+    "PALIMNEX_URL",
+    "PROJECT_MEMORY_URL"
+  ],
+  "include_patterns": [
+    ".palimnex.json",
+    "README.md",
+    "AGENTS.md",
+    ".agents/skills/**/SKILL.md",
+    "docs/**/*.md",
+    "scripts/**/*.py",
+    "scripts/**/*.sh",
+    "palimnex/**/*.py",
+    "palimnex/**/*.md",
+    "palimnex/schemas/**/*.json",
+    ".gitignore"
+  ],
+  "exclude_directories": [
+    ".palimnex",
+    ".venv",
+    "build",
+    "dist",
+    "htmlcov",
+    "node_modules",
+    "reports",
+    "secrets"
+  ],
+  "exclude_paths": [
+    "palimnex/evaluation/v25.json",
+    "palimnex/evaluation/v26.json"
+  ],
+  "include_palimnex": true,
+  "cache_mode": "on",
+  "content_scan_allowlist_sha256": [],
+  "evaluation_fixture": "palimnex/evaluation/v25.json",
+  "evaluation_fixture_sha256": "9cca022d5ac60a527783d4990ff745ba033c25f3fc789ad245bcfe703f0de569",
+  "redis_socket_path": ".palimnex/redis/redis.sock",
+  "durable_ledger_path": ".palimnex/memory.sqlite3",
+  "semantic_provider": {
+    "mode": "disabled"
+  }
+}

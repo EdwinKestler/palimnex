@@ -2785,6 +2785,19 @@ def parser() -> argparse.ArgumentParser:
         required=pack_key_default is None,
         help="private 32-byte raw key file (or PALIMNEX_PACK_KEY_FILE)",
     )
+    export_parser.add_argument(
+        "--include-audit-graph",
+        action="store_true",
+        help="write a sibling signed-capable audit graph JSON next to the pack",
+    )
+    audit_parser = commands.add_parser("audit-graph")
+    audit_parser.add_argument("--output", help="owner-only JSON file; omit to print the graph")
+    audit_parser.add_argument(
+        "--max-sensitivity",
+        default="restricted",
+        choices=("public", "internal", "restricted"),
+    )
+    audit_parser.add_argument("--include-untrusted", action="store_true")
     import_parser = commands.add_parser("memory-import")
     import_parser.add_argument("pack")
     import_parser.add_argument(
@@ -2830,7 +2843,7 @@ def main(argv: list[str] | None = None) -> int:
             "ledger-init", "ledger-status", "session-start", "remember",
             "session-close", "recall", "consolidate", "reverify", "workflow-put",
             "workflow-dry-run", "project-hot", "hot-events", "memory-export",
-            "memory-import", "memory-recover-import",
+            "memory-import", "memory-recover-import", "audit-graph",
             "retention-status", "retention-migrate", "retention-activate", "retention-hold",
             "retention-release", "retention-pin", "retention-authorize",
             "retention-support", "cleanup-plan", "cleanup-apply", "cleanup-finalize",
@@ -3250,10 +3263,28 @@ def main(argv: list[str] | None = None) -> int:
                         ledger,
                         Path(args.output),
                         load_pack_key(Path(args.key_file)),
+                        include_audit_graph=args.include_audit_graph,
                     ),
                     sort_keys=True,
                 )
             )
+            return 0
+        if args.command == "audit-graph":
+            from .audit import build_audit_graph, export_audit_graph
+            if args.output:
+                output = export_audit_graph(
+                    ledger,
+                    Path(args.output),
+                    max_sensitivity=args.max_sensitivity,
+                    include_untrusted=args.include_untrusted,
+                )
+            else:
+                output = build_audit_graph(
+                    ledger,
+                    max_sensitivity=args.max_sensitivity,
+                    include_untrusted=args.include_untrusted,
+                )
+            print(json.dumps(output, sort_keys=True))
             return 0
         if args.command == "memory-import":
             print(

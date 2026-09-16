@@ -22,7 +22,8 @@
       "enum": [
         "encrypted-pack",
         "ledger-checkpoint",
-        "adapter-receipt"
+        "adapter-receipt",
+        "audit-graph"
       ]
     },
     "key_id": {

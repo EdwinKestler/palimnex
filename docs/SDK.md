@@ -1,8 +1,8 @@
 # Python SDK and extension contracts
 
 The 2.7.0 distribution introduces public Python API v1. `palimnex.api`,
-`palimnex.locators`, `palimnex.adapters`, `palimnex.identity`, and
-`palimnex.integrity` are supported extension surfaces. Other modules remain
+`palimnex.locators`, `palimnex.adapters`, `palimnex.identity`,
+`palimnex.integrity`, and `palimnex.audit` are supported extension surfaces. Other modules remain
 implementation details. Breaking changes to these interfaces require a new
 API major version; additive methods do not. Check `API_VERSION` and adapter
 `api_version` before connecting an integration. Plugins are supplied explicitly;
@@ -176,6 +176,24 @@ identifiers and keyed commitments. Authorized cleanup produces a new snapshot
 root; a subsequent checkpoint links to the prior one without retaining erased
 plaintext. Checkpoints, keys and receipts still need their own retention policy.
 Retention-controlled ledgers remain incompatible with replacement imports.
+
+## Replicable audit graph
+
+`audit_graph()` builds `palimnex:audit-graph:v1`, a content-addressed graph of
+eligible session, event, evidence, claim, retention-action, and tombstone nodes.
+Edges record `contains`, `evidenced_by`, `supersedes`, `contradicts`,
+`derived_from`, and `forgotten`. Secret records are never included.
+`graph_digest` covers the graph except `created_at`, `graph_digest`, and
+`signature`, so two exports of the same ledger content compare equal.
+Imported history stays labeled historical-only. Forgotten events appear only as
+tombstones with HMAC commitments, never with deleted payloads.
+
+This is a Palimnex-native document. It does not require Semantica. Optional
+`signer=` attaches an `audit-graph` Ed25519 signature. `export_audit_graph`
+writes an owner-only JSON file. `export_pack(..., include_audit_graph=True)`
+leaves pack v2 bytes unchanged and writes a sibling `.audit-graph.json`.
+CLI: `python3 palimnex.py audit-graph` and `memory-export --include-audit-graph`.
+The graph is historical evidence and never permission to act.
 
 ## MCP
 

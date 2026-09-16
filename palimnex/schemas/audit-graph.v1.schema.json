@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://palimnex.dev/schemas/audit-graph.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "project_id",
+    "project_slug",
+    "created_at",
+    "max_sensitivity",
+    "authority",
+    "authorizes_actions",
+    "secret_omitted",
+    "nodes",
+    "edges",
+    "graph_digest"
+  ],
+  "properties": {
+    "schema": { "const": "palimnex:audit-graph:v1" },
+    "project_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "project_slug": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "created_at": { "type": "integer", "minimum": 0 },
+    "max_sensitivity": { "enum": ["public", "internal", "restricted"] },
+    "authority": { "const": "historical_only" },
+    "authorizes_actions": { "const": false },
+    "secret_omitted": { "const": true },
+    "include_untrusted": { "type": "boolean" },
+    "ledger_checkpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "event_root", "checkpoint_id"],
+      "properties": {
+        "sequence": { "type": "integer", "minimum": 1 },
+        "event_root": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "checkpoint_id": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": { "$ref": "#/$defs/node" }
+    },
+    "edges": {
+      "type": "array",
+      "maxItems": 200000,
+      "items": { "$ref": "#/$defs/edge" }
+    },
+    "graph_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "signature": { "$ref": "signature.v1.schema.json" }
+  },
+  "$defs": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "event_id": { "type": "string", "pattern": "^[0-9a-f]{32}$" },
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "kind": {
+          "enum": ["session", "event", "evidence", "claim", "retention_action", "tombstone"]
+        },
+        "session_id": { "$ref": "#/$defs/event_id" },
+        "event_id": { "$ref": "#/$defs/event_id" },
+        "evidence_id": { "$ref": "#/$defs/event_id" },
+        "status": { "enum": ["open", "closed"] },
+        "started_at": { "type": "integer", "minimum": 0 },
+        "ended_at": { "type": ["integer", "null"], "minimum": 0 },
+        "sequence": { "type": "integer", "minimum": 0 },
+        "event_kind": { "type": "string", "minLength": 1, "maxLength": 32 },
+        "observed_at": { "type": "integer", "minimum": 0 },
+        "valid_from": { "type": "integer", "minimum": 0 },
+        "sensitivity": { "enum": ["public", "internal", "restricted"] },
+        "retention": { "enum": ["volatile", "session", "durable"] },
+        "imported": { "type": "boolean" },
+        "claimed_trust": { "enum": ["observed", "untrusted"] },
+        "subject_digest": { "$ref": "#/$defs/digest" },
+        "payload": true,
+        "payload_omitted": { "enum": ["privacy_policy"] },
+        "locator": { "type": "string", "minLength": 1, "maxLength": 4096 },
+        "content_digest": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" },
+        "receipt_id": { "$ref": "#/$defs/event_id" },
+        "commitment": { "type": "string", "pattern": "^hmac-sha256:[0-9a-f]{64}$" },
+        "control_kind": { "type": "string", "minLength": 1, "maxLength": 32 },
+        "control_digest": { "$ref": "#/$defs/digest" },
+        "previous_digest": { "$ref": "#/$defs/digest" },
+        "plan_digest": { "$ref": "#/$defs/digest" },
+        "policy_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "reason_codes": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "authorized_by": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "forgotten_events": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/event_id" }
+        }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "from", "to"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "contains",
+            "evidenced_by",
+            "supersedes",
+            "contradicts",
+            "derived_from",
+            "forgotten"
+          ]
+        },
+        "from": { "$ref": "#/$defs/id" },
+        "to": { "$ref": "#/$defs/id" }
+      }
+    }
+  }
+}

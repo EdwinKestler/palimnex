@@ -25,10 +25,13 @@ class SDKTests(unittest.TestCase):
         from referencing import Registry, Resource
         directory = Path(__file__).resolve().parents[1] / "schemas"
         schemas = [json.loads((directory / name).read_text()) for name in (
-            "source-locator.v1.schema.json", "signature.v1.schema.json", "event-checkpoint.v1.schema.json")]
+            "source-locator.v1.schema.json", "signature.v1.schema.json",
+            "event-checkpoint.v1.schema.json", "audit-graph.v1.schema.json")]
         registry = Registry().with_resources((schema["$id"], Resource.from_contents(schema)) for schema in schemas)
         checkpoint = self.client.checkpoint(commitment_key=self.key, signer=self.signer)
-        for schema, instance in zip(schemas, (self.locator.to_dict(), checkpoint["signature"], checkpoint)):
+        graph = self.client.audit_graph()
+        instances = (self.locator.to_dict(), checkpoint["signature"], checkpoint, graph)
+        for schema, instance in zip(schemas, instances):
             jsonschema.Draft202012Validator.check_schema(schema)
             validator = jsonschema.Draft202012Validator(schema, registry=registry)
             validator.validate(instance)
@@ -215,6 +218,67 @@ class SDKTests(unittest.TestCase):
         damaged = bytearray(output.read_bytes()); damaged[-1] ^= 1; output.write_bytes(damaged)
         with self.assertRaises(ValueError):
             self.client.import_pack(output, self.key, signature=exported["signature"], trusted_signers=self.trust)
+
+    def test_audit_graph_digest_edges_and_secret_exclusion(self):
+        from palimnex.audit import graph_digest
+        event = self.record()
+        self.client.record(Event(self.sid, "correction", "cobalt orchard", {"state": "fixed"},
+                                 (Evidence(self.locator),), retention="durable", supersedes=event["event_id"]))
+        self.client.record(Event(self.sid, "fact", "cobalt classified", {"state": "secret-payload"},
+                                 sensitivity="secret", retention="durable"))
+        first = self.client.audit_graph()
+        second = Palimnex(self.root).audit_graph()
+        self.assertEqual(first["graph_digest"], second["graph_digest"])
+        self.assertEqual(first["graph_digest"], graph_digest(first))
+        self.assertTrue(first["secret_omitted"])
+        self.assertFalse(first["authorizes_actions"])
+        self.assertNotIn("secret-payload", json.dumps(first))
+        kinds = {node["kind"] for node in first["nodes"]}
+        self.assertEqual({"session", "event", "evidence"} & kinds, {"session", "event", "evidence"})
+        self.assertTrue(any(edge["kind"] == "evidenced_by" for edge in first["edges"]))
+        self.assertTrue(any(edge["kind"] == "supersedes" for edge in first["edges"]))
+        with self.assertRaises(ValueError):
+            self.client.audit_graph(max_sensitivity="secret")
+
+    def test_audit_graph_erasure_leaves_tombstones_not_payloads(self):
+        event = self.record()
+        self.client.close_session(self.sid, "done")
+        before = self.client.audit_graph()
+        self.assertIn("cobalt orchard", json.dumps(before["nodes"]))
+        self.client.migrate_retention(expected_digest=self.client.status()["logical_digest"])
+        self.client.activate_policy({"schema": "project-memory:retention-policy:v1", "policy_id": "test",
+                                    "version": 1, "mode": "manual", "clock": "tx_at", "rules": [],
+                                    "grace_after_close_seconds": 0, "plan_ttl_seconds": 3600},
+                                   actor="tester", reason="test policy")
+        self.client.authorize_erasure([event["event_id"]], authorized_by="tester",
+                                      policy_id="test", reason_code="AUTHORIZED_ERASURE")
+        plan = self.client.plan_erasure([event["event_id"]])
+        self.client.apply_erasure(plan, confirm_digest=plan["plan_digest"], key=b"f" * 32,
+                                  actor="tester", reason="test erase")
+        after = self.client.audit_graph(signer=self.signer)
+        serialized = json.dumps(after)
+        self.assertNotIn("cobalt orchard", serialized)
+        self.assertTrue(any(node["kind"] == "tombstone" and node["event_id"] == event["event_id"]
+                            for node in after["nodes"]))
+        self.assertTrue(any(edge["kind"] == "forgotten" for edge in after["edges"]))
+        self.assertTrue(any(node["kind"] == "retention_action" and node.get("control_kind") == "erased"
+                            for node in after["nodes"]))
+        self.assertEqual(after["signature"]["purpose"], "audit-graph")
+
+    def test_pack_sibling_audit_graph_leaves_pack_v2_importable(self):
+        self.record()
+        self.client.close_session(self.sid, "finished")
+        pack = self.root / ".private/with-graph.pmem"
+        result = self.client.export_pack(pack, self.key, signer=self.signer, include_audit_graph=True)
+        self.assertTrue(pack.read_bytes().startswith(b"PMEM25"))
+        sibling = Path(result["audit_graph"]["path"])
+        self.assertTrue(sibling.is_file())
+        self.assertEqual(sibling.stat().st_mode & 0o777, 0o600)
+        document = json.loads(sibling.read_text(encoding="utf-8"))
+        self.assertEqual(document["schema"], "palimnex:audit-graph:v1")
+        self.assertEqual(document["graph_digest"], result["audit_graph"]["graph_digest"])
+        report = self.client.import_pack(pack, self.key, signature=result["signature"], trusted_signers=self.trust)
+        self.assertEqual(report["status"], "validated_quarantined")
 
 
 class AdapterTests(unittest.TestCase):

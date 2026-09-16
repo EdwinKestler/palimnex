@@ -36,6 +36,6 @@ palimnex = ["py.typed", "README.md", "CHANGELOG.md", "schemas/*.json", "evaluati
 [tool.mypy]
 python_version = "3.11"
 follow_imports = "silent"
-files = ["palimnex/api.py", "palimnex/locators.py", "palimnex/adapters.py", "palimnex/identity.py", "palimnex/integrity.py"]
+files = ["palimnex/api.py", "palimnex/locators.py", "palimnex/adapters.py", "palimnex/identity.py", "palimnex/integrity.py", "palimnex/audit.py"]
 check_untyped_defs = true
 disallow_untyped_defs = true

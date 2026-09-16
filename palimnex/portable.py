@@ -514,7 +514,8 @@ def _rescan_portable_content(document: dict[str, Any]) -> None:
             raise ValueError(f"{label} rejected by current export privacy policy: {summary}")
 
 
-def export_pack(ledger: MemoryLedger, output: Path, key: bytes, *, signer=None) -> dict[str, Any]:
+def export_pack(ledger: MemoryLedger, output: Path, key: bytes, *, signer=None,
+                include_audit_graph: bool = False) -> dict[str, Any]:
     """Export authenticated encrypted durable history; secret-class records stay local."""
     status = ledger.status()
     if status["status"] != "ready":
@@ -566,6 +567,15 @@ def export_pack(ledger: MemoryLedger, output: Path, key: bytes, *, signer=None) 
     result = {"status": "exported", "path": str(output), **manifest}
     if signature is not None:
         result["signature"] = signature
+    if include_audit_graph:
+        from .audit import export_audit_graph
+        graph = export_audit_graph(ledger, Path(str(output) + ".audit-graph.json"), signer=signer)
+        result["audit_graph"] = {
+            "path": graph["path"],
+            "graph_digest": graph["graph_digest"],
+            "nodes": graph["nodes"],
+            "edges": graph["edges"],
+        }
     return result
 
 

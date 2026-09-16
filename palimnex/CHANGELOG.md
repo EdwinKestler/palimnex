@@ -5,7 +5,9 @@ operator-facing behavior; cache and graph schemas are versioned independently.
 
 ## Unreleased
 
-No changes yet.
+- Replicable `palimnex:audit-graph:v1` export of eligible memory and
+  non-reconstructive erasure residue, with optional signature and a sibling
+  file from `memory-export --include-audit-graph`. Pack v2 bytes are unchanged.
 
 ## 2.7.0 - 2026-09-16
 

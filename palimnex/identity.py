@@ -10,7 +10,7 @@ from typing import Any, Mapping, Protocol, runtime_checkable
 from .durable import canonical_json
 
 SIGNATURE_SCHEMA = "palimnex:signature:v1"
-PURPOSES = {"encrypted-pack", "ledger-checkpoint", "adapter-receipt"}
+PURPOSES = {"encrypted-pack", "ledger-checkpoint", "adapter-receipt", "audit-graph"}
 
 
 @runtime_checkable

@@ -150,6 +150,25 @@ class Palimnex:
             raise ValueError("retention migration required")
         return self._ledger.apply(plan, confirm_digest=confirm_digest, key=key, actor=actor, reason=reason)
 
+    def audit_graph(self, *, max_sensitivity: str = "restricted",
+                    include_untrusted: bool = False,
+                    checkpoint: Mapping[str, Any] | None = None,
+                    signer: Signer | None = None) -> dict[str, Any]:
+        from .audit import build_audit_graph
+        return build_audit_graph(
+            self._ledger, max_sensitivity=max_sensitivity, include_untrusted=include_untrusted,
+            checkpoint=checkpoint, signer=signer)
+
+    def export_audit_graph(self, output: Path, *, max_sensitivity: str = "restricted",
+                           include_untrusted: bool = False,
+                           checkpoint: Mapping[str, Any] | None = None,
+                           signer: Signer | None = None) -> dict[str, Any]:
+        from .audit import export_audit_graph
+        self._require_write()
+        return export_audit_graph(
+            self._ledger, output, max_sensitivity=max_sensitivity,
+            include_untrusted=include_untrusted, checkpoint=checkpoint, signer=signer)
+
     def checkpoint(self, *, commitment_key: bytes, signer: Signer,
                    previous: Mapping[str, Any] | None = None,
                    trusted: Mapping[str, TrustedIdentity] | None = None) -> dict[str, Any]:
@@ -163,10 +182,12 @@ class Palimnex:
         return verify_current(self._ledger, checkpoint, commitment_key=commitment_key,
                               trusted=trusted, expected_tip=expected_tip)
 
-    def export_pack(self, output: Path, key: bytes, *, signer: Signer | None = None) -> dict[str, Any]:
+    def export_pack(self, output: Path, key: bytes, *, signer: Signer | None = None,
+                    include_audit_graph: bool = False) -> dict[str, Any]:
         from .portable import export_pack
         self._require_write()
-        return export_pack(self._ledger, output, key, signer=signer)
+        return export_pack(self._ledger, output, key, signer=signer,
+                           include_audit_graph=include_audit_graph)
 
     def import_pack(self, pack: Path, key: bytes, *, signature: dict[str, Any] | None = None,
                     trusted_signers: Mapping[str, TrustedIdentity] | None = None,

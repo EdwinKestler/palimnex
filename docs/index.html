@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Palimnex is a local-first source discovery and durable historical-memory system for coding agents.">
+  <meta name="theme-color" content="#07111f">
+  <title>Palimnex — local-first memory for coding agents</title>
+  <link rel="icon" href="assets/palimnex-mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/palimnex-site.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Palimnex home">
+      <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
+        <path d="M9 10h18a10 10 0 0 1 0 20H17v8H9V10Z"/>
+        <path d="M17 18h10a2 2 0 1 1 0 4H17v-4Z" class="brand-cut"/>
+        <circle cx="36" cy="36" r="5" class="brand-dot"/>
+      </svg>
+      <span>Palimnex</span>
+    </a>
+    <nav class="site-nav" aria-label="Primary navigation">
+      <a href="#architecture">Architecture</a>
+      <a href="#pipelines">Pipelines</a>
+      <a href="#dependencies">Dependencies</a>
+      <a href="#quickstart">Quick start</a>
+    </nav>
+    <a class="header-cta" href="https://github.com/EdwinKestler/palimnex">View on GitHub</a>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="hero-copy">
+        <p class="eyebrow"><span></span> Repository-local memory infrastructure</p>
+        <h1>Memory that preserves context—<em>never authority.</em></h1>
+        <p class="hero-lede">
+          Palimnex gives coding agents fast source discovery, durable historical memory,
+          encrypted portability, and explicit retention controls without making a cloud
+          database or model provider part of the trust boundary.
+        </p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#quickstart">Start locally</a>
+          <a class="button button-secondary" href="https://github.com/EdwinKestler/palimnex/blob/main/docs/DESIGN.md">Read the design</a>
+        </div>
+        <dl class="hero-stats" aria-label="Project status">
+          <div><dt>Release line</dt><dd>2.6.0-rc.1</dd></div>
+          <div><dt>Frozen gate</dt><dd>20 / 20</dd></div>
+          <div><dt>Recall@5</dt><dd>1.0</dd></div>
+        </dl>
+      </div>
+
+      <div class="hero-system" aria-label="Palimnex system overview">
+        <div class="system-glow"></div>
+        <div class="system-label">Local trust boundary</div>
+        <div class="system-node node-source">
+          <span class="node-icon">&lt;/&gt;</span>
+          <div><strong>Repository source</strong><small>Current authority</small></div>
+        </div>
+        <span class="system-arrow arrow-one" aria-hidden="true">↓</span>
+        <div class="system-node node-scan">
+          <span class="node-icon">◇</span>
+          <div><strong>Privacy admission</strong><small>Fail-closed scanning</small></div>
+        </div>
+        <div class="system-split" aria-hidden="true"><span></span><i></i><span></span></div>
+        <div class="system-columns">
+          <div class="system-node node-cache">
+            <span class="status-dot status-cyan"></span>
+            <div><strong>Redis cache</strong><small>Disposable discovery</small></div>
+          </div>
+          <div class="system-node node-ledger">
+            <span class="status-dot status-green"></span>
+            <div><strong>SQLite ledger</strong><small>Durable history</small></div>
+          </div>
+        </div>
+        <div class="authority-note">Historical context <b>≠</b> permission to act</div>
+      </div>
+    </section>
+
+    <section class="trust-strip" aria-label="Core guarantees">
+      <div><span>01</span><strong>Source authoritative</strong><small>Results reopen verified checkout bytes.</small></div>
+      <div><span>02</span><strong>Local by default</strong><small>Owner-only Redis socket and repository state.</small></div>
+      <div><span>03</span><strong>Explicit lifecycle</strong><small>No automatic durable deletion or hidden execution.</small></div>
+      <div><span>04</span><strong>Portable safely</strong><small>Authenticated encryption and quarantined imports.</small></div>
+    </section>
+
+    <section class="section" id="architecture">
+      <div class="section-heading">
+        <p class="eyebrow"><span></span> Architecture</p>
+        <h2>Two memory planes. One clear authority model.</h2>
+        <p>Redis accelerates discovery. SQLite preserves accepted historical events. Repository files remain the current source of truth.</p>
+      </div>
+
+      <div class="architecture-map" role="img" aria-label="Source discovery and durable memory architecture">
+        <div class="arch-input">
+          <span class="arch-kicker">Input</span>
+          <strong>Repository files</strong>
+          <small>Python · Markdown · JSON · config</small>
+        </div>
+        <div class="arch-arrow" aria-hidden="true"><span>scan + hash</span>→</div>
+        <div class="arch-plane plane-cache">
+          <div class="plane-head"><span>Rebuildable</span><strong>Redis v3</strong></div>
+          <ul>
+            <li>Hashed lexical postings</li>
+            <li>Quantized feature vectors</li>
+            <li>Document and symbol graph</li>
+            <li>Bounded hot metadata</li>
+          </ul>
+        </div>
+        <div class="arch-output">
+          <span class="arch-kicker">Read</span>
+          <strong>Verified source result</strong>
+          <small>Digest-checked against the checkout</small>
+        </div>
+
+        <div class="arch-input">
+          <span class="arch-kicker">Input</span>
+          <strong>Agent events</strong>
+          <small>Decisions · outcomes · evidence</small>
+        </div>
+        <div class="arch-arrow" aria-hidden="true"><span>commit first</span>→</div>
+        <div class="arch-plane plane-ledger">
+          <div class="plane-head"><span>Durable</span><strong>SQLite v1</strong></div>
+          <ul>
+            <li>Typed, temporal event history</li>
+            <li>Evidence and verification attempts</li>
+            <li>Outbox-backed Redis projection</li>
+            <li>Retention control and tombstones</li>
+          </ul>
+        </div>
+        <div class="arch-output">
+          <span class="arch-kicker">Recall</span>
+          <strong>Historical context</strong>
+          <small>Always non-authorizing</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-tinted" id="pipelines">
+      <div class="section-heading">
+        <p class="eyebrow"><span></span> Pipeline flows</p>
+        <h2>Evidence enters through controlled, inspectable paths.</h2>
+      </div>
+
+      <article class="pipeline-card">
+        <header>
+          <span class="pipeline-number">A</span>
+          <div><h3>Verified source retrieval</h3><p>Fast candidates, current bytes.</p></div>
+        </header>
+        <ol class="pipeline-flow">
+          <li><span>1</span><strong>Privacy scan</strong><small>Reject credential-shaped content before derivation.</small></li>
+          <li><span>2</span><strong>Build postings</strong><small>Store digests, vectors, graph metadata—never source bodies.</small></li>
+          <li><span>3</span><strong>Bound candidates</strong><small>BM25-style lookup touches at most 512 chunks.</small></li>
+          <li><span>4</span><strong>Reopen source</strong><small>Verify file and chunk digests against the checkout.</small></li>
+          <li><span>5</span><strong>Return evidence</strong><small>Ranked text with score components and source pointers.</small></li>
+        </ol>
+      </article>
+
+      <div class="pipeline-pair">
+        <article class="pipeline-card compact">
+          <header>
+            <span class="pipeline-number">B</span>
+            <div><h3>Durable memory</h3><p>Commit before projection.</p></div>
+          </header>
+          <ol class="vertical-flow">
+            <li><span></span><div><strong>Validate event + evidence</strong><small>Typed schema, current source locator, privacy policy.</small></div></li>
+            <li><span></span><div><strong>SQLite transaction</strong><small>Event and outbox row commit atomically.</small></div></li>
+            <li><span></span><div><strong>Redis hot projection</strong><small>Bounded metadata only; retries are idempotent.</small></div></li>
+            <li><span></span><div><strong>Recall with trust filters</strong><small>Time, sensitivity, retention, history, and verification.</small></div></li>
+          </ol>
+        </article>
+
+        <article class="pipeline-card compact">
+          <header>
+            <span class="pipeline-number">C</span>
+            <div><h3>Authorized erasure</h3><p>Explicit, local, verifiable.</p></div>
+          </header>
+          <ol class="vertical-flow erasure-flow">
+            <li><span></span><div><strong>Authorize + bind plan</strong><small>Short-lived authority, reason code, current ledger digest.</small></div></li>
+            <li><span></span><div><strong>Enforce holds + dependencies</strong><small>Protected anchors and unresolved stores fail closed.</small></div></li>
+            <li><span></span><div><strong>Rewrite + recompute</strong><small>Remove content and derivatives; withdraw unsupported facts.</small></div></li>
+            <li><span></span><div><strong>Verify + tombstone</strong><small>Compact locally and preserve non-reconstructive audit residue.</small></div></li>
+          </ol>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="stores">
+      <div class="section-heading">
+        <p class="eyebrow"><span></span> Data stores</p>
+        <h2>Each store has one job—and explicit limits.</h2>
+      </div>
+      <div class="store-grid">
+        <article class="store-card redis-card">
+          <div class="store-title"><span class="store-glyph">R</span><div><h3>Redis</h3><p>Discovery cache</p></div></div>
+          <dl>
+            <div><dt>Durability</dt><dd>Disposable</dd></div>
+            <div><dt>Contains</dt><dd>Digests, postings, vectors, graph metadata</dd></div>
+            <div><dt>Default transport</dt><dd>Owner-only Unix socket</dd></div>
+            <div><dt>Loss behavior</dt><dd>Rebuild from repository and ledger</dd></div>
+          </dl>
+        </article>
+        <article class="store-card sqlite-card">
+          <div class="store-title"><span class="store-glyph">S</span><div><h3>SQLite</h3><p>Historical ledger</p></div></div>
+          <dl>
+            <div><dt>Durability</dt><dd>Authoritative for accepted memory</dd></div>
+            <div><dt>Contains</dt><dd>Events, evidence, workflows, outbox, controls</dd></div>
+            <div><dt>Mode</dt><dd>WAL · foreign keys · synchronous FULL</dd></div>
+            <div><dt>Boundary</dt><dd>Private repository-local runtime file</dd></div>
+          </dl>
+        </article>
+        <article class="store-card pack-card">
+          <div class="store-title"><span class="store-glyph">P</span><div><h3>Encrypted pack</h3><p>Portable history</p></div></div>
+          <dl>
+            <div><dt>Format</dt><dd>project-memory:pack:v2</dd></div>
+            <div><dt>Cipher</dt><dd>ChaCha20-Poly1305</dd></div>
+            <div><dt>Import state</dt><dd>Quarantined, untrusted history</dd></div>
+            <div><dt>Authority</dt><dd>Never restores permission to act</dd></div>
+          </dl>
+        </article>
+      </div>
+    </section>
+
+    <section class="section section-tinted" id="dependencies">
+      <div class="section-heading">
+        <p class="eyebrow"><span></span> Prerequisites &amp; third parties</p>
+        <h2>Small dependency surface. No mandatory cloud service.</h2>
+        <p>Core source discovery and ledger operations are Python-standard-library code. External components are isolated by capability.</p>
+      </div>
+
+      <div class="dependency-table" role="table" aria-label="Palimnex dependencies">
+        <div class="dependency-row table-head" role="row">
+          <span role="columnheader">Component</span><span role="columnheader">Requirement</span><span role="columnheader">Purpose</span><span role="columnheader">Operational boundary</span>
+        </div>
+        <div class="dependency-row" role="row">
+          <span role="cell"><strong>Python 3.11+</strong><small>Runtime</small></span><span role="cell"><b class="pill required">Required</b></span><span role="cell">CLI, cache engine, ledger, schemas, tests</span><span role="cell">Standard library for core paths</span>
+        </div>
+        <div class="dependency-row" role="row">
+          <span role="cell"><strong>Redis server + CLI</strong><small>Database / cache</small></span><span role="cell"><b class="pill capability">Cache-backed features</b></span><span role="cell">Source discovery cache and hot metadata</span><span role="cell">Disposable; owner-only Unix socket by default</span>
+        </div>
+        <div class="dependency-row" role="row">
+          <span role="cell"><strong>SQLite</strong><small>Embedded database</small></span><span role="cell"><b class="pill bundled">Python bundled</b></span><span role="cell">Durable historical-memory ledger</span><span role="cell">Local file; no database server</span>
+        </div>
+        <div class="dependency-row" role="row">
+          <span role="cell"><strong>cryptography</strong><small>Python distribution</small></span><span role="cell"><b class="pill capability">Pack operations</b></span><span role="cell">ChaCha20-Poly1305 authenticated encryption</span><span role="cell">Only required to import/export encrypted packs</span>
+        </div>
+        <div class="dependency-row" role="row">
+          <span role="cell"><strong>Git</strong><small>Source control</small></span><span role="cell"><b class="pill optional">Recommended</b></span><span role="cell">Repository provenance and rollback workflow</span><span role="cell">Never authorized by recalled memory</span>
+        </div>
+        <div class="dependency-row" role="row">
+          <span role="cell"><strong>GitHub Actions</strong><small>Hosted CI</small></span><span role="cell"><b class="pill optional">Optional</b></span><span role="cell">Runs the standalone local gate on push and PR</span><span role="cell">No live ledger and no model call</span>
+        </div>
+      </div>
+
+      <div class="no-deps">
+        <div><span>×</span><strong>No vector database</strong></div>
+        <div><span>×</span><strong>No model API</strong></div>
+        <div><span>×</span><strong>No HNSW service</strong></div>
+        <div><span>×</span><strong>No hosted SQL database</strong></div>
+      </div>
+    </section>
+
+    <section class="section quickstart" id="quickstart">
+      <div class="quickstart-copy">
+        <p class="eyebrow"><span></span> Quick start</p>
+        <h2>From checkout to verified retrieval.</h2>
+        <p>Run from the repository root. The guarded launcher creates a private Redis instance under ignored local state.</p>
+        <div class="doc-links">
+          <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/RUNBOOK.md"><strong>Operator runbook</strong><small>Day-to-day commands and failure recovery →</small></a>
+          <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/RETENTION.md"><strong>Retention contract</strong><small>Authorization, holds, cleanup, and limits →</small></a>
+          <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/COMPATIBILITY.md"><strong>Compatibility policy</strong><small>Stable storage identifiers and migrations →</small></a>
+        </div>
+      </div>
+      <div class="terminal" aria-label="Quick start terminal commands">
+        <div class="terminal-bar"><span></span><span></span><span></span><b>palimnex — bash</b></div>
+        <pre><code><span class="prompt">$</span> ./scripts/palimnex_redis.sh start
+<span class="prompt">$</span> python3 palimnex.py status
+<span class="prompt">$</span> python3 palimnex.py index --incremental
+<span class="prompt">$</span> python3 palimnex.py validate --deep
+<span class="prompt">$</span> python3 palimnex.py evaluate --limit 5
+<span class="prompt">$</span> python3 palimnex.py ledger-status
+
+<span class="success">✓ fresh cache · deep validation passed</span></code></pre>
+      </div>
+    </section>
+
+    <section class="safety-section">
+      <div>
+        <p class="eyebrow light"><span></span> Safety boundary</p>
+        <h2>Recall informs. It never authorizes.</h2>
+      </div>
+      <p>Cache hits, durable records, imported packs, and remembered workflows cannot grant permission to commit, push, deploy, spend, erase, contact a provider, or change an external system. Current authorization always comes from the current operator and repository context.</p>
+      <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/AGENT_INIT_PROMPT.md" class="button button-light">Maintainer contract</a>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-brand"><strong>Palimnex</strong><span>Local-first memory for coding agents.</span></div>
+    <div class="footer-links">
+      <a href="https://github.com/EdwinKestler/palimnex">GitHub</a>
+      <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/DESIGN.md">Design</a>
+      <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/RUNBOOK.md">Runbook</a>
+      <a href="https://github.com/EdwinKestler/palimnex/blob/main/LICENSE">MIT License</a>
+    </div>
+    <p>Built without analytics, external fonts, or client-side dependencies.</p>
+  </footer>
+</body>
+</html>

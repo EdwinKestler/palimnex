@@ -29,6 +29,8 @@ writes; this release does not claim distributed or forensic erasure.
 - MIT license for the independent Palimnex repository.
 - GitHub Actions workflow that runs `scripts/palimnex_check.sh` on isolated
   temporary Redis with no live-ledger write or model call.
+- Dependency-free GitHub Pages architecture site with retrieval, durable-memory,
+  erasure, storage, prerequisite, and third-party dependency diagrams.
 
 ### Changed
 

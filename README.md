@@ -45,10 +45,15 @@ historical evidence, never authorization to execute external actions.
 - `.palimnex.json` — this repository's safe local configuration.
 - `LICENSE` — MIT license.
 - `.github/workflows/palimnex-check.yml` — CI for the standalone gate.
+- `docs/index.html` — dependency-free GitHub Pages architecture site.
 
 See [the operator runbook](docs/RUNBOOK.md), [retention policy](docs/RETENTION.md),
 [compatibility policy](docs/COMPATIBILITY.md), [maintainer initialization prompt](docs/AGENT_INIT_PROMPT.md),
 and [extraction record](docs/PROVENANCE.md).
+
+The Pages source can be previewed locally and published from `docs/` by an
+authorized maintainer. See [the Pages guide](docs/PAGES.md) for the workflow
+and branch-source options.
 
 ## Safety boundary
 

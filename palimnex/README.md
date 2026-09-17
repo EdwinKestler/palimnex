@@ -157,6 +157,7 @@ python3 palimnex.py session-close ID --outcome "OUTCOME" \
 python3 palimnex.py consolidate ID
 python3 palimnex.py recall "QUERY" --promoted-only
 python3 palimnex.py hot-events --limit 100
+python3 palimnex.py audit-graph
 ```
 
 SQLite uses WAL, full synchronous writes, foreign keys, process locking and
@@ -184,6 +185,11 @@ eligible content and local derivatives, recomputes or withdraws dependent
 facts, verifies affected local stores, and retains only a non-reconstructive,
 hash-chained audit tombstone. Durable and imported records require explicit,
 expiring per-event authorization. Session audit anchors remain protected.
+`audit-graph` exports `palimnex:audit-graph:v1` of eligible memory and
+tombstones. Pack v2 bytes stay unchanged; `--include-audit-graph` writes a
+sibling JSON. Optional `palimnex.semantica` projects that graph as untrusted
+history with TTL disabled; fail-closed adapter receipts hash onto the control
+chain and do not claim forensic erasure. See `docs/SDK.md`.
 
 Previously attempted Redis projections and managed packs fail closed until a
 verified invalidation or regeneration adapter exists. SQLite compaction cannot

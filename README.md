@@ -12,8 +12,12 @@ wallet material, atomic-swap implementation, or repository-specific rollback
 snapshot was copied.
 
 The Python distribution version is `2.7.0`, with public SDK and extension API v1.
-See [the SDK guide](docs/SDK.md) for installation, typed interfaces, source
-resolvers, derivative adapters, signed checkpoints, pack identity and MCP.
+Unreleased work on this line adds a replicable `palimnex:audit-graph:v1` export
+and an optional Semantica projector that copies that graph as untrusted
+history with TTL disabled and fail-closed erasure receipts. See
+[the SDK guide](docs/SDK.md) for installation, typed interfaces, source
+resolvers, derivative adapters, signed checkpoints, the audit graph, optional
+Semantica projection, pack identity and MCP.
 
 ## Quick start
 
@@ -29,6 +33,7 @@ python3 palimnex.py index --incremental
 python3 palimnex.py validate --deep
 python3 palimnex.py evaluate --limit 5
 python3 palimnex.py ledger-status
+python3 palimnex.py audit-graph
 ```
 
 Run the standalone gate with:
@@ -44,15 +49,16 @@ historical evidence, never authorization to execute external actions.
 
 - `palimnex.py` — repository-root CLI.
 - `palimnex/` — engine, schemas, fixtures, and tests.
-- `docs/` — design, operations, retention, and evaluation contracts.
+- `docs/` — design, operations, retention, SDK contracts, and the Pages site.
 - `scripts/palimnex_redis.sh` — owner-only Unix-socket Redis launcher.
 - `.palimnex.json` — this repository's safe local configuration.
 - `LICENSE` — MIT license.
 - `.github/workflows/palimnex-check.yml` — CI for the standalone gate.
 - `docs/index.html` — dependency-free GitHub Pages architecture site.
 
-See [the operator runbook](docs/RUNBOOK.md), [retention policy](docs/RETENTION.md),
-[compatibility policy](docs/COMPATIBILITY.md), [maintainer initialization prompt](docs/AGENT_INIT_PROMPT.md),
+See [the SDK guide](docs/SDK.md), [the operator runbook](docs/RUNBOOK.md),
+[retention policy](docs/RETENTION.md), [compatibility policy](docs/COMPATIBILITY.md),
+[maintainer initialization prompt](docs/AGENT_INIT_PROMPT.md),
 and [extraction record](docs/PROVENANCE.md).
 
 The Pages source can be previewed locally and published from `docs/` by an
@@ -64,9 +70,11 @@ and branch-source options.
 Palimnex never forgets durable data automatically. Cleanup is a separate,
 authorized transaction that resolves derivatives, enforces holds, removes
 eligible local content and indexes, recomputes dependent facts, verifies local
-stores, and writes a non-reconstructive audit tombstone. It does not claim
-forensic deletion from SSDs, backups, snapshots, third-party systems, or
-unmanaged exported copies.
+stores, and writes a non-reconstructive audit tombstone. Optional Semantica
+copies of the audit graph are untrusted projections: `retention_days` must be
+`None`, and a mandatory store that reports `not_configured`, `unsupported`, or
+`failed` fails the adapter apply. It does not claim forensic deletion from
+SSDs, backups, snapshots, third-party systems, or unmanaged exported copies.
 
 ## License
 

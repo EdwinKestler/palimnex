@@ -22,6 +22,7 @@ python3 palimnex.py validate --deep
 python3 palimnex.py evaluate --limit 5
 python3 palimnex.py ledger-init
 python3 palimnex.py ledger-status
+python3 palimnex.py audit-graph
 ```
 
 `migration-shadow` requires a fresh v2.4 index over the same current corpus.
@@ -259,12 +260,20 @@ python3 palimnex.py ledger-status
 python3 palimnex.py memory-export \
   /secure/new/location/project-memory.pmem \
   --key-file .palimnex/project-memory/transfer-2026-09.key
+python3 palimnex.py audit-graph --output .palimnex/audit-graph.json
 ```
 
 `PALIMNEX_PACK_KEY_FILE` may supply only the key-file path. Never put key
 bytes in `.env`, command output, configuration, Git, a memory event or a pack.
 The key and pack are both private owner-controlled, one-link regular files;
 every path component is opened without following symlinks.
+
+`audit-graph` writes `palimnex:audit-graph:v1` of eligible memory and
+non-reconstructive residue. Secret records are omitted. `--include-audit-graph`
+on `memory-export` leaves pack v2 bytes unchanged and writes a sibling
+`.audit-graph.json`. Optional Semantica projection and fail-closed adapter
+receipts are documented in `docs/SDK.md`; they require explicit code, not these
+CLI commands.
 
 The pack selection is `retention-durable-closed-sessions:v1`. It contains only
 closed sessions with an explicit durable non-anchor event, their durable

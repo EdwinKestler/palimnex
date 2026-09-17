@@ -37,12 +37,13 @@
         <h1>Memory that preserves context—<em>never authority.</em></h1>
         <p class="hero-lede">
           Palimnex gives coding agents fast source discovery, durable historical memory,
-          encrypted portability, and explicit retention controls without making a cloud
-          database or model provider part of the trust boundary.
+          a replicable audit graph, encrypted portability, and explicit retention
+          controls without making a cloud database or model provider part of the
+          trust boundary.
         </p>
         <div class="hero-actions">
           <a class="button button-primary" href="#quickstart">Start locally</a>
-          <a class="button button-secondary" href="https://github.com/EdwinKestler/palimnex/blob/main/docs/DESIGN.md">Read the design</a>
+          <a class="button button-secondary" href="https://github.com/EdwinKestler/palimnex/blob/main/docs/SDK.md">Read the SDK</a>
         </div>
         <dl class="hero-stats" aria-label="Project status">
           <div><dt>Package / API</dt><dd>2.7.0 / v1</dd></div>
@@ -127,6 +128,7 @@
             <li>Evidence and verification attempts</li>
             <li>Outbox-backed Redis projection</li>
             <li>Retention control and tombstones</li>
+            <li>Replicable audit-graph export</li>
           </ul>
         </div>
         <div class="arch-output">
@@ -184,6 +186,20 @@
           </ol>
         </article>
       </div>
+
+      <article class="pipeline-card">
+        <header>
+          <span class="pipeline-number">D</span>
+          <div><h3>Replicable audit graph</h3><p>Portable evidence, optional projection.</p></div>
+        </header>
+        <ol class="pipeline-flow">
+          <li><span>1</span><strong>Export graph</strong><small>Eligible sessions, events, evidence, and tombstones. Secrets stay out.</small></li>
+          <li><span>2</span><strong>Content digest</strong><small>Stable graph_digest; optional Ed25519 signature.</small></li>
+          <li><span>3</span><strong>Keep pack v2</strong><small>Sibling JSON only; encrypted pack field set is unchanged.</small></li>
+          <li><span>4</span><strong>Optional Semantica copy</strong><small>Untrusted history, TTL off, local semantica: locators.</small></li>
+          <li><span>5</span><strong>Fail-closed forget</strong><small>Mandatory store gaps fail; receipt hashes, no forensic claim.</small></li>
+        </ol>
+      </article>
     </section>
 
     <section class="section" id="stores">
@@ -219,6 +235,15 @@
             <div><dt>Authority</dt><dd>Never restores permission to act</dd></div>
           </dl>
         </article>
+        <article class="store-card pack-card">
+          <div class="store-title"><span class="store-glyph">G</span><div><h3>Audit graph</h3><p>Replicable evidence</p></div></div>
+          <dl>
+            <div><dt>Format</dt><dd>palimnex:audit-graph:v1</dd></div>
+            <div><dt>Contains</dt><dd>Nodes, edges, tombstones, control residue</dd></div>
+            <div><dt>Projection</dt><dd>Optional Semantica copy, TTL disabled</dd></div>
+            <div><dt>Authority</dt><dd>Historical only; never permission to act</dd></div>
+          </dl>
+        </article>
       </div>
     </section>
 
@@ -252,6 +277,9 @@
           <span role="cell"><strong>mcp</strong><small>Official Python SDK</small></span><span role="cell"><b class="pill optional">Optional transport</b></span><span role="cell">Local stdio tools over public SDK v1</span><span role="cell">Read-only by default; no HTTP listener</span>
         </div>
         <div class="dependency-row" role="row">
+          <span role="cell"><strong>Semantica</strong><small>Optional extra</small></span><span role="cell"><b class="pill optional">Optional projection</b></span><span role="cell">Duck-typed audit-graph copy and fail-closed erase</span><span role="cell">Never imported by core; retention_days must be None</span>
+        </div>
+        <div class="dependency-row" role="row">
           <span role="cell"><strong>Git</strong><small>Source control</small></span><span role="cell"><b class="pill optional">Recommended</b></span><span role="cell">Repository provenance and rollback workflow</span><span role="cell">Never authorized by recalled memory</span>
         </div>
         <div class="dependency-row" role="row">
@@ -273,6 +301,7 @@
         <h2>From checkout to verified retrieval.</h2>
         <p>Run from the repository root. The guarded launcher creates a private Redis instance under ignored local state.</p>
         <div class="doc-links">
+          <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/SDK.md"><strong>SDK and extensions</strong><small>Python API, audit graph, optional Semantica →</small></a>
           <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/RUNBOOK.md"><strong>Operator runbook</strong><small>Day-to-day commands and failure recovery →</small></a>
           <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/RETENTION.md"><strong>Retention contract</strong><small>Authorization, holds, cleanup, and limits →</small></a>
           <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/COMPATIBILITY.md"><strong>Compatibility policy</strong><small>Stable storage identifiers and migrations →</small></a>
@@ -286,6 +315,7 @@
 <span class="prompt">$</span> python3 palimnex.py validate --deep
 <span class="prompt">$</span> python3 palimnex.py evaluate --limit 5
 <span class="prompt">$</span> python3 palimnex.py ledger-status
+<span class="prompt">$</span> python3 palimnex.py audit-graph
 
 <span class="success">✓ fresh cache · deep validation passed</span></code></pre>
       </div>
@@ -306,6 +336,7 @@
     <div class="footer-links">
       <a href="https://github.com/EdwinKestler/palimnex">GitHub</a>
       <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/DESIGN.md">Design</a>
+      <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/SDK.md">SDK</a>
       <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/RUNBOOK.md">Runbook</a>
       <a href="https://github.com/EdwinKestler/palimnex/blob/main/LICENSE">MIT License</a>
     </div>

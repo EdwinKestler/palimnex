@@ -13,6 +13,9 @@ operator-facing behavior; cache and graph schemas are versioned independently.
   is not imported by core Palimnex.
 - Fail-closed Semantica erasure adapter: mandatory store inventory, sanitized
   receipt digests on the retention control chain, no forensic-erasure claim.
+- Documented audit-graph, optional Semantica projection, and fail-closed
+  adapter receipts in README, SDK, design, runbook, retention, compatibility,
+  and the GitHub Pages site.
 
 ## 2.7.0 - 2026-09-16
 

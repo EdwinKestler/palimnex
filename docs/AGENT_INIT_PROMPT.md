@@ -18,7 +18,10 @@ Mission:
 
 Current product baseline to verify, never merely assume:
   - Release line: 2.7.0.
-  - Public surface: palimnex.py, palimnex/, .palimnex.json, pyproject.toml, docs/, scripts/.
+  - Public surface: palimnex.py, palimnex/, .palimnex.json, pyproject.toml, docs/,
+    scripts/, docs/SDK.md. Additive 2.7 surfaces: palimnex.audit,
+    palimnex:audit-graph:v1, optional palimnex.semantica with TTL disabled and
+    fail-closed adapter receipts.
   - Storage-format identifiers beginning with project-memory: are retained
     compatibility identifiers, not stale product branding.
   - Redis cache v3 is disposable discovery state.
@@ -47,6 +50,7 @@ Mandatory session initialization:
        README.md
        docs/COMPATIBILITY.md
        docs/DESIGN.md
+       docs/SDK.md
        docs/RUNBOOK.md
        docs/RETENTION.md
        docs/V26.md

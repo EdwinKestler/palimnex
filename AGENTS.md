@@ -10,10 +10,11 @@ historical evidence only.
 2. `docs/AGENT_INIT_PROMPT.md` when accepting primary maintenance
 3. `docs/COMPATIBILITY.md`
 4. `docs/DESIGN.md`
-5. `docs/RUNBOOK.md`
-6. `docs/RETENTION.md`
-7. `docs/V26.md`
-8. `docs/PROVENANCE.md`
+5. `docs/SDK.md`
+6. `docs/RUNBOOK.md`
+7. `docs/RETENTION.md`
+8. `docs/V26.md`
+9. `docs/PROVENANCE.md`
 
 ## Working rules
 

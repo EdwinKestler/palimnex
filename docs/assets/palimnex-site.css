@@ -167,7 +167,7 @@ h1 em { display: block; color: var(--cyan); font-family: ui-serif, Georgia, seri
 .erasure-flow li > span { border-color: var(--warm); }
 .erasure-flow li:not(:last-child) > span::after { background: rgba(246,199,110,.27); }
 
-.store-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+.store-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; }
 .store-card { padding: 1.45rem; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(14,29,47,.76); }
 .store-title { display: flex; align-items: center; gap: .9rem; margin-bottom: 1.4rem; }
 .store-title h3, .store-title p { margin: 0; }

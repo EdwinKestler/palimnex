@@ -373,6 +373,25 @@ Promotion requires no critical regression, no recall regression, at least
 `+0.05` Recall@5 or `+0.05` MRR, and candidate p95 no more than twice the
 baseline measured in the same environment.
 
+## 10.1 Additive audit graph and optional Semantica projection
+
+`palimnex:audit-graph:v1` is a content-addressed export of eligible sessions,
+events, evidence, claims, retention actions, and tombstones. Edges record
+contains, evidenced_by, supersedes, contradicts, derived_from, and forgotten.
+Secret records never enter the graph. Forgotten events appear only as
+tombstones with HMAC commitments. `graph_digest` omits `created_at` so two
+exports of the same ledger content compare equal. The graph is historical
+evidence and never permission to act.
+
+Pack v2 logical documents keep their exact field set. `memory-export
+--include-audit-graph` writes a sibling owner-only JSON file. Optional
+`palimnex.semantica` copies the graph into a duck-typed Semantica store with
+`retention_days=None`, `authorizes_actions: false`, and `valid_until=None`.
+A `semantica:` locator resolves only from the local projection index. Fail-closed
+erasure treats a mandatory store `not_configured`, `unsupported`, or `failed`
+as an error; sanitized receipt digests append to the retention control chain
+as `adapter_receipt`. This does not claim forensic erasure. See `docs/SDK.md`.
+
 ## 11. Compatibility and rollback
 
 The root entrypoint and these v2 commands remain accepted:

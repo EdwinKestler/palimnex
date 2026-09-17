@@ -2,11 +2,13 @@
 
 The 2.7.0 distribution introduces public Python API v1. `palimnex.api`,
 `palimnex.locators`, `palimnex.adapters`, `palimnex.identity`,
-`palimnex.integrity`, and `palimnex.audit` are supported extension surfaces. Other modules remain
-implementation details. Breaking changes to these interfaces require a new
-API major version; additive methods do not. Check `API_VERSION` and adapter
-`api_version` before connecting an integration. Plugins are supplied explicitly;
-Palimnex does not auto-import installed entry points or fetch plugins.
+`palimnex.integrity`, and `palimnex.audit` are supported extension surfaces.
+`palimnex.semantica` is an optional extra surface and is not imported by core.
+Other modules remain implementation details. Breaking changes to these
+interfaces require a new API major version; additive methods do not. Check
+`API_VERSION` and adapter `api_version` before connecting an integration.
+Plugins are supplied explicitly; Palimnex does not auto-import installed entry
+points or fetch plugins.
 
 ## Install and open
 

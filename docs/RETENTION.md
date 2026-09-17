@@ -53,6 +53,10 @@ context assembly passes its active session through this path. Unscoped reads
 do not infer a session. Closed sessions retain
 those pins through configured grace. No heartbeat silently releases a pin.
 Session anchors, control history, receipts, and deletion tombstones survive.
+After a local apply, an optional `adapter_receipt` control record may store
+sanitized per-store statuses and content-addressed digests from a fail-closed
+Semantica (or other) derivative adapter. That record must not contain deleted
+payloads or backend result blobs, and it cannot claim forensic erasure.
 Anchor task/outcome payloads are scrubbed when a session member is erased.
 Temporal chains are withdrawn together so deleting a correction cannot revive
 its predecessor. Registered support sets use a documented `max` confidence

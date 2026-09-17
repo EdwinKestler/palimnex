@@ -20,4 +20,9 @@ Version 2.7.0 adds Python SDK v1, derivative/source/signer protocols v1,
 keep their original formats. Structured locators occupy the existing string
 field; old readers abstain from verifying their unknown prefix. SDK import
 requires a signature by default; legacy CLI import remains explicitly v2.
+
+Unreleased additive schemas on this line are `palimnex:audit-graph:v1` and
+retention-control kind `adapter_receipt`. Pack v2 field sets are unchanged; an
+optional sibling `.audit-graph.json` is a separate document. Semantica is an
+optional extra and is never imported by core Palimnex.
 See `docs/SDK.md` for trust roots, downgrade behavior and checkpoint limitations.

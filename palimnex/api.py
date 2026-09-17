@@ -150,6 +150,12 @@ class Palimnex:
             raise ValueError("retention migration required")
         return self._ledger.apply(plan, confirm_digest=confirm_digest, key=key, actor=actor, reason=reason)
 
+    def record_adapter_receipt(self, payload: Mapping[str, Any]) -> dict[str, Any]:
+        self._require_write()
+        if not isinstance(self._ledger, retention.RetentionLedger):
+            raise ValueError("retention migration required")
+        return self._ledger.record_adapter_receipt(dict(payload))
+
     def audit_graph(self, *, max_sensitivity: str = "restricted",
                     include_untrusted: bool = False,
                     checkpoint: Mapping[str, Any] | None = None,

@@ -18,6 +18,9 @@ from .locators import ResolvedSource, SourceLocator, SourceRange, SourceResolver
 from .security import scan_bytes
 
 ADAPTER_ID = "semantica"
+KNOWN_STORES = ("graph", "memory", "vectors")
+COMPLETE_STATUSES = frozenset({"erased", "not_found"})
+FAILURE_STATUSES = frozenset({"unsupported", "failed"})
 _EVENT_ID = re.compile(r"[0-9a-f]{32}")
 _OBJECT_ID = re.compile(r"[a-zA-Z0-9._:-]{1,128}")
 
@@ -38,6 +41,79 @@ def require_disabled_ttl(context: Any | None) -> None:
         raise ValueError("Palimnex-governed projections require retention_days=None")
 
 
+def _receipt_stores(receipt: Any) -> dict[str, Any]:
+    stores = getattr(receipt, "stores", None)
+    if stores is None and isinstance(receipt, Mapping):
+        stores = receipt.get("stores")
+    if not isinstance(stores, Mapping):
+        raise ValueError("invalid erasure receipt")
+    return dict(stores)
+
+
+def sanitize_erasure_receipt(receipt: Any) -> dict[str, Any]:
+    """Keep store statuses and identifiers; drop backend blobs and reasons."""
+    entity_id = getattr(receipt, "entity_id", None)
+    if entity_id is None and isinstance(receipt, Mapping):
+        entity_id = receipt.get("entity_id")
+    if not isinstance(entity_id, str) or not entity_id:
+        raise ValueError("invalid erasure receipt")
+    stores = {
+        name: {"status": str((info or {}).get("status", "not_configured"))}
+        for name, info in sorted(_receipt_stores(receipt).items())
+        if name in KNOWN_STORES
+    }
+    body = {
+        "schema": "palimnex:adapter-erasure:v1",
+        "entity_id": entity_id,
+        "stores": stores,
+        "forensic_erasure": False,
+    }
+    body["receipt_digest"] = hashlib.sha256(canonical_json(
+        {key: value for key, value in body.items() if key != "receipt_digest"}
+    )).hexdigest()
+    return body
+
+
+def interpret_erasure_receipt(receipt: Any, mandatory_stores: frozenset[str]) -> dict[str, Any]:
+    """Fail closed: mandatory not_configured/unsupported/failed is an error.
+
+    Optional stores may be not_configured. Any unsupported or failed store fails.
+    """
+    stores = _receipt_stores(receipt)
+    for name in mandatory_stores:
+        status = str((stores.get(name) or {}).get("status", "not_configured"))
+        if status not in COMPLETE_STATUSES:
+            raise ValueError(f"mandatory store {name} reported {status}")
+    for name, info in stores.items():
+        status = str((info or {}).get("status", "not_configured"))
+        if status in FAILURE_STATUSES:
+            raise ValueError(f"store {name} reported {status}")
+    return sanitize_erasure_receipt(receipt)
+
+
+@runtime_checkable
+class ErasureRunner(Protocol):
+    def erase_entity(self, entity_id: str, reason: str | None = None, **kwargs: Any) -> Any: ...
+
+
+class FailClosedCoordinator:
+    """Wrap a Semantica ErasureCoordinator so incomplete mandatory stores raise."""
+
+    def __init__(self, runner: ErasureRunner, *, mandatory_stores: Sequence[str] = ("graph",)):
+        stores = tuple(mandatory_stores)
+        if not stores or any(name not in KNOWN_STORES for name in stores):
+            raise ValueError("invalid mandatory store inventory")
+        if not isinstance(runner, ErasureRunner):
+            raise ValueError("unsupported erasure coordinator")
+        self.runner = runner
+        self.mandatory_stores = frozenset(stores)
+
+    def erase_entity(self, entity_id: str, reason: str | None = None, **kwargs: Any) -> Any:
+        receipt = self.runner.erase_entity(entity_id, reason=reason, **kwargs)
+        interpret_erasure_receipt(receipt, self.mandatory_stores)
+        return receipt
+
+
 def bind_semantica(context: Any) -> Any:
     """Accept a caller-built Semantica AgentContext or ContextGraph.
 
@@ -54,19 +130,29 @@ def bind_semantica(context: Any) -> Any:
 class SemanticaProjectionAdapter:
     """In-process index of projected audit-graph objects.
 
-    Graph mutations use the caller-supplied store. Delete/verify support local
-    projection removal for tests; coordinated store erasure is slice C.
+    When a coordinator is supplied, delete() is fail-closed across the declared
+    mandatory stores. Local graph removal remains available for tests.
     """
     api_version = ADAPTER_API_VERSION
     adapter_id = ADAPTER_ID
 
-    def __init__(self, store: GraphStore, *, project_id: str):
+    def __init__(self, store: GraphStore, *, project_id: str,
+                 coordinator: ErasureRunner | None = None,
+                 mandatory_stores: Sequence[str] = ("graph",)):
         if not isinstance(store, GraphStore):
             raise ValueError("unsupported Semantica graph store")
+        stores = tuple(mandatory_stores)
+        if not stores or any(name not in KNOWN_STORES for name in stores):
+            raise ValueError("invalid mandatory store inventory")
+        if coordinator is not None and not isinstance(coordinator, ErasureRunner):
+            raise ValueError("unsupported erasure coordinator")
         self.store = store
         self.project_id = project_id
+        self.coordinator = coordinator
+        self.mandatory_stores = frozenset(stores)
         self._rows: dict[str, tuple[str, str, str, bytes]] = {}
         self._projection: dict[str, tuple[str, str, str, bytes]] = {}
+        self._sanitized: dict[str, dict[str, Any]] = {}
 
     def put(self, object_id: str, event_id: str, payload: bytes, *, version: str) -> None:
         if not _OBJECT_ID.fullmatch(object_id) or not _EVENT_ID.fullmatch(event_id):
@@ -100,8 +186,33 @@ class SemanticaProjectionAdapter:
             raise ValueError("derivative payload changed")
         if row is not None and row[1] != derivative.version:
             raise ValueError("derivative version changed")
+        if self.coordinator is not None:
+            receipt = self.coordinator.erase_entity(
+                derivative.object_id, reason="palimnex-governed")
+            self._sanitized[derivative.object_id] = interpret_erasure_receipt(
+                receipt, self.mandatory_stores)
         self._rows.pop(derivative.object_id, None)
-        self._remove_store_node(derivative.object_id)
+        if self.store.has_node(derivative.object_id):
+            self._remove_store_node(derivative.object_id)
+
+    def commit_receipts(self, plan_digest: str) -> dict[str, Any]:
+        if not re.fullmatch(r"[0-9a-f]{64}", plan_digest) or not self._sanitized:
+            raise ValueError("adapter receipts require an applied plan digest")
+        receipts = []
+        for object_id in sorted(self._sanitized):
+            body = self._sanitized[object_id]
+            receipts.append({
+                "object_id": object_id,
+                "receipt_digest": body["receipt_digest"],
+                "store_statuses": {name: info["status"] for name, info in body["stores"].items()},
+            })
+        return {
+            "plan_digest": plan_digest,
+            "adapter_id": self.adapter_id,
+            "receipts": receipts,
+            "mandatory_stores": sorted(self.mandatory_stores),
+            "forensic_erasure": False,
+        }
 
     def invalidate_projection(self, derivative: Derivative) -> None:
         self._check(derivative)

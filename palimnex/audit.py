@@ -226,6 +226,17 @@ def build_audit_graph(
                 node["policy_id"] = payload["policy_id"]
                 node["authorized_by"] = [payload["authorized_by"]]
                 node["reason_codes"] = [payload["reason_code"]]
+            elif entry["kind"] == "adapter_receipt":
+                node["plan_digest"] = payload["plan_digest"]
+                node["adapter_id"] = payload["adapter_id"]
+                node["receipt_digest"] = hashlib.sha256(canonical_json(payload["receipts"])).hexdigest()
+                node["forgotten_events"] = [
+                    item["object_id"].split(":", 1)[1]
+                    for item in payload["receipts"]
+                    if isinstance(item.get("object_id"), str)
+                    and item["object_id"].startswith("event:")
+                    and re.fullmatch(r"[0-9a-f]{32}", item["object_id"][6:]) is not None
+                ]
             nodes.append(node)
             if entry["kind"] == "erased":
                 for eid in payload["events"]:

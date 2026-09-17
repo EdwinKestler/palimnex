@@ -11,6 +11,8 @@ operator-facing behavior; cache and graph schemas are versioned independently.
 - Optional Semantica audit-graph projector with TTL disabled, local
   `semantica:` resolvers, and derivative registration. The Semantica package
   is not imported by core Palimnex.
+- Fail-closed Semantica erasure adapter: mandatory store inventory, sanitized
+  receipt digests on the retention control chain, no forensic-erasure claim.
 
 ## 2.7.0 - 2026-09-16
 

@@ -8,11 +8,14 @@ from palimnex import Evidence, Event, Palimnex
 from palimnex.adapters import AdapterRegistry
 from palimnex.locators import resolve_locator
 from palimnex.semantica import (
+    FailClosedCoordinator,
     SemanticaProjectionAdapter,
     SemanticaResolver,
     bind_semantica,
+    interpret_erasure_receipt,
     project_audit_graph,
     require_disabled_ttl,
+    sanitize_erasure_receipt,
     semantica_locator,
 )
 from palimnex.tests.support import PROJECT_ID, write_project
@@ -45,6 +48,25 @@ class FakeGraph:
 class FakeContext:
     retention_days: int | None
     knowledge_graph: FakeGraph
+
+
+@dataclass
+class FakeReceipt:
+    entity_id: str
+    stores: dict
+
+
+class FakeCoordinator:
+    def __init__(self, store: FakeGraph, statuses: dict[str, dict[str, str]]) -> None:
+        self.store = store
+        self.statuses = statuses
+        self.calls: list[str] = []
+
+    def erase_entity(self, entity_id: str, reason: str | None = None, **_kwargs: object) -> FakeReceipt:
+        self.calls.append(entity_id)
+        if self.statuses.get("graph", {}).get("status") in {"erased", "not_found"}:
+            self.store.remove_node(entity_id)
+        return FakeReceipt(entity_id, self.statuses)
 
 
 class SemanticaProjectionTests(unittest.TestCase):
@@ -134,6 +156,75 @@ class SemanticaProjectionTests(unittest.TestCase):
         self.registry.apply(plan, confirm_digest=plan.digest, authorize=lambda _: True)
         self.assertFalse(self.store.has_node(event_node["id"]))
         self.assertTrue(adapter.verify_absent(plan.derivatives[0]))
+
+    def test_fail_closed_mandatory_not_configured_and_unsupported(self) -> None:
+        adapter = SemanticaProjectionAdapter(
+            self.store, project_id=PROJECT_ID,
+            coordinator=FakeCoordinator(self.store, {"graph": {"status": "not_configured"},
+                                                     "vectors": {"status": "not_configured"}}),
+            mandatory_stores=("graph",))
+        project_audit_graph(self.graph, self.store, project_id=PROJECT_ID,
+                            registry=self.registry, adapter=adapter)
+        event_node = next(node for node in self.graph["nodes"] if node["kind"] == "event")
+        plan = self.registry.plan("semantica", [event_node["event_id"]])
+        with self.assertRaisesRegex(ValueError, "mandatory store graph reported not_configured"):
+            self.registry.apply(plan, confirm_digest=plan.digest, authorize=lambda _: True)
+        self.assertTrue(self.store.has_node(event_node["id"]))
+        wrapped = FailClosedCoordinator(
+            FakeCoordinator(self.store, {"graph": {"status": "unsupported"}}),
+            mandatory_stores=("graph",))
+        with self.assertRaisesRegex(ValueError, "mandatory store graph reported unsupported"):
+            wrapped.erase_entity(event_node["id"])
+
+    def test_optional_not_configured_is_allowed_failed_is_not(self) -> None:
+        ok = interpret_erasure_receipt(
+            FakeReceipt("event:x", {"graph": {"status": "erased"}, "vectors": {"status": "not_configured"}}),
+            frozenset({"graph"}))
+        self.assertEqual(ok["stores"]["graph"]["status"], "erased")
+        self.assertNotIn("backend_result", json.dumps(ok))
+        self.assertFalse(ok["forensic_erasure"])
+        with self.assertRaisesRegex(ValueError, "store vectors reported failed"):
+            interpret_erasure_receipt(
+                FakeReceipt("event:x", {"graph": {"status": "erased"}, "vectors": {"status": "failed"}}),
+                frozenset({"graph"}))
+        sanitized = sanitize_erasure_receipt(FakeReceipt(
+            "event:x", {"graph": {"status": "erased", "backend_result": {"raw": "secret-payload"}}}))
+        self.assertNotIn("secret-payload", json.dumps(sanitized))
+        self.assertNotIn("backend_result", sanitized["stores"]["graph"])
+
+    def test_adapter_receipt_digest_lands_on_retention_chain(self) -> None:
+        event = self.client.record(Event(
+            self.sid, "fact", "cobalt orchard", {"state": "forget-me"},
+            (Evidence("docs/alpha.md:1-3"),), retention="durable"))
+        self.client.close_session(self.sid, "done")
+        self.client.migrate_retention(expected_digest=self.client.status()["logical_digest"])
+        self.client.activate_policy({"schema": "project-memory:retention-policy:v1", "policy_id": "test",
+                                    "version": 1, "mode": "manual", "clock": "tx_at", "rules": [],
+                                    "grace_after_close_seconds": 0, "plan_ttl_seconds": 3600},
+                                   actor="tester", reason="test policy")
+        self.client.authorize_erasure([event["event_id"]], authorized_by="tester",
+                                      policy_id="test", reason_code="AUTHORIZED_ERASURE")
+        local = self.client.plan_erasure([event["event_id"]])
+        self.client.apply_erasure(local, confirm_digest=local["plan_digest"], key=b"f" * 32,
+                                  actor="tester", reason="test erase")
+        graph = self.client.audit_graph()
+        adapter = SemanticaProjectionAdapter(
+            self.store, project_id=PROJECT_ID,
+            coordinator=FakeCoordinator(self.store, {"graph": {"status": "erased"},
+                                                     "memory": {"status": "not_configured"}}),
+            mandatory_stores=("graph",))
+        project_audit_graph(graph, self.store, project_id=PROJECT_ID, registry=self.registry, adapter=adapter)
+        tombstone = next(node for node in graph["nodes"] if node["kind"] == "tombstone")
+        plan = self.registry.plan("semantica", [tombstone["event_id"]])
+        self.registry.apply(plan, confirm_digest=plan.digest, authorize=lambda _: True)
+        recorded = self.client.record_adapter_receipt(adapter.commit_receipts(local["plan_digest"]))
+        self.assertFalse(recorded["forensic_erasure"])
+        exported = self.client.audit_graph()
+        action = next(node for node in exported["nodes"]
+                      if node.get("control_kind") == "adapter_receipt")
+        self.assertEqual(len(action["receipt_digest"]), 64)
+        self.assertNotIn("forget-me", json.dumps(exported))
+        self.assertNotIn("secret-payload", json.dumps(exported))
 
 
 if __name__ == "__main__":

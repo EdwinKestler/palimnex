@@ -209,8 +209,16 @@ index; a `semantica:` locator never opens a network URL. Register it explicitly
 on `Palimnex(..., source_resolvers={"semantica": resolver})`.
 
 Install extra `palimnex[semantica]` only when using the real library. Tests use
-in-process fakes. Coordinated fail-closed erasure across Semantica stores is a
-later adapter slice; this projector can remove its own projected nodes.
+in-process fakes.
+
+`FailClosedCoordinator` wraps a Semantica `ErasureCoordinator` (or a fake with
+`erase_entity`). Mandatory stores default to `graph`. `not_configured`,
+`unsupported`, or `failed` on a mandatory store raises. Optional stores may be
+`not_configured`; any `unsupported`/`failed` store fails. Sanitized receipts
+keep only entity id and per-store statuses — no backend blobs, reasons, or
+payloads. After local `apply_erasure`, `record_adapter_receipt(adapter.commit_receipts(plan_digest))`
+appends those digests to the retention control chain. This is not a forensic
+erasure claim.
 
 ## MCP
 

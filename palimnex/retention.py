@@ -26,7 +26,10 @@ SQL = '''CREATE TABLE retention_control (
  previous_digest TEXT NOT NULL, digest TEXT NOT NULL UNIQUE);'''
 COLUMNS = ('sequence', 'kind', 'payload', 'previous_digest', 'digest')
 KINDS = {'migration', 'policy', 'hold', 'release', 'pin', 'pack', 'authorization',
-         'support', 'support_recomputed', 'erased', 'compacted', 'invalid'}
+         'support', 'support_recomputed', 'erased', 'compacted', 'invalid',
+         'adapter_receipt'}
+ADAPTER_STORES = ('graph', 'memory', 'vectors')
+ADAPTER_STORE_STATUSES = {'erased', 'not_found', 'not_configured', 'unsupported', 'failed'}
 IMPORTED_REASON_CODES = {
     'RETENTION_EXPIRED', 'SOURCE_DELETED', 'SOURCE_SYNCHRONIZATION',
     'PRIVACY_REQUEST', 'LEGAL_ERASURE',
@@ -160,6 +163,28 @@ class RetentionLedger(d.MemoryLedger):
                         for table in ('event_terms','evidence','verifications','verification_attempts','promotions','workflows'):
                             if c.execute(f'SELECT 1 FROM {table} WHERE event_id=?',(bytes.fromhex(eid),)).fetchone():
                                 raise ValueError('tombstone retained reconstructive derivative')
+                if entry['kind']=='adapter_receipt':
+                    if set(p)!={'plan_digest','adapter_id','receipts','mandatory_stores','forensic_erasure'}:
+                        raise ValueError('invalid adapter receipt')
+                    if p['forensic_erasure'] is not False:
+                        raise ValueError('adapter receipt cannot claim forensic erasure')
+                    if not re.fullmatch('[0-9a-f]{64}', p['plan_digest']) or not re.fullmatch('[a-z0-9._-]{1,64}', p['adapter_id']):
+                        raise ValueError('invalid adapter receipt identity')
+                    erased_plans={e['payload']['plan_digest'] for e in controls if e['kind']=='erased'}
+                    if p['plan_digest'] not in erased_plans:
+                        raise ValueError('adapter receipt requires an applied local plan')
+                    if not isinstance(p['mandatory_stores'], list) or not p['mandatory_stores'] or any(store not in ADAPTER_STORES for store in p['mandatory_stores']):
+                        raise ValueError('invalid adapter mandatory stores')
+                    if not isinstance(p['receipts'], list) or not 1<=len(p['receipts'])<=1000:
+                        raise ValueError('invalid adapter receipt list')
+                    for item in p['receipts']:
+                        if set(item)!={'object_id','receipt_digest','store_statuses'}:
+                            raise ValueError('invalid adapter receipt item')
+                        if not re.fullmatch('[a-zA-Z0-9._:-]{1,128}', item['object_id']) or not re.fullmatch('[0-9a-f]{64}', item['receipt_digest']):
+                            raise ValueError('invalid adapter receipt item')
+                        statuses=item['store_statuses']
+                        if not isinstance(statuses, dict) or any(store not in ADAPTER_STORES or status not in ADAPTER_STORE_STATUSES for store,status in statuses.items()):
+                            raise ValueError('invalid adapter store statuses')
             state=self._state(c)
             for fact_id,support in state['supports'].items():
                 if fact_id not in forgotten and any(x['event_id'] in forgotten for x in support['sources']):
@@ -434,6 +459,26 @@ class RetentionLedger(d.MemoryLedger):
     def _session_pinned(c,sid,at,p):
         r=c.execute('SELECT status,ended_at FROM sessions WHERE session_id=?',(bytes.fromhex(sid),)).fetchone()
         return r is None or r['status']==1 or at < r['ended_at']+p['grace_after_close_seconds']*1000
+
+    def record_adapter_receipt(self, payload):
+        """Append a sanitized adapter erasure digest after a local apply.
+
+        The payload may contain store statuses and content-addressed receipts,
+        never deleted bodies or backend result blobs.
+        """
+        if not isinstance(payload, dict):
+            raise ValueError('invalid adapter receipt')
+        with self.connection(create=False, write=True) as c:
+            s=self._state(c)
+            encoded=d.canonical_json(payload)
+            for entry in s['controls']:
+                if entry['kind']=='adapter_receipt' and d.canonical_json(entry['payload'])==encoded:
+                    return {'status':'recorded','idempotent':True,'plan_digest':payload.get('plan_digest')}
+            self._record(c,'adapter_receipt',payload)
+            if self._semantic_errors(c):
+                raise ValueError('invalid adapter receipt')
+        return {'status':'recorded','idempotent':False,'plan_digest':payload.get('plan_digest'),
+                'forensic_erasure':False,'authority':'historical_only','authorizes_actions':False}
 
     def apply(self,plan,*,confirm_digest,key,actor,reason):
         actor_identifier(actor);checked_text(reason,'reason')

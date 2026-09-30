@@ -32,9 +32,13 @@ python3 palimnex.py status
 python3 palimnex.py index --incremental
 python3 palimnex.py validate --deep
 python3 palimnex.py evaluate --limit 5
+python3 palimnex.py ledger-init
 python3 palimnex.py ledger-status
 python3 palimnex.py audit-graph
 ```
+
+`ledger-init` is a one-time local write that creates the durable ledger;
+`ledger-status` exits `2` and `audit-graph` fails until it exists.
 
 Run the standalone gate with:
 

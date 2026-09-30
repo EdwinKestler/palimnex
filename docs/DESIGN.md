@@ -1,7 +1,9 @@
-# Palimnex v2.5 design
+# Palimnex design
 
-Status: **implemented locally; release candidate.** This is repository-local
-memory tooling, not application protocol or deployment authorization.
+Status: **implemented; current release line 2.7.0.** This design originated in
+v2.5; later additive surfaces are marked by release (for example, section
+10.1). This is repository-local memory tooling, not application protocol or
+deployment authorization.
 
 ## 1. Outcome
 
@@ -43,7 +45,7 @@ endpoint.
 | Legacy cache | `palimnex:project-memory:v2` | Redis | Read-only rollback source during migration |
 | Discovery cache | `<slug>:<uuid>:project-memory:cache:v3` | Redis | Hashed postings, quantized vectors, graph records and three immutable generations |
 | Hot projection | `<slug>:<uuid>:project-memory:hot:v1` | Redis | Bounded recent notification metadata and delivery-order pointers |
-| Durable ledger | `project-memory:ledger:v1` | `.palimnex/project-memory/memory-v25.sqlite3` | Sessions, typed events, temporal history, verification attempts, evidence, workflows and outbox |
+| Durable ledger | `project-memory:ledger:v1` | `.palimnex/memory.sqlite3` (configurable as `durable_ledger_path`) | Sessions, typed events, temporal history, verification attempts, evidence, workflows and outbox |
 
 The SQLite database and its lock, WAL, import intent, backup and pack files are
 private runtime state. SQLite is crash-safe local staging/audit for every
@@ -63,8 +65,11 @@ chunk record contains:
 
 - repository-relative path and line bounds;
 - file and content digests;
-- project-keyed term digests and term count;
+- term count;
 - a packed signed-byte feature vector and its policy identity.
+
+Project-keyed term digests are stored in the generation's separate posting
+hash, not in chunk records.
 
 Graph records retain plaintext structural metadata such as symbol, heading and
 link names so dependency queries remain useful. Paths and that structural
@@ -94,11 +99,13 @@ extraction remain as before.
 An index build stages a complete immutable generation and atomically changes
 the active pointer. Readers acquire a renewable generation lease before loading
 records. Garbage collection retains the current three complete generations and
-does not remove a leased or grace-period generation. A writer lock and fenced
+every leased generation. Of the unleased complete generations still inside the
+60-second grace period, it keeps only the newest two; older staged or
+grace-period generations may be removed. A writer lock and fenced
 writes prevent a stale writer from activating or deleting records.
 
 The legacy v2 namespace is not modified by v3 indexing, migration, normal
-search, or `clear`.
+search, or v3 `clear` (`cache_mode` `shadow` or `on`).
 Unlike v3, that preserved rollback namespace still contains complete source
 chunks and plaintext lexical-token lists. Treat it as sensitive until a
 separately authorized retirement or lower-level local Redis reset removes it;
@@ -120,7 +127,8 @@ This repository finishes the evidenced migration at `on`. The separate
 set and bytes unchanged, requires an equal source corpus, fills all three
 complete retained v3 generations, and counts shared v3 records once. It gates
 the total retained-v3 Redis size at no more than `0.60` of the active v2 baseline.
-It also compares 66 samples per backend on the shipped `search()` path
+It also times every frozen search-mode case three times per backend (42
+samples each with the current 14 search cases) on the shipped `search()` path
 over the same deep-validated corpus and requires v3 p95 at no more than
 `10.0` of v2 p95 (the previous `1.20` cap applied to the retired in-process
 hot scorer). A new cache with no v2 baseline uses normal `on` indexing;
@@ -173,9 +181,10 @@ separately. For a local write, the system stamps `observed_at`; the caller may
 set only `valid_from`. Neither the CLI nor the ledger API accepts a caller-set
 local recorded/known time. Only an imported historical event may preserve its
 foreign `observed_at`, and imports remain quarantined and untrusted. A
-repository source locator has the exact form `path:start` or
-`path:start-end`;
-the referenced UTF-8 lines are hashed and verified before the event commits.
+repository source locator has the legacy form `path:start` or
+`path:start-end`, or, since 2.7.0, a structured `palimnex:source-locator:v1:`
+locator resolved by an explicitly registered resolver. The referenced bytes
+are hashed and verified before the event commits.
 
 The schema contracts used by portable records are under
 `palimnex/schemas/`. They document the wire shapes; SQLite constraints
@@ -205,7 +214,8 @@ or fact events with `retention=durable`, evidence and local verification.
 
 Verification is a current derived view over immutable evidence, not a
 permanent badge. Each check adds an append-only `verification_attempts` row
-whose timestamp is the actual check time. Session, event, evidence,
+stamped with the ledger-clock check time, clamped so it never precedes the
+event's previous attempt; `attempt_sequence` breaks ties. Session, event, evidence,
 verification and attempt chronology is validated rather than trusted.
 `ledger-status`, recall and consolidation reopen the current source and treat
 changed, unavailable or older-policy evidence as stale. `reverify` success
@@ -228,7 +238,7 @@ historical-only and non-authorizing.
 
 An event transaction inserts an outbox row in the same SQLite commit. Only
 after that commit may the event be projected to Redis. Projection is
-idempotent, bounds the stream to approximately 10,000 entries, and records
+idempotent, caps the stream exactly at 4,096 entries (`XADD MAXLEN =`), and records
 delivery notification, supersession and contradiction pointers without the
 payload body. The subject pointer is named `latest-projected`: it denotes only
 projection delivery order, expires with the projection retention window, and
@@ -411,8 +421,11 @@ commands are `migration-shadow`, durable session/workflow commands,
 semantic status/gating. Pack v2 requires `python3-cryptography`; the remaining
 source/cache/ledger paths retain Python 3.11 standard-library operation.
 
-`clear` removes only this project's v3 disposable cache. It never opens or
-alters the SQLite ledger or legacy v2 namespace.
+With `cache_mode` `shadow` or `on`, `clear` removes only this project's v3
+disposable cache and leaves the legacy v2 namespace untouched. With `off` (the
+default when the field is absent), `clear` deletes this project's legacy v2
+cache namespace instead. In every mode it never opens or alters the SQLite
+ledger.
 
 The separate `scripts/palimnex_redis.sh reset` command operates below
 the storage boundary rather than at namespace level. It first stops only the

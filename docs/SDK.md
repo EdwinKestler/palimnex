@@ -33,8 +33,9 @@ before starting the process. `python -m palimnex` and `palimnex` are equivalent.
 The copied `palimnex.py` wrapper preserves script-location rooting unless
 `PALIMNEX_ROOT` explicitly overrides it.
 The SDK always receives an explicit repository root; it never derives a target
-from the installed package directory. A committed `.palimnex.json` containing
-the project's UUID, slug and private ledger path is required.
+from the installed package directory. A `.palimnex.json` with the project's
+UUID `project_id` is required; `project_slug` defaults to the directory name
+and `durable_ledger_path` to `.palimnex/memory.sqlite3`.
 
 ```python
 from pathlib import Path

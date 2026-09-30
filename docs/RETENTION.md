@@ -89,9 +89,11 @@ modified affected list or digest alone. Replaying a successfully applied plan
 returns its original receipt; invalid plans never receive a partial retry.
 
 Eligibility uses the first winning exclusion: unconfigured policy, hold,
-session pin/grace, protected audit anchor, missing explicit authorization for
-durable/imported content, not expired, dependency guard, then pack/cache
-constraints. A plan enumerates affected records, per-store actions, excluded
+session grace/pin, already erased, protected audit anchor, missing explicit
+authorization for durable/imported content, then not expired. In the
+dependency closure, a member blocked by an audit anchor, hold, active session,
+unadapted store projection or registered pack receives that reason, and every
+other requested root receives `dependency_guard`. A plan enumerates affected records, per-store actions, excluded
 records and reasons, dependencies, managed packs, and byte estimates.
 Unadapted copies are caveats rather than fabricated acknowledgements.
 
@@ -134,8 +136,12 @@ must be listed as unresolved rather than silently counted as erased.
 There is no distributed transaction across SQLite, Redis, and arbitrary pack
 files. Implemented local locking and the SQLite transaction provide only the
 specified local boundary; compaction is a subsequent stage. A failed store acknowledgement must remain visible;
-a claim of global atomic erasure is not justified. Unknown or unverified pack
-membership conservatively blocks affected deletion. Targets included in managed
+a claim of global atomic erasure is not justified. Only pack membership
+registered through the Python `RetentionLedger.register_pack` API blocks
+affected deletion (`pack_sealed`). No CLI command or SDK method registers
+packs, and `memory-export` does not register the packs it writes, so their
+copies do not block deletion; a plan reports them only through the
+`unregistered_copies_out_of_band` caveat. Targets included in registered (managed)
 packs remain blocked until an adapter can prove replacement or retirement; this
 profile does not regenerate packs. Pack regeneration remains a future adapter capability, using the
 existing authenticated/encrypted format without claims of resigning or
@@ -151,9 +157,9 @@ No byte estimate is a forensic-erasure guarantee.
 
 | Artifact | Documentation | Testing | Rollback |
 |---|---|---|---|
-| Versioned policy, deletion contract, digest-bound proposal/apply, local control state | This profile and generated schemas; explicit supported and unsupported scope | Unconfigured retain-all; policy monotonicity; changed policy/ledger/hold/pins/pack refusal; tampered plan refusal | Source rollback preserves runtime; disable manual apply without deleting policy/history |
-| Reference-safe transactional rewrite, compaction and deletion suppression | Receipt meaning, dependency rules, pack and recovery boundaries | Survivor integrity; no dangling references or resurrection; exclusion order; retry/crash and contention behavior; deletion canaries | Before final irreversible purge, explicitly named recovery artifacts; after purge, no silent restoration of deleted data |
-| Repeated-session comparison harness | Scenario provenance, condition definitions, metrics and interpretation | Restarts, temporal ordering, corrections, expiry, holds, abstention, identical budgets; frozen existing fixtures unchanged | Remove generated isolated evaluation output; preserve source fixtures and live ledger |
+| Versioned policy, deletion contract, digest-bound proposal/apply, local control state | This profile and generated schemas; explicit supported and unsupported scope | Unconfigured retain-all; changed policy/ledger/hold/pins/pack refusal; tampered plan refusal (policy-version monotonicity is enforced in code but has no dedicated test) | Source rollback preserves runtime; disable manual apply without deleting policy/history |
+| Reference-safe transactional rewrite, compaction and deletion suppression | Receipt meaning, dependency rules, pack and recovery boundaries | Survivor integrity; no dangling references or resurrection; exclusion order; retry and crash behavior (in-process and process exit); deletion canaries. Retention lock contention has no dedicated test | Before final irreversible purge, explicitly named recovery artifacts; after purge, no silent restoration of deleted data |
+| Repeated-session comparison harness | Scenario provenance, condition definitions, metrics and interpretation | Restarts, temporal ordering, corrections and revocations, expiry, abstention, identical budgets; frozen existing fixtures unchanged. Holds are covered by retention unit tests, not this harness | Remove generated isolated evaluation output; preserve source fixtures and live ledger |
 
 Evidence must identify which rows have actually passed. A synthetic deterministic
 harness establishes behavior of its scripted workloads; it does not establish

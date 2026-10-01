@@ -171,9 +171,10 @@ The only upgrade note in the changelog is for 2.4.0. An operator upgrading
 If they then migrate the retention profile, three things change permanently:
 - `project-hot` and `hot-events` stop working;
 - every write reports `projection_pending: true`;
-- activating an imported pack over the migrated ledger is refused
-  (`portable.py:766-815`); validate-only quarantine still works. This
-  prevents resurrecting erased data.
+- `memory-import` is refused, even validate-only without `--activate`
+  ("retention ledger replacement requires a deletion-registry-aware adapter";
+  `portable.py:766-815`, reproduced). This prevents resurrecting erased data,
+  but it also removes pack inspection on a migrated ledger.
 
 All of this is fail-closed by design, but it is documented only in one
 paragraph of `docs/RETENTION.md` ("Conservative exclusions").

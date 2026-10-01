@@ -58,8 +58,8 @@ The evaluation fixture is excluded from indexing and pinned by
 make a regression pass; review the intended case change separately.
 Reported MRR is diagnostic. Do not treat a sub-1.0 MRR with complete recall as
 a miss, and do not add overlapping winners to `expected_paths` solely to raise
-MRR. The configured v27 cases are draft review data until the owner approves
-them in the PR; v25 remains byte-identical 2.8.0 history. A non-empty
+MRR. The owner approved the configured v27 cases in PR #14; v25 remains
+byte-identical 2.8.0 history. A non-empty
 `critical_margin_warnings` list means a critical required path is exactly at
 its case limit. The standalone gate prints that condition as a warning, but it
 does not change evaluation status or the command exit code. See

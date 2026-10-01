@@ -128,7 +128,7 @@ set and bytes unchanged, requires an equal source corpus, fills all three
 complete retained v3 generations, and counts shared v3 records once. It gates
 the total retained-v3 Redis size at no more than `0.60` of the active v2 baseline.
 It also times every frozen search-mode case three times per backend (39
-samples each with the current draft v27 fixture's 13 search cases) on the shipped `search()` path
+samples each with the current v27 fixture's 13 search cases) on the shipped `search()` path
 over the same deep-validated corpus and requires v3 p95 at no more than
 `10.0` of v2 p95 (the previous `1.20` cap applied to the retired in-process
 hot scorer). A new cache with no v2 baseline uses normal `on` indexing;
@@ -367,14 +367,14 @@ The final ambiguous v25 ranks were:
 The Redis expected path therefore finished 2.8.0 with zero positional margin.
 That historical result is not rewritten by the v27 review.
 
-### Draft v27 intent review
+### v27 intent review
 
-The proposed v27 fixture remains draft review data until the owner approves
-its cases in the PR. Fourteen cases retain their v25 mode, query, labels,
+The owner approved the v27 fixture and its six intent changes in PR #14,
+merged on 2026-10-01. Fourteen cases retain their v25 mode, query, labels,
 limit, and criticality; their self-fixture forbidden path changes mechanically
 from v25 to v27. Six cases change to separate previously mixed intents:
 
-| Case | Intended retrieval task | Draft change and why it expresses the intent better |
+| Case | Intended retrieval task | Change and why it expresses the intent better |
 |---|---|---|
 | `authorized-erasure` | Find the normative retention eligibility and dependency rules | Keep `docs/RETENTION.md`; name first-winning exclusion, legal hold, and dependency guard instead of mixing summary vocabulary |
 | `experience-capsule` | Find the implementation of context/capsule evidence assembly | Use implementation identifiers and require only `palimnex/experience.py`; remove the mixed documentation requirement |
@@ -391,7 +391,7 @@ to the normal critical, recall, and forbidden-path gates.
 | Fixture | Cases passed | Critical | Recall@5 | Forbidden hits | MRR | Worst critical expected rank |
 |---|---:|---|---:|---:|---:|---:|
 | v25 historical | 20/20 | pass | 1.0 | 0 | 0.8533333333333333 | 5 |
-| v27 draft | 20/20 | pass | 1.0 | 0 | 0.9 | 2 |
+| v27 | 20/20 | pass | 1.0 | 0 | 0.9 | 2 |
 
 Evaluation reports `critical_margin_warnings`, containing the identifiers of
 critical cases with any required expected path exactly at that case's limit.
@@ -399,7 +399,7 @@ The standalone gate prints the list as a warning. It is diagnostic only and
 never changes status or exit code.
 
 Numeric-token normalization remains an experiment, not shipped scorer policy.
-Its before/after results on v25, v26, and draft v27 are recorded in
+Its before/after results on v25, v26, and v27 are recorded in
 `docs/design/EVAL_MARGIN.md`. Historical exception `PM-ACCEPT-001` named a
 noncritical miss on the prior atomic-swap corpus; it does not describe this
 repository's frozen results. The development challenge paraphrase case remains

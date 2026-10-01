@@ -1,7 +1,7 @@
 {
   "schema": "project-memory:evaluation:v1",
   "frozen": true,
-  "description": "Draft Palimnex post-2.8 intent-specific retrieval acceptance set awaiting owner approval in review. This file is excluded from the indexed corpus.",
+  "description": "Palimnex post-2.8 intent-specific retrieval acceptance set, approved by the owner in PR #14. Excluded from the indexed corpus.",
   "cases": [
     {"id":"cache-reader-lease","mode":"search","query":"reader lease generation garbage collection fencing","expected_paths":["palimnex/cache_v3.py"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":true},
     {"id":"durable-untrusted-restore","mode":"search","query":"restore untrusted logical document ledger source digest","expected_paths":["palimnex/durable.py"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":true},

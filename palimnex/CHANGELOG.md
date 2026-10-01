@@ -5,6 +5,15 @@ operator-facing behavior; cache and graph schemas are versioned independently.
 
 ## Unreleased
 
+- Adopted the owner-approved v27 intent-specific retrieval fixture as the
+  repository gate while preserving v25 as byte-identical historical evidence.
+- Added diagnostic `critical_margin_warnings` for critical expected paths at
+  their rank limit; the standalone gate prints them without changing status or
+  exit code.
+- Established the corpus-scope rule that unapproved design proposals live
+  under `artifacts/design/` outside the index and move into `docs/` only with
+  the approved implementing change.
+
 ## 2.8.0 - 2026-10-01
 
 - Replicable `palimnex:audit-graph:v1` export of eligible memory and

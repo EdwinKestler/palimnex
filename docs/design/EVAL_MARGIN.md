@@ -1,9 +1,9 @@
 # Frozen evaluation margin
 
 Status: options B and C are approved and implemented by
-`phase3/eval-fixture-v27`. The v27 cases remain draft review data until the
-owner approves them in this PR. Option A remains a measured experiment only;
-no scorer change is included.
+`phase3/eval-fixture-v27`. The owner approved the v27 cases in PR #14, merged
+on 2026-10-01. Option A remains a measured experiment only; no scorer change
+is included.
 
 ## Status and constraints
 
@@ -124,18 +124,18 @@ help them as much as the expected script or regress unrelated queries.
 ## Option B: owner-reviewed versioned fixture
 
 The implementation creates v27 while preserving v25 byte-for-byte as
-historical evidence. Its changed cases are draft review data. DESIGN section
-10 records the intended retrieval task and the reason for each changed query
-or label. The labels are based on ownership and contract authority, not on
-whichever path currently ranks first.
+historical evidence. Its changed cases were approved by the owner in PR #14.
+DESIGN section 10 records the intended retrieval task and the reason for each
+changed query or label. The labels are based on ownership and contract
+authority, not on whichever path currently ranks first.
 
 This PR switches the gate by changing `.palimnex.json` to the new fixture path
 and its independently calculated digest. Adoption evidence includes:
 
 - the new fixture digest and an owner-reviewed rationale for every changed
   case;
-- a structured case diff between v25 and the proposed fixture;
-- v25 and proposed-fixture results on the same commit and corpus, including
+- a structured case diff between v25 and the v27 fixture;
+- v25 and v27 results on the same commit and corpus, including
   critical status, Recall@5, forbidden paths, MRR, and per-case ranks;
 - tests for fixture parsing, digest enforcement, and real-checkout evaluation;
 - a fresh deep validation, full gate, and unchanged v25 file and digest.
@@ -161,9 +161,8 @@ ranking shift can still break the gate.
 ## Decision
 
 The owner selected options B and C. Option A is measured below against the
-same corpus but is not merged. The v27 draft is not accepted merely because it
-passes mechanically: owner review of every changed intent and label remains
-the approval boundary.
+same corpus but is not merged. The owner approved every changed v27 intent and
+label in PR #14; mechanical passage alone was not the approval basis.
 
 ## Option A experiment results
 
@@ -178,7 +177,7 @@ tokenization, ranking code, or the cache policy identity.
 | v26 `files_lexical` | 0.6666666667 | 0.8 | 0.6666666667 | 0.8 | none defined by the challenge fixture |
 | v26 `v25_cache` | 0.6666666667 | 0.8 | 0.6666666667 | 0.8 | none defined by the challenge fixture |
 | v26 `v26_context` | 0.8333333333 | 0.8 | 0.8333333333 | 0.8 | none defined by the challenge fixture |
-| v27 draft | 1.0 | 0.9 | 1.0 | 0.9 | `cache-reader-lease`, `authorized-erasure`, `experience-capsule`, and `redis-owner-socket` 2 -> 2; all other critical cases 1 -> 1 |
+| v27 | 1.0 | 0.9 | 1.0 | 0.9 | `cache-reader-lease`, `authorized-erasure`, `experience-capsule`, and `redis-owner-socket` 2 -> 2; all other critical cases 1 -> 1 |
 
 The v26 MRR is the preregistered positive-case diagnostic; v26 has no critical
 flags. Its cases-passed counts were unchanged at 4/6, 4/6, and 5/6 for the

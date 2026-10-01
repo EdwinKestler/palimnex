@@ -11,7 +11,7 @@ from palimnex.tests.fake_redis import FakeRedis
 
 
 V25_SHA256 = "9cca022d5ac60a527783d4990ff745ba033c25f3fc789ad245bcfe703f0de569"
-V27_SHA256 = "85af15cffad18601ea8ac8c30eadad63b873c8ce1841c9dcaf2774467f7e141b"
+V27_SHA256 = "a2d295cae4a50cdffedffdd2c9c91d5546fad62e5b385909ebe5fa518918bd38"
 
 
 class FrozenCheckoutEvaluationTests(unittest.TestCase):

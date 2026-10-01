@@ -23,6 +23,20 @@ operator-facing behavior; cache and graph schemas are versioned independently.
   for a non-ready ledger, the longitudinal result field set, and that only
   packs registered through `RetentionLedger.register_pack` block erasure
   (`memory-export` does not register packs). No code behavior changed.
+- Added `docs/INSTALL.md` (adopting Palimnex in another repository: pinned
+  installs with pip, pipx or uv, `.gitignore` lines, configuration, Redis,
+  first run, agent instructions, evaluation fixtures, MCP and uninstall) and
+  `docs/UPGRADING.md` (pre-flight snapshot, per-version notes, cache and
+  retention migrations, rollback limits). The package README template now
+  uses `cache_mode: "on"` and an explicit slug.
+
+### Upgrade notes
+
+- The version number is still 2.7.0, so moving from the `v2.7.0` tag may leave
+  the cache valid; reindex if `status` is not fresh.
+- Downgrade hazard: once an erasure adapter records an `adapter_receipt`
+  control entry, version 2.7.0 refuses the whole ledger ("durable ledger
+  failed semantic validation"). See `docs/UPGRADING.md`.
 
 ## 2.7.0 - 2026-09-16
 
@@ -41,6 +55,15 @@ operator-facing behavior; cache and graph schemas are versioned independently.
 Existing `project-memory:*` storage formats and frozen fixtures remain intact.
 External derivative coordination does not clear legacy retention blockers.
 See `docs/SDK.md` for protocol semantics and deployment limitations.
+
+### Upgrade notes
+
+- Ledger schema v1 and pack v2 are unchanged. The new version number
+  invalidates the Redis cache; run `index --incremental`.
+- Events with structured `palimnex:source-locator:v1:` locators are not
+  verified by older readers.
+- The SDK `import_pack` requires a pack signature by default; the CLI
+  `memory-import` keeps the v2 behavior.
 
 ## 2.6.0-rc.1 - 2026-09-15
 
@@ -87,6 +110,17 @@ writes; this release does not claim distributed or forensic erasure.
   relevant gold labels, not a miss or scorer regression. Historical exception
   `PM-ACCEPT-001` is bound to the prior corpus only. The frozen fixture and
   scorer are unchanged. Reported MRR remains diagnostic.
+
+### Upgrade notes
+
+- Configuration moves to `.palimnex.json`; a repository with only
+  `.project-memory.json` keeps working. `PROJECT_MEMORY_URL` is read only when
+  listed in `redis_url_envs`. New state defaults to `.palimnex/`; set
+  `durable_ledger_path` if an existing ledger lives elsewhere, before any write.
+- Reindex after upgrading; ledger schema v1 is unchanged.
+- `retention-migrate` is optional and permanent: it stops hot projection and
+  `memory-import` for that ledger, and readers without the retention profile
+  refuse it. See `docs/UPGRADING.md`.
 
 ## 2.5.0 - 2026-09-04
 

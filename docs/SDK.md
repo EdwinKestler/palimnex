@@ -12,7 +12,12 @@ points or fetch plugins.
 
 ## Install and open
 
-Build or install the checkout with Python 3.11 or newer:
+To adopt Palimnex in another repository, install a pinned release tag and
+follow [`INSTALL.md`](INSTALL.md), which also covers the `.gitignore` lines
+that keep `.palimnex/`, `*.pmem` and `*.key` out of Git. For upgrades, see
+[`UPGRADING.md`](UPGRADING.md).
+
+To develop Palimnex, build or install the checkout with Python 3.11 or newer:
 
 ```bash
 python3 -m venv .venv

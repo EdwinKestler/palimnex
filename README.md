@@ -19,7 +19,21 @@ history with TTL disabled and fail-closed erasure receipts. See
 resolvers, derivative adapters, signed checkpoints, the audit graph, optional
 Semantica projection, pack identity and MCP.
 
-## Quick start
+## Use Palimnex in your repository
+
+Palimnex is not yet on PyPI. Install it from a pinned release tag:
+
+```bash
+pipx install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.7.0"
+```
+
+Before the first run, add `.palimnex/`, `*.pmem` and `*.key` to the
+repository's `.gitignore` so the durable ledger and keys are never committed.
+[The installation guide](docs/INSTALL.md) covers configuration, Redis, first
+run, agent instructions and uninstall; [the upgrade guide](docs/UPGRADING.md)
+covers moving between versions.
+
+## Quick start (this repository)
 
 Requirements are Python 3.11+, Redis server/CLI for cache-backed integration,
 and the distribution `cryptography` package for encrypted packs and signatures.
@@ -60,7 +74,8 @@ historical evidence, never authorization to execute external actions.
 - `.github/workflows/palimnex-check.yml` — CI for the standalone gate.
 - `docs/index.html` — dependency-free GitHub Pages architecture site.
 
-See [the SDK guide](docs/SDK.md), [the operator runbook](docs/RUNBOOK.md),
+See [the installation guide](docs/INSTALL.md), [the upgrade guide](docs/UPGRADING.md),
+[the SDK guide](docs/SDK.md), [the operator runbook](docs/RUNBOOK.md),
 [retention policy](docs/RETENTION.md), [compatibility policy](docs/COMPATIBILITY.md),
 [maintainer initialization prompt](docs/AGENT_INIT_PROMPT.md),
 and [extraction record](docs/PROVENANCE.md).

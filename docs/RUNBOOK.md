@@ -23,7 +23,14 @@ python3 palimnex.py evaluate --limit 5
 python3 palimnex.py ledger-init
 python3 palimnex.py ledger-status
 python3 palimnex.py audit-graph
+python3 palimnex.py doctor
 ```
+
+`doctor` summarizes configuration, Git ignore rules, corpus coverage, Redis,
+cache freshness, the ledger and its snapshots in one report. It changes no
+configuration, cache or ledger content and exits `0` when healthy, `2` when
+something needs attention. `python3 palimnex.py redis start` runs the same
+guarded launcher as `./scripts/palimnex_redis.sh start`.
 
 `migration-shadow` requires a fresh v2.4 index over the same current corpus.
 It proves the v2 key set and bytes remain unchanged, fills all three retained

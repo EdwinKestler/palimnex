@@ -38,6 +38,12 @@ migration.
    database file directly while it is in use. A plain copy of a WAL-mode
    database can miss committed data.
 
+   On versions after 2.7.0, `palimnex ledger-backup` does this for you. It
+   writes a new `0600` snapshot under `backups/` beside the ledger, or to
+   `--output PATH`, and verifies its integrity and logical digest. Later
+   authorized erasure does not remove snapshots, so protect and delete them
+   deliberately.
+
 ## Install the new version
 
 Reinstall from the new release tag (replace `vX.Y.Z`):
@@ -64,6 +70,7 @@ palimnex index --incremental
 palimnex validate --deep
 palimnex recall "a subject you know is in memory"
 palimnex retention-status
+palimnex doctor              # after 2.7.0: all of the above checks in one report
 ```
 
 What to expect:
@@ -139,6 +146,18 @@ Recall, status and every other ledger command then fail under 2.7.0. Do not
 record adapter receipts until you no longer need to run 2.7.0 against that
 ledger.
 
+### 2.7.0 → the unreleased line: ledger creation guard
+
+Inside a Git work tree, the unreleased line refuses to create a ledger at a
+path Git does not ignore. This applies to `ledger-init`, the first
+`session-start` or other write, SDK `initialize()`, and pack activation. The
+refusal happens before any directory, lock or database file is created. An
+existing ledger is not affected. Add `.palimnex/` to `.gitignore` (or run
+`palimnex init --write` in a new repository); the explicit overrides are
+`ledger-init --allow-unignored-ledger` and SDK
+`initialize(allow_unignored_ledger=True)`. `palimnex redis start` also
+requires `redis_socket_path` in `.palimnex.json`.
+
 ## Cache migration from v2 to v3
 
 Only repositories that still run the legacy v2 cache (`cache_mode` missing or
@@ -156,8 +175,8 @@ Only repositories that still run the legacy v2 cache (`cache_mode` missing or
 The legacy v2 namespace stays in Redis as a rollback source. It contains
 complete source text and plaintext token lists, so treat it as sensitive.
 `clear` in `shadow` or `on` mode does not touch it. When you no longer need
-it, remove all Redis state with `./scripts/palimnex_redis.sh reset`, then
-start Redis again and reindex. If you never needed a v2 rollback (for
+it, remove all Redis state with `./scripts/palimnex_redis.sh reset` (after
+2.7.0: `palimnex redis reset`), then start Redis again and reindex. If you never needed a v2 rollback (for
 example, a new repository that started with `off` by mistake), run
 `palimnex clear` while still in `off` mode, then switch to `on` and reindex.
 
@@ -171,12 +190,26 @@ the current logical digest:
 
 ```bash
 palimnex ledger-status          # copy logical_digest
+palimnex retention-migrate --expected-digest LOGICAL_DIGEST --dry-run   # after 2.7.0
 palimnex retention-migrate --expected-digest LOGICAL_DIGEST
 ```
 
-A wrong digest is refused with `DIGEST_MISMATCH`. Before running it, take the
-snapshot described in "Before every upgrade" and rehearse on a copy of the
-repository. Its effects are permanent:
+A wrong digest is refused with `DIGEST_MISMATCH`. Rehearse on a copy of the
+repository first. With 2.7.0, take the snapshot described in "Before every
+upgrade" yourself.
+
+On versions after 2.7.0:
+- `--dry-run` writes nothing. It reports the current and target schema,
+  whether the digest matches, what would be refused, and the effects listed
+  below.
+- A real migration first writes a verified snapshot of the unmigrated
+  ledger, named `*-pre-retention-v2.sqlite3` under `backups/` beside the
+  ledger. It is taken under the exclusive lock and reported in the output.
+  `--no-snapshot` skips it.
+- The SDK takes the snapshot only with `migrate_retention(..., snapshot=True)`.
+- Later authorized erasure does not remove these snapshots.
+
+The migration's effects are permanent:
 
 - Hot projection stops. `project-hot` and `hot-events` exit `1` ("adapter
   required"), and every later write reports `projection_pending: true`. The

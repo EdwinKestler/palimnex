@@ -253,6 +253,7 @@ source memory or to run the test harness.
 ```bash
 python3 palimnex.py retention-status
 python3 palimnex.py ledger-status
+python3 palimnex.py retention-migrate --expected-digest EXPECTED_LOGICAL_DIGEST --dry-run
 python3 palimnex.py retention-migrate --expected-digest EXPECTED_LOGICAL_DIGEST
 python3 palimnex.py retention-activate PRIVATE_POLICY_JSON --actor operator --reason 'isolated rehearsal'
 python3 palimnex.py retention-hold EVENT_ID --actor operator --reason 'preserve for review'
@@ -262,6 +263,12 @@ python3 palimnex.py retention-authorize EVENT_ID --authorized-by privacy-officer
 python3 palimnex.py retention-support DERIVED_FACT_ID --source SOURCE_EVENT_ID=0.90 --source INDEPENDENT_SOURCE_ID=0.80 --threshold 0.75
 python3 palimnex.py cleanup-plan --event EVENT_ID
 ```
+
+`retention-migrate --dry-run` writes nothing. A real `retention-migrate`
+first writes a verified snapshot of the unmigrated ledger under `backups/`
+beside it (`--no-snapshot` skips it). That snapshot, like any
+`ledger-backup` output, is an unmanaged copy: later authorized erasure does
+not remove it. Delete it deliberately once it is no longer needed.
 
 Allowed imported-record reasons are `RETENTION_EXPIRED`, `SOURCE_DELETED`,
 `SOURCE_SYNCHRONIZATION`, `PRIVACY_REQUEST`, and `LEGAL_ERASURE`. Locally

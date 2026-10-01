@@ -11,7 +11,10 @@ the compatibility baseline.
 To adopt Palimnex in another repository, follow `docs/INSTALL.md`: install
 the package from a pinned release tag, add the `.gitignore` lines for
 `.palimnex/`, `*.pmem` and `*.key`, create `.palimnex.json`, and start Redis
-with the guarded launcher. Upgrades are covered in `docs/UPGRADING.md`.
+with the guarded launcher. On the unreleased line after 2.7.0,
+`palimnex init --write` creates the configuration and `.gitignore` lines,
+`palimnex redis start` runs the packaged launcher, and `palimnex doctor`
+checks the result. Upgrades are covered in `docs/UPGRADING.md`.
 
 The older portable-bundle layout still works: copy these paths while
 preserving their relative layout, and add `scripts/palimnex_redis.sh` if you

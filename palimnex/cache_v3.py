@@ -1955,6 +1955,7 @@ def _evaluate_loaded(
     expected_total = 0
     found_total = 0
     critical_passed = True
+    critical_margin_warnings: list[str] = []
     if not _deep_validate(client, manifest, snapshot, root):
         raise ValueError("frozen evaluation requires a deep-valid v3 generation")
     shared_graphs = _load_graphs(client, manifest, root, snapshot)
@@ -1975,18 +1976,19 @@ def _evaluate_loaded(
         }
         if case["mode"] in {"symbols", "impact"}:
             context["_graphs"] = shared_graphs
+        case_limit = case.get("limit", limit)
         response = (
             search(
                 client,
                 case["query"],
-                case.get("limit", limit),
+                case_limit,
                 root,
                 _snapshot=snapshot,
                 _manifest=manifest,
             )
             if case["mode"] == "search"
             else lookup(
-                client, case["query"], case.get("limit", limit), root, **context
+                client, case["query"], case_limit, root, **context
             )
         )
         if case["mode"] in {"search", "symbols"}:
@@ -2005,6 +2007,11 @@ def _evaluate_loaded(
         passed = not missing and not forbidden_hits
         if case.get("critical", False) and not passed:
             critical_passed = False
+        if (
+            case.get("critical", False)
+            and any(rank == case_limit for rank in ranks)
+        ):
+            critical_margin_warnings.append(case["id"])
         outcomes.append(
             {
                 "id": case.get("id"),
@@ -2033,6 +2040,7 @@ def _evaluate_loaded(
         "recall_at_limit": recall,
         "mrr": mrr,
         "limit": limit,
+        "critical_margin_warnings": critical_margin_warnings,
         "outcomes": outcomes,
     }
 

@@ -1,0 +1,27 @@
+{
+  "schema": "project-memory:evaluation:v1",
+  "frozen": true,
+  "description": "Draft Palimnex post-2.8 intent-specific retrieval acceptance set awaiting owner approval in review. This file is excluded from the indexed corpus.",
+  "cases": [
+    {"id":"cache-reader-lease","mode":"search","query":"reader lease generation garbage collection fencing","expected_paths":["palimnex/cache_v3.py"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":true},
+    {"id":"durable-untrusted-restore","mode":"search","query":"restore untrusted logical document ledger source digest","expected_paths":["palimnex/durable.py"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":true},
+    {"id":"portable-pack-bounds","mode":"search","query":"memory pack compression ratio trailing data quarantined","expected_paths":["palimnex/portable.py"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":true},
+    {"id":"content-admission","mode":"search","query":"content privacy admission credential findings policy digest controls","expected_paths":["palimnex/security.py"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":true},
+    {"id":"semantic-disabled","mode":"search","query":"semantic provider disabled promotion latency critical regression","expected_paths":["palimnex/semantic.py"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":true},
+    {"id":"authorized-erasure","mode":"search","query":"retention eligibility first winning exclusion legal hold dependency guard authorized erasure","expected_paths":["docs/RETENTION.md"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":true},
+    {"id":"derived-support","mode":"search","query":"derived fact support confidence threshold supporting sources","expected_paths":["palimnex/retention.py"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":true},
+    {"id":"document-graph","mode":"search","query":"markdown heading links references deterministic document graph","expected_paths":["docs/DESIGN.md"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":false},
+    {"id":"experience-capsule","mode":"search","query":"assemble_context source_quote capsule evidence support implementation","expected_paths":["palimnex/experience.py"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":true},
+    {"id":"redis-owner-socket","mode":"search","query":"Palimnex Redis launcher start owner-only Unix socket --port 0 pidfile","expected_paths":["scripts/palimnex_redis.sh"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":true},
+    {"id":"retention-ledger-symbol","mode":"symbols","query":"RetentionLedger","expected_paths":["palimnex/retention.py"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":true},
+    {"id":"context-symbol","mode":"symbols","query":"assemble_context","expected_paths":["palimnex/experience.py"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":true},
+    {"id":"ledger-symbol","mode":"symbols","query":"MemoryLedger","expected_paths":["palimnex/durable.py"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":true},
+    {"id":"index-symbol","mode":"symbols","query":"build_index","expected_paths":["palimnex/cache_v3.py"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":true},
+    {"id":"source-quote-symbol","mode":"symbols","query":"source_quote","expected_paths":["palimnex/experience.py"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":false},
+    {"id":"document-extractor","mode":"symbols","query":"extract_document_graph","expected_paths":["palimnex/documents.py"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":false},
+    {"id":"pack-encryption","mode":"search","query":"memory pack manifest cipher chacha20-poly1305 nonce ciphertext salt scrypt","expected_paths":["palimnex/schemas/memory-pack-manifest.v2.schema.json"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":true},
+    {"id":"redis-client","mode":"symbols","query":"RedisClient","expected_paths":["palimnex/core.py"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":true},
+    {"id":"cleanup-plan","mode":"search","query":"digest bound cleanup plan separate forget key","expected_paths":["docs/RETENTION.md"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":true},
+    {"id":"audit-tombstone","mode":"search","query":"deletion contract non reconstructive hash chained tombstone commitment keep_tombstone","expected_paths":["palimnex/schemas/deletion-contract.v2.schema.json"],"forbidden_paths":["palimnex/evaluation/v27.json"],"limit":5,"critical":true}
+  ]
+}

@@ -1,13 +1,17 @@
 # Frozen evaluation margin
 
-Status: proposal awaiting owner decision; not indexed (see AGENTS.md).
+Status: options B and C are approved and implemented by
+`phase3/eval-fixture-v27`. The v27 cases remain draft review data until the
+owner approves them in this PR. Option A remains a measured experiment only;
+no scorer change is included.
 
 ## Status and constraints
 
-This note records analysis on `fc1d67b110dbcaa7f6de007f64b49dfce94071aa`,
-the 2.8.0 `main` baseline. It does not approve or implement a scorer, fixture,
-gate, or ranking change. In particular, `palimnex/evaluation/v25.json` and its
-configured SHA-256 pin remain frozen historical evidence.
+This note began as analysis on `fc1d67b110dbcaa7f6de007f64b49dfce94071aa`,
+the 2.8.0 `main` baseline. The approved v27 fixture and diagnostic margin
+warning now move the note into the indexed design corpus with their
+implementation. `palimnex/evaluation/v25.json` remains byte-identical frozen
+historical evidence.
 
 The critical `redis-owner-socket` case searches for `private owner only Redis
 Unix socket port zero` and expects `scripts/palimnex_redis.sh` within the first
@@ -117,18 +121,16 @@ reindex, and evaluation across both fixtures. The principal risk is broad rank
 movement: many competitors also contain numeric literals, so normalization may
 help them as much as the expected script or regress unrelated queries.
 
-## Option B: introduce an owner-reviewed versioned fixture
+## Option B: owner-reviewed versioned fixture
 
-Create a new fixture, for example v27, while preserving v25 byte-for-byte as
-historical evidence. Before inspecting candidate rankings, the owner should
-adjudicate intent-specific gold paths for the ambiguous cases listed in DESIGN
-section 10. That review must explain why each path satisfies the query's intent;
-it must not turn the current top results into gold labels merely because they
-currently win.
+The implementation creates v27 while preserving v25 byte-for-byte as
+historical evidence. Its changed cases are draft review data. DESIGN section
+10 records the intended retrieval task and the reason for each changed query
+or label. The labels are based on ownership and contract authority, not on
+whichever path currently ranks first.
 
-After approval, switch the gate by changing `.palimnex.json` to the new fixture
-path and its independently calculated digest in one reviewed change. Evidence
-for that switch should include:
+This PR switches the gate by changing `.palimnex.json` to the new fixture path
+and its independently calculated digest. Adoption evidence includes:
 
 - the new fixture digest and an owner-reviewed rationale for every changed
   case;
@@ -143,29 +145,46 @@ mechanical edit. The main risk is masking a real retrieval regression through
 relabeling or making historical comparisons misleading. Versioning and the
 side-by-side evidence reduce that risk but do not remove it.
 
-## Option C: retain retrieval and add a warning-only margin check
+## Option C: warning-only critical margin check
 
-Leave ranking and fixtures unchanged, but report a structured warning whenever
-a critical case's best expected path is exactly at that case's rank limit. The
-warning should be visible in human and machine-readable output while leaving
-the evaluation status and exit code unchanged. Tests should cover an expected
-path below the limit, exactly at the limit, and absent from the result window.
+Evaluation now reports `critical_margin_warnings` whenever any required path
+for a critical case is exactly at that case's rank limit. The standalone gate
+prints the named cases as a warning. The list does not contribute to status or
+exit code. Tests cover an expected path below the limit, exactly at the limit,
+and absent from the result window.
 
 Cost is low: a diagnostic calculation, output schema/documentation, and tests.
 The risks are warning fatigue and a false sense of protection. This case would
 warn immediately, but the option creates no retrieval margin and the next
 ranking shift can still break the gate.
 
-## Recommendation
+## Decision
 
-Pursue option A next as an isolated, owner-approved experiment with the
-acceptance criteria above frozen before implementation. It directly addresses
-the documented representation mismatch while using unchanged v25 evidence to
-reject broad regressions. Merge it only if it creates positive Redis-case
-margin and satisfies every v25 and v26 constraint. If it does not, discard the
-candidate and proceed to the owner-adjudicated fixture work in option B.
+The owner selected options B and C. Option A is measured below against the
+same corpus but is not merged. The v27 draft is not accepted merely because it
+passes mechanically: owner review of every changed intent and label remains
+the approval boundary.
 
-Option C is useful observability and can be considered separately, but it is
-not sufficient as the only response because it warns about a margin that is
-already exhausted. No option is implemented by this analysis PR; ranking,
-fixture, and gate changes require a later owner decision.
+## Option A experiment results
+
+The isolated experiment canonicalized English number words from `zero` through
+`ten` to numerals during both corpus and query tokenization. It rebuilt fresh
+in-memory indexes over the same final branch corpus. It did not change shipped
+tokenization, ranking code, or the cache policy identity.
+
+| Fixture/backend | Before recall | Before MRR | After recall | After MRR | Critical ranks before -> after |
+|---|---:|---:|---:|---:|---|
+| v25 | 0.9545454545 | 0.8183333333 | 1.0 | 0.8283333333 | `redis-owner-socket` absent -> 5; `audit-tombstone` 5 -> 5; `experience-capsule` 4 -> 4; `pack-encryption` 3 -> 3; `cache-reader-lease` 2 -> 2; all other critical cases 1 -> 1 |
+| v26 `files_lexical` | 0.6666666667 | 0.8 | 0.6666666667 | 0.8 | none defined by the challenge fixture |
+| v26 `v25_cache` | 0.6666666667 | 0.8 | 0.6666666667 | 0.8 | none defined by the challenge fixture |
+| v26 `v26_context` | 0.8333333333 | 0.8 | 0.8333333333 | 0.8 | none defined by the challenge fixture |
+| v27 draft | 1.0 | 0.9 | 1.0 | 0.9 | `cache-reader-lease`, `authorized-erasure`, `experience-capsule`, and `redis-owner-socket` 2 -> 2; all other critical cases 1 -> 1 |
+
+The v26 MRR is the preregistered positive-case diagnostic; v26 has no critical
+flags. Its cases-passed counts were unchanged at 4/6, 4/6, and 5/6 for the
+three backends respectively.
+
+Normalization recovered the v25 Redis case only at rank 5. It created no
+positive positional margin, left other limiting v25 cases unchanged, and did
+not improve v26 or v27. It therefore fails the experiment's acceptance rule
+and is not a merge candidate.

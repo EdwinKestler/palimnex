@@ -127,8 +127,8 @@ This repository finishes the evidenced migration at `on`. The separate
 set and bytes unchanged, requires an equal source corpus, fills all three
 complete retained v3 generations, and counts shared v3 records once. It gates
 the total retained-v3 Redis size at no more than `0.60` of the active v2 baseline.
-It also times every frozen search-mode case three times per backend (42
-samples each with the current 14 search cases) on the shipped `search()` path
+It also times every frozen search-mode case three times per backend (39
+samples each with the current draft v27 fixture's 13 search cases) on the shipped `search()` path
 over the same deep-validated corpus and requires v3 p95 at no more than
 `10.0` of v2 p95 (the previous `1.20` cap applied to the retired in-process
 hot scorer). A new cache with no v2 baseline uses normal `on` indexing;
@@ -339,36 +339,71 @@ pin. Acceptance requires:
 - no forbidden path hit;
 - reported mean reciprocal rank.
 
-Reported MRR is diagnostic, not a pass/fail threshold. This repository's
-`2.6.0-rc.1` frozen fixture is 20/20 cases with Recall@5 `1.0`. Those two
-figures are the acceptance result. On baseline commit `6bb9c72` the reported
-MRR was `0.8333`; that value is not a retrieval miss and is not a scorer
-regression. Five gold paths are found inside the limit but not ranked first
-because other relevant files in the same corpus outrank a narrower label.
-Documenting this overlap in indexed files can move reported MRR slightly
-without changing recall. BM25 determines those five orderings; removing the
-small cosine, overlap, and symbol additions would not change their winners.
-Fixed 80-line chunks with 16-line overlap favor concise summaries and schemas
-over longer chapters that use the same terminology. Ranks below are from
-`6bb9c72`; later indexed documentation of this overlap can change them.
+Reported MRR is diagnostic, not a pass/fail threshold. Version 1 fixture
+semantics remain exact: every path in `expected_paths` is required, the best
+listed rank contributes to MRR, and no graded or "any of" relevance is
+implied. Adding current winners as extra labels solely to raise MRR remains
+forbidden.
 
-| Case | Rank-1 path | Gold rank | Classification |
+### Historical v25 result at 2.8.0
+
+`palimnex/evaluation/v25.json` is byte-identical historical evidence with
+SHA-256 `9cca022d5ac60a527783d4990ff745ba033c25f3fc789ad245bcfe703f0de569`.
+Its final 2.8.0 result on merge commit
+`978ef4faa46585a179d88eb42ac9e5fbf6334f8b` was 20/20 cases, every critical
+case passing, Recall@5 `1.0`, no forbidden hits, and MRR
+`0.8533333333333333`.
+
+The final ambiguous v25 ranks were:
+
+| Case | Rank-1 path | Expected rank | Classification |
 |---|---|---:|---|
-| `authorized-erasure` | `docs/V26.md` | 3 | Overlap; denser V26 summary |
-| `redis-owner-socket` | `palimnex/core.py` | 3 | Mixed: ownership spans client and launcher; query `zero` vs script `0` |
-| `document-extractor` | `palimnex/README.md` | 2 | Overlap; README contains the query terms |
-| `pack-encryption` | pack-manifest schema | 4 | Gold-label; schema is the cipher/manifest contract |
-| `audit-tombstone` | deletion-contract schema | 4 | Gold-label; schema is the tombstone contract |
+| `authorized-erasure` | `docs/RETENTION.md` | 1 | Overlap resolved as documentation grew |
+| `redis-owner-socket` | `palimnex/core.py` | 5 | Mixed client/launcher intent; word `zero` did not match numeral `0` |
+| `document-extractor` | `palimnex/README.md` | 3 and 4 | Mixed design and implementation labels |
+| `pack-encryption` | pack-manifest schema | 3 | Gold label named README rather than the contract |
+| `audit-tombstone` | deletion-contract schema | 5 | Gold label named prose rather than the contract |
 
-`expected_paths` requires every listed path for recall/pass and uses the
-best-ranked listed path for MRR. Adding current winners as extra gold paths
-would raise MRR without adjudicating relevance. The `2.6.0-rc.1` scorer and
-frozen fixture are unchanged. Numeric token normalization (`zero` vs `0`) and
-intent-specific gold labels remain later evaluation-design work. Historical
-exception `PM-ACCEPT-001` named a noncritical miss on the prior atomic-swap
-corpus; it does not describe this repository's 20/20 frozen result. The
-development challenge paraphrase case remains a separate non-regression
-observation, not an RC ranking blocker.
+The Redis expected path therefore finished 2.8.0 with zero positional margin.
+That historical result is not rewritten by the v27 review.
+
+### Draft v27 intent review
+
+The proposed v27 fixture remains draft review data until the owner approves
+its cases in the PR. Fourteen cases retain their v25 mode, query, labels,
+limit, and criticality; their self-fixture forbidden path changes mechanically
+from v25 to v27. Six cases change to separate previously mixed intents:
+
+| Case | Intended retrieval task | Draft change and why it expresses the intent better |
+|---|---|---|
+| `authorized-erasure` | Find the normative retention eligibility and dependency rules | Keep `docs/RETENTION.md`; name first-winning exclusion, legal hold, and dependency guard instead of mixing summary vocabulary |
+| `experience-capsule` | Find the implementation of context/capsule evidence assembly | Use implementation identifiers and require only `palimnex/experience.py`; remove the mixed documentation requirement |
+| `redis-owner-socket` | Find the guarded launcher that starts the repository Redis | Keep `scripts/palimnex_redis.sh`; use launcher operations, `--port 0`, and pidfile vocabulary actually exposed by the script |
+| `document-extractor` | Find the executable document-graph extractor | Use symbol lookup for `extract_document_graph` and require `palimnex/documents.py`, rather than a prose-overlap search |
+| `pack-encryption` | Find the wire contract for encrypted pack fields | Require `memory-pack-manifest.v2.schema.json` and query its cipher, nonce, salt, and KDF fields; the schema is the contract |
+| `audit-tombstone` | Find the deletion-contract tombstone fields | Require `deletion-contract.v2.schema.json` and query its `keep_tombstone` and commitment fields; the schema is the contract |
+
+No case is relabeled merely to the current rank-1 result, and documentation is
+not reworded to suppress query vocabulary. The stricter adoption check requires
+every required path of every critical v27 case at rank 3 or better in addition
+to the normal critical, recall, and forbidden-path gates.
+
+| Fixture | Cases passed | Critical | Recall@5 | Forbidden hits | MRR | Worst critical expected rank |
+|---|---:|---|---:|---:|---:|---:|
+| v25 historical | 20/20 | pass | 1.0 | 0 | 0.8533333333333333 | 5 |
+| v27 draft | 20/20 | pass | 1.0 | 0 | 0.9 | 2 |
+
+Evaluation reports `critical_margin_warnings`, containing the identifiers of
+critical cases with any required expected path exactly at that case's limit.
+The standalone gate prints the list as a warning. It is diagnostic only and
+never changes status or exit code.
+
+Numeric-token normalization remains an experiment, not shipped scorer policy.
+Its before/after results on v25, v26, and draft v27 are recorded in
+`docs/design/EVAL_MARGIN.md`. Historical exception `PM-ACCEPT-001` named a
+noncritical miss on the prior atomic-swap corpus; it does not describe this
+repository's frozen results. The development challenge paraphrase case remains
+a separate non-regression observation, not a release ranking blocker.
 
 Cache migration has two additional hard gates on the same equal corpus. All
 three retained v3 generations together must use at most `0.60x` the Redis

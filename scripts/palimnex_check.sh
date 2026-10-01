@@ -52,6 +52,12 @@ report = cache_v3.evaluate(client, 5, root)
 assert report["status"] == "passed"
 assert report["critical_passed"]
 assert report["forbidden_clear"]
+if report["critical_margin_warnings"]:
+    print(
+        "warning: critical evaluation cases at their rank limit:",
+        ", ".join(report["critical_margin_warnings"]),
+        file=sys.stderr,
+    )
 print(
     "isolated retrieval:",
     report["cases"],

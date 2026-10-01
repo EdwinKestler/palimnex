@@ -318,6 +318,37 @@ class CacheV3Tests(unittest.TestCase):
         self.assertEqual(result["outcomes"][1]["forbidden_hits"], ["docs/beta.md"])
         self.assertEqual(result["status"], "failed")
 
+    def test_critical_margin_warning_is_diagnostic_only(self) -> None:
+        fixture = self.root / "palimnex/evaluation/v25.json"
+        document = json.loads(fixture.read_text(encoding="utf-8"))
+        for case in document["cases"]:
+            case["limit"] = 2
+        self._write_and_pin_evaluation(document)
+
+        def ranked(*args, **kwargs):
+            return {"results": [{"path": "docs/other.md"}, {"path": "docs/alpha.md"}]}
+
+        with mock.patch.object(cache_v3, "search", side_effect=ranked):
+            at_limit = cache_v3.evaluate(self.client, 5, self.root)
+        self.assertEqual(at_limit["status"], "passed")
+        self.assertEqual(at_limit["critical_margin_warnings"], ["controlled-00"])
+
+        def first(*args, **kwargs):
+            return {"results": [{"path": "docs/alpha.md"}, {"path": "docs/other.md"}]}
+
+        with mock.patch.object(cache_v3, "search", side_effect=first):
+            below_limit = cache_v3.evaluate(self.client, 5, self.root)
+        self.assertEqual(below_limit["status"], "passed")
+        self.assertEqual(below_limit["critical_margin_warnings"], [])
+
+        def missing(*args, **kwargs):
+            return {"results": [{"path": "docs/other.md"}]}
+
+        with mock.patch.object(cache_v3, "search", side_effect=missing):
+            absent = cache_v3.evaluate(self.client, 5, self.root)
+        self.assertEqual(absent["status"], "failed")
+        self.assertEqual(absent["critical_margin_warnings"], [])
+
     def test_evaluation_refuses_frozen_fixture_digest_drift(self) -> None:
         cache_v3.build_index(self.client, self.root)
         fixture = self.root / "palimnex/evaluation/v25.json"

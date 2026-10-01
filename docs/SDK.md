@@ -71,6 +71,19 @@ ledger's transaction semantics. Exceptions remain `ValueError` for invalid
 inputs/state and `PermissionError` for a read-only client. Cryptographic keys
 are never included in result envelopes.
 
+On the unreleased line after 2.7.0, three additions make ledger handling
+safer. All are additive to API v1.
+
+- Inside a Git work tree, `initialize()` and the first write refuse to create
+  a ledger at a path Git does not ignore, before creating any file.
+  `initialize(allow_unignored_ledger=True)` is the explicit override.
+- `backup_ledger(target=None)` writes a verified owner-only snapshot, by
+  default under `backups/` beside the ledger.
+- `migrate_retention(expected_digest=..., snapshot=True)` writes a verified
+  snapshot of the unmigrated ledger before migrating.
+
+Later authorized erasure does not remove snapshots.
+
 ## Versioned source references
 
 `SourceLocator` contains `scheme`, `source_id`, `version`, `range`, and `digest`.

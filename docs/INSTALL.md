@@ -9,6 +9,11 @@ see [`UPGRADING.md`](UPGRADING.md). Commands below use the installed
 Palimnex is not yet published on PyPI. Install from a pinned release tag, as
 shown below.
 
+Steps marked **(after 2.7.0)** use commands on the unreleased line that are
+not in the 2.7.0 release: `palimnex init`, `palimnex doctor`,
+`palimnex redis` and `palimnex ledger-backup`. With 2.7.0, follow the manual
+steps next to them.
+
 ## 1. Requirements
 
 - Python 3.11 or newer.
@@ -75,13 +80,34 @@ Check that the ledger path is ignored:
 git check-ignore -v .palimnex/memory.sqlite3
 ```
 
-Palimnex 2.7.0 does not check this for you. Without these lines, `git add -A`
-stages the durable ledger, its lock file, and the Redis log and pid file. The
-ledger can hold restricted session memory.
+Without these lines, `git add -A` stages the durable ledger, its lock file,
+and the Redis log and pid file. The ledger can hold restricted session memory.
+Palimnex 2.7.0 does not check this for you.
+
+**(after 2.7.0)** `palimnex init --write` adds the lines (see section 4).
+Inside a Git work tree, Palimnex refuses to create a ledger at a path Git does
+not ignore, whether through `ledger-init` or the first `session-start`, and
+creates nothing. `palimnex ledger-init --allow-unignored-ledger` is the
+explicit override.
 
 ## 4. Create the configuration
 
-Create `.palimnex.json` at the repository root and commit it:
+**(after 2.7.0)** Let Palimnex propose the configuration:
+
+```bash
+palimnex init            # preview only; writes nothing
+palimnex init --write    # creates .palimnex.json and adds the .gitignore lines
+```
+
+`init` uses a new UUID, the directory name as slug (or `--slug`),
+`cache_mode: "on"`, and `include_patterns` made of the default patterns that
+match files plus patterns for other source directories it finds. It never
+overwrites an existing `.palimnex.json`, refuses a symlinked `.gitignore`, and
+does not create a ledger or start Redis. Review the patterns, then commit
+`.palimnex.json`.
+
+With 2.7.0, create `.palimnex.json` at the repository root yourself and
+commit it:
 
 ```json
 {
@@ -148,8 +174,18 @@ Field notes:
 
 ## 5. Start Redis
 
-Copy the guarded launcher from the same release tag into the repository's
-`scripts/` directory. It finds the repository as the parent of its own
+**(after 2.7.0)** The guarded launcher ships with the package:
+
+```bash
+palimnex redis start     # also: stop, status, reset, guard
+```
+
+It manages the socket configured in `redis_socket_path`. `start` refuses when
+`redis_socket_path` is not set, because Palimnex would then connect to
+loopback TCP instead, or when the socket path is too long (see below).
+
+With 2.7.0, copy the guarded launcher from the same release tag into the
+repository's `scripts/` directory. It finds the repository as the parent of its own
 directory and keeps all Redis state under `.palimnex/redis/`:
 
 ```bash
@@ -209,6 +245,12 @@ missing, adjust `include_patterns` and run `index --incremental` again.
 `session-start`, also creates it if it does not exist. Until a ledger exists,
 `ledger-status` exits `2` and read commands such as `recall` fail with
 "durable ledger is missing".
+
+**(after 2.7.0)** Finish with `palimnex doctor`. It checks the configuration,
+whether Git ignores the ledger, which directories are indexed and which code
+is left out, the socket path, Redis, cache freshness, a leftover plaintext v2
+cache, the ledger and snapshots. It changes no configuration, cache or ledger
+content, and exits `0` when healthy and `2` when something needs attention.
 
 ## 7. Agent instructions
 
@@ -300,10 +342,10 @@ session. See [`SDK.md`](SDK.md#mcp).
 ## 10. Uninstall and teardown
 
 1. Stop agents and other clients that use Palimnex.
-2. Stop Redis with `./scripts/palimnex_redis.sh stop`. This keeps the snapshot
-   so a later start needs no reindex. `./scripts/palimnex_redis.sh reset`
-   instead stops Redis and removes its log and snapshot files; the cache can
-   always be rebuilt from the repository.
+2. Stop Redis with `./scripts/palimnex_redis.sh stop` (**after 2.7.0**:
+   `palimnex redis stop`). This keeps the snapshot so a later start needs no
+   reindex. `reset` instead stops Redis and removes its log and snapshot
+   files; the cache can always be rebuilt from the repository.
 3. Keep the durable memory you need. Either:
    - Export durable memory from closed sessions as an encrypted pack. This
      needs the `crypto` extra. Create the key's directory first; key
@@ -318,8 +360,11 @@ session. See [`SDK.md`](SDK.md#mcp).
 
      Store the key separately from the pack. A lost key makes the pack
      unrecoverable. Export refuses selected `secret` events.
-   - Or take a consistent snapshot of the whole ledger with SQLite's online
-     backup API:
+   - Or take a consistent snapshot of the whole ledger. **(after 2.7.0)**
+     `palimnex ledger-backup --output /secure/location/memory-snapshot.sqlite3`
+     writes and verifies it (integrity check and logical digest) as a new
+     `0600` file; the parent directory must already exist. With 2.7.0, use
+     SQLite's online backup API:
 
      ```bash
      (umask 077; python3 - <<'PY'

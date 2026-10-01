@@ -14,10 +14,12 @@ import math
 import os
 import re
 import secrets
+import shutil
 import socket
 import ssl
 import stat
 import struct
+import subprocess
 import sys
 import time
 from collections import deque
@@ -37,6 +39,9 @@ EMBEDDING_ID = "feature-hash-sha256-unigram-bigram-v1"
 DIMENSIONS = 384
 DEFAULT_URL = "redis://127.0.0.1:6379/0"
 URL_ENV = "PALIMNEX_URL"
+# sockaddr_un.sun_path size including the terminating NUL byte.
+UNIX_SOCKET_PATH_LIMIT = 104 if sys.platform == "darwin" else 108
+REDIS_START_HINT = "start Redis with `palimnex redis start`"
 DEPENDENCY_EDGE_KINDS = (
     "calls",
     "decorated_by",
@@ -235,6 +240,49 @@ RUST_DEFINITION_RE = re.compile(
 RUST_USE_RE = re.compile(r"^\s*(?:pub\s+)?use\s+([^;]+);")
 RUST_CALL_RE = re.compile(r"\b([A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*)\s*\(")
 RUST_CALL_EXCLUSIONS = {"fn", "if", "while", "for", "loop", "match", "return", "Some", "Ok", "Err"}
+
+
+REDIS_LAUNCHER = Path(__file__).with_name("redis_launcher.sh")
+REDIS_LAUNCHER_ACTIONS = ("start", "stop", "status", "reset", "guard")
+DEFAULT_REDIS_SOCKET = ".palimnex/redis/redis.sock"
+
+
+def run_redis_launcher(action: str, root: Path = ROOT) -> int:
+    """Run the packaged launcher for `root`; it keeps all state under .palimnex/."""
+    if action not in REDIS_LAUNCHER_ACTIONS:
+        raise ValueError("unsupported Redis launcher action")
+    bash = shutil.which("bash")
+    if bash is None or not REDIS_LAUNCHER.is_file():
+        raise ValueError("the Redis launcher needs bash and the packaged redis_launcher.sh")
+    configured = project_config(root).get("redis_socket_path")
+    if configured is None and action == "start":
+        raise ValueError(
+            f"{CONFIG_FILE} does not set redis_socket_path, so Palimnex would connect to "
+            f"loopback TCP rather than this launcher's socket; add \"redis_socket_path\": "
+            f"\"{DEFAULT_REDIS_SOCKET}\" (`palimnex init` writes it)"
+        )
+    configured = DEFAULT_REDIS_SOCKET if configured is None else configured
+    if not isinstance(configured, str) or not configured or Path(configured).is_absolute():
+        raise ValueError(f"{CONFIG_FILE} redis_socket_path must be repository-relative")
+    socket_path = (root / configured).absolute()
+    length = len(os.fsencode(str(socket_path)))
+    if action == "start" and length >= UNIX_SOCKET_PATH_LIMIT:
+        raise ValueError(
+            f"the Redis socket path would be {length} bytes; this platform allows at most "
+            f"{UNIX_SOCKET_PATH_LIMIT - 1}. Use a shorter checkout path, or run an owner-only "
+            "Redis at a short path and set PALIMNEX_URL (docs/INSTALL.md)"
+        )
+    environment = {
+        **os.environ,
+        "PALIMNEX_REDIS_ROOT": str(root),
+        "PALIMNEX_REDIS_DIR": str(socket_path.parent),
+        "PALIMNEX_REDIS_SOCKET": str(socket_path),
+    }
+    return subprocess.run([bash, str(REDIS_LAUNCHER), action], env=environment, check=False).returncode
+
+
+def config_present(root: Path = ROOT) -> bool:
+    return (root / CONFIG_FILE).is_file() or (root / LEGACY_CONFIG_FILE).is_file()
 
 
 def project_config(root: Path = ROOT) -> dict[str, Any]:
@@ -1140,12 +1188,23 @@ class RedisClient:
             "unauthenticated loopback PING is not endpoint identity"
         )
 
+    def _require_short_socket_path(self) -> None:
+        assert self.socket_path is not None
+        length = len(os.fsencode(self.socket_path))
+        if length >= UNIX_SOCKET_PATH_LIMIT:
+            raise RedisError(
+                f"Redis Unix socket path is {length} bytes; this platform allows at most "
+                f"{UNIX_SOCKET_PATH_LIMIT - 1}. Use a shorter checkout path or set "
+                "PALIMNEX_URL to a short owner-only socket (see docs/INSTALL.md)"
+            )
+
     def _guard_unix_socket(self) -> None:
         assert self.socket_path is not None
+        self._require_short_socket_path()
         try:
             metadata = os.lstat(self.socket_path)
         except OSError as exc:
-            raise RedisError("Redis Unix socket is missing") from exc
+            raise RedisError(f"Redis Unix socket is missing; {REDIS_START_HINT}") from exc
         if (
             not stat.S_ISSOCK(metadata.st_mode)
             or metadata.st_uid != os.getuid()
@@ -1159,7 +1218,17 @@ class RedisClient:
             connection = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             connection.settimeout(self.timeout)
             assert self.socket_path is not None
-            connection.connect(self.socket_path)
+            try:
+                connection.connect(self.socket_path)
+            except ConnectionRefusedError as exc:
+                connection.close()
+                raise RedisError(
+                    "Redis is not running behind the configured Unix socket "
+                    f"(stale socket file); {REDIS_START_HINT}"
+                ) from exc
+            except BaseException:
+                connection.close()
+                raise
             return connection
         connection = socket.create_connection((self.host, self.port), self.timeout)
         if self.scheme == "rediss":
@@ -2561,16 +2630,35 @@ def clear(client: RedisClient, root: Path = ROOT) -> dict[str, Any]:
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(description=__doc__)
     result.add_argument("--version", action="version", version=BUNDLE_VERSION)
-    configured_url = next(
-        (os.environ[name] for name in redis_url_envs() if os.environ.get(name)),
-        configured_redis_url(),
-    )
+    try:
+        url_envs = redis_url_envs()
+        configured_url = next(
+            (os.environ[name] for name in url_envs if os.environ.get(name)),
+            configured_redis_url(),
+        )
+    except (ValueError, TypeError):
+        # Commands report the configuration error; `doctor` explains it.
+        url_envs, configured_url = (URL_ENV,), DEFAULT_URL
     result.add_argument(
         "--url",
         default=configured_url,
-        help=f"Redis URL (env: {', '.join(redis_url_envs())})",
+        help=f"Redis URL (env: {', '.join(url_envs)})",
     )
     commands = result.add_subparsers(dest="command", required=True)
+    init_parser = commands.add_parser(
+        "init", help="preview a starter .palimnex.json and .gitignore lines; --write creates them"
+    )
+    init_parser.add_argument(
+        "--write", action="store_true", help="create the files; without it nothing is written"
+    )
+    init_parser.add_argument("--slug", help="project slug (default: the directory name)")
+    commands.add_parser(
+        "doctor", help="check the installation; changes no configuration, cache or ledger content"
+    )
+    redis_parser = commands.add_parser(
+        "redis", help="manage this repository's guarded owner-only Redis (packaged launcher)"
+    )
+    redis_parser.add_argument("action", choices=REDIS_LAUNCHER_ACTIONS)
     status_parser = commands.add_parser("status")
     status_parser.add_argument(
         "--verbose", action="store_true", help="include the complete active manifest"
@@ -2635,7 +2723,18 @@ def parser() -> argparse.ArgumentParser:
     migration_parser.add_argument("--limit", type=int, default=5)
     commands.add_parser("clear")
 
-    commands.add_parser("ledger-init")
+    ledger_backup = commands.add_parser(
+        "ledger-backup", help="write a verified owner-only snapshot of the ledger"
+    )
+    ledger_backup.add_argument(
+        "--output", help="new snapshot path (default: backups/ beside the ledger)"
+    )
+    ledger_init = commands.add_parser("ledger-init")
+    ledger_init.add_argument(
+        "--allow-unignored-ledger",
+        action="store_true",
+        help="create the ledger even though Git does not ignore its path",
+    )
     commands.add_parser("ledger-status")
     session_start = commands.add_parser("session-start")
     session_start.add_argument("--task", required=True)
@@ -2699,6 +2798,12 @@ def parser() -> argparse.ArgumentParser:
     commands.add_parser("retention-status")
     rp = commands.add_parser("retention-migrate")
     rp.add_argument("--expected-digest", required=True)
+    rp.add_argument("--dry-run", action="store_true", help="describe the migration without writing")
+    rp.add_argument(
+        "--no-snapshot",
+        action="store_true",
+        help="skip the verified pre-migration snapshot under the ledger's backups/ directory",
+    )
     rp = commands.add_parser("retention-activate")
     rp.add_argument("policy")
     rp.add_argument("--actor", required=True)
@@ -2831,6 +2936,18 @@ def main(argv: list[str] | None = None) -> int:
         from .security import read_bounded_file
         from .semantic import SemanticMetrics, promotion_decision, semantic_status
 
+        if args.command == "redis":
+            return run_redis_launcher(args.action, ROOT)
+        if args.command == "init":
+            from .onboarding import init
+            print(json.dumps(init(ROOT, write=args.write, slug=args.slug), sort_keys=True))
+            return 0
+        if args.command == "doctor":
+            from .onboarding import doctor
+            report = doctor(ROOT, redis_url=args.url)
+            print(json.dumps(report, sort_keys=True))
+            return 0 if report["status"] == "healthy" else 2
+
         cache_commands = {
             "status", "validate", "index", "search", "symbols", "impact", "path",
             "evaluate", "migration-shadow", "clear", "project-hot", "hot-events",
@@ -2840,7 +2957,7 @@ def main(argv: list[str] | None = None) -> int:
         cache_mode = cache_v3.configured_cache_mode(ROOT)
         ledger_commands = {
             "context", "capsule", "capture-preview", "capture-apply",
-            "ledger-init", "ledger-status", "session-start", "remember",
+            "ledger-init", "ledger-status", "ledger-backup", "session-start", "remember",
             "session-close", "recall", "consolidate", "reverify", "workflow-put",
             "workflow-dry-run", "project-hot", "hot-events", "memory-export",
             "memory-import", "memory-recover-import", "audit-graph",
@@ -2848,6 +2965,11 @@ def main(argv: list[str] | None = None) -> int:
             "retention-release", "retention-pin", "retention-authorize",
             "retention-support", "cleanup-plan", "cleanup-apply", "cleanup-finalize",
         }
+        if (args.command in cache_commands or args.command in ledger_commands) and not config_present(ROOT):
+            raise ValueError(
+                f"no {CONFIG_FILE} in {ROOT}; run `palimnex init` to create one "
+                "(see docs/INSTALL.md)"
+            )
         ledger = (
             MemoryLedger(
                 durable_ledger_path(),
@@ -2902,9 +3024,23 @@ def main(argv: list[str] | None = None) -> int:
                 }
 
         if args.command.startswith("retention-") or args.command.startswith("cleanup-"):
-            from .retention import RetentionLedger, migrate, unconfigured_plan
-            if args.command == "retention-migrate":
-                output = migrate(ledger, expected_digest=args.expected_digest)
+            from .retention import RetentionLedger, migrate, migration_preview, unconfigured_plan
+            if args.command == "retention-migrate" and args.dry_run:
+                output = migration_preview(
+                    ledger,
+                    expected_digest=args.expected_digest,
+                    snapshot_path=None if args.no_snapshot else f"{ledger.path.parent / 'backups'}/",
+                )
+            elif args.command == "retention-migrate":
+                snapshot_path = (
+                    None
+                    if args.no_snapshot or isinstance(ledger, RetentionLedger)
+                    or not ledger.path.is_file()
+                    else ledger.default_snapshot_path("-pre-retention-v2")
+                )
+                output = migrate(
+                    ledger, expected_digest=args.expected_digest, snapshot_path=snapshot_path
+                )
             elif not isinstance(ledger, RetentionLedger):
                 if args.command == "retention-status":
                     output = {"configured": False, "migration_required": True, "automatic_deletion": False}
@@ -3132,7 +3268,12 @@ def main(argv: list[str] | None = None) -> int:
             output = clear(client) if cache_mode == "off" else cache_v3.clear(client)
             print(json.dumps({**output, "cache_mode": cache_mode}, sort_keys=True))
             return 0
+        if args.command == "ledger-backup":
+            output = ledger.backup(Path(args.output) if args.output else None)
+            print(json.dumps(output, sort_keys=True))
+            return 0
         if args.command == "ledger-init":
+            ledger.allow_unignored_path = args.allow_unignored_ledger
             print(json.dumps(ledger.initialize(), sort_keys=True))
             return 0
         if args.command == "ledger-status":

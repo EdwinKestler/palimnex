@@ -29,6 +29,9 @@ pipx install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2
 
 Before the first run, add `.palimnex/`, `*.pmem` and `*.key` to the
 repository's `.gitignore` so the durable ledger and keys are never committed.
+On the unreleased line after 2.7.0, `palimnex init --write` does this and
+writes the configuration, `palimnex redis start` starts the guarded Redis, and
+`palimnex doctor` checks the installation.
 [The installation guide](docs/INSTALL.md) covers configuration, Redis, first
 run, agent instructions and uninstall; [the upgrade guide](docs/UPGRADING.md)
 covers moving between versions.

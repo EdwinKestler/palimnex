@@ -624,8 +624,36 @@ def open_ledger(ledger):
         finally:c.close()
     return as_retention(ledger) if r is not None and r[0].decode()==SCHEMA else ledger
 
-def migrate(ledger,*,expected_digest):
+MIGRATION_EFFECTS=(
+    'hot projection stops: project-hot and hot-events exit 1, and later writes report projection_pending',
+    'memory-import is refused for this ledger, even without --activate',
+    'events whose hot projection was attempted cannot be erased until an adapter retires that projection (store_not_adapted)',
+    'a marker file <ledger>.retention-v2 is written beside the ledger; never delete it',
+    'readers without the retention profile (2.5 and earlier) refuse the migrated ledger',
+)
+
+
+def migration_preview(ledger,*,expected_digest,snapshot_path=None):
+    """Read-only description of what retention-migrate would do."""
+    if isinstance(ledger,RetentionLedger):
+        return {'mode':'dry-run','will_write':False,'already_migrated':True,'schema':SCHEMA}
+    from .portable import _intent_path
+    with ledger.connection(create=False) as c:
+        current=ledger._logical_digest(c)
+    refusals=[]
+    if _intent_path(ledger).exists():refusals.append('pending import blocks retention migration')
+    if current!=expected_digest:refusals.append('DIGEST_MISMATCH')
+    return {'mode':'dry-run','will_write':False,'already_migrated':False,
+            'current_schema':d.LEDGER_SCHEMA,'target_schema':SCHEMA,'logical_digest':current,
+            'expected_digest_matches':current==expected_digest,'would_refuse':refusals,
+            'snapshot':(f'a verified snapshot is written to {snapshot_path} first; {d.SNAPSHOT_ERASURE_NOTE}'
+                        if snapshot_path else 'no snapshot (--no-snapshot)'),
+            'effects':list(MIGRATION_EFFECTS)}
+
+
+def migrate(ledger,*,expected_digest,snapshot_path=None):
     if isinstance(ledger,RetentionLedger):return ledger.retention_status()
+    snapshot=None
     with ledger.file_lock(exclusive=True):
         c=ledger._open(create=False)
         try:
@@ -634,6 +662,9 @@ def migrate(ledger,*,expected_digest):
             ledger._require_schema(c)
             if ledger._semantic_errors(c):raise ValueError('cannot migrate corrupt ledger')
             if ledger._logical_digest(c)!=expected_digest:raise ValueError('DIGEST_MISMATCH')
+            if snapshot_path is not None:
+                # Taken under the exclusive lock, before the marker and the schema change.
+                snapshot=d.write_snapshot(ledger,c,Path(snapshot_path))
             marker=Path(str(ledger.path)+'.retention-v2')
             if marker.exists():
                 d._guard_private_file(marker,'retention migration marker')
@@ -651,7 +682,8 @@ def migrate(ledger,*,expected_digest):
         except BaseException:
             c.rollback();raise
         finally:c.close()
-    return as_retention(ledger).retention_status()
+    status=as_retention(ledger).retention_status()
+    return status if snapshot is None else {**status,'pre_migration_snapshot':snapshot}
 
 
 def unconfigured_plan(ledger):

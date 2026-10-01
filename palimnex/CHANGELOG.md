@@ -30,10 +30,38 @@ operator-facing behavior; cache and graph schemas are versioned independently.
   retention migrations, rollback limits). The package README template now
   uses `cache_mode: "on"` and an explicit slug.
 
+- `palimnex init` previews a starter `.palimnex.json` (new UUID, slug,
+  `cache_mode: "on"`, include patterns detected from the repository) and the
+  missing `.gitignore` lines; `--write` creates them without overwriting and
+  never creates a ledger or starts Redis.
+- `palimnex doctor` checks configuration, Git ignore rules, corpus coverage,
+  socket path length, Redis, cache freshness (naming the version that built a
+  stale cache), a leftover plaintext v2 cache, the ledger and its snapshots.
+  It changes no configuration, cache or ledger content; exit `0` healthy,
+  `2` action needed.
+- `palimnex redis start|stop|status|reset|guard` runs the guarded launcher,
+  now packaged as `palimnex/redis_launcher.sh` (a byte-identical copy of
+  `scripts/palimnex_redis.sh`). `start` refuses an over-long socket path or a
+  missing `redis_socket_path`.
+- `ledger-backup` (SDK `backup_ledger`) writes a verified owner-only SQLite
+  snapshot. `retention-migrate --dry-run` describes the migration without
+  writing, and a real migration first writes a verified pre-migration
+  snapshot (`--no-snapshot` skips it; SDK `snapshot=True` opts in).
+- Inside a Git work tree, creating a ledger at a path Git does not ignore is
+  refused before anything is written; `ledger-init --allow-unignored-ledger`
+  and SDK `initialize(allow_unignored_ledger=True)` override explicitly.
+- Clearer errors: missing configuration points to `palimnex init`; an
+  over-long, missing or stale Unix socket is named as such; `status` adds
+  `action` and `built_by_version`, and `search` names the version that built
+  an unreadable cache.
+
 ### Upgrade notes
 
 - The version number is still 2.7.0, so moving from the `v2.7.0` tag may leave
   the cache valid; reindex if `status` is not fresh.
+- New ledgers inside a Git work tree require Git to ignore the ledger path;
+  existing ledgers are unaffected. `palimnex redis start` requires
+  `redis_socket_path` in `.palimnex.json`.
 - Downgrade hazard: once an erasure adapter records an `adapter_receipt`
   control entry, version 2.7.0 refuses the whole ledger ("durable ledger
   failed semantic validation"). See `docs/UPGRADING.md`.

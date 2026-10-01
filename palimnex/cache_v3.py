@@ -522,6 +522,33 @@ def _active_manifest_key(client: Any, root: Path) -> str | None:
     return value if isinstance(value, str) and value.startswith(namespace(root) + ":generation:") else None
 
 
+def _older_manifest_version(client: Any, root: Path) -> str | None:
+    """Return the version that built an active manifest this version cannot load."""
+    key = _active_manifest_key(client, root)
+    if key is None:
+        return None
+    try:
+        value = _json(client.execute("GET", key))
+    except (UnicodeError, json.JSONDecodeError):
+        return None
+    version = value.get("bundle_version") if isinstance(value, dict) else None
+    if (
+        isinstance(version, str)
+        and version != legacy.BUNDLE_VERSION
+        and 0 < len(version) <= 64
+        and all(character.isascii() and (character.isalnum() or character in ".+-") for character in version)
+    ):
+        return version
+    return None
+
+
+def _rebuild_hint(client: Any, root: Path) -> str:
+    older = _older_manifest_version(client, root)
+    if older is not None:
+        return f"v3 cache was built by Palimnex {older}; run `index --incremental`"
+    return "active cache generation is missing or malformed; run `index --incremental`"
+
+
 def _load_manifest(client: Any, key: str | None, root: Path) -> dict[str, Any] | None:
     if key is None:
         return None
@@ -639,7 +666,7 @@ def generation_reader(client: Any, root: Path):
     try:
         manifest = _load_manifest(client, manifest_key, root)
         if manifest is None:
-            raise ValueError("active cache generation is missing or malformed")
+            raise ValueError(_rebuild_hint(client, root))
         manifest = dict(manifest)
         manifest["_reader_lease_key"] = lease_key
         yield manifest
@@ -855,7 +882,14 @@ def status(
         and manifest["fingerprint"] == snapshot.fingerprint
         and _validate_manifest_shape(manifest, snapshot, root)
     )
+    guidance: dict[str, Any] = {}
+    if not fresh:
+        older = None if manifest else _older_manifest_version(client, root)
+        guidance = {"action": "run `index --incremental`"}
+        if older is not None:
+            guidance["built_by_version"] = older
     return {
+        **guidance,
         "status": "fresh" if fresh else ("stale" if manifest else "missing_or_invalid"),
         "fresh": fresh,
         "namespace": namespace(root),

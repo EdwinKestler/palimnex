@@ -228,6 +228,14 @@ def _ledger_checks(root: Path) -> list[Check]:
         else Check("ledger", "fail", f"ledger status is {report.get('status')}",
                    "run `palimnex ledger-status` for details")
     ]
+    backups = path.parent / durable.SNAPSHOT_DIRECTORY
+    snapshots = sorted(backups.glob("*.sqlite3")) if backups.is_dir() else []
+    if snapshots:
+        checks.append(Check(
+            "snapshots", "info",
+            f"{len(snapshots)} ledger snapshot(s) in {backups.relative_to(root).as_posix()}/; "
+            "later authorized erasure does not remove them",
+        ))
     if isinstance(ledger, retention.RetentionLedger):
         checks.append(Check(
             "retention", "info",

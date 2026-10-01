@@ -507,6 +507,61 @@ def _fsync_directory(path: Path) -> None:
         os.close(descriptor)
 
 
+SNAPSHOT_DIRECTORY = "backups"
+SNAPSHOT_ERASURE_NOTE = (
+    "later authorized erasure does not remove this snapshot; protect it like the live ledger"
+)
+
+
+def write_snapshot(ledger: "MemoryLedger", source: sqlite3.Connection, target: Path) -> dict[str, Any]:
+    """Copy a consistent SQLite online-backup snapshot into a new owner-only file.
+
+    The caller holds the ledger lock. The snapshot is verified by integrity
+    check and logical digest; a snapshot that fails verification is removed.
+    """
+    target = target.absolute()
+    descriptor = os.open(
+        target,
+        os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_CLOEXEC", 0)
+        | getattr(os, "O_NOFOLLOW", 0),
+        0o600,
+    )
+    os.close(descriptor)
+    try:
+        destination = sqlite3.connect(f"file:{quote(str(target))}?nofollow=1", uri=True)
+        try:
+            source.backup(destination)
+            # A single self-contained file: no -wal or -shm beside the snapshot.
+            destination.execute("PRAGMA journal_mode=DELETE")
+        finally:
+            destination.close()
+        os.chmod(target, 0o600)
+        with open(target, "rb") as handle:
+            os.fsync(handle.fileno())
+        _fsync_directory(target.parent)
+        check = sqlite3.connect(f"file:{quote(str(target))}?mode=ro&nofollow=1", uri=True)
+        check.row_factory = sqlite3.Row
+        try:
+            integrity = check.execute("PRAGMA integrity_check").fetchone()[0]
+            snapshot_digest = ledger._logical_digest(check)
+        finally:
+            check.close()
+        if integrity != "ok" or snapshot_digest != ledger._logical_digest(source):
+            raise ValueError("ledger snapshot verification failed")
+    except BaseException:
+        with contextlib.suppress(OSError):
+            os.unlink(target)
+        raise
+    return {
+        "path": str(target),
+        "bytes": target.stat().st_size,
+        "integrity": "ok",
+        "logical_digest": snapshot_digest,
+        "schema": ledger.schema,
+        "note": SNAPSHOT_ERASURE_NOTE,
+    }
+
+
 def _ensure_private_directory(root: Path, directory: Path) -> None:
     """Create a private in-repository directory without traversing symlinks."""
     try:
@@ -623,6 +678,46 @@ class MemoryLedger:
                 f"whether it is ignored. Check `git check-ignore -v {relative}`, or override "
                 f"explicitly with {override}"
             )
+
+    def default_snapshot_path(self, label: str = "") -> Path:
+        """A new path under the ledger's private `backups/` directory."""
+        directory = self.path.parent / SNAPSHOT_DIRECTORY
+        _ensure_private_directory(self.root, directory)
+        now = time.time_ns()
+        stamp = time.strftime("%Y%m%dT%H%M%S", time.gmtime(now / 1e9))
+        return directory / f"{self.path.stem}-{stamp}{now // 1_000_000 % 1000:03d}Z{label}.sqlite3"
+
+    def backup(self, target: Path | None = None) -> dict[str, Any]:
+        """Write a verified, owner-only snapshot of an existing ledger.
+
+        Without `target`, the snapshot goes under the ledger's private
+        `backups/` directory. A target inside the repository must be ignored
+        by Git; a target outside it must have an existing parent directory.
+        """
+        if not self.path.is_file():
+            raise ValueError(f"durable ledger is missing: {self.path}")
+        if target is None:
+            target = self.default_snapshot_path()
+        else:
+            target = (target if target.is_absolute() else self.root / target).absolute()
+            if target.is_relative_to(self.root):
+                from .vcs import git_ignore_state
+
+                relative = target.relative_to(self.root).as_posix()
+                if git_ignore_state(self.root, relative) in {"not_ignored", "unknown"}:
+                    raise ValueError(
+                        f"refusing to write a ledger snapshot to {relative}: Git does not "
+                        "ignore it; choose a path under .palimnex/ or outside the repository"
+                    )
+            if not target.parent.is_dir():
+                raise ValueError("ledger snapshot parent directory must already exist")
+        with self.file_lock(exclusive=False):
+            source = self._open(create=False)
+            try:
+                self._require_schema(source)
+                return write_snapshot(self, source, target)
+            finally:
+                source.close()
 
     def _guard_paths(self) -> None:
         _ensure_private_directory(self.root, self.path.parent)

@@ -2678,6 +2678,12 @@ def parser() -> argparse.ArgumentParser:
     migration_parser.add_argument("--limit", type=int, default=5)
     commands.add_parser("clear")
 
+    ledger_backup = commands.add_parser(
+        "ledger-backup", help="write a verified owner-only snapshot of the ledger"
+    )
+    ledger_backup.add_argument(
+        "--output", help="new snapshot path (default: backups/ beside the ledger)"
+    )
     ledger_init = commands.add_parser("ledger-init")
     ledger_init.add_argument(
         "--allow-unignored-ledger",
@@ -2747,6 +2753,12 @@ def parser() -> argparse.ArgumentParser:
     commands.add_parser("retention-status")
     rp = commands.add_parser("retention-migrate")
     rp.add_argument("--expected-digest", required=True)
+    rp.add_argument("--dry-run", action="store_true", help="describe the migration without writing")
+    rp.add_argument(
+        "--no-snapshot",
+        action="store_true",
+        help="skip the verified pre-migration snapshot under the ledger's backups/ directory",
+    )
     rp = commands.add_parser("retention-activate")
     rp.add_argument("policy")
     rp.add_argument("--actor", required=True)
@@ -2898,7 +2910,7 @@ def main(argv: list[str] | None = None) -> int:
         cache_mode = cache_v3.configured_cache_mode(ROOT)
         ledger_commands = {
             "context", "capsule", "capture-preview", "capture-apply",
-            "ledger-init", "ledger-status", "session-start", "remember",
+            "ledger-init", "ledger-status", "ledger-backup", "session-start", "remember",
             "session-close", "recall", "consolidate", "reverify", "workflow-put",
             "workflow-dry-run", "project-hot", "hot-events", "memory-export",
             "memory-import", "memory-recover-import", "audit-graph",
@@ -2965,9 +2977,23 @@ def main(argv: list[str] | None = None) -> int:
                 }
 
         if args.command.startswith("retention-") or args.command.startswith("cleanup-"):
-            from .retention import RetentionLedger, migrate, unconfigured_plan
-            if args.command == "retention-migrate":
-                output = migrate(ledger, expected_digest=args.expected_digest)
+            from .retention import RetentionLedger, migrate, migration_preview, unconfigured_plan
+            if args.command == "retention-migrate" and args.dry_run:
+                output = migration_preview(
+                    ledger,
+                    expected_digest=args.expected_digest,
+                    snapshot_path=None if args.no_snapshot else f"{ledger.path.parent / 'backups'}/",
+                )
+            elif args.command == "retention-migrate":
+                snapshot_path = (
+                    None
+                    if args.no_snapshot or isinstance(ledger, RetentionLedger)
+                    or not ledger.path.is_file()
+                    else ledger.default_snapshot_path("-pre-retention-v2")
+                )
+                output = migrate(
+                    ledger, expected_digest=args.expected_digest, snapshot_path=snapshot_path
+                )
             elif not isinstance(ledger, RetentionLedger):
                 if args.command == "retention-status":
                     output = {"configured": False, "migration_required": True, "automatic_deletion": False}
@@ -3194,6 +3220,10 @@ def main(argv: list[str] | None = None) -> int:
             client.require_trusted_write_endpoint()
             output = clear(client) if cache_mode == "off" else cache_v3.clear(client)
             print(json.dumps({**output, "cache_mode": cache_mode}, sort_keys=True))
+            return 0
+        if args.command == "ledger-backup":
+            output = ledger.backup(Path(args.output) if args.output else None)
+            print(json.dumps(output, sort_keys=True))
             return 0
         if args.command == "ledger-init":
             ledger.allow_unignored_path = args.allow_unignored_ledger

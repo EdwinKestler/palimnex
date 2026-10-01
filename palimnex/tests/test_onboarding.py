@@ -294,5 +294,72 @@ class LedgerCommitGuardTests(unittest.TestCase):
         self.assertEqual(Palimnex(self.root, writable=True).initialize()["status"], "ready")
 
 
+
+class LedgerSnapshotTests(unittest.TestCase):
+    def setUp(self) -> None:
+        from palimnex.api import Event, Evidence, Palimnex
+        self.temporary = tempfile.TemporaryDirectory(prefix="pmx-")
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        write_project(self.root)
+        self.client = Palimnex(self.root, writable=True)
+        self.client.initialize()
+        session = self.client.start_session("snapshot rehearsal")["session_id"]
+        self.client.record(Event(session, "fact", "cobalt orchard", {"state": "kept"},
+                                 (Evidence("docs/alpha.md:1-3"),), retention="durable"))
+        self.client.close_session(session, "done")
+
+    def _cli(self, *arguments: str) -> dict[str, object]:
+        environment = {**os.environ, "PYTHONPATH": str(REPOSITORY)}
+        environment.pop("PALIMNEX_ROOT", None)
+        result = subprocess.run([sys.executable, "-m", "palimnex", *arguments], cwd=self.root,
+                                env=environment, capture_output=True, text=True, check=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        return json.loads(result.stdout)
+
+    def test_backup_is_private_self_contained_and_verified(self) -> None:
+        snapshot = self.client.backup_ledger()
+        path = Path(snapshot["path"])
+        self.assertEqual(path.parent, self.root / ".private/backups")
+        self.assertEqual(os.stat(path).st_mode & 0o777, 0o600)
+        self.assertFalse(Path(str(path) + "-wal").exists())
+        self.assertEqual(snapshot["logical_digest"], self.client.status()["logical_digest"])
+        self.assertIn("does not remove", snapshot["note"])
+        report = onboarding.doctor(self.root, redis_url="redis://127.0.0.1:6379/0")
+        checks = {check["id"]: check for check in report["checks"]}
+        self.assertIn("1 ledger snapshot(s)", checks["snapshots"]["detail"])
+        with self.assertRaises(FileExistsError):
+            self.client.backup_ledger(path)
+        with self.assertRaisesRegex(ValueError, "parent directory"):
+            self.client.backup_ledger(Path(self.temporary.name) / "absent" / "copy.sqlite3")
+
+    def test_dry_run_writes_nothing_and_reports_refusal(self) -> None:
+        digest = self.client.status()["logical_digest"]
+        preview = self._cli("retention-migrate", "--expected-digest", digest, "--dry-run")
+        self.assertFalse(preview["will_write"])
+        self.assertEqual(preview["would_refuse"], [])
+        self.assertTrue(any("memory-import" in effect for effect in preview["effects"]))
+        wrong = self._cli("retention-migrate", "--expected-digest", "0" * 64, "--dry-run")
+        self.assertEqual(wrong["would_refuse"], ["DIGEST_MISMATCH"])
+        self.assertFalse((self.root / ".private/memory.sqlite3.retention-v2").exists())
+        self.assertFalse((self.root / ".private/backups").exists())
+        self.assertEqual(self.client.status()["logical_digest"], digest)
+
+    def test_cli_migration_writes_a_verified_snapshot_first(self) -> None:
+        digest = self.client.status()["logical_digest"]
+        output = self._cli("retention-migrate", "--expected-digest", digest)
+        snapshot = output["pre_migration_snapshot"]
+        self.assertEqual(snapshot["logical_digest"], digest)
+        self.assertEqual(snapshot["schema"], "project-memory:ledger:v1")
+        self.assertTrue(Path(snapshot["path"]).name.endswith("-pre-retention-v2.sqlite3"))
+        self.assertTrue((self.root / ".private/memory.sqlite3.retention-v2").exists())
+
+    def test_sdk_snapshot_is_opt_in(self) -> None:
+        digest = self.client.status()["logical_digest"]
+        result = self.client.migrate_retention(expected_digest=digest)
+        self.assertNotIn("pre_migration_snapshot", result)
+        self.assertFalse((self.root / ".private/backups").exists())
+
+
 if __name__ == "__main__":
     unittest.main()

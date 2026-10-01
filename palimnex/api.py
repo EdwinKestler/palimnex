@@ -125,11 +125,21 @@ class Palimnex:
                     "scope": "local-ledger", "forensic_erasure": False,
                     "authority": "historical_only", "authorizes_actions": False}
 
-    def migrate_retention(self, *, expected_digest: str) -> dict[str, Any]:
+    def migrate_retention(self, *, expected_digest: str, snapshot: bool = False) -> dict[str, Any]:
+        """Migrate to the retention profile; `snapshot=True` first writes a verified backup."""
         self._require_write()
-        result = retention.migrate(self._ledger, expected_digest=expected_digest)
+        snapshot_path = (
+            self._ledger.default_snapshot_path("-pre-retention-v2")
+            if snapshot and self._ledger.path.is_file() else None)
+        result = retention.migrate(
+            self._ledger, expected_digest=expected_digest, snapshot_path=snapshot_path)
         self._ledger = retention.open_ledger(self._ledger)
         return result
+
+    def backup_ledger(self, target: Path | None = None) -> dict[str, Any]:
+        """Write a verified owner-only ledger snapshot; later erasure does not remove it."""
+        self._require_write()
+        return self._ledger.backup(target)
 
     def activate_policy(self, policy: dict[str, Any], *, actor: str, reason: str) -> dict[str, Any]:
         self._require_write()

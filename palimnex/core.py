@@ -31,7 +31,7 @@ from typing import Any
 from urllib.parse import parse_qs, quote, unquote, urlparse
 
 SCHEMA = "project-memory:v2"
-BUNDLE_VERSION = "2.8.0"
+BUNDLE_VERSION = "2.8.1"
 GRAPH_SCHEMA = "project-memory:code-graph:v3"
 GRAPH_RECORD_SCHEMA = "project-memory:graph-record:v1"
 CONTENT_ADDRESSED_GRAPH_BUNDLE_SERIES = ("2.3", "2.4")

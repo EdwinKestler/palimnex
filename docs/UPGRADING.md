@@ -108,6 +108,7 @@ What to expect:
 | 2.5 → 2.6 | Product renamed to Palimnex; reindex | Unchanged schema v1 | Configuration and naming changes below; optional retention migration added |
 | 2.6 → 2.7 | Installable package and SDK v1; reindex | Unchanged schema v1, pack v2 unchanged | Structured source locators; SDK pack import requires a signature by default |
 | 2.7 → 2.8 | Audit graph, optional Semantica extra; version change invalidates the cache, so reindex | Unchanged schema v1; new retention-control kind `adapter_receipt` | Downgrade hazard below |
+| 2.8.0 → 2.8.1 | Documentation and release-workflow corrections; version change invalidates the cache, so reindex | Unchanged schema v1; pack v2 unchanged | No other migration required |
 
 ### 2.5 → 2.6: Palimnex naming
 

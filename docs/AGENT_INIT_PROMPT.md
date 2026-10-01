@@ -19,7 +19,7 @@ Mission:
   authorization for consequential writes.
 
 Current product baseline to verify, never merely assume:
-  - Release line: 2.8.0.
+  - Release line: 2.8.1.
   - Public surface: palimnex.py, palimnex/, .palimnex.json, pyproject.toml, docs/,
     scripts/, docs/SDK.md. Additive 2.8 surfaces: palimnex.audit,
     palimnex:audit-graph:v1, optional palimnex.semantica with TTL disabled and

@@ -5,6 +5,13 @@ operator-facing behavior; cache and graph schemas are versioned independently.
 
 ## Unreleased
 
+## 2.8.1 - 2026-10-01
+
+- Switched the README and installation guide to the published PyPI package,
+  with exact `pipx`, `uv`, and `pip` pins and the Git tag retained as an
+  alternative.
+- Corrected the Trusted Publishing action pin to the peeled v1.13.0 commit so
+  the container image is available when the workflow runs.
 - Adopted the owner-approved v27 intent-specific retrieval fixture as the
   repository gate while preserving v25 as byte-identical historical evidence.
 - Added diagnostic `critical_margin_warnings` for critical expected paths at
@@ -13,6 +20,13 @@ operator-facing behavior; cache and graph schemas are versioned independently.
 - Established the corpus-scope rule that unapproved design proposals live
   under `artifacts/design/` outside the index and move into `docs/` only with
   the approved implementing change.
+
+### Upgrade notes
+
+- Upgrading from 2.8.0 to 2.8.1 invalidates the disposable Redis cache. Run
+  `index --incremental` to rebuild it with version 2.8.1.
+- API v1, SQLite ledger schema v1, Redis cache schema v3, and encrypted pack v2
+  are unchanged; no other migration is required.
 
 ## 2.8.0 - 2026-10-01
 

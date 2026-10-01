@@ -5,7 +5,7 @@ operator-facing behavior; cache and graph schemas are versioned independently.
 
 ## Unreleased
 
-## 2.8.0 - YYYY-MM-DD <!-- OWNER: replace with the release date before tagging -->
+## 2.8.0 - 2026-10-01
 
 - Replicable `palimnex:audit-graph:v1` export of eligible memory and
   non-reconstructive erasure residue, with optional signature and a sibling

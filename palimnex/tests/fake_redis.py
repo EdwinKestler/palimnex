@@ -60,6 +60,8 @@ class FakeRedis:
     def execute(self, command: str | bytes, *args: str | bytes) -> Any:
         name = self._text(command).upper()
         self.commands.append((name, *args))
+        if name == "PING":
+            return "PONG"
         if name == "GET":
             return self._get(self._text(args[0]))
         if name == "MGET":

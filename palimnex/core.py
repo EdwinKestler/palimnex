@@ -2589,16 +2589,31 @@ def clear(client: RedisClient, root: Path = ROOT) -> dict[str, Any]:
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(description=__doc__)
     result.add_argument("--version", action="version", version=BUNDLE_VERSION)
-    configured_url = next(
-        (os.environ[name] for name in redis_url_envs() if os.environ.get(name)),
-        configured_redis_url(),
-    )
+    try:
+        url_envs = redis_url_envs()
+        configured_url = next(
+            (os.environ[name] for name in url_envs if os.environ.get(name)),
+            configured_redis_url(),
+        )
+    except (ValueError, TypeError):
+        # Commands report the configuration error; `doctor` explains it.
+        url_envs, configured_url = (URL_ENV,), DEFAULT_URL
     result.add_argument(
         "--url",
         default=configured_url,
-        help=f"Redis URL (env: {', '.join(redis_url_envs())})",
+        help=f"Redis URL (env: {', '.join(url_envs)})",
     )
     commands = result.add_subparsers(dest="command", required=True)
+    init_parser = commands.add_parser(
+        "init", help="preview a starter .palimnex.json and .gitignore lines; --write creates them"
+    )
+    init_parser.add_argument(
+        "--write", action="store_true", help="create the files; without it nothing is written"
+    )
+    init_parser.add_argument("--slug", help="project slug (default: the directory name)")
+    commands.add_parser(
+        "doctor", help="check the installation; changes no configuration, cache or ledger content"
+    )
     status_parser = commands.add_parser("status")
     status_parser.add_argument(
         "--verbose", action="store_true", help="include the complete active manifest"
@@ -2858,6 +2873,16 @@ def main(argv: list[str] | None = None) -> int:
         )
         from .security import read_bounded_file
         from .semantic import SemanticMetrics, promotion_decision, semantic_status
+
+        if args.command == "init":
+            from .onboarding import init
+            print(json.dumps(init(ROOT, write=args.write, slug=args.slug), sort_keys=True))
+            return 0
+        if args.command == "doctor":
+            from .onboarding import doctor
+            report = doctor(ROOT, redis_url=args.url)
+            print(json.dumps(report, sort_keys=True))
+            return 0 if report["status"] == "healthy" else 2
 
         cache_commands = {
             "status", "validate", "index", "search", "symbols", "impact", "path",

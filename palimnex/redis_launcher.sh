@@ -132,7 +132,7 @@ configure_paths() {
 }
 
 guard_socket_path() {
-  [ "$(dirname -- "$SOCKET_PATH")" = "$STATE_DIR" ] || {
+  [ "$(dirname "$SOCKET_PATH")" = "$STATE_DIR" ] || {
     echo "refusing Redis socket outside the state directory: $SOCKET_PATH" >&2
     return 1
   }
@@ -148,20 +148,37 @@ guard_socket_path() {
 
 regular_owned_or_absent() {
   local path="$1"
-  [ ! -L "$path" ] || { echo "refusing symlinked Redis state file: $path" >&2; return 1; }
-  [ -e "$path" ] || return 0
-  [ -f "$path" ] || { echo "refusing non-file Redis state path: $path" >&2; return 1; }
-  [ "$(stat -c '%u' -- "$path")" = "$(id -u)" ] \
-    || { echo "refusing Redis state file owned by another user: $path" >&2; return 1; }
-  [ "$(stat -c '%h' -- "$path")" = "1" ] \
-    || { echo "refusing hard-linked Redis state file: $path" >&2; return 1; }
+  python3 - "$path" <<'PY'
+import os
+import stat
+import sys
+
+
+path = sys.argv[1]
+try:
+    info = os.lstat(path)
+except FileNotFoundError:
+    raise SystemExit(0)
+if stat.S_ISLNK(info.st_mode):
+    reason = "symlinked Redis state file"
+elif not stat.S_ISREG(info.st_mode):
+    reason = "non-file Redis state path"
+elif info.st_uid != os.getuid():
+    reason = "Redis state file owned by another user"
+elif info.st_nlink != 1:
+    reason = "hard-linked Redis state file"
+else:
+    raise SystemExit(0)
+print(f"refusing {reason}: {path}", file=sys.stderr)
+raise SystemExit(1)
+PY
 }
 
 read_pid_file() {
   local pid size
   [ -e "$PID_FILE" ] || return 1
   regular_owned_or_absent "$PID_FILE" || return 1
-  size="$(stat -c '%s' -- "$PID_FILE")"
+  size="$(wc -c < "$PID_FILE")"
   [ "$size" -le 32 ] || return 1
   pid="$(tr -d '[:space:]' < "$PID_FILE")"
   case "$pid" in ''|*[!0-9]*) return 1 ;; esac
@@ -178,9 +195,13 @@ live_recorded_pid() {
 managed_pid() {
   local pid expected_exe actual_exe actual_name expected_name argv0 info_pid configured_socket
   pid="$(live_recorded_pid)" || return 1
-  [ "$(stat -c '%u' -- "/proc/$pid" 2>/dev/null || true)" = "$(id -u)" ] || return 1
-  expected_exe="$(realpath -e -- "$REDIS_SERVER" 2>/dev/null || true)"
-  actual_exe="$(readlink -f -- "/proc/$pid/exe" 2>/dev/null || true)"
+  [ "$(ps -o uid= -p "$pid" 2>/dev/null | tr -d '[:space:]')" = "$(id -u)" ] || return 1
+  expected_exe="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$REDIS_SERVER")"
+  if [ -e "/proc/$pid/exe" ]; then
+    actual_exe="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "/proc/$pid/exe" 2>/dev/null || true)"
+  else
+    actual_exe="$(ps -o comm= -p "$pid" 2>/dev/null | awk '{$1=$1; print; exit}')"
+  fi
   [ -n "$expected_exe" ] && [ -n "$actual_exe" ] || return 1
   if [ "$actual_exe" != "$expected_exe" ]; then
     # Some isolated installations expose redis-server through a small wrapper
@@ -189,12 +210,14 @@ managed_pid() {
     # Accept only that narrow wrapper shape and bind it back to the live process
     # title; the PID, uid, Redis-reported PID and configured socket are still
     # checked below before the process is treated as launcher-owned.
-    expected_name="$(basename -- "$expected_exe")"
-    actual_name="$(basename -- "$actual_exe")"
+    expected_name="$(basename "$expected_exe")"
+    actual_name="$(basename "$actual_exe")"
     [ "$expected_name" = "redis-server" ] || return 1
     case "$actual_name" in redis-server|redis-server.bin) ;; *) return 1 ;; esac
-    argv0="$(tr '\0' '\n' < "/proc/$pid/cmdline" 2>/dev/null | head -1)"
-    case "$argv0" in "$actual_exe"|"$actual_exe "*) ;; *) return 1 ;; esac
+    if [ -r "/proc/$pid/cmdline" ]; then
+      argv0="$(tr '\0' '\n' < "/proc/$pid/cmdline" 2>/dev/null | head -1)"
+      case "$argv0" in "$actual_exe"|"$actual_exe "*) ;; *) return 1 ;; esac
+    fi
   fi
   answers || return 1
   info_pid="$(cli --raw info server 2>/dev/null | awk -F: '$1 == "process_id" {gsub(/\r/, "", $2); print $2; exit}')"
@@ -214,6 +237,7 @@ remove_regular_owned() {
 }
 
 start() {
+  local attempt
   umask 077
   configure_paths create
   regular_owned_or_absent "$PID_FILE"
@@ -256,7 +280,7 @@ start() {
     --dir "$STATE_DIR" --dbfilename "$DUMP_FILE" \
     --save 60 1 300 100 --appendonly no --always-show-logo no \
     > /dev/null
-  for _ in $(seq 1 60); do
+  for ((attempt = 0; attempt < 60; attempt++)); do
     if answers && managed_pid > /dev/null; then
       echo "Palimnex Redis up on owner socket $SOCKET_PATH (state $STATE_DIR)"
       return 0
@@ -268,12 +292,12 @@ start() {
 }
 
 stop() {
-  local pid
+  local attempt pid
   configure_paths inspect
   if pid="$(managed_pid)"; then
     # Persist the index before exit so the next start needs no reindex.
     cli shutdown save > /dev/null 2>&1 || kill "$pid" 2>/dev/null || true
-    for _ in $(seq 1 60); do
+    for ((attempt = 0; attempt < 60; attempt++)); do
       if ! kill -0 "$pid" 2>/dev/null; then
         remove_regular_owned "$PID_FILE"
         [ ! -e "$SOCKET_PATH" ] || rm -f -- "$SOCKET_PATH"
@@ -323,7 +347,16 @@ status() {
     keys="$(cli dbsize 2>/dev/null | tr -dc '0-9')"
     echo "keys:     ${keys:-unknown}"
     if [ -f "$STATE_DIR/$DUMP_FILE" ]; then
-      echo "dump:     $(stat -c '%s bytes, saved %y' "$STATE_DIR/$DUMP_FILE" | cut -d. -f1)"
+      python3 - "$STATE_DIR/$DUMP_FILE" <<'PY'
+from datetime import datetime
+import os
+import sys
+
+
+info = os.stat(sys.argv[1], follow_symlinks=False)
+saved = datetime.fromtimestamp(info.st_mtime).isoformat(sep=" ", timespec="seconds")
+print(f"dump:     {info.st_size} bytes, saved {saved}")
+PY
     fi
     return 0
   fi

@@ -199,6 +199,8 @@ managed_pid() {
   expected_exe="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$REDIS_SERVER")"
   if [ -e "/proc/$pid/exe" ]; then
     actual_exe="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "/proc/$pid/exe" 2>/dev/null || true)"
+  elif command -v lsof > /dev/null 2>&1; then
+    actual_exe="$(lsof -a -p "$pid" -d txt -Fn 2>/dev/null | sed -n 's/^n//p' | head -1)"
   else
     actual_exe="$(ps -o comm= -p "$pid" 2>/dev/null | awk '{$1=$1; print; exit}')"
   fi

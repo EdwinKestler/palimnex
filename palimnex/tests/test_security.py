@@ -185,6 +185,14 @@ class ContentAdmissionTests(unittest.TestCase):
                 canary.encode("utf-8"), repr(client.commands).encode("utf-8")
             )
 
+    def test_json_nesting_limit_ignores_brackets_inside_strings(self) -> None:
+        raw = json.dumps(
+            {"description": "[" * (security.MAX_JSON_NESTING + 1)},
+            separators=(",", ":"),
+        ).encode("utf-8")
+
+        self.assertEqual(security.scan_bytes(raw), [])
+
     def test_duplicate_sensitive_json_array_is_not_hidden_by_placeholder(self) -> None:
         sensitive_name = "wallet_" + "seed"
         words = ["alpha"] * 12

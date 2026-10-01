@@ -13,6 +13,7 @@ def main() -> None:
     assert API_VERSION == 1 and __version__ == "2.7.0"
     package = files("palimnex")
     assert package.joinpath("py.typed").is_file()
+    assert package.joinpath("redis_launcher.sh").is_file()
     assert any(package.joinpath("schemas").iterdir())
     assert any(package.joinpath("evaluation").iterdir())
     with tempfile.TemporaryDirectory(prefix="palimnex-installed-") as temporary:

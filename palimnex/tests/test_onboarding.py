@@ -361,5 +361,64 @@ class LedgerSnapshotTests(unittest.TestCase):
         self.assertFalse((self.root / ".private/backups").exists())
 
 
+
+class PackagedRedisLauncherTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory(prefix="pmx-")
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        self.config = {"project_slug": "launcher", "project_id": str(uuid.uuid4()), "cache_mode": "on",
+                       "redis_socket_path": ".palimnex/redis/redis.sock"}
+        (self.root / ".palimnex.json").write_text(json.dumps(self.config), encoding="utf-8")
+
+    def _cli(self, *arguments: str, extra: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
+        environment = {**os.environ, "PYTHONPATH": str(REPOSITORY), **(extra or {})}
+        environment.pop("PALIMNEX_ROOT", None)
+        return subprocess.run([sys.executable, "-m", "palimnex", *arguments], cwd=self.root,
+                              env=environment, capture_output=True, text=True, check=False)
+
+    def test_packaged_launcher_is_identical_to_the_repository_script(self) -> None:
+        # scripts/palimnex_redis.sh is the reviewed, indexed source; the package carries a copy.
+        self.assertEqual(core.REDIS_LAUNCHER.read_bytes(),
+                         (REPOSITORY / "scripts/palimnex_redis.sh").read_bytes())
+
+    def test_status_and_guard_target_the_current_repository_without_writing(self) -> None:
+        fake_cli = self.root / "fake-cli"
+        fake_cli.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+        fake_cli.chmod(0o700)
+        fakes = {"REDIS_SERVER_BIN": "/bin/true", "REDIS_CLI_BIN": str(fake_cli)}
+        status = self._cli("redis", "status", extra=fakes)
+        self.assertEqual(status.returncode, 1)
+        self.assertIn(str(self.root / ".palimnex/redis/redis.sock"), status.stdout)
+        self.assertEqual(self._cli("redis", "guard", extra=fakes).returncode, 0)
+        self.assertFalse((self.root / ".palimnex").exists())
+
+    def test_start_refuses_a_too_long_socket_path_before_running_the_launcher(self) -> None:
+        self.config["redis_socket_path"] = ".palimnex/" + "d" * core.UNIX_SOCKET_PATH_LIMIT + "/redis.sock"
+        (self.root / ".palimnex.json").write_text(json.dumps(self.config), encoding="utf-8")
+        with mock.patch.object(subprocess, "run") as run:
+            with self.assertRaisesRegex(ValueError, "PALIMNEX_URL"):
+                core.run_redis_launcher("start", self.root)
+        run.assert_not_called()
+
+    def test_start_requires_the_client_to_use_the_launcher_socket(self) -> None:
+        del self.config["redis_socket_path"]
+        (self.root / ".palimnex.json").write_text(json.dumps(self.config), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "redis_socket_path"):
+            core.run_redis_launcher("start", self.root)
+
+    @unittest.skipUnless(shutil.which("redis-server") and shutil.which("redis-cli"), "Redis is required")
+    def test_real_start_index_and_stop(self) -> None:
+        (self.root / "docs").mkdir()
+        (self.root / "docs/notes.md").write_text("# Notes\n\nRetry budget is three.\n", encoding="utf-8")
+        started = self._cli("redis", "start")
+        self.addCleanup(self._cli, "redis", "stop")
+        self.assertEqual(started.returncode, 0, started.stderr)
+        self.assertEqual(self._cli("index", "--incremental").returncode, 0)
+        found = json.loads(self._cli("search", "retry budget").stdout)
+        self.assertEqual([item["path"] for item in found["results"]], ["docs/notes.md"])
+        self.assertEqual(self._cli("redis", "stop").returncode, 0)
+
+
 if __name__ == "__main__":
     unittest.main()

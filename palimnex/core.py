@@ -14,10 +14,12 @@ import math
 import os
 import re
 import secrets
+import shutil
 import socket
 import ssl
 import stat
 import struct
+import subprocess
 import sys
 import time
 from collections import deque
@@ -238,6 +240,45 @@ RUST_DEFINITION_RE = re.compile(
 RUST_USE_RE = re.compile(r"^\s*(?:pub\s+)?use\s+([^;]+);")
 RUST_CALL_RE = re.compile(r"\b([A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*)\s*\(")
 RUST_CALL_EXCLUSIONS = {"fn", "if", "while", "for", "loop", "match", "return", "Some", "Ok", "Err"}
+
+
+REDIS_LAUNCHER = Path(__file__).with_name("redis_launcher.sh")
+REDIS_LAUNCHER_ACTIONS = ("start", "stop", "status", "reset", "guard")
+DEFAULT_REDIS_SOCKET = ".palimnex/redis/redis.sock"
+
+
+def run_redis_launcher(action: str, root: Path = ROOT) -> int:
+    """Run the packaged launcher for `root`; it keeps all state under .palimnex/."""
+    if action not in REDIS_LAUNCHER_ACTIONS:
+        raise ValueError("unsupported Redis launcher action")
+    bash = shutil.which("bash")
+    if bash is None or not REDIS_LAUNCHER.is_file():
+        raise ValueError("the Redis launcher needs bash and the packaged redis_launcher.sh")
+    configured = project_config(root).get("redis_socket_path")
+    if configured is None and action == "start":
+        raise ValueError(
+            f"{CONFIG_FILE} does not set redis_socket_path, so Palimnex would connect to "
+            f"loopback TCP rather than this launcher's socket; add \"redis_socket_path\": "
+            f"\"{DEFAULT_REDIS_SOCKET}\" (`palimnex init` writes it)"
+        )
+    configured = DEFAULT_REDIS_SOCKET if configured is None else configured
+    if not isinstance(configured, str) or not configured or Path(configured).is_absolute():
+        raise ValueError(f"{CONFIG_FILE} redis_socket_path must be repository-relative")
+    socket_path = (root / configured).absolute()
+    length = len(os.fsencode(str(socket_path)))
+    if action == "start" and length >= UNIX_SOCKET_PATH_LIMIT:
+        raise ValueError(
+            f"the Redis socket path would be {length} bytes; this platform allows at most "
+            f"{UNIX_SOCKET_PATH_LIMIT - 1}. Use a shorter checkout path, or run an owner-only "
+            "Redis at a short path and set PALIMNEX_URL (docs/INSTALL.md)"
+        )
+    environment = {
+        **os.environ,
+        "PALIMNEX_REDIS_ROOT": str(root),
+        "PALIMNEX_REDIS_DIR": str(socket_path.parent),
+        "PALIMNEX_REDIS_SOCKET": str(socket_path),
+    }
+    return subprocess.run([bash, str(REDIS_LAUNCHER), action], env=environment, check=False).returncode
 
 
 def config_present(root: Path = ROOT) -> bool:
@@ -2614,6 +2655,10 @@ def parser() -> argparse.ArgumentParser:
     commands.add_parser(
         "doctor", help="check the installation; changes no configuration, cache or ledger content"
     )
+    redis_parser = commands.add_parser(
+        "redis", help="manage this repository's guarded owner-only Redis (packaged launcher)"
+    )
+    redis_parser.add_argument("action", choices=REDIS_LAUNCHER_ACTIONS)
     status_parser = commands.add_parser("status")
     status_parser.add_argument(
         "--verbose", action="store_true", help="include the complete active manifest"
@@ -2891,6 +2936,8 @@ def main(argv: list[str] | None = None) -> int:
         from .security import read_bounded_file
         from .semantic import SemanticMetrics, promotion_decision, semantic_status
 
+        if args.command == "redis":
+            return run_redis_launcher(args.action, ROOT)
         if args.command == "init":
             from .onboarding import init
             print(json.dumps(init(ROOT, write=args.write, slug=args.slug), sort_keys=True))

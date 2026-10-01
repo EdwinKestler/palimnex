@@ -8,6 +8,7 @@ import os
 import shutil
 import socket
 import subprocess
+import sys
 import tempfile
 import unittest
 import uuid
@@ -19,6 +20,8 @@ from palimnex import core
 from palimnex import onboarding
 from palimnex.tests.fake_redis import FakeRedis
 from palimnex.tests.support import write_project
+
+REPOSITORY = Path(__file__).resolve().parents[2]
 
 
 def tree_digest(root: Path) -> dict[str, str]:
@@ -250,6 +253,45 @@ class InitTests(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertEqual(json.loads(output.getvalue())["mode"], "preview")
         self.assertFalse((self.root / ".palimnex.json").exists())
+
+
+
+@unittest.skipUnless(shutil.which("git"), "git is required")
+class LedgerCommitGuardTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory(prefix="pmx-")
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        write_project(self.root)
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+
+    def _cli(self, *arguments: str) -> subprocess.CompletedProcess[str]:
+        environment = {**os.environ, "PYTHONPATH": str(REPOSITORY)}
+        environment.pop("PALIMNEX_ROOT", None)
+        return subprocess.run([sys.executable, "-m", "palimnex", *arguments], cwd=self.root,
+                              env=environment, capture_output=True, text=True, check=False)
+
+    def test_sdk_refuses_an_unignored_ledger_and_creates_nothing(self) -> None:
+        from palimnex.api import Palimnex
+        with self.assertRaisesRegex(ValueError, "Git does not ignore"):
+            Palimnex(self.root, writable=True).initialize()
+        self.assertFalse((self.root / ".private").exists())
+
+    def test_cli_refuses_explicit_and_implicit_creation(self) -> None:
+        for arguments in (("ledger-init",), ("session-start", "--task", "t")):
+            result = self._cli(*arguments)
+            self.assertEqual(result.returncode, 1, result.stderr)
+            self.assertIn("Git does not ignore", json.loads(result.stderr)["error"])
+        self.assertFalse((self.root / ".private").exists())
+
+    def test_explicit_override_and_ignored_path_both_create_the_ledger(self) -> None:
+        result = self._cli("ledger-init", "--allow-unignored-ledger")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue((self.root / ".private/memory.sqlite3").is_file())
+        shutil.rmtree(self.root / ".private")
+        (self.root / ".gitignore").write_text(".private/\n", encoding="utf-8")
+        from palimnex.api import Palimnex
+        self.assertEqual(Palimnex(self.root, writable=True).initialize()["status"], "ready")
 
 
 if __name__ == "__main__":

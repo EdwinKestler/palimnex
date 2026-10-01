@@ -2678,7 +2678,12 @@ def parser() -> argparse.ArgumentParser:
     migration_parser.add_argument("--limit", type=int, default=5)
     commands.add_parser("clear")
 
-    commands.add_parser("ledger-init")
+    ledger_init = commands.add_parser("ledger-init")
+    ledger_init.add_argument(
+        "--allow-unignored-ledger",
+        action="store_true",
+        help="create the ledger even though Git does not ignore its path",
+    )
     commands.add_parser("ledger-status")
     session_start = commands.add_parser("session-start")
     session_start.add_argument("--task", required=True)
@@ -3191,6 +3196,7 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps({**output, "cache_mode": cache_mode}, sort_keys=True))
             return 0
         if args.command == "ledger-init":
+            ledger.allow_unignored_path = args.allow_unignored_ledger
             print(json.dumps(ledger.initialize(), sort_keys=True))
             return 0
         if args.command == "ledger-status":

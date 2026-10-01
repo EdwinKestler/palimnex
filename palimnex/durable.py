@@ -583,6 +583,8 @@ class MemoryLedger:
 
     schema = LEDGER_SCHEMA
     table_columns = TABLE_COLUMNS
+    # Explicit operator override for creating a ledger Git would not ignore.
+    allow_unignored_path = False
 
     def __init__(self, path: Path, *, project_id: str, project_slug: str, root: Path,
                  source_resolvers=None):
@@ -596,6 +598,31 @@ class MemoryLedger:
         self.project_id = uuid.UUID(self.project_id_text).bytes
         self.project_slug = project_slug
         self.lock_path = self.path.with_suffix(self.path.suffix + ".lock")
+
+    def _require_ignored_location(self) -> None:
+        """Refuse to create a ledger that Git would commit; skipped outside Git."""
+        if self.allow_unignored_path or self.path.exists():
+            return
+        from .vcs import git_ignore_state
+
+        relative = self.path.relative_to(self.root).as_posix()
+        state = git_ignore_state(self.root, relative)
+        override = (
+            "`palimnex ledger-init --allow-unignored-ledger` "
+            "(SDK: `initialize(allow_unignored_ledger=True)`)"
+        )
+        if state == "not_ignored":
+            raise ValueError(
+                f"refusing to create the durable ledger at {relative}: Git does not ignore it, "
+                "so `git add -A` would commit it. Add `.palimnex/` to .gitignore "
+                f"(`palimnex init --write` does this), or override explicitly with {override}"
+            )
+        if state == "unknown":
+            raise ValueError(
+                f"refusing to create the durable ledger at {relative}: Git could not report "
+                f"whether it is ignored. Check `git check-ignore -v {relative}`, or override "
+                f"explicitly with {override}"
+            )
 
     def _guard_paths(self) -> None:
         _ensure_private_directory(self.root, self.path.parent)
@@ -633,6 +660,8 @@ class MemoryLedger:
             os.close(descriptor)
 
     def _open(self, *, create: bool) -> sqlite3.Connection:
+        if create:
+            self._require_ignored_location()
         self._guard_paths()
         if not create and not self.path.is_file():
             raise ValueError(f"durable ledger is missing: {self.path}")
@@ -677,6 +706,8 @@ class MemoryLedger:
         write: bool = False,
         require_semantic: bool = True,
     ) -> Iterator[sqlite3.Connection]:
+        if create:
+            self._require_ignored_location()
         with self.file_lock(exclusive=write):
             connection = self._open(create=create)
             try:
@@ -701,6 +732,7 @@ class MemoryLedger:
                 connection.close()
 
     def initialize(self) -> dict[str, Any]:
+        self._require_ignored_location()
         self._guard_paths()
         with self.file_lock(exclusive=True):
             connection = self._open(create=True)

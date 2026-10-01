@@ -67,8 +67,10 @@ class Palimnex:
         if not self.writable:
             raise PermissionError("SDK client is read-only; explicit writable=True required")
 
-    def initialize(self) -> dict[str, Any]:
+    def initialize(self, *, allow_unignored_ledger: bool = False) -> dict[str, Any]:
+        """Create the ledger; refuses a path Git would commit unless explicitly overridden."""
         self._require_write()
+        self._ledger.allow_unignored_path = allow_unignored_ledger
         return self._ledger.initialize()
 
     def status(self) -> dict[str, Any]:

@@ -1,1 +1,2 @@
 include docs/SDK.md
+recursive-include palimnex/tests *.py

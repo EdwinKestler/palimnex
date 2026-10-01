@@ -12,7 +12,7 @@ from pathlib import Path
 from . import durable as d
 from .retention import migrate, open_ledger, RetentionLedger, POLICY
 from .experience import assemble_context
-from .tests.support import write_project, PROJECT_ID
+from ._offline_fixtures import PROJECT_ID, write_project
 
 ARMS=('source_only','history','history_cleanup')
 FAMILIES=('recall','correction','revocation','abstention','workflow','cleanup')

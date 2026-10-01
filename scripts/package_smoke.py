@@ -1,4 +1,5 @@
 """Exercise installed distributions outside the source tree (no Redis/network)."""
+from importlib.metadata import version as distribution_version
 from importlib.resources import files
 from pathlib import Path
 import subprocess
@@ -6,23 +7,27 @@ import sys
 import tempfile
 
 from palimnex import API_VERSION, Palimnex, __version__
-from palimnex.tests.support import write_project
+from palimnex._offline_fixtures import write_project
 
 
 def main() -> None:
-    assert API_VERSION == 1 and __version__ == "2.7.0"
+    installed_version = distribution_version("palimnex")
+    assert API_VERSION == 1 and __version__ == installed_version
     package = files("palimnex")
     assert package.joinpath("py.typed").is_file()
     assert package.joinpath("redis_launcher.sh").is_file()
     assert any(package.joinpath("schemas").iterdir())
     assert any(package.joinpath("evaluation").iterdir())
+    assert not package.joinpath("tests").is_dir()
     with tempfile.TemporaryDirectory(prefix="palimnex-installed-") as temporary:
         root = Path(temporary)
         write_project(root)
         reader = Palimnex(root)
         assert reader.status()["status"] == "missing"
-        version = subprocess.check_output([sys.executable, "-m", "palimnex", "--version"], cwd=root, text=True)
-        assert "2.7.0" in version
+        cli_version = subprocess.check_output(
+            [sys.executable, "-m", "palimnex", "--version"], cwd=root, text=True
+        ).strip()
+        assert cli_version == installed_version
         commands = () if "--core-only" in sys.argv else ("evaluate-challenges", "evaluate-longitudinal")
         for command in commands:
             subprocess.run([sys.executable, "-m", "palimnex", command], cwd=root, check=True,

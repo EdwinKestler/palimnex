@@ -9,8 +9,8 @@ from pathlib import Path
 
 from . import cache_v3, core
 from .retrieval import budget_items, retrieve_sources
-from .tests.fake_redis import FakeRedis
-from .tests.support import write_project
+from ._offline_fixtures import write_project
+from ._offline_redis import FakeRedis
 
 FIXTURE_SHA256 = '8a1de2e3275fba858990c144f2eab34bf9a111c351f04eef8547fba48137abf3'
 

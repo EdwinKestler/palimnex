@@ -19,6 +19,7 @@ from typing import Iterable
 
 
 MAX_SCAN_BYTES = 1_000_000
+MAX_JSON_NESTING = 512
 SCANNER_VERSION = "content-privacy:v2"
 ENTROPY_THRESHOLD = 3.5
 
@@ -149,8 +150,38 @@ def _credential_assignment_rule(name: str, value: str) -> str | None:
     return None
 
 
+def _json_nesting_exceeds_limit(text: str) -> bool:
+    """Bound JSON-shaped nesting before decoder behavior can vary by Python."""
+    if not text.lstrip().startswith(("[", "{")):
+        return False
+    depth = 0
+    in_string = False
+    escaped = False
+    for character in text:
+        if in_string:
+            if escaped:
+                escaped = False
+            elif character == "\\":
+                escaped = True
+            elif character == '"':
+                in_string = False
+        elif character == '"':
+            in_string = True
+        elif character in "[{":
+            depth += 1
+            if depth > MAX_JSON_NESTING:
+                return True
+        elif character in "]}":
+            depth -= 1
+            if depth < 0:
+                return False
+    return False
+
+
 def _structured_json_findings(text: str) -> set[ContentFinding]:
     """Inspect JSON keys without exposing values or relying on line layout."""
+    if _json_nesting_exceeds_limit(text):
+        return {ContentFinding("json-structure-too-deep", 1)}
     findings: set[ContentFinding] = set()
 
     # Preserve coverage of duplicate object keys: json.loads keeps only the

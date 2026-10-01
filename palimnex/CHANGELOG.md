@@ -16,6 +16,13 @@ operator-facing behavior; cache and graph schemas are versioned independently.
 - Documented audit-graph, optional Semantica projection, and fail-closed
   adapter receipts in README, SDK, design, runbook, retention, compatibility,
   and the GitHub Pages site.
+- Corrected 32 documentation statements that disagreed with the code, found
+  by the claim check in `artifacts/doc-claim-check/`. Among them: the durable
+  ledger default path, the exact 4,096-entry hot-stream cap, mode-dependent
+  `clear` behavior, the missing `ledger-init` quick-start step, exit code `2`
+  for a non-ready ledger, the longitudinal result field set, and that only
+  packs registered through `RetentionLedger.register_pack` block erasure
+  (`memory-export` does not register packs). No code behavior changed.
 
 ## 2.7.0 - 2026-09-16
 
@@ -123,8 +130,9 @@ writes; this release does not claim distributed or forensic erasure.
 - Frozen `evaluate` search cases and the migration p95 samples call the
   shipped `search()` scorer. The duplicate in-process v3 hot scorer is gone.
 - Shadow migration `legacy_comparison` is an asserted v2-versus-v3 check, not
-  a literal `"passed"`: v3 must return every expected path, and v2 must either
-  do the same or overlap v3.
+  a literal `"passed"`: v3 must return every expected path, and v2 must return
+  a non-empty list of paths. v2 paths are not checked against expected paths
+  or against v3.
 
 ### Security and authority
 
@@ -161,7 +169,8 @@ writes; this release does not claim distributed or forensic erasure.
 - Portable pack schema: `project-memory:pack:v2`; pack operations require the
   reviewed distribution `python3-cryptography` package.
 - The legacy `project-memory:v2` namespace is read-only during shadow
-  comparison and is never changed by v3 migration or `clear`.
+  comparison and is never changed by v3 migration or by `clear` in `shadow` or
+  `on` mode. With `cache_mode` `off` (the default), `clear` removes the v2 index.
   It still contains full source chunks and plaintext lexical-token lists and
   remains sensitive until a separate retirement or lower-level local reset.
 - Migration acceptance requires an equal-corpus, byte-stable v2 baseline, all

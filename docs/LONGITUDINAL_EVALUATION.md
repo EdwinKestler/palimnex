@@ -86,16 +86,21 @@ retrieval results alone prove neither physical erasure nor correct cleanup.
 
 ## Metrics and result integrity
 
-Development reports record scenario/session/query counts, process restart
-count, fixture digest, code identity, backend configuration, output byte
-budget, source fingerprints, and whether cleanup operations actually ran.
-Measure evidence hit rate, forbidden/stale evidence exposure, negative-query
-abstention, serialized output bytes, and retrieval latency separately per arm.
-Report missing or truncated context explicitly. Never substitute the same
+Development reports record scenario and family counts, sessions per scenario,
+cohort and generator digests, per-arm summaries, and for each observation its
+arm, worker PID, context bytes, latency, forbidden-evidence flag and
+erased-record count. Process-restart count, backend configuration, output byte
+budget and source fingerprints are not yet recorded as report fields.
+Per-arm summaries report evidence success, negative-query abstention accuracy,
+mean context bytes and p95 retrieval latency. Forbidden (obsolete) evidence
+exposure is a per-observation flag that fails that observation; it has no
+aggregated per-arm rate. Missing or truncated context (`omitted_count`,
+`candidate_scan_truncated`) is not yet reported. Never substitute the same
 scalar for evidence recall, answer correctness, and task success.
 
-Model and task metrics remain `not_measured` until real external results are
-supplied. Zero model calls and development-only status must remain visible.
+Model and task metrics remain JSON `null` (`task_success`,
+`supported_answer_accuracy`; scored values with `measured: 0`) until real
+external results are supplied. Zero model calls and development-only status must remain visible.
 Latency from synthetic local subprocesses is not a production model or Redis
 latency measurement. Storage measurements must distinguish canonical bytes,
 derived bytes, retained recovery copies, and unresolved external copies.
@@ -130,20 +135,21 @@ manifest excludes its own `manifest_digest` from its digest input.
 }
 ```
 
-The controller stores the complete manifest before execution. Each runner
-request contains only the manifest digest, scenario/session/query/arm identity,
-visible-input digest, current question/context, and declared model/budgets.
-It excludes scoring gold and future actions. A persisted result envelope is:
+The controller stores the complete manifest before execution. Each prepared
+request in `requests.json` contains scenario/session/query/arm identity, the
+visible-input digest, and the query with its retrieved context. The manifest
+digest, model and budgets live in `manifest.json`. Requests exclude scoring
+gold and future actions. A persisted result envelope has exactly these fields;
+`usage` has one integer per manifest budget key:
 
 ```json
 {
-  "schema": "project-memory:longitudinal-answer:v1",
   "manifest_digest": "SHA256",
   "scenario_id": "s01", "session": 1, "query_id": "q01", "arm": "source_only",
   "visible_input_digest": "SHA256",
   "answer": "runner response",
   "abstained": false,
-  "usage": {"input_tokens": 100, "output_tokens": 20},
+  "usage": {"input_tokens": 100, "output_tokens": 20, "context_bytes": 200},
   "labels": {
     "method": "human",
     "answer_correct": true,
@@ -154,7 +160,9 @@ It excludes scoring gold and future actions. A persisted result envelope is:
 }
 ```
 
-These shapes are an integration proposal until implemented. A result cannot
+`longitudinal-prepare` and `longitudinal-score` enforce these shapes
+(`seal_manifest` and `score_external`); any other field set is rejected.
+`labels.method` must be `human`, `deterministic` or `model_judge`. A result cannot
 silently change its manifest's model, budgets, cohort, or arm configuration.
 Require every `(scenario_id, session, query_id, arm)` exactly once when scoring
 a complete run. Null labels mean unmeasured and are excluded from that metric's

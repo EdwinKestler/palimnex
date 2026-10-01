@@ -2085,7 +2085,7 @@ def _redis_memory_bytes(client: Any, keys: list[str]) -> int:
 def _legacy_comparison_status(
     comparisons: list[dict[str, Any]], search_cases: list[dict[str, Any]]
 ) -> str:
-    """Require both backends to return every expected frozen-search path."""
+    """Require v3 to return every expected frozen-search path and v2 a non-empty path list."""
     expected = {
         case["id"]: set(case["expected_paths"])
         for case in search_cases

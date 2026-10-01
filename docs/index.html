@@ -299,7 +299,7 @@
       <div class="quickstart-copy">
         <p class="eyebrow"><span></span> Quick start</p>
         <h2>From checkout to verified retrieval.</h2>
-        <p>Run from the repository root. The guarded launcher creates a private Redis instance under ignored local state.</p>
+        <p>Run from the repository root. The guarded launcher creates a private Redis instance under ignored local state. <code>ledger-init</code> is a one-time local write that creates the durable ledger.</p>
         <div class="doc-links">
           <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/SDK.md"><strong>SDK and extensions</strong><small>Python API, audit graph, optional Semantica →</small></a>
           <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/RUNBOOK.md"><strong>Operator runbook</strong><small>Day-to-day commands and failure recovery →</small></a>
@@ -314,6 +314,7 @@
 <span class="prompt">$</span> python3 palimnex.py index --incremental
 <span class="prompt">$</span> python3 palimnex.py validate --deep
 <span class="prompt">$</span> python3 palimnex.py evaluate --limit 5
+<span class="prompt">$</span> python3 palimnex.py ledger-init
 <span class="prompt">$</span> python3 palimnex.py ledger-status
 <span class="prompt">$</span> python3 palimnex.py audit-graph
 

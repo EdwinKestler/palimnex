@@ -1,4 +1,4 @@
-# Palimnex v2.5 runbook
+# Palimnex runbook (2.7.0)
 
 Status: local repository-memory operations only. No command here starts a
 chain, creates a wallet, installs WDK/MCP, or contacts a public network.
@@ -59,8 +59,8 @@ Expected command exit meanings:
 | Exit | Meaning |
 |---:|---|
 | `0` | command succeeded; cache is fresh; quality gate passed |
-| `2` | cache is missing/stale, or a quality/promotion gate did not pass |
-| `1` | operational, privacy, schema, integrity or input error |
+| `2` | cache is missing/stale; a quality/promotion gate did not pass; `ledger-status` is not `ready` (missing, stale or corrupt, including a failed integrity check); or `reverify` evidence did not verify |
+| `1` | operational, privacy, schema or input error raised as an exception |
 
 Use `status --verbose` only for diagnosis. Normal `status` is intentionally
 compact.
@@ -100,8 +100,10 @@ Allowed explicit kinds are `task`, `decision`, `failure`, `outcome`, `fact`,
 
 `remember` defaults to `retention=session`. All retention classes are written
 to crash-safe local SQLite staging/audit, but only explicit `durable` events
-can be promoted or exported. Local physical pruning of `volatile` and
-`session` rows is not implemented in v2.5.
+can be promoted or exported. Nothing prunes `volatile` or `session` rows
+automatically. After an authorized retention migration and policy activation,
+`cleanup-plan` and `cleanup-apply` can erase expired rows by TTL rule
+(tombstone plus compaction); see `docs/RETENTION.md`.
 
 For a correction, keep the same subject and name the predecessor:
 
@@ -123,8 +125,9 @@ Local writes always receive `observed_at` from the ledger clock. There is no
 `remember --observed-at` option, and the local ledger API refuses a supplied
 recorded time; callers control only `--valid-from`. Import alone may preserve a
 foreign historical `observed_at`, but imported events remain quarantined and
-untrusted. Verification attempts likewise use the actual check time, and the
-ledger validates event, evidence, verification and attempt chronology.
+untrusted. Verification attempts likewise use the ledger-clock check time,
+clamped so it never precedes the event's previous attempt, and the ledger
+validates event, evidence, verification and attempt chronology.
 
 ## 4. Recall current or historical memory
 
@@ -251,9 +254,11 @@ any remembered action.
 
 Generate one new raw key in an ignored, private directory. The command creates
 the file exclusively at mode `0600` and prints only its path, format and key
-identifier, never its 32 bytes:
+identifier, never its 32 bytes. It does not create parent directories, so
+create the private directory first:
 
 ```bash
+install -d -m 0700 .palimnex/project-memory
 python3 palimnex.py memory-keygen \
   .palimnex/project-memory/transfer-2026-09.key
 python3 palimnex.py ledger-status

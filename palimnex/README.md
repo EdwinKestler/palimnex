@@ -127,9 +127,11 @@ It never writes to the legacy namespace, proves its bytes unchanged, fills all
 three retained v3 generations, and requires an equal corpus, Recall at least
 0.95, zero forbidden hits, total retained-v3 Redis size at most `0.60x` v2,
 and shipped `search()` p95 at most `10.0x` v2. The retired in-process hot
-scorer used `1.20x`; that is not the current executable gate. `clear` deletes only this
-project's v3 cache and reports that both the durable ledger and v2 were
-untouched.
+scorer used `1.20x`; that is not the current executable gate. With `cache_mode`
+`shadow` or `on`, `clear` deletes only this project's v3 cache and reports that
+both the durable ledger and v2 were untouched. With `off` (the default), it
+deletes this project's legacy v2 cache namespace instead. Neither mode touches
+the durable ledger.
 
 The preserved legacy v2 namespace still contains full source chunks and
 plaintext lexical-token lists. It remains sensitive rollback state until a
@@ -215,7 +217,9 @@ is `historical_only` and cannot authorize actions.
 For local writes the ledger stamps `observed_at`; callers may supply only
 `valid_from`. Only quarantined imports preserve a foreign recorded time.
 Event, evidence, verification and verification-attempt chronology is
-validated, and an append-only attempt timestamp is the actual check time.
+validated, and an append-only attempt timestamp is the ledger-clock check
+time, clamped so it never precedes the event's previous attempt
+(`attempt_sequence` breaks ties).
 
 Verification attempts are append-only. Current verification is re-derived
 from repository bytes: changed, unavailable or older-policy evidence makes the

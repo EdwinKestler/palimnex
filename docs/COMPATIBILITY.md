@@ -9,8 +9,9 @@ and storage format identifiers. They remain unchanged so compatible Redis v2/v3
 records, SQLite schema v1 ledgers, encrypted pack v2 files, workflows,
 retention plans, and tombstones are not silently reinterpreted.
 
-`PROJECT_MEMORY_URL` remains a secondary Redis URL alias for migrations;
-`PALIMNEX_URL` is preferred. New state defaults to `.palimnex/` and new
+`PALIMNEX_URL` is the built-in Redis URL variable. `PROJECT_MEMORY_URL` is not
+a built-in alias: it is honored only when a repository lists it in
+`.palimnex.json` `redis_url_envs`, as this repository does for migrations. New state defaults to `.palimnex/` and new
 repositories use `.palimnex.json`. Renaming a format identifier requires a
 new schema version and an explicit migration, not a search-and-replace.
 

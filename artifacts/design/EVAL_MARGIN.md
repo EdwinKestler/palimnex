@@ -1,5 +1,7 @@
 # Frozen evaluation margin
 
+Status: proposal awaiting owner decision; not indexed (see AGENTS.md).
+
 ## Status and constraints
 
 This note records analysis on `fc1d67b110dbcaa7f6de007f64b49dfce94071aa`,

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "palimnex"
-version = "2.7.0"
+dynamic = ["version"]
 description = "Repository-local evidence, historical memory, and explicit retention controls"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -30,6 +30,9 @@ Repository = "https://github.com/EdwinKestler/palimnex"
 [tool.setuptools]
 packages = ["palimnex", "palimnex.tests"]
 include-package-data = false
+
+[tool.setuptools.dynamic]
+version = {attr = "palimnex.core.BUNDLE_VERSION"}
 
 [tool.setuptools.package-data]
 palimnex = ["py.typed", "README.md", "CHANGELOG.md", "redis_launcher.sh", "schemas/*.json", "evaluation/*.json"]

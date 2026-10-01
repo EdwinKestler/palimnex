@@ -8,7 +8,14 @@ claim deletion from external copies.
 Existing SQLite schema v1, Redis cache v3 and encrypted pack v2 formats remain
 the compatibility baseline.
 
-Copy these paths to another repository while preserving their relative layout:
+To adopt Palimnex in another repository, follow `docs/INSTALL.md`: install
+the package from a pinned release tag, add the `.gitignore` lines for
+`.palimnex/`, `*.pmem` and `*.key`, create `.palimnex.json`, and start Redis
+with the guarded launcher. Upgrades are covered in `docs/UPGRADING.md`.
+
+The older portable-bundle layout still works: copy these paths while
+preserving their relative layout, and add `scripts/palimnex_redis.sh` if you
+want the launcher. A copied bundle has no version or integrity check.
 
 ```text
 palimnex.py
@@ -32,39 +39,53 @@ This repository's full design and operator guide are
 
 ## Configuration
 
-A v2.6 repository needs a stable random UUID committed with its slug:
+A repository needs a committed `.palimnex.json` with a stable random UUID and
+an explicit slug:
 
 ```json
 {
   "project_slug": "my-repository",
-  "project_id": "00000000-0000-4000-8000-000000000000",
-  "cache_mode": "off",
-  "redis_url_envs": ["PALIMNEX_URL"],
+  "project_id": "REPLACE-WITH-A-NEW-UUID",
+  "cache_mode": "on",
   "redis_socket_path": ".palimnex/redis/redis.sock",
   "durable_ledger_path": ".palimnex/memory.sqlite3",
-  "evaluation_fixture": "palimnex/evaluation/v25.json",
-  "evaluation_fixture_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-  "exclude_paths": ["palimnex/evaluation/v25.json"],
-  "content_scan_allowlist_sha256": [],
+  "include_patterns": ["docs/**/*.md", "src/**/*.py", "tests/**/*.py"],
   "semantic_provider": {"mode": "disabled"}
 }
 ```
 
-Generate a real UUID for each project; never reuse the example or another
-project's identity. Preserve it across authorized clones of that project, but
-do not point concurrent divergent checkouts at one Redis endpoint. Redis and
-ledger paths must be repository-relative and ignored by Git. The evaluation
-fixture must be excluded from its own indexed corpus and pinned to the reviewed
-file bytes with `evaluation_fixture_sha256`; replace the fail-closed all-zero
-example with that file's reviewed SHA-256.
+Generate a real UUID for each project
+(`python3 -c "import uuid; print(uuid.uuid4())"`); never reuse the example or
+another project's identity. Preserve it across authorized clones of that
+project, but do not point concurrent divergent checkouts at one Redis
+endpoint. Set `project_slug` explicitly: it defaults to the directory name,
+and the ledger refuses to open under a different slug. Redis and ledger paths
+must be repository-relative and ignored by Git.
 
-`redis_url_envs` retains the portable and any legacy repository-specific URL
-variables. Configuration files must not contain credentials.
+`include_patterns` replaces the default corpus patterns, which cover
+`src/**`, `docs/**/*.md`, `tests/**` and root configuration files but not
+directories such as `app/` or `scripts/`. Check `status --verbose`
+(`manifest.files`) after the first index. `docs/INSTALL.md` lists the defaults
+and the always-skipped paths.
 
-`cache_mode` is the explicit cutover flag. `off` indexes and reads v2 only;
-`shadow` builds both caches while reads remain v2-authoritative; `on` indexes
-and reads v3. Missing means `off` for backward compatibility. Advance modes
-only after `migration-shadow` passes over a fresh equal-corpus v2 baseline.
+Evaluation is optional. `evaluate` needs a fixture written for your own
+corpus, excluded from the index and pinned with `evaluation_fixture` and
+`evaluation_fixture_sha256`; the fixtures bundled under
+`palimnex/evaluation/` describe Palimnex's own files. See `docs/INSTALL.md`
+for the fixture format.
+
+`redis_url_envs` is optional and defaults to `["PALIMNEX_URL"]`; list any
+legacy repository-specific URL variables there. Configuration files must not
+contain credentials.
+
+`cache_mode` is the explicit cutover flag. Use `on` for a new repository.
+`off` indexes and reads the legacy v2 cache, which stores complete source text
+and plaintext token lists in Redis; `shadow` builds both caches while reads
+remain v2-authoritative. Missing means `off` for backward compatibility.
+Advance an existing v2 deployment only after `migration-shadow` passes over a
+fresh equal-corpus v2 baseline. If you started a new repository with `off`,
+run `clear` while still in `off` mode to delete the plaintext v2 cache, then
+switch to `on` and run `index --incremental`.
 
 ## Redis endpoints
 

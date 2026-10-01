@@ -12,9 +12,10 @@ historical evidence only.
 4. `docs/DESIGN.md`
 5. `docs/SDK.md`
 6. `docs/RUNBOOK.md`
-7. `docs/RETENTION.md`
-8. `docs/V26.md`
-9. `docs/PROVENANCE.md`
+7. `docs/INSTALL.md` and `docs/UPGRADING.md` for adoption and upgrades
+8. `docs/RETENTION.md`
+9. `docs/V26.md`
+10. `docs/PROVENANCE.md`
 
 ## Working rules
 

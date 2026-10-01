@@ -22,6 +22,8 @@ historical evidence only.
 - Start non-trivial work with `python3 palimnex.py status`; index only if
   missing or stale, then run `validate --deep` and a focused search.
 - Reindex and evaluate after changing indexed files.
+- Unapproved design proposals live under artifacts/design/ and are not indexed;
+  an approved design moves into docs/ with the change that implements it.
 - Never commit `.palimnex/`, credentials, key files, packs, or live databases.
 - Never use `FLUSHDB`, `FLUSHALL`, raw Redis-key deletion, or another project's
   namespace.

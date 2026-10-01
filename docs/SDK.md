@@ -12,8 +12,9 @@ points or fetch plugins.
 
 ## Install and open
 
-To adopt Palimnex in another repository, install a pinned release tag and
-follow [`INSTALL.md`](INSTALL.md), which also covers the `.gitignore` lines
+To adopt Palimnex in another repository, install an exact published version
+(or its pinned release tag) and follow [`INSTALL.md`](INSTALL.md), which also
+covers the `.gitignore` lines
 that keep `.palimnex/`, `*.pmem` and `*.key` out of Git. For upgrades, see
 [`UPGRADING.md`](UPGRADING.md).
 
@@ -266,20 +267,19 @@ tool listing and invocation, plus read-only and session restrictions.
 
 ## Publication and release boundary
 
-This checkout prepares version 2.8.0; building it does not publish it to PyPI.
-The manual `publish.yml` workflow accepts an existing reviewed `v2.8.0` tag,
+Version 2.8.0 is published on PyPI through Trusted Publishing with provenance
+attestations for its wheel and source distribution. The manual `publish.yml`
+workflow accepts an existing reviewed release tag,
 checks that the package and runtime versions match, reruns the gate, checks
 types, builds wheel/sdist and tests the installed wheel outside the checkout.
 Only the publish job receives an OIDC token. It does not create tags or releases.
 
-Before first publication, the project owner must configure a PyPI pending
-Trusted Publisher for project `palimnex`, GitHub owner `EdwinKestler`, repository
-`palimnex`, workflow `publish.yml`, environment `pypi`. Configure that GitHub
-environment with required reviewers before dispatching. No long-lived upload
-token is needed. Review the release, authorize its tag, then manually dispatch
-the selected version and approve the environment. Package-name availability is
-not reserved by a local build. Until PyPI confirms publication, install from the
-checkout or the locally built wheel; do not assume `pip install palimnex` works.
+The PyPI Trusted Publisher is bound to project `palimnex`, GitHub owner
+`EdwinKestler`, repository `palimnex`, workflow `publish.yml`, and environment
+`pypi`. The GitHub environment may require reviewer approval. No long-lived
+upload token is needed. Review and authorize each release tag separately, then
+manually dispatch the selected version. A local build is never evidence that a
+future version has been published.
 
 References: [Python packaging metadata](https://packaging.python.org/en/latest/specifications/pyproject-toml/)
 and the [official MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk).

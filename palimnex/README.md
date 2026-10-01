@@ -9,7 +9,8 @@ Existing SQLite schema v1, Redis cache v3 and encrypted pack v2 formats remain
 the compatibility baseline.
 
 To adopt Palimnex in another repository, follow `docs/INSTALL.md`: install
-the package from a pinned release tag, add the `.gitignore` lines for
+the published package at an exact version (or from its pinned release tag),
+add the `.gitignore` lines for
 `.palimnex/`, `*.pmem` and `*.key`, create `.palimnex.json`, and start Redis
 with the guarded launcher. In 2.8.0 and later,
 `palimnex init --write` creates the configuration and `.gitignore` lines,

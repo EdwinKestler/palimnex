@@ -21,7 +21,13 @@ Semantica projection, pack identity and MCP.
 
 ## Use Palimnex in your repository
 
-Palimnex is not yet on PyPI. Install it from a pinned release tag:
+Install the exact published release from PyPI:
+
+```bash
+pipx install "palimnex[crypto]==2.8.0"
+```
+
+Or install the same release directly from its Git tag:
 
 ```bash
 pipx install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.8.0"

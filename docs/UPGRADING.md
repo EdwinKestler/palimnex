@@ -46,7 +46,15 @@ migration.
 
 ## Install the new version
 
-Reinstall from the new release tag (replace `vX.Y.Z`):
+Reinstall the exact published version from PyPI (replace `X.Y.Z`):
+
+```bash
+pipx install --force "palimnex[crypto]==X.Y.Z"
+uv tool install --force "palimnex[crypto]==X.Y.Z"
+python3 -m pip install --upgrade "palimnex[crypto]==X.Y.Z"
+```
+
+The matching Git release tag remains an alternative:
 
 ```bash
 pipx install --force "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@vX.Y.Z"

@@ -6,8 +6,7 @@ see [`UPGRADING.md`](UPGRADING.md). Commands below use the installed
 `palimnex` command; in a copied bundle or this checkout, use
 `python3 palimnex.py` instead.
 
-Palimnex is not yet published on PyPI. Install from a pinned release tag, as
-shown below.
+Palimnex 2.8.0 is published on PyPI. Install an exact version, as shown below.
 
 Steps marked **(2.8.0 and later)** use commands that are not in the 2.7.0
 release: `palimnex init`, `palimnex doctor`,
@@ -32,23 +31,33 @@ steps next to them.
 
 ## 2. Install the package
 
-Install the command-line tool in its own environment, pinned to a release tag:
+Install the command-line tool in its own environment, pinned to an exact version:
 
 ```bash
-pipx install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.8.0"
+pipx install "palimnex[crypto]==2.8.0"
 # or
-uv tool install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.8.0"
+uv tool install "palimnex[crypto]==2.8.0"
 ```
 
 To use the Python SDK from a project's own virtual environment:
 
 ```bash
+python3 -m pip install "palimnex[crypto]==2.8.0"
+```
+
+The matching Git release tag remains an alternative:
+
+```bash
+pipx install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.8.0"
+# or
+uv tool install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.8.0"
+# or, inside a project virtual environment
 python3 -m pip install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.8.0"
 ```
 
 Each method installs two commands: `palimnex` and `palimnex-mcp`. Add the
-`mcp` extra (`palimnex[crypto,mcp]`) if you need the MCP server. Always pin a
-release tag; do not install from a branch.
+`mcp` extra (`palimnex[crypto,mcp]`) if you need the MCP server. Always pin an
+exact published version or release tag; do not install from a branch.
 
 Installed commands operate on the current directory. Run them from the target
 repository's root, or set `PALIMNEX_ROOT` to that root.

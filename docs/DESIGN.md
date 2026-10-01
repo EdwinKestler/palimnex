@@ -1,6 +1,6 @@
 # Palimnex design
 
-Status: **implemented; current release line 2.7.0.** This design originated in
+Status: **implemented; current release line 2.8.0.** This design originated in
 v2.5; later additive surfaces are marked by release (for example, section
 10.1). This is repository-local memory tooling, not application protocol or
 deployment authorization.

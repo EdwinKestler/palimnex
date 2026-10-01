@@ -71,7 +71,7 @@ ledger's transaction semantics. Exceptions remain `ValueError` for invalid
 inputs/state and `PermissionError` for a read-only client. Cryptographic keys
 are never included in result envelopes.
 
-On the unreleased line after 2.7.0, three additions make ledger handling
+Since 2.8.0, three additions make ledger handling
 safer. All are additive to API v1.
 
 - Inside a Git work tree, `initialize()` and the first write refuse to create
@@ -266,8 +266,8 @@ tool listing and invocation, plus read-only and session restrictions.
 
 ## Publication and release boundary
 
-This checkout prepares version 2.7.0; building it does not publish it to PyPI.
-The manual `publish.yml` workflow accepts an existing reviewed `v2.7.0` tag,
+This checkout prepares version 2.8.0; building it does not publish it to PyPI.
+The manual `publish.yml` workflow accepts an existing reviewed `v2.8.0` tag,
 checks that the package and runtime versions match, reruns the gate, checks
 types, builds wheel/sdist and tests the installed wheel outside the checkout.
 Only the publish job receives an OIDC token. It does not create tags or releases.

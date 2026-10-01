@@ -22,7 +22,7 @@ keep their original formats. Structured locators occupy the existing string
 field; old readers abstain from verifying their unknown prefix. SDK import
 requires a signature by default; legacy CLI import remains explicitly v2.
 
-Unreleased additive schemas on this line are `palimnex:audit-graph:v1` and
+Version 2.8.0 adds `palimnex:audit-graph:v1` and the
 retention-control kind `adapter_receipt`. Pack v2 field sets are unchanged; an
 optional sibling `.audit-graph.json` is a separate document. Semantica is an
 optional extra and is never imported by core Palimnex.

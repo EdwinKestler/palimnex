@@ -38,7 +38,7 @@ migration.
    database file directly while it is in use. A plain copy of a WAL-mode
    database can miss committed data.
 
-   On versions after 2.7.0, `palimnex ledger-backup` does this for you. It
+   In 2.8.0 and later, `palimnex ledger-backup` does this for you. It
    writes a new `0600` snapshot under `backups/` beside the ledger, or to
    `--output PATH`, and verifies its integrity and logical digest. Later
    authorized erasure does not remove snapshots, so protect and delete them
@@ -70,17 +70,15 @@ palimnex index --incremental
 palimnex validate --deep
 palimnex recall "a subject you know is in memory"
 palimnex retention-status
-palimnex doctor              # after 2.7.0: all of the above checks in one report
+palimnex doctor              # 2.8.0 and later: all checks in one report
 ```
 
 What to expect:
 
-- The cache manifest records the version number that built it. After a new
-  version number, `status` reports `missing_or_invalid` and `search` fails
-  with "active cache generation is missing or malformed" until you run
-  `index --incremental`. Moving within one version number (for example, from
-  the `v2.7.0` tag to the unreleased line) may leave the cache valid; reindex
-  whenever `status` is not fresh.
+- The cache manifest records the version number that built it. The 2.7 to 2.8
+  version change invalidates the cache: `status` reports `missing_or_invalid`
+  and `search` identifies the older builder until you run
+  `index --incremental`.
 - `retention-status` may report `"migration_required": true` on a ledger that
   was never retention-migrated. That is information, not an instruction. The
   retention migration is optional; see below before running it.
@@ -101,7 +99,7 @@ What to expect:
 | 2.4 → 2.5 | New compact v3 cache beside v2; `cache_mode` missing means `off` (v2) | New SQLite ledger (`project-memory:ledger:v1`) | Migrate the cache only through `migration-shadow` (below) |
 | 2.5 → 2.6 | Product renamed to Palimnex; reindex | Unchanged schema v1 | Configuration and naming changes below; optional retention migration added |
 | 2.6 → 2.7 | Installable package and SDK v1; reindex | Unchanged schema v1, pack v2 unchanged | Structured source locators; SDK pack import requires a signature by default |
-| 2.7.0 → unreleased line | Audit graph, optional Semantica extra; same version number, so reindex only if `status` is not fresh | Unchanged schema v1; new retention-control kind `adapter_receipt` | Downgrade hazard below |
+| 2.7 → 2.8 | Audit graph, optional Semantica extra; version change invalidates the cache, so reindex | Unchanged schema v1; new retention-control kind `adapter_receipt` | Downgrade hazard below |
 
 ### 2.5 → 2.6: Palimnex naming
 
@@ -131,9 +129,9 @@ unchanged (see [`COMPATIBILITY.md`](COMPATIBILITY.md)). Around them:
 - `Palimnex.import_pack` in the SDK requires a pack signature by default. The
   CLI `memory-import` keeps the v2 behavior.
 
-### 2.7.0 → the unreleased line: downgrade hazard
+### 2.7 → 2.8: downgrade hazard
 
-The unreleased line adds the retention-control kind `adapter_receipt`, which
+Version 2.8.0 adds the retention-control kind `adapter_receipt`, which
 is written when a fail-closed Semantica (or other) erasure adapter records its
 receipt. Version 2.7.0 does not know this kind. Once a ledger contains one,
 2.7.0 refuses the whole ledger:
@@ -146,9 +144,9 @@ Recall, status and every other ledger command then fail under 2.7.0. Do not
 record adapter receipts until you no longer need to run 2.7.0 against that
 ledger.
 
-### 2.7.0 → the unreleased line: ledger creation guard
+### 2.7 → 2.8: ledger creation guard
 
-Inside a Git work tree, the unreleased line refuses to create a ledger at a
+Inside a Git work tree, version 2.8.0 refuses to create a ledger at a
 path Git does not ignore. This applies to `ledger-init`, the first
 `session-start` or other write, SDK `initialize()`, and pack activation. The
 refusal happens before any directory, lock or database file is created. An
@@ -175,8 +173,8 @@ Only repositories that still run the legacy v2 cache (`cache_mode` missing or
 The legacy v2 namespace stays in Redis as a rollback source. It contains
 complete source text and plaintext token lists, so treat it as sensitive.
 `clear` in `shadow` or `on` mode does not touch it. When you no longer need
-it, remove all Redis state with `./scripts/palimnex_redis.sh reset` (after
-2.7.0: `palimnex redis reset`), then start Redis again and reindex. If you never needed a v2 rollback (for
+it, remove all Redis state with `./scripts/palimnex_redis.sh reset` (2.8.0
+and later: `palimnex redis reset`), then start Redis again and reindex. If you never needed a v2 rollback (for
 example, a new repository that started with `off` by mistake), run
 `palimnex clear` while still in `off` mode, then switch to `on` and reindex.
 
@@ -190,7 +188,7 @@ the current logical digest:
 
 ```bash
 palimnex ledger-status          # copy logical_digest
-palimnex retention-migrate --expected-digest LOGICAL_DIGEST --dry-run   # after 2.7.0
+palimnex retention-migrate --expected-digest LOGICAL_DIGEST --dry-run   # 2.8.0 and later
 palimnex retention-migrate --expected-digest LOGICAL_DIGEST
 ```
 
@@ -198,7 +196,7 @@ A wrong digest is refused with `DIGEST_MISMATCH`. Rehearse on a copy of the
 repository first. With 2.7.0, take the snapshot described in "Before every
 upgrade" yourself.
 
-On versions after 2.7.0:
+In 2.8.0 and later:
 - `--dry-run` writes nothing. It reports the current and target schema,
   whether the digest matches, what would be refused, and the effects listed
   below.

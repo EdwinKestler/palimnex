@@ -32,13 +32,14 @@
   ],
   "exclude_paths": [
     "palimnex/evaluation/v25.json",
-    "palimnex/evaluation/v26.json"
+    "palimnex/evaluation/v26.json",
+    "palimnex/evaluation/v27.json"
   ],
   "include_palimnex": true,
   "cache_mode": "on",
   "content_scan_allowlist_sha256": [],
-  "evaluation_fixture": "palimnex/evaluation/v25.json",
-  "evaluation_fixture_sha256": "9cca022d5ac60a527783d4990ff745ba033c25f3fc789ad245bcfe703f0de569",
+  "evaluation_fixture": "palimnex/evaluation/v27.json",
+  "evaluation_fixture_sha256": "85af15cffad18601ea8ac8c30eadad63b873c8ce1841c9dcaf2774467f7e141b",
   "redis_socket_path": ".palimnex/redis/redis.sock",
   "durable_ledger_path": ".palimnex/memory.sqlite3",
   "semantic_provider": {

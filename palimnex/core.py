@@ -37,6 +37,9 @@ EMBEDDING_ID = "feature-hash-sha256-unigram-bigram-v1"
 DIMENSIONS = 384
 DEFAULT_URL = "redis://127.0.0.1:6379/0"
 URL_ENV = "PALIMNEX_URL"
+# sockaddr_un.sun_path size including the terminating NUL byte.
+UNIX_SOCKET_PATH_LIMIT = 104 if sys.platform == "darwin" else 108
+REDIS_START_HINT = "start Redis with `palimnex redis start`"
 DEPENDENCY_EDGE_KINDS = (
     "calls",
     "decorated_by",
@@ -235,6 +238,10 @@ RUST_DEFINITION_RE = re.compile(
 RUST_USE_RE = re.compile(r"^\s*(?:pub\s+)?use\s+([^;]+);")
 RUST_CALL_RE = re.compile(r"\b([A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*)\s*\(")
 RUST_CALL_EXCLUSIONS = {"fn", "if", "while", "for", "loop", "match", "return", "Some", "Ok", "Err"}
+
+
+def config_present(root: Path = ROOT) -> bool:
+    return (root / CONFIG_FILE).is_file() or (root / LEGACY_CONFIG_FILE).is_file()
 
 
 def project_config(root: Path = ROOT) -> dict[str, Any]:
@@ -1140,12 +1147,23 @@ class RedisClient:
             "unauthenticated loopback PING is not endpoint identity"
         )
 
+    def _require_short_socket_path(self) -> None:
+        assert self.socket_path is not None
+        length = len(os.fsencode(self.socket_path))
+        if length >= UNIX_SOCKET_PATH_LIMIT:
+            raise RedisError(
+                f"Redis Unix socket path is {length} bytes; this platform allows at most "
+                f"{UNIX_SOCKET_PATH_LIMIT - 1}. Use a shorter checkout path or set "
+                "PALIMNEX_URL to a short owner-only socket (see docs/INSTALL.md)"
+            )
+
     def _guard_unix_socket(self) -> None:
         assert self.socket_path is not None
+        self._require_short_socket_path()
         try:
             metadata = os.lstat(self.socket_path)
         except OSError as exc:
-            raise RedisError("Redis Unix socket is missing") from exc
+            raise RedisError(f"Redis Unix socket is missing; {REDIS_START_HINT}") from exc
         if (
             not stat.S_ISSOCK(metadata.st_mode)
             or metadata.st_uid != os.getuid()
@@ -1159,7 +1177,17 @@ class RedisClient:
             connection = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             connection.settimeout(self.timeout)
             assert self.socket_path is not None
-            connection.connect(self.socket_path)
+            try:
+                connection.connect(self.socket_path)
+            except ConnectionRefusedError as exc:
+                connection.close()
+                raise RedisError(
+                    "Redis is not running behind the configured Unix socket "
+                    f"(stale socket file); {REDIS_START_HINT}"
+                ) from exc
+            except BaseException:
+                connection.close()
+                raise
             return connection
         connection = socket.create_connection((self.host, self.port), self.timeout)
         if self.scheme == "rediss":
@@ -2848,6 +2876,11 @@ def main(argv: list[str] | None = None) -> int:
             "retention-release", "retention-pin", "retention-authorize",
             "retention-support", "cleanup-plan", "cleanup-apply", "cleanup-finalize",
         }
+        if (args.command in cache_commands or args.command in ledger_commands) and not config_present(ROOT):
+            raise ValueError(
+                f"no {CONFIG_FILE} in {ROOT}; run `palimnex init` to create one "
+                "(see docs/INSTALL.md)"
+            )
         ledger = (
             MemoryLedger(
                 durable_ledger_path(),

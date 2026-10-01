@@ -5,6 +5,8 @@ operator-facing behavior; cache and graph schemas are versioned independently.
 
 ## Unreleased
 
+## 2.8.0 - YYYY-MM-DD <!-- OWNER: replace with the release date before tagging -->
+
 - Replicable `palimnex:audit-graph:v1` export of eligible memory and
   non-reconstructive erasure residue, with optional signature and a sibling
   file from `memory-export --include-audit-graph`. Pack v2 bytes are unchanged.
@@ -57,8 +59,8 @@ operator-facing behavior; cache and graph schemas are versioned independently.
 
 ### Upgrade notes
 
-- The version number is still 2.7.0, so moving from the `v2.7.0` tag may leave
-  the cache valid; reindex if `status` is not fresh.
+- Upgrading from 2.7 to 2.8 invalidates the Redis cache. Run
+  `index --incremental` to rebuild it with version 2.8.0.
 - New ledgers inside a Git work tree require Git to ignore the ledger path;
   existing ledgers are unaffected. `palimnex redis start` requires
   `redis_socket_path` in `.palimnex.json`.

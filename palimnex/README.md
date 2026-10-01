@@ -1,6 +1,6 @@
-# Portable Palimnex v2.7.0 bundle and Python SDK
+# Portable Palimnex v2.8.0 bundle and Python SDK
 
-Status: version 2.7.0 package implementation; see `docs/SDK.md` for public API v1
+Status: version 2.8.0 package implementation; see `docs/SDK.md` for public API v1
 and publication requirements. This includes explicit local retention and
 authorized-erasure functionality; it
 does not activate a live retention policy, migrate or delete a live ledger, or
@@ -11,7 +11,7 @@ the compatibility baseline.
 To adopt Palimnex in another repository, follow `docs/INSTALL.md`: install
 the package from a pinned release tag, add the `.gitignore` lines for
 `.palimnex/`, `*.pmem` and `*.key`, create `.palimnex.json`, and start Redis
-with the guarded launcher. On the unreleased line after 2.7.0,
+with the guarded launcher. In 2.8.0 and later,
 `palimnex init --write` creates the configuration and `.gitignore` lines,
 `palimnex redis start` runs the packaged launcher, and `palimnex doctor`
 checks the result. Upgrades are covered in `docs/UPGRADING.md`.

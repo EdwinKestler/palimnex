@@ -9,8 +9,8 @@ see [`UPGRADING.md`](UPGRADING.md). Commands below use the installed
 Palimnex is not yet published on PyPI. Install from a pinned release tag, as
 shown below.
 
-Steps marked **(after 2.7.0)** use commands on the unreleased line that are
-not in the 2.7.0 release: `palimnex init`, `palimnex doctor`,
+Steps marked **(2.8.0 and later)** use commands that are not in the 2.7.0
+release: `palimnex init`, `palimnex doctor`,
 `palimnex redis` and `palimnex ledger-backup`. With 2.7.0, follow the manual
 steps next to them.
 
@@ -27,7 +27,7 @@ steps next to them.
 | (none) | No third-party packages | Source cache, ledger, recall, retention |
 | `crypto` | `cryptography` | Encrypted memory packs, Ed25519 identities and signed checkpoints |
 | `mcp` | Official MCP Python SDK | The `palimnex-mcp` stdio server |
-| `semantica` | `semantica` | Optional audit-graph projection; not in 2.7.0, only on the unreleased line after it |
+| `semantica` | `semantica` | Optional audit-graph projection in 2.8.0 and later; not in 2.7.0 |
 | `test` | Schema validation, `mypy`, build tools | Developing Palimnex itself |
 
 ## 2. Install the package
@@ -35,15 +35,15 @@ steps next to them.
 Install the command-line tool in its own environment, pinned to a release tag:
 
 ```bash
-pipx install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.7.0"
+pipx install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.8.0"
 # or
-uv tool install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.7.0"
+uv tool install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.8.0"
 ```
 
 To use the Python SDK from a project's own virtual environment:
 
 ```bash
-python3 -m pip install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.7.0"
+python3 -m pip install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.8.0"
 ```
 
 Each method installs two commands: `palimnex` and `palimnex-mcp`. Add the
@@ -84,7 +84,7 @@ Without these lines, `git add -A` stages the durable ledger, its lock file,
 and the Redis log and pid file. The ledger can hold restricted session memory.
 Palimnex 2.7.0 does not check this for you.
 
-**(after 2.7.0)** `palimnex init --write` adds the lines (see section 4).
+**(2.8.0 and later)** `palimnex init --write` adds the lines (see section 4).
 Inside a Git work tree, Palimnex refuses to create a ledger at a path Git does
 not ignore, whether through `ledger-init` or the first `session-start`, and
 creates nothing. `palimnex ledger-init --allow-unignored-ledger` is the
@@ -92,7 +92,7 @@ explicit override.
 
 ## 4. Create the configuration
 
-**(after 2.7.0)** Let Palimnex propose the configuration:
+**(2.8.0 and later)** Let Palimnex propose the configuration:
 
 ```bash
 palimnex init            # preview only; writes nothing
@@ -174,7 +174,7 @@ Field notes:
 
 ## 5. Start Redis
 
-**(after 2.7.0)** The guarded launcher ships with the package:
+**(2.8.0 and later)** The guarded launcher ships with the package:
 
 ```bash
 palimnex redis start     # also: stop, status, reset, guard
@@ -246,7 +246,7 @@ missing, adjust `include_patterns` and run `index --incremental` again.
 `ledger-status` exits `2` and read commands such as `recall` fail with
 "durable ledger is missing".
 
-**(after 2.7.0)** Finish with `palimnex doctor`. It checks the configuration,
+**(2.8.0 and later)** Finish with `palimnex doctor`. It checks the configuration,
 whether Git ignores the ledger, which directories are indexed and which code
 is left out, the socket path, Redis, cache freshness, a leftover plaintext v2
 cache, the ledger and snapshots. It changes no configuration, cache or ledger
@@ -342,7 +342,7 @@ session. See [`SDK.md`](SDK.md#mcp).
 ## 10. Uninstall and teardown
 
 1. Stop agents and other clients that use Palimnex.
-2. Stop Redis with `./scripts/palimnex_redis.sh stop` (**after 2.7.0**:
+2. Stop Redis with `./scripts/palimnex_redis.sh stop` (**2.8.0 and later**:
    `palimnex redis stop`). This keeps the snapshot so a later start needs no
    reindex. `reset` instead stops Redis and removes its log and snapshot
    files; the cache can always be rebuilt from the repository.
@@ -360,7 +360,7 @@ session. See [`SDK.md`](SDK.md#mcp).
 
      Store the key separately from the pack. A lost key makes the pack
      unrecoverable. Export refuses selected `secret` events.
-   - Or take a consistent snapshot of the whole ledger. **(after 2.7.0)**
+   - Or take a consistent snapshot of the whole ledger. **(2.8.0 and later)**
      `palimnex ledger-backup --output /secure/location/memory-snapshot.sqlite3`
      writes and verifies it (integrity check and logical digest) as a new
      `0600` file; the parent directory must already exist. With 2.7.0, use

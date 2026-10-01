@@ -11,8 +11,8 @@ development now belongs here. No live Redis data, SQLite ledger, credentials,
 wallet material, atomic-swap implementation, or repository-specific rollback
 snapshot was copied.
 
-The Python distribution version is `2.7.0`, with public SDK and extension API v1.
-Unreleased work on this line adds a replicable `palimnex:audit-graph:v1` export
+The Python distribution version is `2.8.0`, with public SDK and extension API v1.
+Version 2.8.0 adds a replicable `palimnex:audit-graph:v1` export
 and an optional Semantica projector that copies that graph as untrusted
 history with TTL disabled and fail-closed erasure receipts. See
 [the SDK guide](docs/SDK.md) for installation, typed interfaces, source
@@ -24,12 +24,12 @@ Semantica projection, pack identity and MCP.
 Palimnex is not yet on PyPI. Install it from a pinned release tag:
 
 ```bash
-pipx install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.7.0"
+pipx install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.8.0"
 ```
 
 Before the first run, add `.palimnex/`, `*.pmem` and `*.key` to the
 repository's `.gitignore` so the durable ledger and keys are never committed.
-On the unreleased line after 2.7.0, `palimnex init --write` does this and
+In 2.8.0 and later, `palimnex init --write` does this and
 writes the configuration, `palimnex redis start` starts the guarded Redis, and
 `palimnex doctor` checks the installation.
 [The installation guide](docs/INSTALL.md) covers configuration, Redis, first

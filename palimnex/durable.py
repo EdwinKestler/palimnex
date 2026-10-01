@@ -12,6 +12,7 @@ import re
 import secrets
 import sqlite3
 import stat
+import sys
 import time
 import uuid
 import zlib
@@ -513,6 +514,24 @@ SNAPSHOT_ERASURE_NOTE = (
 )
 
 
+def _platform_absolute_path(path: Path) -> Path:
+    """Canonicalize Darwin's fixed /tmp and /var aliases, but no user symlinks."""
+    absolute = path.absolute()
+    if sys.platform != "darwin":
+        return absolute
+    for alias in (Path("/tmp"), Path("/var")):
+        try:
+            relative = absolute.relative_to(alias)
+        except ValueError:
+            continue
+        try:
+            canonical = alias.resolve(strict=True)
+        except OSError:
+            return absolute
+        return canonical / relative
+    return absolute
+
+
 def write_snapshot(ledger: "MemoryLedger", source: sqlite3.Connection, target: Path) -> dict[str, Any]:
     """Copy a consistent SQLite online-backup snapshot into a new owner-only file.
 
@@ -646,7 +665,7 @@ class MemoryLedger:
         self.source_resolvers = dict(source_resolvers or {})
         self.root = root.resolve()
         candidate = path if path.is_absolute() else root / path
-        self.path = candidate.absolute()
+        self.path = _platform_absolute_path(candidate)
         if not self.path.is_relative_to(self.root):
             raise ValueError("durable ledger path must stay inside the repository")
         self.project_id_text = validate_project_id(project_id)

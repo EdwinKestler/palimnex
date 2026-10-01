@@ -320,7 +320,7 @@ class LedgerSnapshotTests(unittest.TestCase):
     def test_backup_is_private_self_contained_and_verified(self) -> None:
         snapshot = self.client.backup_ledger()
         path = Path(snapshot["path"])
-        self.assertEqual(path.parent, self.root / ".private/backups")
+        self.assertEqual(path.parent.resolve(), (self.root / ".private/backups").resolve())
         self.assertEqual(os.stat(path).st_mode & 0o777, 0o600)
         self.assertFalse(Path(str(path) + "-wal").exists())
         self.assertEqual(snapshot["logical_digest"], self.client.status()["logical_digest"])

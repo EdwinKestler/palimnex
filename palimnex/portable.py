@@ -24,6 +24,7 @@ from .durable import (
     MAX_IMPORT_SESSIONS,
     SENSITIVITY_CODES,
     MemoryLedger,
+    _platform_absolute_path,
     canonical_json,
 )
 from .security import policy_digest, scan_bytes
@@ -53,7 +54,7 @@ def _fsync_directory(path: Path) -> None:
 
 def _open_directory_nofollow(path: Path) -> int:
     """Open an existing absolute directory one component at a time."""
-    absolute = path.absolute()
+    absolute = _platform_absolute_path(path)
     flags = (
         os.O_RDONLY
         | getattr(os, "O_CLOEXEC", 0)

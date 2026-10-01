@@ -6,7 +6,7 @@ import sys
 import tempfile
 
 from palimnex import API_VERSION, Palimnex, __version__
-from palimnex.tests.support import write_project
+from palimnex._offline_fixtures import write_project
 
 
 def main() -> None:
@@ -16,6 +16,7 @@ def main() -> None:
     assert package.joinpath("redis_launcher.sh").is_file()
     assert any(package.joinpath("schemas").iterdir())
     assert any(package.joinpath("evaluation").iterdir())
+    assert not package.joinpath("tests").is_dir()
     with tempfile.TemporaryDirectory(prefix="palimnex-installed-") as temporary:
         root = Path(temporary)
         write_project(root)

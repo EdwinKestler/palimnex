@@ -213,7 +213,7 @@
           <dl>
             <div><dt>Durability</dt><dd>Disposable</dd></div>
             <div><dt>Contains</dt><dd>Digests, postings, vectors, graph metadata</dd></div>
-            <div><dt>Default transport</dt><dd>Owner-only Unix socket</dd></div>
+            <div><dt>Transport</dt><dd>Owner-only Unix socket when configured; writes refuse unauthenticated TCP</dd></div>
             <div><dt>Loss behavior</dt><dd>Rebuild from repository and ledger</dd></div>
           </dl>
         </article>
@@ -233,6 +233,7 @@
             <div><dt>Cipher</dt><dd>ChaCha20-Poly1305</dd></div>
             <div><dt>Import state</dt><dd>Quarantined, untrusted history</dd></div>
             <div><dt>Authority</dt><dd>Never restores permission to act</dd></div>
+            <div><dt>Erasure</dt><dd>Exported copies are out of band unless registered</dd></div>
           </dl>
         </article>
         <article class="store-card pack-card">
@@ -262,7 +263,7 @@
           <span role="cell"><strong>Python 3.11+</strong><small>Runtime</small></span><span role="cell"><b class="pill required">Required</b></span><span role="cell">CLI, cache engine, ledger, schemas, tests</span><span role="cell">Standard library for core paths</span>
         </div>
         <div class="dependency-row" role="row">
-          <span role="cell"><strong>Redis server + CLI</strong><small>Database / cache</small></span><span role="cell"><b class="pill capability">Cache-backed features</b></span><span role="cell">Source discovery cache and hot metadata</span><span role="cell">Disposable; owner-only Unix socket by default</span>
+          <span role="cell"><strong>Redis server + CLI</strong><small>Database / cache</small></span><span role="cell"><b class="pill capability">Cache-backed features</b></span><span role="cell">Source discovery cache and hot metadata</span><span role="cell">Disposable; owner-only Unix socket via the guarded launcher</span>
         </div>
         <div class="dependency-row" role="row">
           <span role="cell"><strong>SQLite</strong><small>Embedded database</small></span><span role="cell"><b class="pill bundled">Python bundled</b></span><span role="cell">Durable historical-memory ledger</span><span role="cell">Local file; no database server</span>

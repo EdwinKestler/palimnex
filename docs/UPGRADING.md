@@ -3,8 +3,8 @@
 This guide covers moving an existing Palimnex installation to a newer
 version: the code, the Redis cache, and the durable SQLite ledger. For a new
 installation, see [`INSTALL.md`](INSTALL.md). Commands use the installed
-`palimnex` command; in a copied bundle or this checkout, use
-`python3 palimnex.py` instead.
+`palimnex` command; in the Palimnex source checkout (or a deprecated copied
+bundle), use `python3 palimnex.py` instead.
 
 Upgrades never migrate durable state on their own. A new version number
 invalidates the disposable Redis cache, which you rebuild with
@@ -63,8 +63,9 @@ python3 -m pip install --upgrade "palimnex[crypto] @ git+https://github.com/Edwi
 ```
 
 Use the command that matches how you installed it, and keep the same extras.
-For a copied bundle, delete the old `palimnex.py` and `palimnex/` and copy the
-new ones from the tag. Do not copy on top of the old directory, because files
+Copied bundles are deprecated; prefer moving to the package ("Copied bundle to
+package" below). Until then, for a copied bundle, delete the old `palimnex.py`
+and `palimnex/` and copy the new ones from the tag. Do not copy on top of the old directory, because files
 removed in the new version would otherwise remain. Update
 `scripts/palimnex_redis.sh` from the same tag.
 
@@ -100,6 +101,36 @@ What to expect:
   checkout's directory name changed and `project_slug` was never set. Add the
   original slug to `.palimnex.json`.
 
+## Copied bundle to package
+
+Copying `palimnex.py` and `palimnex/` into a repository is deprecated on the
+unreleased line, and its instructions are removed in 3.0.0. A copy keeps
+running; nothing refuses it. To move to the package:
+
+1. Stop agents and other clients. With the copied version, run
+   `python3 palimnex.py ledger-status` and, in 2.8.0 and later,
+   `python3 palimnex.py ledger-backup` (with 2.7.0, take the snapshot in
+   "Before every upgrade").
+2. Install the same or a newer version from PyPI with `pipx`, `uv tool` or
+   `pip` ([`INSTALL.md`](INSTALL.md)), with the extras you use.
+3. In one commit, remove `palimnex.py`, `palimnex/` and any copied
+   `scripts/palimnex_redis.sh` from the repository. Keep `.palimnex.json`.
+4. Change agent instructions from `python3 palimnex.py` to `palimnex`, and an
+   MCP configuration to `palimnex-mcp`.
+5. Run installed commands from the repository root, or set `PALIMNEX_ROOT`.
+6. Run `palimnex doctor`, then `palimnex index --incremental`. Use
+   `palimnex redis start` instead of a copied launcher.
+
+`.palimnex.json`, `.palimnex/` and the ledger stay where they are: configured
+paths are relative to the repository root, which does not change.
+
+`palimnex doctor` reports how Palimnex is installed: an installed package, an
+editable install, the Palimnex source checkout, or a copied bundle (a
+warning). It also reports when two copies can run against one ledger, either
+an installed package shadowed by a copy that Python imported instead, or a
+copy in the repository beside the running package. Either case is a failure
+when the versions differ or cannot be read, and a warning when they match.
+
 ## Version notes
 
 | From → to | Code and cache | Ledger | Notes |
@@ -109,7 +140,7 @@ What to expect:
 | 2.6 → 2.7 | Installable package and SDK v1; reindex | Unchanged schema v1, pack v2 unchanged | Structured source locators; SDK pack import requires a signature by default |
 | 2.7 → 2.8 | Audit graph, optional Semantica extra; version change invalidates the cache, so reindex | Unchanged schema v1; new retention-control kind `adapter_receipt` | Downgrade hazard below |
 | 2.8.0 → 2.8.1 | Documentation and release-workflow corrections; version change invalidates the cache, so reindex | Unchanged schema v1; pack v2 unchanged | No other migration required |
-| 2.8.1 → unreleased line | `ledger-migrate` framework; `retention-migrate` routed through it | Ledger schemas unchanged; new transient `<ledger>.migration-intent` during an unfinished migration | `--no-snapshot` and SDK `snapshot=False` deprecated; see below |
+| 2.8.1 → unreleased line | `ledger-migrate` framework; `retention-migrate` routed through it | Ledger schemas unchanged; new transient `<ledger>.migration-intent` during an unfinished migration | `--no-snapshot` and SDK `snapshot=False` deprecated; copied bundle deprecated; see below |
 
 ### 2.5 → 2.6: Palimnex naming
 

@@ -17,9 +17,12 @@ with the guarded launcher. In 2.8.0 and later,
 `palimnex redis start` runs the packaged launcher, and `palimnex doctor`
 checks the result. Upgrades are covered in `docs/UPGRADING.md`.
 
-The older portable-bundle layout still works: copy these paths while
-preserving their relative layout, and add `scripts/palimnex_redis.sh` if you
-want the launcher. A copied bundle has no version or integrity check.
+The older portable-bundle layout is deprecated: it keeps working through
+2.x, but it has no version or integrity check, `palimnex doctor` warns about
+it, and its instructions are removed in 3.0.0. Move existing copies to the
+package with "Copied bundle to package" in `docs/UPGRADING.md`. A copy keeps
+these paths in their relative layout, with `scripts/palimnex_redis.sh` if it
+uses the launcher.
 
 ```text
 palimnex.py

@@ -1,7 +1,8 @@
 # Copied-bundle mode: deprecate or verify
 
-Status: proposal awaiting the owner's choice between options A and B; not
-indexed (see AGENTS.md). No code changes until an option is chosen.
+Status: decided. The owner chose option A, deprecation (see "Owner
+decisions"). It is implemented on the unreleased line: `doctor` reports the
+install mode, and the documentation deprecates the copied bundle.
 
 ## Problem
 
@@ -42,8 +43,9 @@ weakens the case for keeping a second, unverified distribution channel.
 
 ## Install-mode detection (needed by both options)
 
-Both options need `doctor` to know how it is running. Proposed read-only
-classification, using only the standard library and no network:
+Both options need `doctor` to know how it is running. `doctor` uses this
+read-only classification (`onboarding.installation`), with only the standard
+library and no network:
 
 | Mode | Rule |
 |---|---|
@@ -198,7 +200,7 @@ self-consistency, at a recurring CI or release cost. The install-mode,
 shadowing and second-copy checks address the most dangerous case (two
 versions writing one ledger), and option A needs them anyway.
 
-If option A is chosen, the implementing pull request would:
+The implementing change:
 
 1. Add the install-mode classification and the shadowing and second-copy
    checks to `palimnex/onboarding.py`, with tests.
@@ -209,11 +211,15 @@ If option A is chosen, the implementing pull request would:
    frozen evaluation with no fixture change and empty
    `critical_margin_warnings`.
 
-## Open questions for the owner
+## Owner decisions
 
-1. Option A or option B? The recommendation is A.
-2. Is 3.0.0 the right point to drop the copy instructions and escalate
-   `doctor`, or should it be a specific 2.x minor?
-3. Should the shadowing and second-copy checks `fail` only when versions
-   differ (as proposed), or always?
-4. Should GitHub Releases attach the wheel for offline installs (prompt 3.8b)?
+1. **Option A, deprecation.** Option B is not implemented.
+2. **Timeline as proposed.** The copied bundle is deprecated on the line
+   after 2.8.1 (2.9.0). The copy instructions leave `docs/INSTALL.md`, and
+   `doctor` escalates `copied_bundle` to `fail` in 3.0.0. The runtime never
+   refuses a copied bundle.
+3. **Severity as proposed.** `install_shadowing` and `second_copy` fail when
+   the versions differ and warn when they match. A version that cannot be
+   read counts as different.
+4. **Wheel on GitHub Releases** (prompt 3.8b) remains a separate, optional
+   release step and is not part of this change.

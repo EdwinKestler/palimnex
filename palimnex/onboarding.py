@@ -9,12 +9,14 @@ network.
 """
 from __future__ import annotations
 
+import importlib.metadata
 import importlib.util
 import json
 import os
 import re
 import stat
 import sys
+import urllib.parse
 import uuid
 from collections import Counter
 from dataclasses import asdict, dataclass
@@ -38,6 +40,11 @@ MAX_SCANNED_FILES = 50_000
 MAX_PROPOSED_PATTERNS = 40
 
 CheckStatus = Literal["ok", "info", "warn", "fail", "skip"]
+InstallMode = Literal["installed", "editable", "source_checkout", "copied_bundle"]
+COPY_MIGRATION = 'docs/UPGRADING.md, "Copied bundle to package"'
+BUNDLE_VERSION_LINE = re.compile(rb'^BUNDLE_VERSION = "([^"\n]{1,64})"$', re.MULTILINE)
+MAX_CORE_BYTES = 1 << 20
+MAX_PYPROJECT_BYTES = 1 << 16
 
 
 @dataclass(frozen=True)
@@ -292,6 +299,140 @@ def _corpus_checks(root: Path) -> list[Check]:
     return checks
 
 
+@dataclass(frozen=True)
+class Installation:
+    """How the running Palimnex was installed, from distribution metadata."""
+
+    mode: InstallMode
+    package_dir: Path
+    version: str
+    distribution_version: str | None = None
+    distribution_dir: Path | None = None
+    shadowed: bool = False
+
+
+def _distribution() -> importlib.metadata.Distribution | None:
+    try:
+        return importlib.metadata.distribution("palimnex")
+    except importlib.metadata.PackageNotFoundError:
+        return None
+
+
+def _editable_source(distribution: importlib.metadata.Distribution) -> Path | None:
+    """The project directory of an editable install (PEP 610 `direct_url.json`)."""
+    raw = distribution.read_text("direct_url.json")
+    try:
+        document = json.loads(raw) if raw else None
+    except json.JSONDecodeError:
+        return None
+    if (
+        not isinstance(document, dict)
+        or not isinstance(document.get("dir_info"), dict)
+        or document["dir_info"].get("editable") is not True
+        or not isinstance(document.get("url"), str)
+    ):
+        return None
+    parsed = urllib.parse.urlparse(document["url"])
+    if parsed.scheme != "file":
+        return None
+    return Path(urllib.parse.unquote(parsed.path)).resolve()
+
+
+def _declares_palimnex(directory: Path) -> bool:
+    try:
+        with open(directory / "pyproject.toml", "rb") as handle:
+            text = handle.read(MAX_PYPROJECT_BYTES).decode("utf-8", "replace")
+    except OSError:
+        return False
+    return re.search(r'^name\s*=\s*"palimnex"\s*$', text, re.MULTILINE) is not None
+
+
+def _copy_version(core_file: Path) -> str | None:
+    """BUNDLE_VERSION of another copy, read as bounded text and never imported."""
+    try:
+        with open(core_file, "rb") as handle:
+            match = BUNDLE_VERSION_LINE.search(handle.read(MAX_CORE_BYTES))
+    except OSError:
+        return None
+    return match.group(1).decode("utf-8", "replace") if match else None
+
+
+def installation(package_dir: Path | None = None, version: str | None = None) -> Installation:
+    """Classify the running copy: installed, editable, source checkout or copied bundle.
+
+    Only distribution metadata is trusted. `PALIMNEX_ROOT` and the presence
+    of `palimnex.py` are not signals: operators set the first for installed
+    commands, and the Palimnex source checkout has the second.
+    """
+    package = (package_dir or Path(core.__file__).parent).resolve()
+    running = version or core.BUNDLE_VERSION
+    fallback: InstallMode = (
+        "source_checkout" if _declares_palimnex(package.parent) else "copied_bundle")
+    distribution = _distribution()
+    if distribution is None:
+        return Installation(fallback, package, running)
+    editable = _editable_source(distribution)
+    if editable is not None:
+        if package.parent == editable:
+            return Installation("editable", package, running, distribution.version,
+                                editable / "palimnex")
+        return Installation(fallback, package, running, distribution.version,
+                            editable / "palimnex", shadowed=True)
+    installed = Path(str(distribution.locate_file("palimnex/__init__.py"))).resolve().parent
+    if installed == package:
+        # Build metadata (for example a leftover `palimnex.egg-info`) inside the
+        # Palimnex project tree describes the checkout, not an installed wheel.
+        mode: InstallMode = "source_checkout" if _declares_palimnex(package.parent) else "installed"
+        return Installation(mode, package, running, distribution.version, installed)
+    return Installation(fallback, package, running, distribution.version, installed, shadowed=True)
+
+
+def _install_checks(root: Path, info: Installation) -> list[Check]:
+    """Report the install mode, a shadowed distribution and a second copy in the root."""
+    if info.mode == "installed":
+        checks = [Check("install_mode", "info",
+                        f"Palimnex runs from the installed package at {info.package_dir}")]
+    elif info.mode == "editable":
+        detail = f"Palimnex runs from an editable install of {info.package_dir.parent}"
+        if info.distribution_version and info.distribution_version != info.version:
+            detail += (f"; its installed metadata still says {info.distribution_version}, so "
+                       "reinstall the editable package to refresh it")
+        checks = [Check("install_mode", "info", detail)]
+    elif info.mode == "source_checkout":
+        checks = [Check("install_mode", "info",
+                        f"Palimnex runs from its source checkout at {info.package_dir.parent}")]
+    else:
+        checks = [Check(
+            "install_mode", "warn",
+            f"Palimnex runs from a copied bundle at {info.package_dir}. Copying palimnex.py and "
+            "palimnex/ into a repository is deprecated: it has no version or integrity check, "
+            "and its instructions are removed in 3.0.0",
+            f"install the package and remove the copy ({COPY_MIGRATION})",
+        )]
+    if info.shadowed and info.distribution_dir is not None:
+        other = _copy_version(info.distribution_dir / "core.py") or info.distribution_version
+        checks.append(Check(
+            "install_shadowing", "warn" if other == info.version else "fail",
+            f"Python imported Palimnex {info.version} from {info.package_dir}, but the installed "
+            f"palimnex distribution ({other or 'unknown version'}) is at "
+            f"{info.distribution_dir}; the `palimnex` command and `python3 palimnex.py` can run "
+            "different copies against the same ledger",
+            "keep one copy: remove the copied palimnex.py and palimnex/ from the repository, "
+            f"or uninstall the package ({COPY_MIGRATION})",
+        ))
+    copy = root / "palimnex"
+    if (copy / "core.py").is_file() and copy.resolve() != info.package_dir:
+        other = _copy_version(copy / "core.py")
+        checks.append(Check(
+            "second_copy", "warn" if other == info.version else "fail",
+            f"{copy} holds another Palimnex copy ({other or 'unknown version'}) beside this "
+            f"Palimnex {info.version}; `python3 palimnex.py` and `python3 -m palimnex` run that "
+            "copy, while the `palimnex` command runs this one",
+            f"remove the copied palimnex.py and palimnex/ from the repository ({COPY_MIGRATION})",
+        ))
+    return checks
+
+
 def _environment_checks() -> list[Check]:
     extras = {
         name: importlib.util.find_spec(module) is not None
@@ -308,6 +449,7 @@ def _environment_checks() -> list[Check]:
 def doctor(root: Path, *, redis_url: str) -> dict[str, Any]:
     """Run read-only installation checks; see the module docstring for the boundary."""
     checks = _environment_checks()
+    checks.extend(_install_checks(root, installation()))
     config_checks, config_ok = _config_checks(root)
     checks.extend(config_checks)
     if config_ok:

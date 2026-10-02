@@ -28,6 +28,7 @@ CHECKOUT = Path(__file__).resolve().parents[1]
 COMMAND_TIMEOUT_SECONDS = 120
 FIXED_RECALL_TIME = "4102444800000"  # 2100-01-01T00:00:00Z
 DOCTOR_STATUSES = frozenset({"ok", "info", "warn", "fail", "skip"})
+RETENTION_SCHEMA = "project-memory:retention-ledger:v2"
 
 
 class RehearsalError(RuntimeError):
@@ -418,6 +419,76 @@ def _rehearse_retention(source: Path, target: Path, redis_url: str) -> dict[str,
     }
 
 
+def _ledger_shape(root: Path) -> dict[str, Any]:
+    """Schema objects, metadata, first migration record and guard of a migrated copy."""
+    ledger = root / ".palimnex" / "memory.sqlite3"
+    database = sqlite3.connect(f"file:{ledger}?mode=ro", uri=True)
+    try:
+        objects = database.execute(
+            "SELECT type, name, sql FROM sqlite_schema ORDER BY name"
+        ).fetchall()
+        metadata = database.execute("SELECT key, value FROM metadata ORDER BY key").fetchall()
+        first = json.loads(database.execute(
+            "SELECT payload FROM retention_control ORDER BY sequence LIMIT 1"
+        ).fetchone()[0])
+    finally:
+        database.close()
+    return {
+        "objects": objects,
+        "metadata": metadata,
+        "migration_fields": sorted(first),
+        "from_schema": first["from_schema"],
+        "before_digest": first["before_digest"],
+        "guard": (root / ".palimnex" / "memory.sqlite3.retention-v2").read_bytes(),
+    }
+
+
+def _rehearse_generic(source: Path, target: Path, alias_target: Path) -> dict[str, Any]:
+    """Migrate a second copy with `ledger-migrate` and compare it with the alias result."""
+    _copy_for_retention(source, target)
+    expected_digest = _cli_json(target, "ledger-status")["logical_digest"]
+    before = _tree_state(target / ".palimnex")
+    plan = _cli_json(
+        target, "ledger-migrate", "--plan", "--to", RETENTION_SCHEMA,
+        "--expected-digest", expected_digest,
+    )
+    if _tree_state(target / ".palimnex") != before or plan.get("will_write") is not False:
+        raise RehearsalError("ledger-migrate --plan changed temporary state")
+    if plan.get("status") != "ready" or plan.get("refusals") != []:
+        raise RehearsalError(f"ledger-migrate --plan was not ready: {plan.get('refusals')}")
+    applied = _cli_json(
+        target, "ledger-migrate", "--apply", "--to", RETENTION_SCHEMA,
+        "--expected-digest", expected_digest,
+    )
+    snapshot = applied.get("pre_migration_snapshot")
+    if (
+        applied.get("status") != "migrated"
+        or not isinstance(snapshot, dict)
+        or snapshot.get("logical_digest") != expected_digest
+    ):
+        raise RehearsalError("ledger-migrate --apply did not migrate with a verified snapshot")
+    rerun = _cli_json(
+        target, "ledger-migrate", "--apply", "--to", RETENTION_SCHEMA,
+        "--expected-digest", expected_digest,
+    )
+    if rerun.get("status") != "already_migrated":
+        raise RehearsalError("rerunning ledger-migrate --apply was not idempotent")
+    leftovers = sorted(
+        path.name for path in (target / ".palimnex").iterdir()
+        if path.name.endswith(".migration-intent") or ".tmp-" in path.name
+    )
+    if leftovers:
+        raise RehearsalError(f"ledger-migrate left transient files: {leftovers}")
+    if _ledger_shape(target) != _ledger_shape(alias_target):
+        raise RehearsalError("ledger-migrate and retention-migrate produced different ledgers")
+    return {
+        "plan_unchanged": True,
+        "status": applied["status"],
+        "rerun": rerun["status"],
+        "matches_alias": True,
+    }
+
+
 def rehearse(tag: str) -> dict[str, Any]:
     old_umask = os.umask(0o077)
     try:
@@ -425,6 +496,7 @@ def rehearse(tag: str) -> dict[str, Any]:
             root = Path(temporary)
             repository = root / "repo"
             retention_repository = root / "ret"
+            generic_repository = root / "gen"
             repository.mkdir()
             _extract_old_bundle(tag, repository)
             _write_repository_files(repository)
@@ -497,6 +569,9 @@ def rehearse(tag: str) -> dict[str, Any]:
 
                 retention = _rehearse_retention(
                     repository, retention_repository, redis_url
+                )
+                retention["generic"] = _rehearse_generic(
+                    repository, generic_repository, retention_repository
                 )
                 return {
                     "status": "passed",

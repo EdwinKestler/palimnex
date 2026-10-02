@@ -109,6 +109,7 @@ What to expect:
 | 2.6 → 2.7 | Installable package and SDK v1; reindex | Unchanged schema v1, pack v2 unchanged | Structured source locators; SDK pack import requires a signature by default |
 | 2.7 → 2.8 | Audit graph, optional Semantica extra; version change invalidates the cache, so reindex | Unchanged schema v1; new retention-control kind `adapter_receipt` | Downgrade hazard below |
 | 2.8.0 → 2.8.1 | Documentation and release-workflow corrections; version change invalidates the cache, so reindex | Unchanged schema v1; pack v2 unchanged | No other migration required |
+| 2.8.1 → unreleased line | `ledger-migrate` framework; `retention-migrate` routed through it | Ledger schemas unchanged; new transient `<ledger>.migration-intent` during an unfinished migration | `--no-snapshot` and SDK `snapshot=False` deprecated; see below |
 
 ### 2.5 → 2.6: Palimnex naming
 
@@ -216,14 +217,34 @@ In 2.8.0 and later:
 - The SDK takes the snapshot only with `migrate_retention(..., snapshot=True)`.
 - Later authorized erasure does not remove these snapshots.
 
-On the unreleased line, `palimnex ledger-migrate --plan --to
-project-memory:retention-ledger:v2 --expected-digest LOGICAL_DIGEST` gives a
-fuller read-only plan. It reports the exact reader checks, any pending import
-or migration intent, the state of the `<ledger>.retention-v2` replacement
-guard, whether Git ignores the intent and snapshot paths, and the effects. It
-exits `2` when the migration would be refused. `palimnex ledger-migrate --list`
-shows the registered migrations. `ledger-migrate --apply` is not available
-yet, so `retention-migrate` remains the apply command.
+On the unreleased line, the generic ledger migration framework
+([`MIGRATIONS.md`](MIGRATIONS.md)) runs this migration:
+
+```bash
+palimnex ledger-migrate --list
+palimnex ledger-migrate --plan  --to project-memory:retention-ledger:v2 --expected-digest LOGICAL_DIGEST
+palimnex ledger-migrate --apply --to project-memory:retention-ledger:v2 --expected-digest LOGICAL_DIGEST
+```
+
+- `--plan` writes nothing. It reports the exact reader checks, any pending
+  import or migration intent, the state of the `<ledger>.retention-v2`
+  replacement guard, whether Git ignores the intent and snapshot paths, and
+  the effects. It exits `2` when the migration would be refused.
+- `--apply` always writes a verified snapshot first. It then applies the
+  step in one transaction, verifies the result, and prints what it did.
+- If an apply is interrupted, rerun the same command with the same digest. It
+  finishes the migration without applying the step twice and never restores
+  the snapshot. `palimnex doctor` reports an interrupted migration.
+- Running it again after success reports `already_migrated` and writes
+  nothing.
+- The intent and snapshot paths must be ignored by Git, like the ledger
+  itself. `--allow-unignored-ledger` is the explicit override.
+- `retention-migrate` and `Palimnex.migrate_retention` now run through the
+  same engine and keep their output fields, with an added `migration` summary.
+- `retention-migrate --no-snapshot` is deprecated. It prints a warning, adds
+  a `deprecations` field, and is removed in 2.10.0. SDK `migrate_retention`
+  still defaults to `snapshot=False` under API v1, but warns with
+  `DeprecationWarning` unless you pass `snapshot=True`.
 
 The migration's effects are permanent:
 
@@ -242,8 +263,14 @@ The migration's effects are permanent:
   makes legacy pack replacement refuse the ledger. An interrupted migration
   can therefore leave an unmigrated ledger with the marker. That state is
   safe, and rerunning the same command with the same digest completes it.
-  `palimnex doctor` reports it, and also reports an empty or mismatched
-  marker; preserve such a marker for review.
+  `palimnex doctor` reports it.
+  - An empty marker can be left by an interrupted 2.8.x migration. On the
+    unreleased line, `ledger-migrate --apply` replaces it only after
+    confirming the unmigrated ledger and the digest.
+  - A migrated ledger whose marker is missing gets the marker back from
+    `ledger-migrate --apply` with the digest recorded in the migration audit.
+    `--plan` shows that digest as `audit_before_digest`.
+  - Preserve a mismatched marker for review.
 - Readers without the retention profile (2.5 and earlier) refuse the
   migrated ledger with "durable ledger schema is unsupported".
 

@@ -165,7 +165,8 @@ class SDKTests(unittest.TestCase):
         event = self.record()
         self.client.close_session(self.sid, "done")
         first = self.client.checkpoint(commitment_key=self.key, signer=self.signer)
-        self.client.migrate_retention(expected_digest=self.client.status()["logical_digest"])
+        with self.assertWarns(DeprecationWarning):
+            self.client.migrate_retention(expected_digest=self.client.status()["logical_digest"])
         self.client.activate_policy({"schema": "project-memory:retention-policy:v1", "policy_id": "test",
                                     "version": 1, "mode": "manual", "clock": "tx_at", "rules": [],
                                     "grace_after_close_seconds": 0, "plan_ttl_seconds": 3600},
@@ -245,7 +246,8 @@ class SDKTests(unittest.TestCase):
         self.client.close_session(self.sid, "done")
         before = self.client.audit_graph()
         self.assertIn("cobalt orchard", json.dumps(before["nodes"]))
-        self.client.migrate_retention(expected_digest=self.client.status()["logical_digest"])
+        with self.assertWarns(DeprecationWarning):
+            self.client.migrate_retention(expected_digest=self.client.status()["logical_digest"])
         self.client.activate_policy({"schema": "project-memory:retention-policy:v1", "policy_id": "test",
                                     "version": 1, "mode": "manual", "clock": "tx_at", "rules": [],
                                     "grace_after_close_seconds": 0, "plan_ttl_seconds": 3600},

@@ -266,9 +266,12 @@ python3 palimnex.py cleanup-plan --event EVENT_ID
 
 `retention-migrate --dry-run` writes nothing. A real `retention-migrate`
 first writes a verified snapshot of the unmigrated ledger under `backups/`
-beside it (`--no-snapshot` skips it). That snapshot, like any
-`ledger-backup` output, is an unmanaged copy: later authorized erasure does
-not remove it. Delete it deliberately once it is no longer needed.
+beside it. `--no-snapshot` skips it, but is deprecated and is removed in
+2.10.0. That snapshot, like any `ledger-backup` output, is an unmanaged copy:
+later authorized erasure does not remove it. Delete it deliberately once it is
+no longer needed. On the unreleased line, `retention-migrate` runs through the
+generic `ledger-migrate` engine (`docs/MIGRATIONS.md`), so an interrupted
+migration is finished by rerunning the same command with the same digest.
 
 Allowed imported-record reasons are `RETENTION_EXPIRED`, `SOURCE_DELETED`,
 `SOURCE_SYNCHRONIZATION`, `PRIVACY_REQUEST`, and `LEGAL_ERASURE`. Locally

@@ -81,7 +81,10 @@ safer. All are additive to API v1.
 - `backup_ledger(target=None)` writes a verified owner-only snapshot, by
   default under `backups/` beside the ledger.
 - `migrate_retention(expected_digest=..., snapshot=True)` writes a verified
-  snapshot of the unmigrated ledger before migrating.
+  snapshot of the unmigrated ledger before migrating. On the unreleased line
+  it runs through the generic migration engine (`docs/MIGRATIONS.md`), and
+  calling it without `snapshot=True` emits `DeprecationWarning`; the API v1
+  default stays `snapshot=False`.
 
 Later authorized erasure does not remove snapshots.
 

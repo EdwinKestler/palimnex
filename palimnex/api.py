@@ -1,6 +1,7 @@
 """Public SDK v1. Public methods are rooted explicitly and never create state on open."""
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal, Mapping
@@ -126,13 +127,20 @@ class Palimnex:
                     "authority": "historical_only", "authorizes_actions": False}
 
     def migrate_retention(self, *, expected_digest: str, snapshot: bool = False) -> dict[str, Any]:
-        """Migrate to the retention profile; `snapshot=True` first writes a verified backup."""
+        """Migrate to the retention profile; `snapshot=True` first writes a verified backup.
+
+        The generic migration engine applies, resumes or completes the step.
+        Calling without `snapshot=True` is deprecated.
+        """
         self._require_write()
-        snapshot_path = (
-            self._ledger.default_snapshot_path("-pre-retention-v2")
-            if snapshot and self._ledger.path.is_file() else None)
+        if snapshot is not True:
+            warnings.warn(
+                "migrate_retention() without snapshot=True is deprecated; pass snapshot=True "
+                "to keep a verified pre-migration snapshot",
+                DeprecationWarning, stacklevel=2,
+            )
         result = retention.migrate(
-            self._ledger, expected_digest=expected_digest, snapshot_path=snapshot_path)
+            self._ledger, expected_digest=expected_digest, snapshot=snapshot is True)
         self._ledger = retention.open_ledger(self._ledger)
         return result
 

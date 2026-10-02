@@ -356,7 +356,8 @@ class LedgerSnapshotTests(unittest.TestCase):
 
     def test_sdk_snapshot_is_opt_in(self) -> None:
         digest = self.client.status()["logical_digest"]
-        result = self.client.migrate_retention(expected_digest=digest)
+        with self.assertWarns(DeprecationWarning):
+            result = self.client.migrate_retention(expected_digest=digest)
         self.assertNotIn("pre_migration_snapshot", result)
         self.assertFalse((self.root / ".private/backups").exists())
 

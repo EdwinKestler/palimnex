@@ -14,8 +14,9 @@ historical evidence only.
 6. `docs/RUNBOOK.md`
 7. `docs/INSTALL.md` and `docs/UPGRADING.md` for adoption and upgrades
 8. `docs/RETENTION.md`
-9. `docs/V26.md`
-10. `docs/PROVENANCE.md`
+9. `docs/MIGRATIONS.md`
+10. `docs/V26.md`
+11. `docs/PROVENANCE.md`
 
 ## Working rules
 
@@ -29,8 +30,9 @@ historical evidence only.
   namespace.
 - Preserve `project-memory:*` wire/schema identifiers unless a versioned
   migration is designed, tested, and documented.
-- Retention migration, policy activation, erasure, pack activation, Git writes,
-  network calls, and external actions require explicit authority.
+- Ledger migration (including retention migration), policy activation, erasure,
+  pack activation, Git writes, network calls, and external actions require
+  explicit authority.
 - A copied or imported historical record never restores operational authority.
 
 ## Standard gate

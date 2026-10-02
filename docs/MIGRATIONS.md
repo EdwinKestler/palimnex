@@ -1,16 +1,13 @@
-# Ledger migration framework proposal
+# Ledger migration framework
 
-Status: approved (PR #17 merged); implementation in progress. 4.1c added the
-registry, `ledger-migrate --list`, `ledger-migrate --plan` and the doctor
-states; the apply engine follows in 4.1d.
+Status: approved design (owner decisions D1 to D6 below), implemented on the
+unreleased line in `palimnex/migrations.py` and the `ledger-migrate` command.
+Where an earlier section is more general, the owner decisions govern.
 
-This proposal is not indexed (see AGENTS.md).
-
-This document proposes a general, explicit framework for durable-ledger schema
-migrations. It does not approve or implement a migration. Repository source and
-the live ledger remain authoritative in their respective domains, and no plan,
-snapshot, marker, pack, or historical record grants authority to apply a
-migration.
+This document defines one general, explicit framework for durable-ledger
+schema migrations. Repository source and the live ledger remain authoritative
+in their respective domains, and no plan, snapshot, marker, pack, or
+historical record grants authority to apply a migration.
 
 ## Goals and non-goals
 
@@ -28,96 +25,90 @@ Every apply remains explicit, is bound to `--expected-digest`, and runs under
 the ledger's exclusive owner lock. Opening a ledger, starting Palimnex, or
 installing a newer package must never migrate it automatically.
 
-This proposal does not change the Redis cache, pack v2, retention behavior,
+This framework does not change the Redis cache, pack v2, retention behavior,
 erasure rules, or any `project-memory:*` identifier. It does not define the
 next ledger schema. It also does not make downgrade safe: a writer that stores
 new semantics can make older readers fail closed, but cannot teach an already
 released reader to understand them.
 
-## Current state
+## Background: the retention migration in 2.8.x
 
 ### Exact reader selection and validation
 
-- The ordinary ledger identifies itself as `project-memory:ledger:v1`
-  (`palimnex/durable.py:27`). `MemoryLedger.connection()` calls
-  `MemoryLedger._require_schema()` on every open before semantic use
-  (`palimnex/durable.py:815-846`).
+- The ordinary ledger identifies itself as `project-memory:ledger:v1`.
+  `MemoryLedger.connection()` calls `MemoryLedger._require_schema()` on every
+  open before semantic use.
 - `_require_schema()` requires the exact metadata key set, exact
   `ledger_schema`, exact project identity and codec, exact SQLite object set,
-  and exact column order (`palimnex/durable.py:895-925`). This is deliberately
-  fail-closed rather than best-effort compatibility.
+  and exact column order. This is deliberately fail-closed rather than
+  best-effort compatibility.
 - `retention.open_ledger()` reads only `metadata.ledger_schema` to select
   `RetentionLedger`; all other schemas continue through the ordinary reader
-  and are rejected by its exact check (`palimnex/retention.py:619-625`).
+  and are rejected by its exact check.
 - The retention profile is `project-memory:retention-ledger:v2`, adds the
   `retention_control` table, and requires the first control entry to be the
-  migration record (`palimnex/retention.py:14,24-30,89-111`). A reader without
-  that profile refuses the migrated ledger as unsupported.
+  migration record. A reader without that profile refuses the migrated ledger
+  as unsupported.
 
-### Current retention migration
+### The 2.8.x retention migration
 
-`retention.migrate()` is the only durable schema migration
-(`palimnex/retention.py:654-685`):
+Before this framework, `retention.migrate()` was the only durable schema
+migration:
 
-1. It returns current retention status when the Python object is already a
+1. It returned current retention status when the Python object was already a
    `RetentionLedger`.
-2. It takes the same exclusive file lock used by ledger writers.
-3. It refuses a pending pack-import intent, exact-checks the source schema,
-   refuses semantic corruption, and compares the current logical digest with
+2. It took the same exclusive file lock used by ledger writers.
+3. It refused a pending pack-import intent, exact-checked the source schema,
+   refused semantic corruption, and compared the current logical digest with
    `expected_digest`.
-4. When requested, it calls `durable.write_snapshot()` under that lock before
+4. When requested, it called `durable.write_snapshot()` under that lock before
    changing the ledger. `write_snapshot()` uses SQLite online backup, produces
    an owner-only self-contained file, fsyncs it and its directory, and verifies
-   both `PRAGMA integrity_check` and the logical digest
-   (`palimnex/durable.py:535-581`). The CLI supplies a default
-   `backups/*-pre-retention-v2.sqlite3` path; the SDK currently makes snapshots
+   both `PRAGMA integrity_check` and the logical digest. The CLI supplied a
+   default `backups/*-pre-retention-v2.sqlite3` path; the SDK made snapshots
    opt-in.
-5. It creates and fsyncs `<ledger>.retention-v2`, whose bytes are exactly
+5. It created and fsynced `<ledger>.retention-v2`, whose bytes are exactly
    `project-memory:retention-ledger:v2`, before beginning the SQLite
    transaction. This marker is a durable replacement guard: it means that the
    ledger is, or may become, the retention schema, so legacy pack replacement
    must be refused.
-6. It begins one immediate transaction, creates `retention_control`, changes
-   `metadata.ledger_schema`, records the source digest in the first migration
-   control entry, and commits.
-7. It reopens through `RetentionLedger` and reports status.
+6. It began one immediate transaction, created `retention_control`, changed
+   `metadata.ledger_schema`, recorded the source digest in the first migration
+   control entry, and committed.
+7. It reopened through `RetentionLedger` and reported status.
 
 Marker-before-transaction ordering is deliberate and load-bearing, not a
 defect. `portable._refuse_retention_replacement()` checks the marker before it
-returns early for a missing live database (`palimnex/portable.py:767-781`), and
-`recover_import()` documents that the marker survives a damaged or missing
-live database (`palimnex/portable.py:808-819`). `RetentionLedger` does not
-consult this sidecar. If the guard were marker-last, a crash after SQLite
-commit would leave a usable retention ledger without the guard; erasure could
-then run, and later ledger loss followed by legacy pack activation could
+returns early for a missing live database, and `recover_import()` documents
+that the marker survives a damaged or missing live database. `RetentionLedger`
+does not consult this sidecar. If the guard were marker-last, a crash after
+SQLite commit would leave a usable retention ledger without the guard; erasure
+could then run, and later ledger loss followed by legacy pack activation could
 resurrect erased data. A v1 ledger plus an exact marker is therefore an
 intentional fail-closed, resumable state, not evidence that migration
 verification completed.
 
-The real legacy crash gap is inside marker creation. Current
-`retention.migrate()` opens the final marker with `O_EXCL` and then writes its
-bytes (`palimnex/retention.py:670-674`). A process exit between those operations
-leaves a zero-length marker; current reruns see an existing marker and fail
-with `invalid retention marker`. The generic engine must atomically publish
-the guard and define a narrow recovery for this legacy empty-marker state.
+The real legacy crash gap was inside marker creation. The 2.8.x
+`retention.migrate()` opened the final marker with `O_EXCL` and then wrote its
+bytes. A process exit between those operations leaves a zero-length marker;
+2.8.x reruns see an existing marker and fail with `invalid retention marker`.
+The generic engine publishes the guard atomically and recovers this legacy
+empty-marker state narrowly (see "Crash points and recovery").
 
-`migration_preview()` is the current dry run
-(`palimnex/retention.py:636-651`). It reports the source and target schemas,
-digest match, pending-import refusal, snapshot policy, and effects without
-writing. CLI parsing and dispatch are specific to `retention-migrate`
-(`palimnex/core.py:2799-2806,3026-3043`).
+`migration_preview()` was the 2.8.x dry run. It reported the source and target
+schemas, digest match, pending-import refusal, snapshot policy, and effects
+without writing.
 
 ### Existing downgrade boundary
 
 The retention schema identifier did not change when `adapter_receipt` was
 added. Version 2.7.0's allowed retention-control kinds do not include it, so
 its semantic validation refuses the entire ledger. Version 2.8.0 is the first
-release whose `RetentionLedger` validates and reads that control kind
-(`palimnex/retention.py:28-30,99-105,166-185`; see also
-`docs/UPGRADING.md:141-153`). This is safe failure, but its message is generic
-because 2.7.0 cannot know the future meaning.
+release whose `RetentionLedger` validates and reads that control kind (see
+`docs/UPGRADING.md`). This is safe failure, but its message is generic because
+2.7.0 cannot know the future meaning.
 
-## Proposed invariants
+## Invariants
 
 1. **Explicit only.** Only an apply command can migrate. Constructors, open,
    status, doctor, import, and package upgrade remain non-migrating.
@@ -191,15 +182,15 @@ it is not loaded from configuration, a pack, a plan file, Redis, or the ledger.
 
 ## Plan contract
 
-`ledger-migrate --plan` returns a versioned machine-readable document, proposed
-as `project-memory:ledger-migration-plan:v1`, containing at least:
+`ledger-migrate --plan` returns a versioned machine-readable document,
+`project-memory:ledger-migration-plan:v1`, containing at least:
 
 - observed source and requested immediate target schemas;
 - the single adjacent migration step and its user-visible effects;
 - current logical digest and whether it matches `--expected-digest`;
 - structural, semantic, import-intent, migration-intent, replacement-guard,
   Git-ignore, and snapshot preconditions;
-- proposed snapshot location and the snapshot-retention warning;
+- the snapshot location and the snapshot-retention warning;
 - whether an interrupted migration intent exists and its recoverable phase;
 - `will_write: false`, `authority: historical_only`, and
   `authorizes_actions: false`.
@@ -209,7 +200,7 @@ does not trust a saved JSON document or its digest.
 
 ## Apply pipeline
 
-The proposed engine performs these phases:
+The engine performs these phases:
 
 1. **Plan again under the exclusive lock.** Guard paths; open the live ledger;
    exact-check source metadata, objects, columns, semantics, foreign keys and
@@ -252,11 +243,10 @@ The proposed engine performs these phases:
    remove the intent and fsync the directory. Return the target status plus the
    verified snapshot receipt and whether recovery completed any prior phase.
 
-The intent contains no payloads, credentials, keys, or authorization. It should
-use a new versioned identifier such as
-`project-memory:ledger-migration-intent:v1` and bounded canonical JSON. Pack
-import, pack activation, and `recover_import` must refuse while this generic
-intent exists. Migration continues to refuse while the existing
+The intent contains no payloads, credentials, keys, or authorization. It is
+`project-memory:ledger-migration-intent:v1` in canonical JSON of at most 4,096
+bytes. Pack import, pack activation, and `recover_import` refuse while this
+generic intent exists. Migration continues to refuse while the existing
 `<ledger>.import-intent` exists.
 
 ### Retention migration registration
@@ -303,7 +293,7 @@ route through that engine without otherwise changing its API v1 signature.
 
 ## CLI shape
 
-Proposed commands:
+Commands:
 
 ```text
 palimnex ledger-migrate --list
@@ -549,25 +539,47 @@ deep validation, and the frozen evaluation without fixture changes.
   refuses it. Deleting a marker or metadata field to force a downgrade is never
   rollback.
 
-## Recommended implementation order after approval
+## Implementation
 
-1. **4.1c: read-only framework.** Add and validate the ordered registry, plus
-   `ledger-migrate --list`, `ledger-migrate --plan`, and the migration-specific
-   doctor states. This slice performs no migration, marker, intent, or snapshot
-   writes and does not move this proposal into the indexed corpus.
-2. **4.1d: apply framework.** Add the generic intent, atomic replacement-guard
-   publication and legacy empty-marker recovery, mandatory-snapshot apply
-   engine, adjacent-step crash matrix, retention registration, alias routing,
-   deprecations, pack refusals, and operator/compatibility documentation.
-3. In 4.1d, move this approved proposal to `docs/MIGRATIONS.md` with the
-   implementation. Because a new indexed documentation file can shift frozen
-   retrieval rankings, run incremental indexing, deep validation, and the
-   frozen evaluation. `docs/DESIGN.md` section 10 forbids rewording the design
-   to dodge query vocabulary or current winners.
-4. Extend the installed-wheel upgrade rehearsal through both the alias and
-   generic CLI while preserving the live-ledger boundary.
-5. Only then consider a second schema edge or future diagnostic
-   `minimum_reader_version` metadata.
+The design was delivered in two slices:
+
+1. **4.1c, read-only framework.** The ordered registry, validated at import;
+   `ledger-migrate --list` (`project-memory:ledger-migration-list:v1`);
+   `ledger-migrate --plan` (`project-memory:ledger-migration-plan:v1`); and the
+   migration-specific `doctor` states.
+2. **4.1d, apply framework.** `ledger-migrate --apply`, the transient intent
+   (`project-memory:ledger-migration-intent:v1`), atomic replacement-guard
+   publication with legacy empty-marker recovery, the mandatory-snapshot
+   pipeline, the crash matrix, retention registration, routing of
+   `retention-migrate` and `Palimnex.migrate_retention` through the engine,
+   the D1 deprecations, pack refusals while an intent exists, and the
+   operator and compatibility documentation.
+
+Implementation notes:
+
+- `apply` prints `project-memory:ledger-migration-result:v1` with `status`
+  (`migrated`, `already_migrated` or `guard_repaired`), `resumed`, the
+  `recovery` notes, the `replacement_guard` action and the verified
+  `pre_migration_snapshot`. The CLI adds the target's `ledger_status`.
+- Rerunning an exact-guarded `already_migrated` ledger writes nothing and
+  does not require a matching digest. Every write (a new step, a resume, or a
+  guard repair) requires it.
+- Publication temporaries are named `<final>.tmp-<pid>-<ns>`. Apply removes
+  only such regular, owner-owned, bounded files under the exclusive lock, and
+  the read-only guard and intent checks tolerate the one extra hard link that
+  an interrupted `os.link` publication leaves.
+- An incomplete snapshot is renamed to `<name>.quarantined-<ns>`, never
+  deleted, and a new snapshot path is recorded in the intent.
+- `--allow-unignored-ledger` on `ledger-migrate` and `retention-migrate` is
+  the D4 override. The SDK has no override.
+- The crash matrix interrupts real child processes at every named boundary
+  and also injects exceptions before and after commit
+  (`palimnex/tests/test_migrations.py`). The upgrade rehearsal migrates one
+  copy through `retention-migrate` and another through `ledger-migrate`, and
+  compares the results.
+
+A second schema edge or diagnostic `minimum_reader_version` metadata needs its
+own design and approval.
 
 ## Owner decisions
 

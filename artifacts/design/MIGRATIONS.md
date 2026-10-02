@@ -1,6 +1,8 @@
 # Ledger migration framework proposal
 
-Status: proposal; owner decisions recorded; awaiting approval.
+Status: approved (PR #17 merged); implementation in progress. 4.1c added the
+registry, `ledger-migrate --list`, `ledger-migrate --plan` and the doctor
+states; the apply engine follows in 4.1d.
 
 This proposal is not indexed (see AGENTS.md).
 

@@ -2729,6 +2729,27 @@ def parser() -> argparse.ArgumentParser:
     ledger_backup.add_argument(
         "--output", help="new snapshot path (default: backups/ beside the ledger)"
     )
+    ledger_migrate = commands.add_parser(
+        "ledger-migrate", help="list or plan an explicit, digest-bound ledger schema migration"
+    )
+    migrate_mode = ledger_migrate.add_mutually_exclusive_group(required=True)
+    migrate_mode.add_argument(
+        "--list", dest="list_migrations", action="store_true",
+        help="list registered migrations and where this ledger stands (read-only)",
+    )
+    migrate_mode.add_argument(
+        "--plan", action="store_true", help="describe one adjacent migration without writing"
+    )
+    migrate_mode.add_argument(
+        "--apply", action="store_true", help="not available in this version"
+    )
+    ledger_migrate.add_argument("--to", dest="target", help="the immediate target schema")
+    ledger_migrate.add_argument("--expected-digest", help="the current logical_digest")
+    ledger_migrate.add_argument(
+        "--allow-unignored-ledger",
+        action="store_true",
+        help="accept migration intent and snapshot paths that Git does not ignore",
+    )
     ledger_init = commands.add_parser("ledger-init")
     ledger_init.add_argument(
         "--allow-unignored-ledger",
@@ -2957,7 +2978,8 @@ def main(argv: list[str] | None = None) -> int:
         cache_mode = cache_v3.configured_cache_mode(ROOT)
         ledger_commands = {
             "context", "capsule", "capture-preview", "capture-apply",
-            "ledger-init", "ledger-status", "ledger-backup", "session-start", "remember",
+            "ledger-init", "ledger-status", "ledger-backup", "ledger-migrate",
+            "session-start", "remember",
             "session-close", "recall", "consolidate", "reverify", "workflow-put",
             "workflow-dry-run", "project-hot", "hot-events", "memory-export",
             "memory-import", "memory-recover-import", "audit-graph",
@@ -2981,7 +3003,7 @@ def main(argv: list[str] | None = None) -> int:
             else None
         )
 
-        if ledger is not None:
+        if ledger is not None and args.command != "ledger-migrate":
             from .retention import open_ledger
             ledger = open_ledger(ledger)
 
@@ -3272,6 +3294,26 @@ def main(argv: list[str] | None = None) -> int:
             output = ledger.backup(Path(args.output) if args.output else None)
             print(json.dumps(output, sort_keys=True))
             return 0
+        if args.command == "ledger-migrate":
+            from . import migrations
+            if args.list_migrations:
+                print(json.dumps(migrations.listing(ledger), sort_keys=True))
+                return 0
+            if not args.target or not args.expected_digest:
+                raise ValueError("--plan and --apply require --to and --expected-digest")
+            if args.apply:
+                print(json.dumps({
+                    "status": "refused", "cache_consulted": False,
+                    "error": "ledger-migrate --apply is not available in this version; "
+                             "`palimnex retention-migrate` remains the apply path",
+                }), file=sys.stderr)
+                return 2
+            output = migrations.plan(
+                ledger, target=args.target, expected_digest=args.expected_digest,
+                allow_unignored=args.allow_unignored_ledger,
+            )
+            print(json.dumps(output, sort_keys=True))
+            return 2 if output["status"] == "refused" else 0
         if args.command == "ledger-init":
             ledger.allow_unignored_path = args.allow_unignored_ledger
             print(json.dumps(ledger.initialize(), sort_keys=True))

@@ -5,6 +5,18 @@ operator-facing behavior; cache and graph schemas are versioned independently.
 
 ## Unreleased
 
+- Deprecated the copied bundle (copying `palimnex.py` and `palimnex/` into a
+  repository), as approved in `docs/BUNDLE_MODE.md`. It keeps working through
+  2.x; its instructions are removed and `doctor` escalates it to a failure in
+  3.0.0. `docs/UPGRADING.md` gains "Copied bundle to package".
+- `doctor` reports the install mode from distribution metadata: `installed`,
+  `editable`, `source_checkout` (information) or `copied_bundle` (warning). It
+  also reports `install_shadowing`, when Python imported a copy instead of the
+  installed distribution, and `second_copy`, when the repository holds a copy
+  beside the running package. Both fail when the versions differ or cannot be
+  read, and warn when they match. Another copy's version is read as bounded
+  text, never imported.
+
 - Added an ordered ledger migration registry, validated at import, holding the
   existing v1-to-retention-v2 step.
 - `ledger-migrate --list` and `ledger-migrate --plan --to TARGET

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+import dataclasses
 import hashlib
 import io
 import json
@@ -89,11 +90,122 @@ class ActionableErrorTests(unittest.TestCase):
 
 
 
+class FakeDistribution:
+    """The parts of importlib.metadata.Distribution that `installation` reads."""
+
+    def __init__(self, site: Path, version: str = "2.8.1", direct_url: str | None = None) -> None:
+        self.site = site
+        self.version = version
+        self.direct_url = direct_url
+
+    def read_text(self, name: str) -> str | None:
+        return self.direct_url if name == "direct_url.json" else None
+
+    def locate_file(self, path: str) -> Path:
+        return self.site / path
+
+
+def make_copy(parent: Path, version: str = "2.8.1", *, project: bool = False) -> Path:
+    package = parent / "palimnex"
+    package.mkdir(parents=True)
+    (package / "__init__.py").write_text("", encoding="utf-8")
+    (package / "core.py").write_text(f'BUNDLE_VERSION = "{version}"\n', encoding="utf-8")
+    if project:
+        (parent / "pyproject.toml").write_text('[project]\nname = "palimnex"\n', encoding="utf-8")
+    return package.resolve()
+
+
+class InstallModeTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory(prefix="pmx-")
+        self.addCleanup(self.temporary.cleanup)
+        self.base = Path(self.temporary.name).resolve()
+        self.root = self.base / "repo"
+        self.root.mkdir()
+
+    def classify(self, package: Path, distribution: FakeDistribution | None,
+                 version: str = "2.8.1") -> tuple[onboarding.Installation, dict[str, dict[str, object]]]:
+        with mock.patch.object(onboarding, "_distribution", return_value=distribution):
+            info = onboarding.installation(package, version)
+        checks = {check.id: dataclasses.asdict(check)
+                  for check in onboarding._install_checks(self.root, info)}
+        return info, checks
+
+    def test_source_checkout_and_copied_bundle_without_metadata(self) -> None:
+        checkout = make_copy(self.base / "checkout", project=True)
+        info, checks = self.classify(checkout, None)
+        self.assertEqual((info.mode, checks["install_mode"]["status"]), ("source_checkout", "info"))
+        copy = make_copy(self.root)
+        info, checks = self.classify(copy, None)
+        self.assertEqual((info.mode, checks["install_mode"]["status"]), ("copied_bundle", "warn"))
+        self.assertIn("deprecated", checks["install_mode"]["detail"])
+        self.assertIn("Copied bundle to package", checks["install_mode"]["action"])
+        self.assertEqual(set(checks), {"install_mode"})
+
+    def test_build_metadata_inside_the_checkout_is_not_an_installed_package(self) -> None:
+        checkout = self.base / "checkout"
+        package = make_copy(checkout, project=True)
+        info, checks = self.classify(package, FakeDistribution(checkout))
+        self.assertEqual((info.mode, checks["install_mode"]["status"]), ("source_checkout", "info"))
+        self.assertFalse(info.shadowed)
+
+    def test_installed_and_editable_packages(self) -> None:
+        site = self.base / "site"
+        installed = make_copy(site)
+        info, checks = self.classify(installed, FakeDistribution(site))
+        self.assertEqual((info.mode, checks["install_mode"]["status"]), ("installed", "info"))
+        project = self.base / "project"
+        package = make_copy(project, project=True)
+        url = json.dumps({"url": project.as_uri(), "dir_info": {"editable": True}})
+        info, checks = self.classify(package, FakeDistribution(site, "2.7.0", url))
+        self.assertEqual((info.mode, checks["install_mode"]["status"]), ("editable", "info"))
+        self.assertIn("still says 2.7.0", checks["install_mode"]["detail"])
+        self.assertNotIn("install_shadowing", checks)
+
+    def test_a_shadowed_distribution_fails_only_when_versions_differ(self) -> None:
+        site = self.base / "site"
+        make_copy(site, "2.7.0")
+        copy = make_copy(self.root)
+        info, checks = self.classify(copy, FakeDistribution(site, "2.7.0"))
+        self.assertTrue(info.shadowed)
+        self.assertEqual(info.mode, "copied_bundle")
+        self.assertEqual(checks["install_shadowing"]["status"], "fail")
+        self.assertIn("2.7.0", checks["install_shadowing"]["detail"])
+        info, checks = self.classify(copy, FakeDistribution(site, "2.7.0"), version="2.7.0")
+        self.assertEqual(checks["install_shadowing"]["status"], "warn")
+
+    def test_a_second_copy_in_the_root_is_reported(self) -> None:
+        site = self.base / "site"
+        installed = make_copy(site)
+        copy = make_copy(self.root, "2.7.0")
+        _, checks = self.classify(installed, FakeDistribution(site))
+        self.assertEqual(checks["second_copy"]["status"], "fail")
+        self.assertIn("2.7.0", checks["second_copy"]["detail"])
+        (copy / "core.py").write_text('BUNDLE_VERSION = "2.8.1"\n', encoding="utf-8")
+        _, checks = self.classify(installed, FakeDistribution(site))
+        self.assertEqual(checks["second_copy"]["status"], "warn")
+        (copy / "core.py").write_text("no version here\n", encoding="utf-8")
+        _, checks = self.classify(installed, FakeDistribution(site))
+        self.assertEqual(checks["second_copy"]["status"], "fail")
+        self.assertIn("unknown version", checks["second_copy"]["detail"])
+        _, checks = self.classify(copy, None)
+        self.assertNotIn("second_copy", checks)
+
+    def test_doctor_reports_the_install_mode(self) -> None:
+        report = onboarding.doctor(self.root, redis_url="redis://127.0.0.1:1/0")
+        self.assertIn("install_mode", {check["id"] for check in report["checks"]})
+
+
 class DoctorTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory(prefix="pmx-")
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name)
+        # Pin the install mode: these tests must not depend on how the test
+        # environment installed Palimnex.
+        patcher = mock.patch.object(onboarding, "_distribution", return_value=None)
+        patcher.start()
+        self.addCleanup(patcher.stop)
         self.client = FakeRedis()
         self.client.socket_path = None  # type: ignore[attr-defined]
 

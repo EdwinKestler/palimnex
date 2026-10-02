@@ -3,8 +3,8 @@
 This guide covers adopting Palimnex in another repository, from installation
 to first run, and removing it again. For upgrades of an existing installation,
 see [`UPGRADING.md`](UPGRADING.md). Commands below use the installed
-`palimnex` command; in a copied bundle or this checkout, use
-`python3 palimnex.py` instead.
+`palimnex` command; in the Palimnex source checkout (or a deprecated copied
+bundle), use `python3 palimnex.py` instead.
 
 Palimnex 2.8.1 is published on PyPI. Install an exact version, as shown below.
 
@@ -66,9 +66,12 @@ To work on Palimnex itself, use an editable checkout instead:
 `python3 -m pip install -e '.[crypto,mcp,test]'` (see [`SDK.md`](SDK.md)).
 
 Copying `palimnex.py` and `palimnex/` into a repository (the "portable
-bundle") still works. Its wrapper finds the repository from its own location.
-Prefer the package: a copied bundle has no version or integrity check, so a
-partial copy can mix versions without warning.
+bundle") is deprecated. It keeps working through 2.x, but it has no version or
+integrity check: a partial copy can mix versions without warning, and a copy
+beside an installed package lets two versions write one ledger. `palimnex
+doctor` warns when it runs from a copied bundle, and these instructions are
+removed in 3.0.0. To move an existing copy to the package, follow "Copied
+bundle to package" in [`UPGRADING.md`](UPGRADING.md).
 
 ## 3. Protect runtime state first
 

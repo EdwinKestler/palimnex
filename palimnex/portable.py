@@ -764,8 +764,21 @@ def _sqlite_ready(
         return False
 
 
+def _refuse_pending_migration(ledger: MemoryLedger) -> None:
+    """A transient migration intent blocks every pack import, activation and recovery."""
+    from .migrations import INTENT_SUFFIX
+
+    intent = Path(str(ledger.path) + INTENT_SUFFIX)
+    if intent.exists() or intent.is_symlink():
+        raise ValueError(
+            "a ledger migration intent exists; finish it with `palimnex ledger-migrate --apply` "
+            "before importing, activating or recovering a pack"
+        )
+
+
 def _refuse_retention_replacement(ledger: MemoryLedger) -> None:
     """Called under the replacement lock; inspect storage, not a stale Python type."""
+    _refuse_pending_migration(ledger)
     marker = Path(str(ledger.path) + ".retention-v2")
     if ledger.schema != "project-memory:ledger:v1" or marker.exists() or marker.is_symlink():
         raise ValueError("retention ledger replacement requires a deletion-registry-aware adapter")
@@ -802,6 +815,7 @@ def recover_import(ledger: MemoryLedger) -> dict[str, Any]:
     if ledger.schema != "project-memory:ledger:v1":
         raise ValueError("retention ledger replacement requires a deletion-registry-aware adapter")
     """Finish or roll back a previously fsynced activation intent."""
+    _refuse_pending_migration(ledger)
     intent_path = _intent_path(ledger)
     if not intent_path.exists():
         return {"status": "no_pending_import"}

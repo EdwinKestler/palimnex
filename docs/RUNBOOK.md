@@ -33,7 +33,10 @@ or a replacement guard that does not match the ledger. It changes no
 configuration, cache or ledger content and exits `0` when healthy, `2` when
 something needs attention. `ledger-migrate --list` and `ledger-migrate --plan
 --to TARGET --expected-digest DIGEST` describe ledger schema migrations
-without writing. `python3 palimnex.py redis start` runs the same
+without writing. `ledger-migrate --apply` with the same arguments applies one
+step after a verified snapshot. If it is interrupted, rerun the identical
+command; never delete the migration intent or the replacement guard
+(`docs/MIGRATIONS.md`). `python3 palimnex.py redis start` runs the same
 guarded launcher as `./scripts/palimnex_redis.sh start`.
 
 `migration-shadow` requires a fresh v2.4 index over the same current corpus.

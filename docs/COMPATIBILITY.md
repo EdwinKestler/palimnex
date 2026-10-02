@@ -28,7 +28,8 @@ optional sibling `.audit-graph.json` is a separate document. Semantica is an
 optional extra and is never imported by core Palimnex.
 See `docs/SDK.md` for trust roots, downgrade behavior and checkpoint limitations.
 
-The unreleased line adds two read-only command documents,
+The unreleased line adds the ledger migration framework (`docs/MIGRATIONS.md`)
+and four documents. Two are read-only command output,
 `project-memory:ledger-migration-list:v1` (`ledger-migrate --list`) and
 `project-memory:ledger-migration-plan:v1` (`ledger-migrate --plan`). They are
 printed, never persisted, and are not apply tokens: an apply recomputes
@@ -40,4 +41,22 @@ reader checks, pending import or migration intents, the replacement-guard
 state (`absent`, `exact`, `empty`, `invalid` or `unsafe`), Git ignore states,
 the required snapshot, effects, `status` and `refusals`. The migration
 registry ships with the code and is never read from configuration, packs,
-Redis or the ledger. No ledger, pack or cache identifier changes.
+Redis or the ledger.
+
+`ledger-migrate --apply` prints `project-memory:ledger-migration-result:v1`:
+`status` (`migrated`, `already_migrated` or `guard_repaired`), `source`,
+`target`, `resumed`, `recovery` notes, the `replacement_guard` action
+(`published`, `existing`, `replaced_empty` or `unchanged`), the verified
+`pre_migration_snapshot` or `null`, `authority: historical_only` and
+`authorizes_actions: false`. While an apply is unfinished, it keeps the
+transient `<ledger>.migration-intent` (`project-memory:ledger-migration-intent:v1`):
+owner-only canonical JSON of at most 4,096 bytes with exactly `schema`,
+`ledger`, `source`, `target`, `expected_digest`, `registry` (a digest of the
+shipped registry), `snapshot` (`null` or `path` and `verified`), `phase`
+(`prepared`, `snapshot_verified` or `target_verified`), `authority` and
+`authorizes_actions`. It holds no payload, key or authorization; an intent
+that does not match the ledger, step, digest or registry is refused rather
+than resumed. Pack import, activation and recovery refuse while it exists, and
+it is removed after a verified target. The `<ledger>.retention-v2` guard keeps
+its exact bytes; it is published atomically before the schema change and is
+never removed. No ledger, pack or cache identifier changes.

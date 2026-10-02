@@ -5,11 +5,13 @@ import hashlib
 import json
 import os
 import shutil
+import sqlite3
 import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 from palimnex import durable as d
 from palimnex import migrations as m
@@ -39,8 +41,17 @@ def tree_state(root: Path) -> dict[str, tuple[str, int, int]]:
     return state
 
 
+def _no_apply(connection: object, ledger: object, digest: str) -> None:
+    raise AssertionError("not applied in registry tests")
+
+
+def _no_audit(reader: object, connection: object) -> tuple[str, str]:
+    raise AssertionError("not audited in registry tests")
+
+
 def step(source: str, target: str, suffix: str = ".next", label: str = "-pre-next") -> m.Migration:
-    return m.Migration(source, target, suffix, label, ("an effect",))
+    return m.Migration(source, target, suffix, label, ("an effect",), _no_apply,  # type: ignore[arg-type]
+                       _no_audit)  # type: ignore[arg-type]
 
 
 class RegistryTests(unittest.TestCase):
@@ -75,7 +86,11 @@ class RegistryTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unsafe or reused"):
             m.validate_registry((step(self.A, self.B), step(self.B, self.C)), readers)
         with self.assertRaisesRegex(ValueError, "declare its effects"):
-            m.validate_registry((m.Migration(self.A, self.B, ".b", "-b", ()),), readers)
+            m.validate_registry((m.Migration(self.A, self.B, ".b", "-b", (), _no_apply,  # type: ignore[arg-type]
+                                             _no_audit),), readers)  # type: ignore[arg-type]
+        with self.assertRaisesRegex(ValueError, "apply and audit callbacks"):
+            m.validate_registry((m.Migration(self.A, self.B, ".b", "-b", ("x",), None,  # type: ignore[arg-type]
+                                             _no_audit),), readers)  # type: ignore[arg-type]
 
     def test_resolves_only_the_adjacent_step(self) -> None:
         registry = m.validate_registry(
@@ -247,7 +262,7 @@ class CommandTests(LedgerFixture):
                                 env=environment, capture_output=True, text=True, check=False)
         return result.returncode, result.stdout, result.stderr
 
-    def test_list_plan_and_apply_exit_codes(self) -> None:
+    def test_list_and_plan_exit_codes(self) -> None:
         before = tree_state(self.root)
         code, output, _ = self.run_cli("ledger-migrate", "--list")
         self.assertEqual((code, json.loads(output)["schema"]), (0, m.LIST_SCHEMA))
@@ -257,10 +272,6 @@ class CommandTests(LedgerFixture):
         code, output, _ = self.run_cli("ledger-migrate", "--plan", "--to", TARGET,
                                        "--expected-digest", "0" * 64)
         self.assertEqual((code, json.loads(output)["status"]), (2, "refused"))
-        code, _, errors = self.run_cli("ledger-migrate", "--apply", "--to", TARGET,
-                                       "--expected-digest", self.digest)
-        self.assertEqual(code, 2)
-        self.assertIn("retention-migrate", json.loads(errors)["error"])
         code, _, errors = self.run_cli("ledger-migrate", "--plan")
         self.assertEqual(code, 1)
         self.assertIn("--expected-digest", json.loads(errors)["error"])
@@ -323,6 +334,374 @@ class DoctorMigrationTests(LedgerFixture):
         found = self.findings()["replacement_guard"]
         self.assertEqual(found["status"], "fail")
         self.assertIn("ledger is missing", found["detail"])
+
+
+def ledger_files(ledger: d.MemoryLedger) -> list[str]:
+    """Sidecars and temporaries beside the ledger, excluding SQLite's own files."""
+    ignored = {ledger.path.name, ledger.lock_path.name, f"{ledger.path.name}-wal",
+               f"{ledger.path.name}-shm"}
+    return sorted(p.name for p in ledger.path.parent.iterdir()
+                  if p.name not in ignored and not p.is_dir())
+
+
+def snapshots(ledger: d.MemoryLedger) -> list[Path]:
+    directory = ledger.path.parent / d.SNAPSHOT_DIRECTORY
+    return sorted(directory.glob("*.sqlite3")) if directory.is_dir() else []
+
+
+class EngineFixture(LedgerFixture):
+    def apply(self, digest: str | None = None, **options: object) -> dict[str, object]:
+        return m.apply(self.ledger, target=TARGET, expected_digest=digest or self.digest,
+                       **options)  # type: ignore[arg-type]
+
+    def assert_migrated(self) -> None:
+        found = m.inspect(self.ledger)
+        self.assertEqual(found.observed, TARGET)
+        self.assertTrue(found.exact, found.failures())
+        self.assertEqual(found.audit, (d.LEDGER_SCHEMA, self.digest))
+        self.assertEqual(self.guard.read_bytes(), TARGET.encode())
+        self.assertEqual(os.stat(self.guard).st_mode & 0o777, 0o600)
+        self.assertEqual(ledger_files(self.ledger), [self.guard.name])
+
+
+class ApplyTests(EngineFixture):
+    def test_apply_snapshots_publishes_the_guard_and_removes_the_intent(self) -> None:
+        result = self.apply()
+        self.assertEqual(result["schema"], m.RESULT_SCHEMA)
+        self.assertEqual((result["status"], result["resumed"]), ("migrated", False))
+        self.assertEqual(result["replacement_guard"], "published")
+        self.assertFalse(result["authorizes_actions"])
+        receipt = result["pre_migration_snapshot"]
+        self.assertEqual((receipt["schema"], receipt["logical_digest"]), (d.LEDGER_SCHEMA, self.digest))
+        self.assertEqual([path.name for path in snapshots(self.ledger)], [Path(receipt["path"]).name])
+        self.assertTrue(Path(receipt["path"]).name.endswith("-pre-retention-v2.sqlite3"))
+        self.assert_migrated()
+        again = self.apply("0" * 64)
+        self.assertEqual((again["status"], again["replacement_guard"]), ("already_migrated", "existing"))
+        self.assertEqual(len(snapshots(self.ledger)), 1)
+        with self.assertRaisesRegex(ValueError, "backward migration"):
+            m.apply(self.ledger, target=d.LEDGER_SCHEMA, expected_digest=self.digest)
+
+    def test_refusals_write_nothing(self) -> None:
+        before = tree_state(self.root)
+        with self.assertRaisesRegex(ValueError, "DIGEST_MISMATCH"):
+            self.apply("0" * 64)
+        same = m.apply(self.ledger, target=d.LEDGER_SCHEMA, expected_digest=self.digest)
+        self.assertEqual((same["status"], same["replacement_guard"]), ("already_migrated", "unchanged"))
+        with self.assertRaisesRegex(ValueError, "unknown migration target"):
+            m.apply(self.ledger, target="project-memory:later:v9", expected_digest=self.digest)
+        self.assertEqual(tree_state(self.root), before)
+        intent = Path(str(self.ledger.path) + ".import-intent")
+        intent.write_text("{}", encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "pending import"):
+            self.apply()
+        intent.unlink()
+        self.write_guard(b"conflicting")
+        with self.assertRaisesRegex(ValueError, "manual review"):
+            self.apply()
+        self.assertEqual(self.guard.read_bytes(), b"conflicting")
+        self.assertEqual(m.inspect(self.ledger).observed, d.LEDGER_SCHEMA)
+
+    def test_legacy_guard_states_beside_the_source(self) -> None:
+        self.write_guard(TARGET.encode())
+        result = self.apply()
+        self.assertEqual(result["replacement_guard"], "existing")
+        self.assertIn("continued after an existing replacement guard", result["recovery"])
+        self.assert_migrated()
+
+    def test_legacy_empty_guard_is_replaced_only_after_the_digest_matches(self) -> None:
+        self.write_guard(b"")
+        with self.assertRaisesRegex(ValueError, "DIGEST_MISMATCH"):
+            self.apply("0" * 64)
+        self.assertEqual(self.guard.read_bytes(), b"")
+        result = self.apply()
+        self.assertEqual(result["replacement_guard"], "replaced_empty")
+        self.assert_migrated()
+
+    def test_migrated_ledger_without_guard_is_repaired_with_the_audit_digest(self) -> None:
+        self.apply()
+        self.guard.unlink()
+        with self.assertRaisesRegex(ValueError, "DIGEST_MISMATCH"):
+            self.apply("0" * 64)
+        self.assertFalse(self.guard.exists())
+        result = self.apply()
+        self.assertEqual(result["status"], "guard_repaired")
+        self.assert_migrated()
+        self.guard.unlink()
+        self.write_guard(b"")
+        with self.assertRaisesRegex(ValueError, "manual review"):
+            self.apply()
+
+    def test_intent_that_does_not_match_is_not_resumable(self) -> None:
+        self.write_guard(TARGET.encode())
+        intent = {
+            "schema": m.INTENT_SCHEMA, "ledger": ".private/memory.sqlite3",
+            "source": d.LEDGER_SCHEMA, "target": TARGET, "expected_digest": self.digest,
+            "registry": "f" * 64, "snapshot": None, "phase": "prepared",
+            "authority": "historical_only", "authorizes_actions": False,
+        }
+        path = Path(str(self.ledger.path) + m.INTENT_SUFFIX)
+        path.write_bytes(d.canonical_json(intent))
+        with self.assertRaisesRegex(ValueError, "different migration registry"):
+            self.apply()
+        self.assertEqual(self.plan()["status"], "refused")
+        path.write_bytes(d.canonical_json({**intent, "registry": m.registry_identity(),
+                                           "expected_digest": "e" * 64}))
+        with self.assertRaisesRegex(ValueError, "different --expected-digest"):
+            self.apply()
+        path.write_bytes(d.canonical_json({**intent, "registry": m.registry_identity(),
+                                           "phase": "target_verified"}))
+        with self.assertRaisesRegex(ValueError, "still the source"):
+            self.apply()
+        self.assertTrue(any("still the source" in reason for reason in self.plan()["refusals"]))
+        path.write_bytes(b'{"schema": "x"}')
+        with self.assertRaisesRegex(ValueError, "canonical JSON|field set"):
+            self.apply()
+        self.assertEqual(m.inspect(self.ledger).observed, d.LEDGER_SCHEMA)
+
+    def test_snapshot_survives_later_erasure(self) -> None:
+        session = self.ledger.start_session("erasure rehearsal")["session_id"]
+        self.ledger.append_event(session, "fact", subject="violet", payload={"v": "temporary"},
+                                 retention="session")
+        self.ledger.close_session(session, outcome="done")
+        self.digest = self.ledger.status()["logical_digest"]
+        receipt = self.apply()["pre_migration_snapshot"]
+        migrated = r.as_retention(self.ledger)
+        migrated.activate_policy({
+            "schema": r.POLICY, "policy_id": "local", "version": 1, "mode": "manual",
+            "clock": "tx_at", "rules": [{"retention": "session", "kinds": ["fact"],
+                                         "ttl_seconds": 0}],
+            "grace_after_close_seconds": 0, "plan_ttl_seconds": 3600,
+        }, actor="operator", reason="erasure rehearsal")
+        proposal = migrated.propose()
+        self.assertEqual(len(proposal["affected"]), 1)
+        applied = migrated.apply(proposal, confirm_digest=proposal["plan_digest"], key=b"k" * 32,
+                                 actor="operator", reason="erasure rehearsal")
+        self.assertEqual(applied["status"], "applied")
+        snapshot = Path(receipt["path"])
+        self.assertTrue(snapshot.is_file())
+        self.assertEqual(m._verify_snapshot_file(self.ledger, snapshot, m.REGISTRY[0], self.digest)
+                         ["logical_digest"], self.digest)
+
+    @unittest.skipUnless(shutil.which("git"), "git is required")
+    def test_git_ignore_is_required_before_any_write(self) -> None:
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+        before = tree_state(self.root)
+        with self.assertRaisesRegex(ValueError, "--allow-unignored-ledger"):
+            self.apply()
+        self.assertEqual(tree_state(self.root), before)
+        self.assertEqual(self.apply(allow_unignored=True)["status"], "migrated")
+
+
+class PackRefusalTests(EngineFixture):
+    def test_pack_paths_refuse_while_a_migration_intent_exists(self) -> None:
+        from palimnex import portable
+        key = bytes(range(32))
+        pack = self.root / ".private/source.pmem"
+        portable.export_pack(self.ledger, pack, key)
+        Path(str(self.ledger.path) + m.INTENT_SUFFIX).write_text("{}", encoding="utf-8")
+        for attempt in (
+            lambda: portable.import_pack(self.ledger, pack, key),
+            lambda: portable.import_pack(self.ledger, pack, key, activate=True, replace=True),
+            lambda: portable.recover_import(self.ledger),
+        ):
+            with self.assertRaisesRegex(ValueError, "migration intent exists"):
+                attempt()
+        self.assertEqual(self.ledger.status()["logical_digest"], self.digest)
+
+
+class LegacyAliasTests(EngineFixture):
+    def twin(self) -> d.MemoryLedger:
+        """An identical copy of the fixture ledger in a second repository."""
+        temporary = tempfile.TemporaryDirectory(prefix="pmx-")
+        self.addCleanup(temporary.cleanup)
+        root = Path(temporary.name).resolve()
+        write_project(root)
+        (root / ".private").mkdir(mode=0o700)
+        source = sqlite3.connect(self.ledger.path)
+        target = sqlite3.connect(root / ".private/memory.sqlite3")
+        try:
+            source.backup(target)
+        finally:
+            target.close()
+            source.close()
+        os.chmod(root / ".private/memory.sqlite3", 0o600)
+        return d.MemoryLedger(root / ".private/memory.sqlite3", project_id=PROJECT_ID,
+                              project_slug="memory-fixture", root=root)
+
+    @staticmethod
+    def shape(ledger: d.MemoryLedger) -> dict[str, object]:
+        connection = sqlite3.connect(ledger.path)
+        try:
+            objects = connection.execute(
+                "SELECT type, name, sql FROM sqlite_schema ORDER BY name").fetchall()
+            metadata = connection.execute("SELECT key, value FROM metadata ORDER BY key").fetchall()
+            first = json.loads(connection.execute(
+                "SELECT payload FROM retention_control ORDER BY sequence LIMIT 1").fetchone()[0])
+        finally:
+            connection.close()
+        status = r.as_retention(ledger).retention_status()
+        return {
+            "objects": objects, "metadata": metadata,
+            "migration": sorted(first), "from": first["from_schema"],
+            "before": first["before_digest"],
+            "marker": Path(str(ledger.path) + ".retention-v2").read_bytes(),
+            "status_fields": sorted(status),
+            "files": ledger_files(ledger),
+        }
+
+    def test_alias_and_generic_command_reach_the_same_target(self) -> None:
+        twin = self.twin()
+        self.assertEqual(twin.status()["logical_digest"], self.digest)
+        legacy = r.migrate(self.ledger, expected_digest=self.digest, snapshot=True)
+        generic = m.apply(twin, target=TARGET, expected_digest=self.digest)
+        self.assertEqual(self.shape(self.ledger), self.shape(twin))
+        self.assertEqual(legacy["migration"]["status"], "migrated")
+        for receipt in (legacy["pre_migration_snapshot"], generic["pre_migration_snapshot"]):
+            self.assertEqual(receipt["logical_digest"], self.digest)
+            self.assertEqual(os.stat(receipt["path"]).st_mode & 0o777, 0o600)
+
+    def test_sdk_keeps_its_default_and_warns(self) -> None:
+        from palimnex.api import Palimnex
+        twin = self.twin()
+        client = Palimnex(self.root, writable=True)
+        with self.assertWarns(DeprecationWarning):
+            result = client.migrate_retention(expected_digest=self.digest)
+        self.assertNotIn("pre_migration_snapshot", result)
+        self.assertEqual(snapshots(self.ledger), [])
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", DeprecationWarning)
+            result = Palimnex(twin.root, writable=True).migrate_retention(
+                expected_digest=self.digest, snapshot=True)
+        self.assertEqual(result["pre_migration_snapshot"]["logical_digest"], self.digest)
+
+
+class ApplyCommandTests(EngineFixture):
+    def run_cli(self, *arguments: str) -> tuple[int, str, str]:
+        environment = {**os.environ, "PYTHONPATH": str(REPOSITORY)}
+        environment.pop("PALIMNEX_ROOT", None)
+        result = subprocess.run([sys.executable, "-m", "palimnex", *arguments], cwd=self.root,
+                                env=environment, capture_output=True, text=True, check=False)
+        return result.returncode, result.stdout, result.stderr
+
+    def test_apply_command(self) -> None:
+        code, output, errors = self.run_cli("ledger-migrate", "--apply", "--to", TARGET,
+                                            "--expected-digest", self.digest)
+        self.assertEqual(code, 0, errors)
+        result = json.loads(output)
+        self.assertEqual((result["schema"], result["status"]), (m.RESULT_SCHEMA, "migrated"))
+        self.assertEqual(result["ledger_status"]["schema"], TARGET)
+        self.assert_migrated()
+        code, _, errors = self.run_cli("ledger-migrate", "--apply", "--to", d.LEDGER_SCHEMA,
+                                       "--expected-digest", self.digest)
+        self.assertEqual(code, 1)
+        self.assertIn("backward migration", json.loads(errors)["error"])
+
+    def test_no_snapshot_alias_is_deprecated(self) -> None:
+        code, output, errors = self.run_cli("retention-migrate", "--expected-digest", self.digest,
+                                            "--no-snapshot")
+        self.assertEqual(code, 0, errors)
+        self.assertIn("deprecated", errors)
+        result = json.loads(output)
+        self.assertEqual(result["deprecations"], [r.NO_SNAPSHOT_DEPRECATION])
+        self.assertNotIn("pre_migration_snapshot", result)
+        self.assert_migrated()
+
+
+CHILD = """
+import os, sys
+from pathlib import Path
+from palimnex import durable as d, migrations as m
+root, boundary, digest, project = Path(sys.argv[1]), sys.argv[2], sys.argv[3], sys.argv[4]
+name, _, nth = boundary.partition("#")
+reached = {"count": 0}
+def interrupt(current):
+    if current == name:
+        reached["count"] += 1
+        if reached["count"] == int(nth or 1):
+            os._exit(17)
+m._boundary = interrupt
+ledger = d.MemoryLedger(root / ".private/memory.sqlite3", project_id=project,
+                        project_slug="memory-fixture", root=root)
+m.apply(ledger, target="project-memory:retention-ledger:v2", expected_digest=digest)
+os._exit(0)
+"""
+
+BOUNDARIES = (
+    "guard-temporary-written", "guard-linked", "guard-published",
+    "intent-temporary-written", "intent-linked", "intent-created",
+    "snapshot-verified", "intent-temporary-written#2", "intent-snapshot-recorded",
+    "transaction-applied", "committed", "target-verified",
+    "intent-temporary-written#3", "intent-verified-recorded", "intent-removed",
+)
+
+
+class CrashMatrixTests(EngineFixture):
+    def interrupt(self, boundary: str) -> None:
+        environment = {**os.environ, "PYTHONPATH": str(REPOSITORY)}
+        result = subprocess.run(
+            [sys.executable, "-c", CHILD, str(self.root), boundary, self.digest, PROJECT_ID],
+            env=environment, capture_output=True, text=True, check=False, timeout=120,
+        )
+        self.assertEqual(result.returncode, 17, f"{boundary} not reached: {result.stderr}")
+
+    def assert_exact_source_or_target(self) -> None:
+        found = m.inspect(self.ledger)
+        self.assertIn(found.observed, {d.LEDGER_SCHEMA, TARGET})
+        self.assertTrue(found.exact, found.failures())
+
+    def test_every_boundary_is_recoverable_by_rerunning_apply(self) -> None:
+        for boundary in BOUNDARIES:
+            with self.subTest(boundary=boundary):
+                self.setUp()
+                self.interrupt(boundary)
+                self.assert_exact_source_or_target()
+                self.assertEqual(self.plan()["status"] in {"resumable", "already_migrated",
+                                                           "ready"}, True)
+                if m.inspect(self.ledger).observed == TARGET and m._present(
+                        Path(str(self.ledger.path) + m.INTENT_SUFFIX)):
+                    with self.assertRaisesRegex(ValueError, "not resumable|DIGEST_MISMATCH"):
+                        self.apply("e" * 64)
+                elif m.inspect(self.ledger).observed == d.LEDGER_SCHEMA:
+                    with self.assertRaisesRegex(ValueError, "DIGEST_MISMATCH"):
+                        self.apply("e" * 64)
+                result = self.apply()
+                self.assertIn(result["status"], {"migrated", "already_migrated"})
+                self.assert_migrated()
+                self.assertEqual(len(snapshots(self.ledger)), 1, boundary)
+                self.assertEqual(self.apply()["status"], "already_migrated")
+
+    def test_incomplete_snapshot_is_quarantined_and_rewritten(self) -> None:
+        self.interrupt("intent-created")
+        intent = m.read_intent(self.ledger)
+        assert intent is not None
+        partial = self.root / intent["snapshot"]["path"]
+        partial.write_bytes(b"SQLite format 3\x00 partial")
+        os.chmod(partial, 0o600)
+        result = self.apply()
+        self.assertTrue(any("quarantined" in note for note in result["recovery"]))
+        self.assert_migrated()
+        self.assertEqual(len(snapshots(self.ledger)), 1)
+        self.assertEqual(len(list(partial.parent.glob("*.quarantined-*"))), 1)
+
+    def test_exceptions_before_and_after_commit(self) -> None:
+        def fail_at(name: str) -> object:
+            def hook(current: str) -> None:
+                if current == name:
+                    raise RuntimeError(f"injected at {name}")
+            return hook
+        for boundary, observed in (("transaction-applied", d.LEDGER_SCHEMA),
+                                   ("target-verified", TARGET)):
+            with self.subTest(boundary=boundary):
+                self.setUp()
+                with mock.patch.object(m, "_boundary", fail_at(boundary)):
+                    with self.assertRaisesRegex(RuntimeError, "injected"):
+                        self.apply()
+                self.assertEqual(m.inspect(self.ledger).observed, observed)
+                self.assertTrue(m._present(Path(str(self.ledger.path) + m.INTENT_SUFFIX)))
+                self.assertTrue(self.apply()["resumed"])
+                self.assert_migrated()
 
 
 if __name__ == "__main__":

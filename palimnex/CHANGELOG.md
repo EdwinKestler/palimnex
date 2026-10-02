@@ -11,7 +11,38 @@ operator-facing behavior; cache and graph schemas are versioned independently.
   --expected-digest DIGEST` describe one adjacent migration without writing
   (`project-memory:ledger-migration-list:v1` and
   `project-memory:ledger-migration-plan:v1`). A plan exits `2` when it would
-  be refused. `--apply` is not available yet; `retention-migrate` is unchanged.
+  be refused.
+- `ledger-migrate --apply --to TARGET --expected-digest DIGEST` applies,
+  resumes or completes one adjacent step, printing
+  `project-memory:ledger-migration-result:v1`. It works under the exclusive
+  lock in this order:
+  - publishes the replacement guard atomically before any schema change;
+  - records a transient `<ledger>.migration-intent`
+    (`project-memory:ledger-migration-intent:v1`);
+  - writes and verifies a mandatory snapshot;
+  - applies the step in one transaction;
+  - exact-verifies the target, then removes the intent.
+
+  Rerunning the same command recovers from an interruption at any boundary.
+- A legacy empty `.retention-v2` guard from an interrupted 2.8.x migration is
+  replaced only after the exact source and digest are confirmed. A migrated
+  ledger without its guard gets the guard republished after exact
+  verification.
+- `retention-migrate` and SDK `migrate_retention` run through the engine and
+  keep their output fields, adding a `migration` summary.
+- `retention-migrate --no-snapshot` is deprecated: it prints a warning, adds
+  `deprecations` to the output, and is removed in 2.10.0. SDK
+  `migrate_retention` keeps its API v1 default, but emits `DeprecationWarning`
+  unless `snapshot=True`.
+- The migration intent and snapshot paths must be ignored by Git;
+  `--allow-unignored-ledger` (also on `retention-migrate`) is the explicit
+  override.
+- Pack import, activation and `memory-recover-import` refuse while a migration
+  intent exists.
+- The approved design moved to `docs/MIGRATIONS.md`, after `docs/RETENTION.md`
+  in the AGENTS.md entry order. The upgrade rehearsal migrates one copy
+  through `retention-migrate` and another through `ledger-migrate`, and
+  compares the results.
 - `doctor` reports unfinished or unsafe migration state: an interrupted
   migration intent, a replacement guard beside an unmigrated ledger, an empty
   or mismatched guard, a migrated ledger without its guard, and a guard

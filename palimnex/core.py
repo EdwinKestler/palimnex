@@ -2730,7 +2730,7 @@ def parser() -> argparse.ArgumentParser:
         "--output", help="new snapshot path (default: backups/ beside the ledger)"
     )
     ledger_migrate = commands.add_parser(
-        "ledger-migrate", help="list or plan an explicit, digest-bound ledger schema migration"
+        "ledger-migrate", help="list, plan or apply an explicit, digest-bound ledger migration"
     )
     migrate_mode = ledger_migrate.add_mutually_exclusive_group(required=True)
     migrate_mode.add_argument(
@@ -2741,7 +2741,8 @@ def parser() -> argparse.ArgumentParser:
         "--plan", action="store_true", help="describe one adjacent migration without writing"
     )
     migrate_mode.add_argument(
-        "--apply", action="store_true", help="not available in this version"
+        "--apply", action="store_true",
+        help="apply, resume or complete one adjacent migration (snapshot first)",
     )
     ledger_migrate.add_argument("--to", dest="target", help="the immediate target schema")
     ledger_migrate.add_argument("--expected-digest", help="the current logical_digest")
@@ -2823,7 +2824,12 @@ def parser() -> argparse.ArgumentParser:
     rp.add_argument(
         "--no-snapshot",
         action="store_true",
-        help="skip the verified pre-migration snapshot under the ledger's backups/ directory",
+        help="deprecated (removed in 2.10.0): skip the verified pre-migration snapshot",
+    )
+    rp.add_argument(
+        "--allow-unignored-ledger",
+        action="store_true",
+        help="accept migration intent and snapshot paths that Git does not ignore",
     )
     rp = commands.add_parser("retention-activate")
     rp.add_argument("policy")
@@ -3046,22 +3052,24 @@ def main(argv: list[str] | None = None) -> int:
                 }
 
         if args.command.startswith("retention-") or args.command.startswith("cleanup-"):
-            from .retention import RetentionLedger, migrate, migration_preview, unconfigured_plan
+            from .retention import (
+                NO_SNAPSHOT_DEPRECATION, RetentionLedger, migrate, migration_preview,
+                unconfigured_plan,
+            )
+            if args.command == "retention-migrate" and args.no_snapshot:
+                print(f"warning: {NO_SNAPSHOT_DEPRECATION}", file=sys.stderr)
             if args.command == "retention-migrate" and args.dry_run:
                 output = migration_preview(
                     ledger,
                     expected_digest=args.expected_digest,
                     snapshot_path=None if args.no_snapshot else f"{ledger.path.parent / 'backups'}/",
+                    allow_unignored=args.allow_unignored_ledger,
                 )
             elif args.command == "retention-migrate":
-                snapshot_path = (
-                    None
-                    if args.no_snapshot or isinstance(ledger, RetentionLedger)
-                    or not ledger.path.is_file()
-                    else ledger.default_snapshot_path("-pre-retention-v2")
-                )
                 output = migrate(
-                    ledger, expected_digest=args.expected_digest, snapshot_path=snapshot_path
+                    ledger, expected_digest=args.expected_digest,
+                    snapshot=not args.no_snapshot,
+                    allow_unignored=args.allow_unignored_ledger,
                 )
             elif not isinstance(ledger, RetentionLedger):
                 if args.command == "retention-status":
@@ -3099,6 +3107,8 @@ def main(argv: list[str] | None = None) -> int:
                 _guard_private_file(key_path,"forget key")
                 key = read_bounded_file(ROOT,dkey,max_bytes=32)
                 output = ledger.apply(repository_json(args.plan,"cleanup plan",1048576),confirm_digest=args.confirm_digest,key=key,actor=args.actor,reason=args.reason)
+            if args.command == "retention-migrate" and args.no_snapshot:
+                output = {**output, "deprecations": [NO_SNAPSHOT_DEPRECATION]}
             print(json.dumps(output,sort_keys=True))
             return 0
         if args.command == "longitudinal-prepare":
@@ -3302,12 +3312,14 @@ def main(argv: list[str] | None = None) -> int:
             if not args.target or not args.expected_digest:
                 raise ValueError("--plan and --apply require --to and --expected-digest")
             if args.apply:
-                print(json.dumps({
-                    "status": "refused", "cache_consulted": False,
-                    "error": "ledger-migrate --apply is not available in this version; "
-                             "`palimnex retention-migrate` remains the apply path",
-                }), file=sys.stderr)
-                return 2
+                from .retention import open_ledger
+                output = migrations.apply(
+                    ledger, target=args.target, expected_digest=args.expected_digest,
+                    allow_unignored=args.allow_unignored_ledger,
+                )
+                output["ledger_status"] = open_ledger(ledger).status()
+                print(json.dumps(output, sort_keys=True))
+                return 0
             output = migrations.plan(
                 ledger, target=args.target, expected_digest=args.expected_digest,
                 allow_unignored=args.allow_unignored_ledger,

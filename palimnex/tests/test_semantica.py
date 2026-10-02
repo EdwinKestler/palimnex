@@ -197,7 +197,8 @@ class SemanticaProjectionTests(unittest.TestCase):
             self.sid, "fact", "cobalt orchard", {"state": "forget-me"},
             (Evidence("docs/alpha.md:1-3"),), retention="durable"))
         self.client.close_session(self.sid, "done")
-        self.client.migrate_retention(expected_digest=self.client.status()["logical_digest"])
+        with self.assertWarns(DeprecationWarning):
+            self.client.migrate_retention(expected_digest=self.client.status()["logical_digest"])
         self.client.activate_policy({"schema": "project-memory:retention-policy:v1", "policy_id": "test",
                                     "version": 1, "mode": "manual", "clock": "tx_at", "rules": [],
                                     "grace_after_close_seconds": 0, "plan_ttl_seconds": 3600},

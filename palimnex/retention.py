@@ -5,7 +5,6 @@ import hmac
 import json
 import re
 import secrets
-import os
 from pathlib import Path
 from typing import Any
 from . import durable as d
@@ -633,57 +632,51 @@ MIGRATION_EFFECTS=(
 )
 
 
-def migration_preview(ledger,*,expected_digest,snapshot_path=None):
-    """Read-only description of what retention-migrate would do."""
-    if isinstance(ledger,RetentionLedger):
-        return {'mode':'dry-run','will_write':False,'already_migrated':True,'schema':SCHEMA}
-    from .portable import _intent_path
-    with ledger.connection(create=False) as c:
-        current=ledger._logical_digest(c)
-    refusals=[]
-    if _intent_path(ledger).exists():refusals.append('pending import blocks retention migration')
-    if current!=expected_digest:refusals.append('DIGEST_MISMATCH')
+def apply_migration(c,ledger,expected_digest):
+    """The v1 -> retention v2 step, inside the migration engine's transaction."""
+    c.execute(SQL)
+    c.execute("UPDATE metadata SET value=? WHERE key='ledger_schema'",(SCHEMA.encode(),))
+    as_retention(ledger)._record(c,'migration',{'from_schema':d.LEDGER_SCHEMA,'before_digest':expected_digest,'at':d.now_ms()})
+
+
+def migration_audit(reader,c):
+    """(from_schema, before_digest) of the first, migration control entry."""
+    first=reader._controls(c)[0]['payload']
+    return first['from_schema'],first['before_digest']
+
+
+NO_SNAPSHOT_DEPRECATION=('--no-snapshot is deprecated and is removed in 2.10.0; '
+                         '`palimnex ledger-migrate --apply` always writes a verified snapshot')
+
+
+def migration_preview(ledger,*,expected_digest,snapshot_path=None,allow_unignored=False):
+    """Read-only description of what retention-migrate would do (the generic plan inside)."""
+    from .migrations import plan as migration_plan
+    plan=migration_plan(ledger,target=SCHEMA,expected_digest=expected_digest,allow_unignored=allow_unignored)
+    if plan['observed_schema']==SCHEMA:
+        return {'mode':'dry-run','will_write':False,'already_migrated':True,'schema':SCHEMA,'plan':plan}
     return {'mode':'dry-run','will_write':False,'already_migrated':False,
-            'current_schema':d.LEDGER_SCHEMA,'target_schema':SCHEMA,'logical_digest':current,
-            'expected_digest_matches':current==expected_digest,'would_refuse':refusals,
+            'current_schema':d.LEDGER_SCHEMA,'target_schema':SCHEMA,'logical_digest':plan['logical_digest'],
+            'expected_digest_matches':plan['expected_digest_matches'],'would_refuse':plan['refusals'],
             'snapshot':(f'a verified snapshot is written to {snapshot_path} first; {d.SNAPSHOT_ERASURE_NOTE}'
                         if snapshot_path else 'no snapshot (--no-snapshot)'),
-            'effects':list(MIGRATION_EFFECTS)}
+            'effects':list(MIGRATION_EFFECTS),'plan':plan}
 
 
-def migrate(ledger,*,expected_digest,snapshot_path=None):
-    if isinstance(ledger,RetentionLedger):return ledger.retention_status()
-    snapshot=None
-    with ledger.file_lock(exclusive=True):
-        c=ledger._open(create=False)
-        try:
-            from .portable import _intent_path
-            if _intent_path(ledger).exists():raise ValueError('pending import blocks retention migration')
-            ledger._require_schema(c)
-            if ledger._semantic_errors(c):raise ValueError('cannot migrate corrupt ledger')
-            if ledger._logical_digest(c)!=expected_digest:raise ValueError('DIGEST_MISMATCH')
-            if snapshot_path is not None:
-                # Taken under the exclusive lock, before the marker and the schema change.
-                snapshot=d.write_snapshot(ledger,c,Path(snapshot_path))
-            marker=Path(str(ledger.path)+'.retention-v2')
-            if marker.exists():
-                d._guard_private_file(marker,'retention migration marker')
-                if marker.read_bytes()!=SCHEMA.encode():raise ValueError('invalid retention marker')
-            else:
-                fd=os.open(marker,os.O_WRONLY|os.O_CREAT|os.O_EXCL|getattr(os,'O_NOFOLLOW',0),0o600)
-                try:os.write(fd,SCHEMA.encode());os.fsync(fd)
-                finally:os.close(fd)
-                d._fsync_directory(marker.parent)
-            c.execute('BEGIN IMMEDIATE');c.execute(SQL)
-            c.execute("UPDATE metadata SET value=? WHERE key='ledger_schema'",(SCHEMA.encode(),))
-            newer=as_retention(ledger)
-            newer._record(c,'migration',{'from_schema':d.LEDGER_SCHEMA,'before_digest':expected_digest,'at':d.now_ms()})
-            c.commit()
-        except BaseException:
-            c.rollback();raise
-        finally:c.close()
+def migrate(ledger,*,expected_digest,snapshot_path=None,snapshot=None,allow_unignored=False):
+    """Legacy entry point; the generic engine applies, resumes or completes the step.
+
+    A snapshot is written when `snapshot` is true or `snapshot_path` is given.
+    """
+    from .migrations import apply as apply_step
+    wanted=bool(snapshot) or snapshot_path is not None
+    result=apply_step(ledger,target=SCHEMA,expected_digest=expected_digest,snapshot=wanted,
+                      snapshot_path=Path(snapshot_path) if snapshot_path is not None else None,
+                      allow_unignored=allow_unignored)
     status=as_retention(ledger).retention_status()
-    return status if snapshot is None else {**status,'pre_migration_snapshot':snapshot}
+    receipt=result['pre_migration_snapshot']
+    output=status if receipt is None else {**status,'pre_migration_snapshot':receipt}
+    return {**output,'migration':{key:result[key] for key in ('status','resumed','recovery','replacement_guard')}}
 
 
 def unconfigured_plan(ledger):

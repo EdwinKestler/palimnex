@@ -27,3 +27,17 @@ retention-control kind `adapter_receipt`. Pack v2 field sets are unchanged; an
 optional sibling `.audit-graph.json` is a separate document. Semantica is an
 optional extra and is never imported by core Palimnex.
 See `docs/SDK.md` for trust roots, downgrade behavior and checkpoint limitations.
+
+The unreleased line adds two read-only command documents,
+`project-memory:ledger-migration-list:v1` (`ledger-migrate --list`) and
+`project-memory:ledger-migration-plan:v1` (`ledger-migrate --plan`). They are
+printed, never persisted, and are not apply tokens: an apply recomputes
+everything under the exclusive lock. Both carry `will_write: false`,
+`authority: historical_only` and `authorizes_actions: false`. A plan names one
+adjacent step from the observed `ledger_schema` to the requested target, the
+current `logical_digest`, whether it matches `--expected-digest`, the exact
+reader checks, pending import or migration intents, the replacement-guard
+state (`absent`, `exact`, `empty`, `invalid` or `unsafe`), Git ignore states,
+the required snapshot, effects, `status` and `refusals`. The migration
+registry ships with the code and is never read from configuration, packs,
+Redis or the ledger. No ledger, pack or cache identifier changes.

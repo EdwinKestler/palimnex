@@ -5,6 +5,18 @@ operator-facing behavior; cache and graph schemas are versioned independently.
 
 ## Unreleased
 
+- Added an ordered ledger migration registry, validated at import, holding the
+  existing v1-to-retention-v2 step.
+- `ledger-migrate --list` and `ledger-migrate --plan --to TARGET
+  --expected-digest DIGEST` describe one adjacent migration without writing
+  (`project-memory:ledger-migration-list:v1` and
+  `project-memory:ledger-migration-plan:v1`). A plan exits `2` when it would
+  be refused. `--apply` is not available yet; `retention-migrate` is unchanged.
+- `doctor` reports unfinished or unsafe migration state: an interrupted
+  migration intent, a replacement guard beside an unmigrated ledger, an empty
+  or mismatched guard, a migrated ledger without its guard, and a guard
+  without its ledger. It never repairs them.
+
 ## 2.8.1 - 2026-10-01
 
 - Switched the README and installation guide to the published PyPI package,

@@ -216,6 +216,15 @@ In 2.8.0 and later:
 - The SDK takes the snapshot only with `migrate_retention(..., snapshot=True)`.
 - Later authorized erasure does not remove these snapshots.
 
+On the unreleased line, `palimnex ledger-migrate --plan --to
+project-memory:retention-ledger:v2 --expected-digest LOGICAL_DIGEST` gives a
+fuller read-only plan. It reports the exact reader checks, any pending import
+or migration intent, the state of the `<ledger>.retention-v2` replacement
+guard, whether Git ignores the intent and snapshot paths, and the effects. It
+exits `2` when the migration would be refused. `palimnex ledger-migrate --list`
+shows the registered migrations. `ledger-migrate --apply` is not available
+yet, so `retention-migrate` remains the apply command.
+
 The migration's effects are permanent:
 
 - Hot projection stops. `project-hot` and `hot-events` exit `1` ("adapter
@@ -229,7 +238,12 @@ The migration's effects are permanent:
   history therefore cannot revive erased records. Validate packs on an
   unmigrated copy if you need to inspect them.
 - A marker file `<ledger>.retention-v2` is written beside the ledger. Never
-  delete it to force compatibility.
+  delete it to force compatibility. It is written before the schema change and
+  makes legacy pack replacement refuse the ledger. An interrupted migration
+  can therefore leave an unmigrated ledger with the marker. That state is
+  safe, and rerunning the same command with the same digest completes it.
+  `palimnex doctor` reports it, and also reports an empty or mismatched
+  marker; preserve such a marker for review.
 - Readers without the retention profile (2.5 and earlier) refuse the
   migrated ledger with "durable ledger schema is unsupported".
 

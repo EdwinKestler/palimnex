@@ -248,6 +248,21 @@ def _ledger_checks(root: Path) -> list[Check]:
     return checks
 
 
+def _migration_checks(root: Path) -> list[Check]:
+    """Unfinished or unsafe migration sidecars; reported, never repaired."""
+    from . import cache_v3, durable, migrations
+    try:
+        ledger = durable.MemoryLedger(
+            core.durable_ledger_path(root), project_id=cache_v3.project_id(root),
+            project_slug=core.project_slug(root), root=root,
+        )
+        findings = migrations.doctor_findings(ledger)
+    except (ValueError, TypeError, OSError) as exc:
+        return [Check("migration", "fail", f"migration state cannot be inspected: {exc}")]
+    return [Check(identifier, status, detail, action)
+            for identifier, status, detail, action in findings]
+
+
 def _corpus_checks(root: Path) -> list[Check]:
     try:
         included = {path.relative_to(root).as_posix() for path in core.included_files(root)}
@@ -300,6 +315,7 @@ def doctor(root: Path, *, redis_url: str) -> dict[str, Any]:
         checks.extend(_corpus_checks(root))
         checks.extend(_redis_checks(root, redis_url, cache_ready=True))
         checks.extend(_ledger_checks(root))
+        checks.extend(_migration_checks(root))
     healthy = all(check.status not in {"warn", "fail"} for check in checks)
     return {
         "schema": DOCTOR_SCHEMA,

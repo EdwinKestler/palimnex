@@ -1,7 +1,7 @@
 # Ledger migration framework
 
-Status: approved design (owner decisions D1 to D6 below), implemented on the
-unreleased line in `palimnex/migrations.py` and the `ledger-migrate` command.
+Status: approved design (owner decisions D1 to D6 below), implemented in
+2.9.0 in `palimnex/migrations.py` and the `ledger-migrate` command.
 Where an earlier section is more general, the owner decisions govern.
 
 This document defines one general, explicit framework for durable-ledger

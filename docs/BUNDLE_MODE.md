@@ -1,7 +1,7 @@
 # Copied-bundle mode: deprecate or verify
 
 Status: decided. The owner chose option A, deprecation (see "Owner
-decisions"). It is implemented on the unreleased line: `doctor` reports the
+decisions"). It is implemented in 2.9.0: `doctor` reports the
 install mode, and the documentation deprecates the copied bundle.
 
 ## Problem
@@ -214,10 +214,10 @@ The implementing change:
 ## Owner decisions
 
 1. **Option A, deprecation.** Option B is not implemented.
-2. **Timeline as proposed.** The copied bundle is deprecated on the line
-   after 2.8.1 (2.9.0). The copy instructions leave `docs/INSTALL.md`, and
-   `doctor` escalates `copied_bundle` to `fail` in 3.0.0. The runtime never
-   refuses a copied bundle.
+2. **Timeline as proposed.** The copied bundle is deprecated in 2.9.0. The
+   copy instructions leave `docs/INSTALL.md`, and `doctor` escalates
+   `copied_bundle` to `fail` in 3.0.0. The runtime never refuses a copied
+   bundle.
 3. **Severity as proposed.** `install_shadowing` and `second_copy` fail when
    the versions differ and warn when they match. A version that cannot be
    read counts as different.

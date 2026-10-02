@@ -103,8 +103,8 @@ What to expect:
 
 ## Copied bundle to package
 
-Copying `palimnex.py` and `palimnex/` into a repository is deprecated on the
-unreleased line, and its instructions are removed in 3.0.0. A copy keeps
+Copying `palimnex.py` and `palimnex/` into a repository is deprecated in
+2.9.0, and its instructions are removed in 3.0.0. A copy keeps
 running; nothing refuses it. To move to the package:
 
 1. Stop agents and other clients. With the copied version, run
@@ -140,7 +140,7 @@ when the versions differ or cannot be read, and a warning when they match.
 | 2.6 → 2.7 | Installable package and SDK v1; reindex | Unchanged schema v1, pack v2 unchanged | Structured source locators; SDK pack import requires a signature by default |
 | 2.7 → 2.8 | Audit graph, optional Semantica extra; version change invalidates the cache, so reindex | Unchanged schema v1; new retention-control kind `adapter_receipt` | Downgrade hazard below |
 | 2.8.0 → 2.8.1 | Documentation and release-workflow corrections; version change invalidates the cache, so reindex | Unchanged schema v1; pack v2 unchanged | No other migration required |
-| 2.8.1 → unreleased line | `ledger-migrate` framework; `retention-migrate` routed through it | Ledger schemas unchanged; new transient `<ledger>.migration-intent` during an unfinished migration | `--no-snapshot` and SDK `snapshot=False` deprecated; copied bundle deprecated; see below |
+| 2.8.1 → 2.9.0 | `ledger-migrate` framework; `retention-migrate` routed through it | Ledger schemas unchanged; new transient `<ledger>.migration-intent` during an unfinished migration | `--no-snapshot` and SDK `snapshot=False` deprecated; copied bundle deprecated; see below |
 
 ### 2.5 → 2.6: Palimnex naming
 
@@ -248,7 +248,7 @@ In 2.8.0 and later:
 - The SDK takes the snapshot only with `migrate_retention(..., snapshot=True)`.
 - Later authorized erasure does not remove these snapshots.
 
-On the unreleased line, the generic ledger migration framework
+In 2.9.0 and later, the generic ledger migration framework
 ([`MIGRATIONS.md`](MIGRATIONS.md)) runs this migration:
 
 ```bash
@@ -295,9 +295,9 @@ The migration's effects are permanent:
   can therefore leave an unmigrated ledger with the marker. That state is
   safe, and rerunning the same command with the same digest completes it.
   `palimnex doctor` reports it.
-  - An empty marker can be left by an interrupted 2.8.x migration. On the
-    unreleased line, `ledger-migrate --apply` replaces it only after
-    confirming the unmigrated ledger and the digest.
+  - An empty marker can be left by an interrupted 2.8.x migration. In 2.9.0
+    and later, `ledger-migrate --apply` replaces it only after confirming the
+    unmigrated ledger and the digest.
   - A migrated ledger whose marker is missing gets the marker back from
     `ledger-migrate --apply` with the digest recorded in the migration audit.
     `--plan` shows that digest as `audit_before_digest`.

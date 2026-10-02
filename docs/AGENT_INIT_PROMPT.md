@@ -19,11 +19,13 @@ Mission:
   authorization for consequential writes.
 
 Current product baseline to verify, never merely assume:
-  - Release line: 2.8.1.
+  - Release line: 2.9.0.
   - Public surface: palimnex.py, palimnex/, .palimnex.json, pyproject.toml, docs/,
     scripts/, docs/SDK.md. Additive 2.8 surfaces: palimnex.audit,
     palimnex:audit-graph:v1, optional palimnex.semantica with TTL disabled and
-    fail-closed adapter receipts.
+    fail-closed adapter receipts. Additive 2.9 surfaces: palimnex.migrations
+    (`ledger-migrate`, docs/MIGRATIONS.md) and the doctor install-mode checks;
+    the copied bundle is deprecated (docs/BUNDLE_MODE.md).
   - Storage-format identifiers beginning with project-memory: are retained
     compatibility identifiers, not stale product branding.
   - Redis cache v3 is disposable discovery state.

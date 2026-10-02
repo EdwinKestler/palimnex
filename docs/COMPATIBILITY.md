@@ -28,7 +28,7 @@ optional sibling `.audit-graph.json` is a separate document. Semantica is an
 optional extra and is never imported by core Palimnex.
 See `docs/SDK.md` for trust roots, downgrade behavior and checkpoint limitations.
 
-The unreleased line adds the ledger migration framework (`docs/MIGRATIONS.md`)
+Version 2.9.0 adds the ledger migration framework (`docs/MIGRATIONS.md`)
 and four documents. Two are read-only command output,
 `project-memory:ledger-migration-list:v1` (`ledger-migrate --list`) and
 `project-memory:ledger-migration-plan:v1` (`ledger-migrate --plan`). They are

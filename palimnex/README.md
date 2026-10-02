@@ -1,6 +1,6 @@
-# Portable Palimnex v2.8.1 bundle and Python SDK
+# Portable Palimnex v2.9.0 bundle and Python SDK
 
-Status: version 2.8.1 package implementation; see `docs/SDK.md` for public API v1
+Status: version 2.9.0 package implementation; see `docs/SDK.md` for public API v1
 and publication requirements. This includes explicit local retention and
 authorized-erasure functionality; it
 does not activate a live retention policy, migrate or delete a live ledger, or

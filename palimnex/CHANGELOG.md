@@ -5,6 +5,8 @@ operator-facing behavior; cache and graph schemas are versioned independently.
 
 ## Unreleased
 
+## 2.9.0 - 2026-10-02
+
 - Deprecated the copied bundle (copying `palimnex.py` and `palimnex/` into a
   repository), as approved in `docs/BUNDLE_MODE.md`. It keeps working through
   2.x; its instructions are removed and `doctor` escalates it to a failure in
@@ -59,6 +61,25 @@ operator-facing behavior; cache and graph schemas are versioned independently.
   migration intent, a replacement guard beside an unmigrated ledger, an empty
   or mismatched guard, a migrated ledger without its guard, and a guard
   without its ledger. It never repairs them.
+
+### Upgrade notes
+
+- Upgrading from 2.8.x to 2.9.0 invalidates the disposable Redis cache. Run
+  `index --incremental` to rebuild it with version 2.9.0.
+- API v1, SQLite ledger schema v1, the retention profile
+  (`project-memory:retention-ledger:v2`), Redis cache schema v3, and encrypted
+  pack v2 are unchanged; no migration is required. 2.9.0 writes no new ledger
+  record kind, so 2.8.x can still open a ledger that 2.9.0 used.
+- Finish an interrupted `ledger-migrate --apply` (or `retention-migrate`)
+  before downgrading: 2.8.x does not know `<ledger>.migration-intent`.
+- `retention-migrate` and `Palimnex.migrate_retention` now require Git to
+  ignore the migration intent and snapshot paths beside the ledger. The
+  default `.palimnex/` ignore rule covers them; `--allow-unignored-ledger` is
+  the CLI override, and the SDK has none.
+- Deprecated: `retention-migrate --no-snapshot` (removed in 2.10.0), SDK
+  `migrate_retention` without `snapshot=True` (`DeprecationWarning`), and the
+  copied bundle (instructions removed in 3.0.0; see "Copied bundle to package"
+  in `docs/UPGRADING.md`).
 
 ## 2.8.1 - 2026-10-01
 

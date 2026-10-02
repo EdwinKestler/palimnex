@@ -1,4 +1,4 @@
-# Palimnex runbook (2.8.1)
+# Palimnex runbook (2.9.0)
 
 Status: local repository-memory operations only. No command here starts a
 chain, creates a wallet, installs WDK/MCP, or contacts a public network.

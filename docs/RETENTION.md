@@ -269,7 +269,7 @@ first writes a verified snapshot of the unmigrated ledger under `backups/`
 beside it. `--no-snapshot` skips it, but is deprecated and is removed in
 2.10.0. That snapshot, like any `ledger-backup` output, is an unmanaged copy:
 later authorized erasure does not remove it. Delete it deliberately once it is
-no longer needed. On the unreleased line, `retention-migrate` runs through the
+no longer needed. In 2.9.0 and later, `retention-migrate` runs through the
 generic `ledger-migrate` engine (`docs/MIGRATIONS.md`), so an interrupted
 migration is finished by rerunning the same command with the same digest.
 

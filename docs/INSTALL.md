@@ -6,7 +6,7 @@ see [`UPGRADING.md`](UPGRADING.md). Commands below use the installed
 `palimnex` command; in the Palimnex source checkout (or a deprecated copied
 bundle), use `python3 palimnex.py` instead.
 
-Palimnex 2.8.1 is published on PyPI. Install an exact version, as shown below.
+Palimnex 2.9.0 is published on PyPI. Install an exact version, as shown below.
 
 Steps marked **(2.8.0 and later)** use commands that are not in the 2.7.0
 release: `palimnex init`, `palimnex doctor`,
@@ -34,25 +34,25 @@ steps next to them.
 Install the command-line tool in its own environment, pinned to an exact version:
 
 ```bash
-pipx install "palimnex[crypto]==2.8.1"
+pipx install "palimnex[crypto]==2.9.0"
 # or
-uv tool install "palimnex[crypto]==2.8.1"
+uv tool install "palimnex[crypto]==2.9.0"
 ```
 
 To use the Python SDK from a project's own virtual environment:
 
 ```bash
-python3 -m pip install "palimnex[crypto]==2.8.1"
+python3 -m pip install "palimnex[crypto]==2.9.0"
 ```
 
 The matching Git release tag remains an alternative:
 
 ```bash
-pipx install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.8.1"
+pipx install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.9.0"
 # or
-uv tool install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.8.1"
+uv tool install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.9.0"
 # or, inside a project virtual environment
-python3 -m pip install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.8.1"
+python3 -m pip install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.9.0"
 ```
 
 Each method installs two commands: `palimnex` and `palimnex-mcp`. Add the

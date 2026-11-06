@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://palimnex.dev/schemas/ontology-implementation-receipt.v1.schema.json",
+  "title": "Palimnex ontology implementation receipt v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "workstream_id", "design_identity", "task_digest", "approval_evidence_digest",
+    "owned_scope", "files_changed", "dependencies_consumed", "commands",
+    "compatibility_effect", "privacy_and_authority_checks",
+    "integration_patch_proposals", "unresolved_risks",
+    "cache_and_ledger_state", "git_state", "status"
+  ],
+  "properties": {
+    "schema": {"const": "palimnex:ontology-implementation-receipt:v1"},
+    "workstream_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{2,63}$"},
+    "design_identity": {"$ref": "#/$defs/designIdentity"},
+    "task_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "approval_evidence_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "owned_scope": {"$ref": "#/$defs/pathList"},
+    "files_changed": {"$ref": "#/$defs/pathList"},
+    "dependencies_consumed": {"$ref": "#/$defs/textList"},
+    "commands": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["command", "exit_code", "result"],
+        "properties": {
+          "command": {"type": "string", "minLength": 1, "maxLength": 2048},
+          "exit_code": {"type": "integer"},
+          "result": {"type": "string", "minLength": 1, "maxLength": 4096}
+        }
+      }
+    },
+    "compatibility_effect": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "privacy_and_authority_checks": {"$ref": "#/$defs/nonEmptyTextList"},
+    "integration_patch_proposals": {"$ref": "#/$defs/textList"},
+    "unresolved_risks": {"$ref": "#/$defs/textList"},
+    "cache_and_ledger_state": {"type": "object"},
+    "git_state": {"type": "object"},
+    "status": {"enum": ["implemented", "tested", "partial", "blocked", "refused"]}
+  },
+  "$defs": {
+    "designIdentity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "path": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+", "maxLength": 512},
+    "pathList": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/path"}},
+    "textList": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 4096}},
+    "nonEmptyTextList": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 4096}}
+  }
+}

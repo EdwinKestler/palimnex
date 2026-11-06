@@ -1,0 +1,94 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "artifacts/design/ontology-phase-0/frozen-cases/README.md",
+    "artifacts/design/ontology-phase-0/frozen-cases/cases.v0.json",
+    "artifacts/design/ontology-phase-0/frozen-cases/check_cases.py",
+    "artifacts/design/ontology-phase-0/threat-model/THREAT_MODEL.md",
+    "artifacts/ontology/phase-0/briefs/wave-2/ontology-phase-0-threat-cases.md",
+    "artifacts/ontology/phase-0/integration/reconciliation-decisions.v1.md",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json",
+    "artifacts/ontology/phase-0/tasks/ontology-phase-0-threat-cases.json",
+    "docs/ONTOLOGY_ADOPTION.md",
+    "palimnex/cache_v3.py",
+    "palimnex/challenge.py",
+    "palimnex/durable.py",
+    "palimnex/experience.py",
+    "palimnex/locators.py",
+    "palimnex/retrieval.py",
+    "palimnex/security.py",
+    "palimnex/semantic.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "9bfdb51ddec03aa8976206979fc45df5a1c7668579aa855d1cff6cae690686c2"
+  },
+  "task_digest": "93b79d121ae51f1eff9ab71a1f1f030c7d996793bb282b1b36e35918b4aeae35",
+  "approval_evidence_digest": "a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760",
+  "workstream_id": "ontology-phase-0-threat-cases",
+  "evidence": [
+    "RESOLVED: Wave-1 MAJOR concept-ID pattern and concept. prefix. All 29 fixtures validate against registry $defs.conceptId, including underscore IDs such as concept.source_locator. check_cases.py dropped startswith(\"concept.\") and validates each complete fixture through a local referencing.Registry.",
+    "RESOLVED: Wave-1 MAJOR lifecycle_status and wrapped locators. Every registry_fixture is a palimnex:concept-registry:v1 document with status, unwrapped source-locator.v1 bindings, canonical registry_digest, and a single case-level binding_digests_are_placeholders flag. README.md defines that mapping. A lifecycle_status extra field is refused by additionalProperties false.",
+    "RESOLVED: Wave-1 MAJOR stale/uncovered and empty-covered-on-ambiguous rules. expected_stale_concept_ids is required. ONT-STALE-001/002 move concept.source_drift and concept.version_drift into that list with expected_outcome receipt. ONT-AMB-002 keeps covered concept.release_audit disjoint from ambiguous registry/provider release IDs. check_cases.py enforces four-way disjointness and R = C+U+S+A.",
+    "RESOLVED: Wave-1 MAJOR digest-only locator probe. Independent replacement of a locator with {digest: placeholder} now fails schema validation (scheme, source_id, version, and range required). The checker also runs that probe and reports digest_only_locator_probe_rejected true.",
+    "RESOLVED: Wave-1 MINOR stored display-case aliases and disputed ONT-NORM-002/003. Stored aliases are registry-normalized. ONT-NORM-002 query is NFD café source against NFC alias café source. ONT-NORM-003 query carries tab/newline against collapsed alias source binding verification. Those cases are no longer disputed.",
+    "MINOR: ONT-NORM-001 does not put a cased display form in the query. R2 and the wave-2 brief require normalization cases to put the display form in the query; alias and query are both already 'coverage receipt', and canonical_name is 'Case Fold Fixture Concept'. The case-fold dimension is described but not encoded. Unicode and whitespace cases do put display forms in the query.",
+    "NOTE: R7 is encoded: secret, path, and cross-project cases have expected_outcome error, expected_status_disputed true, and dispute_reason citing R7; stale-source cases have expected_outcome receipt and remain disputed. 29 cases still cover 14 categories with at least two each. Candidate content uses candidate_set / candidate_registry_fixture.",
+    "NOTE: check_cases.py rglob-scans owned files through scan_bytes, which strict-decodes UTF-8; a __pycache__/*.pyc in frozen-cases fails the check. It also forbids expected_stale_concept_ids outside the stale-source category, so a mixed covered+stale frozen case cannot be added without a checker change; coverage exercises that mix in partial-stale.json."
+  ],
+  "commands": [
+    "./.venv/bin/python artifacts/design/ontology-phase-0/frozen-cases/check_cases.py -> exit 0; 29 cases; 14 categories; matrix_sha256 a64be4f15fdfb664b3142706e5cef35d10fbaa4ed340aea38f22388404f7314b; owned_files_scanned 5; canary_cases_verified 2; registry_fixtures_validated 30; digest_only_locator_probe_rejected true",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-0/tasks/ontology-phase-0-threat-cases.json --implementation-receipt artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json -> exit 0; status valid; task_digest 93b79d121ae51f1eff9ab71a1f1f030c7d996793bb282b1b36e35918b4aeae35; approval_evidence_digest a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760; authorizes_actions false",
+    "python3 palimnex.py status -> exit 0; status fresh; schema project-memory:cache:v3; cache_consulted true; cache_written false",
+    "python3 palimnex.py ledger-status -> exit 0; schema project-memory:ledger:v1; status ready; integrity ok; semantic_errors empty",
+    "git status --short --untracked-files=all -- artifacts/design/ontology-phase-0/threat-model artifacts/design/ontology-phase-0/frozen-cases artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json -> five owned files untracked",
+    "/tmp copy probes: digest-only locator now fails schema; overlap covered with ambiguous, non-placeholder digest with leftover flag, drop a secret case below category minimum, lifecycle_status extra field, doubled-separator concept.source__locator, stale ID also covered -> check_cases.py exit 1 each; injecting a ghp_ canary into query bytes is detected as github-token without value echo"
+  ],
+  "source_grounding_result": "Accepted with limits. Threat-model citations to locators.RepositoryResolver/resolve_locator, security.scan_text/scan_bytes/read_bounded_file, retrieval.retrieve_sources, cache_v3.project_id, experience.is_capture/apply_capture, durable historical_only, semantic.semantic_status disabled, challenge.promotion_eligible false, and validate_contract functions match current source. Frozen fixtures are complete registry documents with placeholder locators. ONT-NORM-001 does not encode a case-fold query stimulus.",
+  "privacy_result": "Accepted. check_cases.py scans owned files with palimnex.security.scan_bytes. Secret cases store split fragments; scan_text on each fragment is clean; joined canaries are detected; reconstructed values are not printed. Injecting a github-token-shaped literal into query bytes is detected without value echo.",
+  "retrieval_quality_result": "Accepted with limits. Positive, partial, mixed ambiguous+covered, negative, stale, secret, truncation, byte-budget, supersession, withdrawn, candidate-non-influence, path, cross-project, and normalization cases are present. Stale is its own expected collection. Ambiguous and covered are disjoint. Case-fold normalization is not actually present in ONT-NORM-001's query/alias pair. No retrieval engine was executed.",
+  "compatibility_result": "Accepted. Draft-only unindexed artifacts. No public schema, product code, or existing project-memory:* identifier changed. Placeholder locators are marked with one case-level flag.",
+  "rollback_result": "Accepted. Rollback is deletion of the untracked threat-model, frozen-cases, and receipt files. The matrix digest is draft evidence until the owner records it at the exit gate.",
+  "authority_result": "Accepted. Draft pending Phase 0 exit gate. Candidate/superseded/withdrawn cases have no recognized coverage influence in the delivered expected sets. Receipt validation returned authorizes_actions false. R7 disputes are explicit. No Git write, network, index, or live-state mutation.",
+  "limitations": [
+    "palimnex validate --deep and the standard gate were not run; deep validation refreshes a Redis reader lease, which is a cache write outside this review's authority",
+    "check_cases.py is structural; it does not run alias matching against queries or resolve locators, and it does not exclude candidate/superseded/withdrawn IDs from expected sets beyond what the cases themselves declare",
+    "R7 error-versus-receipt split remains disputed in the six typed-error cases and both stale-receipt cases",
+    "Placeholder locators use version current and digest 0x64; consuming Phase 1-3 tests must materialize isolated sources",
+    "Owner questions remain in THREAT_MODEL.md, including confirming R7, inactive-concept diagnostics, project binding for non-repo resolvers, numeric limits, and recording the matrix digest at the exit gate"
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": true,
+    "cache_status": "fresh",
+    "cache_schema": "project-memory:cache:v3",
+    "cache_written": false,
+    "indexed_files_changed": false,
+    "reindex_performed": false,
+    "ledger_consulted": true,
+    "ledger_schema": "project-memory:ledger:v1",
+    "ledger_status": "ready",
+    "ledger_integrity": "ok",
+    "ledger_semantic_errors": [],
+    "ledger_written": false,
+    "live_state_written": false,
+    "network_used": false
+  },
+  "git_state": {
+    "branch": "main",
+    "head": "b604f83579a55e78fc5ffabdd5b70fa4bd0623e1",
+    "git_writes_performed": false,
+    "staged": false,
+    "committed": false,
+    "owned_paths_status": "untracked threat-model, frozen-cases, and implementation receipt",
+    "lane_files": [
+      "artifacts/design/ontology-phase-0/frozen-cases/README.md",
+      "artifacts/design/ontology-phase-0/frozen-cases/cases.v0.json",
+      "artifacts/design/ontology-phase-0/frozen-cases/check_cases.py",
+      "artifacts/design/ontology-phase-0/threat-model/THREAT_MODEL.md",
+      "artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json"
+    ],
+    "product_code_changed": false,
+    "reviewer_modified_repository": false
+  },
+  "status": "accepted_with_limits"
+}

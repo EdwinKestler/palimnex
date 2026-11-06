@@ -1,0 +1,135 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-1-frozen-conformance",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "0288521fd44d14333ff059a000596861e2a3babc2ffb0a6c58960ba2a6415856"
+  },
+  "task_digest": "977fcceacf128218b630f462fa34c7a7f571b97728475f214ae6acd0e09be8fc",
+  "approval_evidence_digest": "138ad4d34c2874351c67b5687c0ae75af9e3b25ecaf40dca51aaec026450e3db",
+  "owned_scope": [
+    "palimnex/tests/test_concepts_frozen.py",
+    "palimnex/tests/fixtures/ontology",
+    "artifacts/ontology/phase-1/receipts/ontology-phase-1-frozen-conformance.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/tests/test_concepts_frozen.py",
+    "palimnex/tests/fixtures/ontology",
+    "artifacts/ontology/phase-1/receipts/ontology-phase-1-frozen-conformance.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [
+    "ontology-phase-1-registry-core receipt: artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-core.implementation-receipt.json, status tested, task digest 1882e503461032c224d0b22457cf140d1827eaac70652bfc70c6b1dbac0f0eb9",
+    "ontology-phase-1-registry-schema receipt: artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-schema.implementation-receipt.json, status tested, task digest c0b0acf941b9b7f8956b5d32c1075471678cf26b132303d8c6a1147b3e0c33a2"
+  ],
+  "commands": [
+    {
+      "command": "python3 palimnex.py status",
+      "exit_code": 1,
+      "result": "Redis Unix socket missing; cache_consulted false. The task forbids starting Redis or indexing."
+    },
+    {
+      "command": "python3 palimnex.py validate --deep",
+      "exit_code": 1,
+      "result": "Redis Unix socket missing; cache_consulted false. Continued from repository source as required."
+    },
+    {
+      "command": "python3 palimnex.py search --limit 5 'parse_registry allow_placeholder_digests match_aliases ConceptRegistryError'",
+      "exit_code": 1,
+      "result": "Redis Unix socket missing; cache_consulted false. Exact-vocabulary source inspection was completed directly."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-1/tasks/ontology-phase-1-frozen-conformance.json",
+      "exit_code": 0,
+      "result": "Task and approval evidence valid; task digest 977fcceacf128218b630f462fa34c7a7f571b97728475f214ae6acd0e09be8fc; approval evidence digest 138ad4d34c2874351c67b5687c0ae75af9e3b25ecaf40dca51aaec026450e3db."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_concepts_frozen palimnex.tests.test_concepts -v",
+      "exit_code": 0,
+      "result": "26 test methods passed: 4 new frozen-conformance methods and 22 existing core-registry methods. The new methods exercised all 15 Phase 1 cases as separate subtests, all 30 frozen registry documents, and all 11 schema-lane registry fixtures."
+    },
+    {
+      "command": "timeout 150s ./.venv/bin/python -m unittest discover -s palimnex/tests -p 'test_*.py' -v",
+      "exit_code": 124,
+      "result": "Every test through test_concepts_frozen passed; the pre-existing MCP real-stdio subprocess test then hung under the restricted sandbox until the bounded timeout. No product failure was reported before the environmental hang."
+    },
+    {
+      "command": "timeout 90s ./.venv/bin/python -m unittest palimnex.tests.test_redis_launcher -v",
+      "exit_code": 1,
+      "result": "9 tests ran; 5 pre-existing tests errored because the sandbox denied AF_UNIX bind with PermissionError: Operation not permitted. This confirms the full-gate environment limitation."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_cache_v3 palimnex.tests.test_challenge palimnex.tests.test_concept_registry_schema palimnex.tests.test_concepts palimnex.tests.test_concepts_frozen palimnex.tests.test_documents palimnex.tests.test_durable palimnex.tests.test_experience palimnex.tests.test_feature_modes palimnex.tests.test_longitudinal palimnex.tests.test_migrations palimnex.tests.test_portable palimnex.tests.test_real_checkout_evaluation palimnex.tests.test_retention palimnex.tests.test_sdk palimnex.tests.test_security palimnex.tests.test_semantic palimnex.tests.test_semantica palimnex.tests.test_version",
+      "exit_code": 0,
+      "result": "266 unaffected tests passed in 57.989 seconds after excluding only the four pre-existing modules that require forbidden local socket or subprocess transport behavior."
+    },
+    {
+      "command": "timeout 150s ./scripts/palimnex_check.sh",
+      "exit_code": 1,
+      "result": "The standard gate ran 313 tests in 91.937 seconds and stopped with 1 failure, 11 errors and 3 skips: system Python lacked the test-only referencing package, and the sandbox denied local socket operations and temporary Redis startup. The gate did not reach isolated indexing."
+    },
+    {
+      "command": "./.venv/bin/python -m py_compile palimnex/tests/test_concepts_frozen.py; scan_file owned test and fixture; git diff --check; cmp frozen source and copied fixture",
+      "exit_code": 0,
+      "result": "Compilation passed; security scanning reported zero findings in both owned product files; no whitespace errors; the copied matrix is byte-identical and has SHA-256 a64be4f15fdfb664b3142706e5cef35d10fbaa4ed340aea38f22388404f7314b."
+    },
+    {
+      "command": "python3 palimnex.py ledger-status",
+      "exit_code": 0,
+      "result": "Read-only status ready; integrity ok; zero events, sessions, evidence, nodes, edges, promotions, workflows, verifications, verification attempts and pending projections."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-1/tasks/ontology-phase-1-frozen-conformance.json --implementation-receipt artifacts/ontology/phase-1/receipts/ontology-phase-1-frozen-conformance.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Implementation receipt validated against the runtime contract, receipt schema, task digest, approval digest and owned roots."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "All three owned deliverables are untracked; 215 total status entries include extensive pre-existing and parallel-lane work, all preserved. No Git write was performed."
+    }
+  ],
+  "compatibility_effect": "Adds no runtime API or wire-format change. It adds the byte-exact accepted Phase 0 frozen case matrix as a test fixture and conformance coverage for the existing public palimnex.concepts API and palimnex:concept-registry:v1 JSON Schema. Existing project-memory:* identifiers, schemas, CLI, configuration, retrieval, cache, ledger, pack and MCP behavior are unchanged.",
+  "privacy_and_authority_checks": [
+    "The secret canary is reconstructed only at test time from the accepted fixture recipe, is refused before alias derivation, and is absent from the typed error.",
+    "Traversal, symlink and cross-project cases assert stable typed refusals and verify rejected source or project values are not echoed.",
+    "Candidate, superseded and withdrawn concepts remain non-influential; ambiguous IDs remain disjoint from frozen covered IDs.",
+    "Runtime and public JSON Schema acceptance agree for all 30 frozen registry documents and all 11 schema-lane registry fixtures.",
+    "palimnex.security.scan_file reported zero findings for palimnex/tests/test_concepts_frozen.py and palimnex/tests/fixtures/ontology/cases.v0.json.",
+    "No network, model, provider, Git write, live Redis or SQLite write, migration, policy activation, erasure, pack activation, staging, commit, branch or push occurred."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "The required full unittest suite and standard gate could not pass in this restricted sandbox: AF_UNIX bind is denied and the MCP real-stdio subprocess hangs. The coordinator must rerun the full suite and PATH=\"$PWD/.venv/bin:$PATH\" ./scripts/palimnex_check.sh in an environment permitted to use isolated local sockets before promoting this receipt to tested.",
+    "The owned test and fixture match indexed include patterns. Reindex and evaluate were not run because this task card explicitly forbids palimnex index and live-state writes; the coordinator must reindex and evaluate after integration."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_status": "unavailable because the repository Redis Unix socket is absent",
+    "deep_validation_completed": false,
+    "focused_search_completed": false,
+    "indexed_files_changed": true,
+    "reindex_performed": false,
+    "evaluation_performed": false,
+    "ledger_consulted": true,
+    "ledger_status": "ready_read_only",
+    "ledger_integrity": "ok",
+    "ledger_counts_all_zero": true,
+    "ledger_writes": false,
+    "live_state_writes": false,
+    "standard_gate": "blocked_by_restricted_local_socket_environment"
+  },
+  "git_state": {
+    "git_write_authority": false,
+    "git_writes_performed": false,
+    "staged": false,
+    "committed": false,
+    "pushed": false,
+    "preexisting_dirty_worktree_preserved": true,
+    "status_entries_before_receipt": 214,
+    "owned_product_files_status": [
+      "?? palimnex/tests/fixtures/ontology/cases.v0.json",
+      "?? palimnex/tests/test_concepts_frozen.py"
+    ]
+  },
+  "status": "partial"
+}

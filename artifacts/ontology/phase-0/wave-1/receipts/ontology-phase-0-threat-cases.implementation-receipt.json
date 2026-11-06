@@ -1,0 +1,123 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-0-threat-cases",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "9bfdb51ddec03aa8976206979fc45df5a1c7668579aa855d1cff6cae690686c2"
+  },
+  "task_digest": "7d5afda31848b7d097b39b123e2606344296a75a2b9bbbb989669f3e543e3e39",
+  "approval_evidence_digest": "a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760",
+  "owned_scope": [
+    "artifacts/design/ontology-phase-0/threat-model",
+    "artifacts/design/ontology-phase-0/frozen-cases",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "artifacts/design/ontology-phase-0/threat-model",
+    "artifacts/design/ontology-phase-0/frozen-cases",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [],
+  "commands": [
+    {
+      "command": "python3 palimnex.py status",
+      "exit_code": 1,
+      "result": "Redis Unix socket was absent; command reported cache_consulted false. Redis was not started because live-state writes are outside authority."
+    },
+    {
+      "command": "python3 palimnex.py validate --deep",
+      "exit_code": 1,
+      "result": "Deep cache validation could not run because the Redis Unix socket was absent; command reported cache_consulted false."
+    },
+    {
+      "command": "rg -n \"def (scan_bytes|scan_text|resolve|validate|canonical)|source-locator|project_id|symlink|traversal|semantic-provider|authorizes_actions|historical_only|candidate|supersed|withdrawn\" palimnex docs .agents/skills/palimnex-ontology-coordinator/scripts --glob '!**/__pycache__/**'",
+      "exit_code": 0,
+      "result": "Focused source search located current controls in locators, security, cache, retrieval, semantic, durable history, evaluation, and ontology contract validation; cited source files were opened before drafting."
+    },
+    {
+      "command": "sha256sum docs/ONTOLOGY_ADOPTION.md artifacts/design/Ontologyadoptionplan.md; ./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-0/tasks/ontology-phase-0-threat-cases.json",
+      "exit_code": 0,
+      "result": "Approved design and source proposal matched their task-card digests; contract validation returned status valid with the recorded task and approval-evidence digests."
+    },
+    {
+      "command": "./.venv/bin/python artifacts/design/ontology-phase-0/frozen-cases/check_cases.py",
+      "exit_code": 0,
+      "result": "Passed 29 cases across all 14 required categories; verified two runtime canary recipes; scanned all five final owned files, including this receipt, with no privacy findings."
+    },
+    {
+      "command": "python3 palimnex.py ledger-status",
+      "exit_code": 0,
+      "result": "Read-only ledger status reported project-memory:ledger:v1 ready, integrity ok, no semantic or foreign-key errors, no stale verifications, and zero stored object counts."
+    },
+    {
+      "command": "sed -n '1,220p' .palimnex.json",
+      "exit_code": 0,
+      "result": "Confirmed the index include patterns exclude all artifacts owned by this lane and the semantic provider mode is disabled."
+    },
+    {
+      "command": "git status --short --untracked-files=all -- artifacts/design/ontology-phase-0/threat-model artifacts/design/ontology-phase-0/frozen-cases artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Before receipt creation, exactly four untracked files appeared inside the lane-owned design directories and no foreign path was changed by this lane."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-0/tasks/ontology-phase-0-threat-cases.json --implementation-receipt artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Implementation receipt validation returned status valid, implementation_receipt_validated true, authorizes_actions false, and the expected task and approval-evidence digests."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "All five lane files are untracked as expected; additional untracked files belong to the coordinator and parallel lanes. No tracked, staged, committed, or pushed change was made by this lane."
+    }
+  ],
+  "compatibility_effect": "Draft-only additive artifacts under unindexed artifacts/ paths. No product code, public schema, CLI, configuration, existing project-memory:* identifier, cache layout, ledger schema, pack format, context envelope, migration behavior, or retrieval result changed.",
+  "privacy_and_authority_checks": [
+    "The offline checker scans every regular non-symlink file under both owned design directories and the owned receipt when present with palimnex.security.scan_bytes.",
+    "Two secret cases store split construction recipes only; each stored fragment is clean and each in-memory reconstruction is detected by scan_text without printing the reconstructed value.",
+    "No network, package installation, provider call, model call, Redis mutation, SQLite mutation, migration, retention action, erasure, pack action, policy activation, Git staging, commit, branch, push, or publication was performed.",
+    "Candidate, superseded, and withdrawn cases have no approved retrieval influence; receipts and historical records remain non-authorizing evidence.",
+    "The approved design, task action, phase, ownership, and authority booleans were validated before implementation."
+  ],
+  "integration_patch_proposals": [
+    "Target .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py: validate files_changed by repository-relative ancestor containment within task owned_paths, rather than exact string membership. This would let future receipts follow COMMON.md and list each created file while preserving traversal-free ownership enforcement. The current receipt lists the two owned directory roots plus the exact receipt path so the mandated validator can pass; exact created files are recorded in git_state.lane_files."
+  ],
+  "unresolved_risks": [
+    "The four-status coverage vocabulary does not specify whether stale source, privacy refusal, malformed path, symlink refusal, or cross-project mismatch returns a typed operation error or an unanswerable diagnostic receipt; affected cases are explicitly disputed.",
+    "Alias normalization details for Unicode form and whitespace classes are not frozen.",
+    "Source-locator v1 has no project identity field, so the registry or resolver boundary must add a project check without changing that existing locator shape.",
+    "Numeric registry, alias, relation, binding, query, and receipt limits belong to the parallel schema lanes and require serial owner review.",
+    "The matrix digest is draft evidence only until the owner records it at the Phase 0 exit gate; later held-out cases remain necessary to reduce fixture overfitting."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_status": "unavailable_redis_socket_missing",
+    "deep_cache_validation": "not_run_redis_socket_missing",
+    "cache_write_performed": false,
+    "ledger_status_consulted": true,
+    "ledger_schema": "project-memory:ledger:v1",
+    "ledger_status": "ready",
+    "ledger_integrity": "ok",
+    "ledger_foreign_key_errors": 0,
+    "ledger_semantic_errors": [],
+    "ledger_object_counts": 0,
+    "ledger_write_performed": false,
+    "live_state_authorized": false
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "staged": false,
+    "committed": false,
+    "pushed": false,
+    "indexed_files_changed": false,
+    "pre_existing_untracked_outside_owned_scope": true,
+    "lane_files": [
+      "artifacts/design/ontology-phase-0/frozen-cases/README.md",
+      "artifacts/design/ontology-phase-0/frozen-cases/cases.v0.json",
+      "artifacts/design/ontology-phase-0/frozen-cases/check_cases.py",
+      "artifacts/design/ontology-phase-0/threat-model/THREAT_MODEL.md",
+      "artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json"
+    ]
+  },
+  "status": "tested"
+}

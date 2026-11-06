@@ -1,0 +1,92 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "artifacts/design/ontology-phase-0/registry/SEMANTICS.md",
+    "artifacts/design/ontology-phase-0/registry/check_registry_contract.py",
+    "artifacts/design/ontology-phase-0/registry/concept-registry.v1.schema.json",
+    "artifacts/design/ontology-phase-0/registry/examples/invalid/bad-concept-id.json",
+    "artifacts/design/ontology-phase-0/registry/examples/invalid/bad-locator-digest.json",
+    "artifacts/design/ontology-phase-0/registry/examples/invalid/doubled-separator-concept-id.json",
+    "artifacts/design/ontology-phase-0/registry/examples/invalid/extra-field.json",
+    "artifacts/design/ontology-phase-0/registry/examples/invalid/oversize-alias-list.json",
+    "artifacts/design/ontology-phase-0/registry/examples/invalid/unknown-status.json",
+    "artifacts/design/ontology-phase-0/registry/examples/invalid/wrong-authorizes-actions.json",
+    "artifacts/design/ontology-phase-0/registry/examples/valid/minimal-approved.json",
+    "artifacts/design/ontology-phase-0/registry/examples/valid/multi-concept-relations.json",
+    "artifacts/design/ontology-phase-0/registry/examples/valid/supersession-chain.json",
+    "artifacts/design/ontology-phase-0/registry/examples/valid/underscore-concept-id.json",
+    "artifacts/ontology/phase-0/briefs/wave-2/ontology-phase-0-registry-contract.md",
+    "artifacts/ontology/phase-0/integration/reconciliation-decisions.v1.md",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-registry-contract.implementation-receipt.json",
+    "artifacts/ontology/phase-0/tasks/ontology-phase-0-registry-contract.json",
+    "docs/ONTOLOGY_ADOPTION.md",
+    "palimnex/cache_v3.py",
+    "palimnex/core.py",
+    "palimnex/durable.py",
+    "palimnex/locators.py",
+    "palimnex/schemas/source-locator.v1.schema.json",
+    "palimnex/security.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "9bfdb51ddec03aa8976206979fc45df5a1c7668579aa855d1cff6cae690686c2"
+  },
+  "task_digest": "637a51963383df523470f8356829e3926f7d13c5af51a21943a9d1cef40c9deb",
+  "approval_evidence_digest": "a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760",
+  "workstream_id": "ontology-phase-0-registry-contract",
+  "evidence": [
+    "RESOLVED: Wave-1 MAJOR concept-ID mismatch. $defs.conceptId is now ^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$ with minLength 3 and maxLength 128 in artifacts/design/ontology-phase-0/registry/concept-registry.v1.schema.json. Coverage $refs that definition and keeps no copy. Frozen IDs such as concept.source_locator validate. check_cases.py no longer requires startswith(\"concept.\").",
+    "RESOLVED: Wave-1 MAJOR frozen lifecycle_status vs registry status. The registry concept object still requires status. SEMANTICS.md documents R4: frozen cases embed complete palimnex:concept-registry:v1 documents; placeholder digests are allowed only when binding_digests_are_placeholders is true. Wave-2 frozen fixtures now use status and unwrapped source-locator.v1 objects.",
+    "RESOLVED: Wave-1 MINOR alias maxLength 128 vs 256 and split project UUID/slug patterns. Coverage matched-alias and identities.project now $ref https://palimnex.dev/schemas/concept-registry.v1.schema.json#/$defs/alias and #/$defs/projectIdentity. SEMANTICS.md states those $defs are the single shared definitions.",
+    "NOTE: R1-R4 are implemented as written: underscore is a legal single separator; examples/valid/underscore-concept-id.json uses concept.source_locator; examples/invalid/doubled-separator-concept-id.json uses a__b. Independent probes rejected a__b, a..b, a--b, trailing ab_, and colon ID concept.source:locator. Breaking registry_digest, authorizes_actions true, and a stale locator digest still fail.",
+    "NOTE: R8 remains deferred. files_changed lists owned directory roots. Integration patch proposals for coverage and frozen-cases are still status=proposed because this lane finished first; those lanes applied the requested $ref and fixture changes.",
+    "NOTE: No candidate_set valid example is present. Owner exit-gate questions in SEMANTICS.md remain, including registry_kind, committed location, bounds, and cross-concept alias collisions as diagnostics."
+  ],
+  "commands": [
+    "./.venv/bin/python artifacts/design/ontology-phase-0/registry/check_registry_contract.py -> exit 0; 4 valid and 7 invalid examples plus privacy canary passed",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-0/tasks/ontology-phase-0-registry-contract.json --implementation-receipt artifacts/ontology/phase-0/receipts/ontology-phase-0-registry-contract.implementation-receipt.json -> exit 0; status valid; task_digest 637a51963383df523470f8356829e3926f7d13c5af51a21943a9d1cef40c9deb; approval_evidence_digest a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760; authorizes_actions false",
+    "python3 palimnex.py status -> exit 0; status fresh; schema project-memory:cache:v3; cache_consulted true; cache_written false",
+    "python3 palimnex.py ledger-status -> exit 0; schema project-memory:ledger:v1; status ready; integrity ok; semantic_errors empty",
+    "sha256sum docs/ONTOLOGY_ADOPTION.md artifacts/design/Ontologyadoptionplan.md -> 9bfdb51ddec03aa8976206979fc45df5a1c7668579aa855d1cff6cae690686c2 and 8fe38bef5f7f25fa8a7d58dad21b89f69c70f4a367d9981c01fdedf6bd165d86",
+    "git status --short --untracked-files=all -- artifacts/design/ontology-phase-0/registry artifacts/ontology/phase-0/receipts/ontology-phase-0-registry-contract.implementation-receipt.json -> owned registry drafts and receipt untracked; no staged or committed lane files",
+    "/tmp independent probes against the live schema: break registry_digest, authorizes_actions true, stale locator digest, a__b, a..b, a--b, ab_, concept.source:locator -> all rejected; concept.source_locator remains valid"
+  ],
+  "source_grounding_result": "Accepted. Valid examples reopen current source through palimnex.locators.resolve_locator. SEMANTICS citations to cache_v3.project_id, core.project_slug, durable.canonical_json, locators.select_range/resolve_locator, and security.scan_bytes match current source. Shared $defs.conceptId, alias, and projectIdentity are the R1-R3 source of truth.",
+  "privacy_result": "Accepted. The check constructs a ghp_ canary at runtime, scan_bytes detects github-token, and findings do not echo the value. No literal secret-pattern material in owned files. Source bytes are scanned in select_range before a binding can support a valid example.",
+  "retrieval_quality_result": "Accepted. Candidate entries remain excluded from approved_registry. Underscore IDs are legal; doubled and trailing separators are refused. No retrieval engine exists yet. Frozen fixtures now validate as complete registry documents in the threat lane.",
+  "compatibility_result": "Accepted. Draft schema lives under artifacts/design, $refs existing source-locator.v1 by local $id, and changes no project-memory:* identifier, cache layout, context envelope, ledger schema, or palimnex/ product code.",
+  "rollback_result": "Accepted. Rollback is deletion of the untracked draft directory and receipt. No durable or cache state was written.",
+  "authority_result": "Accepted. Phase 0 contract draft only. Schema const authorizes_actions false and authority historical_only. Receipt validation returned authorizes_actions false. R1-R7 remain provisional pending the owner exit gate. No Git write, network, index, or live-state mutation by this review.",
+  "limitations": [
+    "palimnex validate --deep and the standard gate were not run; deep validation refreshes a Redis reader lease, which is a cache write outside this review's authority",
+    "No candidate_set valid example is present",
+    "Numeric bounds, committed registry location, and cross-concept alias-collision policy remain owner exit-gate questions in SEMANTICS.md"
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": true,
+    "cache_status": "fresh",
+    "cache_schema": "project-memory:cache:v3",
+    "cache_written": false,
+    "indexed_files_changed": false,
+    "reindex_performed": false,
+    "ledger_consulted": true,
+    "ledger_schema": "project-memory:ledger:v1",
+    "ledger_status": "ready",
+    "ledger_integrity": "ok",
+    "ledger_semantic_errors": [],
+    "ledger_written": false,
+    "live_state_written": false,
+    "network_used": false
+  },
+  "git_state": {
+    "branch": "main",
+    "head": "b604f83579a55e78fc5ffabdd5b70fa4bd0623e1",
+    "git_writes_performed": false,
+    "staged": false,
+    "committed": false,
+    "owned_paths_status": "untracked draft registry files and untracked implementation receipt",
+    "product_code_changed": false,
+    "reviewer_modified_repository": false
+  },
+  "status": "accepted"
+}

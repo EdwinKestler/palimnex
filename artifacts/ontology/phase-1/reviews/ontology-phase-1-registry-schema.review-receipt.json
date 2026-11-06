@@ -1,0 +1,58 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "docs/CONCEPT_REGISTRY.md",
+    "palimnex/schemas/concept-registry.v1.schema.json",
+    "palimnex/tests/fixtures/concept_registry",
+    "palimnex/tests/test_concept_registry_schema.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "0288521fd44d14333ff059a000596861e2a3babc2ffb0a6c58960ba2a6415856"
+  },
+  "task_digest": "c0b0acf941b9b7f8956b5d32c1075471678cf26b132303d8c6a1147b3e0c33a2",
+  "approval_evidence_digest": "138ad4d34c2874351c67b5687c0ae75af9e3b25ecaf40dca51aaec026450e3db",
+  "workstream_id": "ontology-phase-1-registry-schema",
+  "evidence": [
+    "NOTE: palimnex.tests.test_concept_registry_schema plus palimnex.tests.test_sdk: 25 tests passed in 1.332s. Implementation receipt validated (task_digest c0b0acf941b9b7f8956b5d32c1075471678cf26b132303d8c6a1147b3e0c33a2, approval_evidence_digest 138ad4d34c2874351c67b5687c0ae75af9e3b25ecaf40dca51aaec026450e3db).",
+    "RESOLVED: Round-1 MAJOR that docs/CONCEPT_REGISTRY.md treated symlink (and some other unsafe inputs) as stale. Current Source bindings, drift, and refusals section matches palimnex/concepts.py reason codes: invalid_source_binding at parse; source_drift plus stale_concept_ids for missing/unreadable/unavailable resolver, resolver failure, version mismatch, malformed resolved result, invalid range, digest mismatch, and second-read change; source_path_refused; source_root_refused; source_symlink_refused; source_project_mismatch; project_mismatch; source_privacy_refused. No remaining stale-versus-refusal contradiction against the code.",
+    "NOTE: Alias normalization section now states the six-step procedure for registry keys, including C* refusal of TAB/LF/CR, and the R9 query rule that whitespace is treated as U+0020 before the same procedure. This review judges R9 a faithful reading of SEMANTICS.md scope plus frozen ONT-NORM-003, not a new contract.",
+    "NOTE: JSON Schema still cannot encode NFKC stored-alias equality; an unnormalized alias is schema-valid and runtime-invalid (alias_not_normalized). Fixture-level runtime/schema parity still holds via palimnex.tests.test_concepts_frozen.",
+    "NOTE: palimnex.tests.test_sdk.test_public_wire_schemas still does not enumerate concept-registry.v1.schema.json. Existing SDK tests pass; listing the new schema remains integration-owned.",
+    "NOTE: Documentation still states that registry location is not yet decided and that Phase 1 defines no default location, configuration key, CLI loading path, or retrieval influence, with authority historical_only and authorizes_actions false."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_concept_registry_schema palimnex.tests.test_sdk -v",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-1/tasks/ontology-phase-1-registry-schema.json --implementation-receipt artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-schema.implementation-receipt.json",
+    "git status --short -- docs/CONCEPT_REGISTRY.md palimnex/schemas/concept-registry.v1.schema.json palimnex/tests/test_concept_registry_schema.py palimnex/tests/fixtures/concept_registry"
+  ],
+  "source_grounding_result": "Public schema remains the accepted Phase 0 draft with the documented title edit. Reader documentation restates identity, lifecycle, normalization, ambiguity, supersession, digest, bounds, privacy, and non-authority, and now classifies R7 unsafe inputs as typed refusals with the runtime reason codes.",
+  "privacy_result": "Fixtures do not store complete credential-shaped strings. Schema tests resolve locators locally. Documentation requires privacy admission before derivation and non-echoing refusals, including source_privacy_refused.",
+  "retrieval_quality_result": "This lane adds a public schema, fixtures, tests, and docs only. test_sdk public-contract tests still pass. No retrieval wiring.",
+  "compatibility_result": "Additive palimnex:concept-registry:v1 at the frozen $id. Existing source-locator.v1 is referenced, not forked. Existing SDK wire-schema tests remain green because they use a hardcoded name list that does not yet include the new schema.",
+  "rollback_result": "Rollback is deleting the public schema, docs, fixtures, and schema tests. No runtime default location or retrieval path is introduced.",
+  "authority_result": "Owned files do not change CLI, config, retrieval, cache, ledger, or MCP. The lane does not import palimnex.concepts. Implementation receipt validated; no Git writes in this review. Citing R9 in docs/CONCEPT_REGISTRY.md describes an already-accepted query/key split rather than exercising a new owner action.",
+  "limitations": [
+    "Redis was absent; cache_consulted is false.",
+    "Stale-versus-refusal verification compared the public doc to palimnex/concepts.py reason codes; runtime refusals were independently probed in the registry-core lane."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_mutated": false,
+    "ledger_consulted": false,
+    "ledger_mutated": false,
+    "reindexed": false,
+    "evaluated": false
+  },
+  "git_state": {
+    "git_writes": false,
+    "owned_product_files": [
+      "?? docs/CONCEPT_REGISTRY.md",
+      "?? palimnex/schemas/concept-registry.v1.schema.json",
+      "?? palimnex/tests/test_concept_registry_schema.py",
+      "?? palimnex/tests/fixtures/concept_registry/"
+    ],
+    "worktree": "dirty with tracked integration-owned edits to docs/COMPATIBILITY.md, palimnex/CHANGELOG.md, and pyproject.toml, plus pre-existing untracked ontology artifacts"
+  },
+  "status": "accepted"
+}

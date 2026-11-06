@@ -1,0 +1,52 @@
+{
+  "authorizes_actions": false,
+  "changed_by_lane": {
+    "ontology-phase-0-coverage-contract": [
+      "artifacts/design/ontology-phase-0/coverage/SEMANTICS.md",
+      "artifacts/design/ontology-phase-0/coverage/check_coverage_contract.py",
+      "artifacts/design/ontology-phase-0/coverage/examples/invalid/ambiguous-concept-counted-as-covered.json",
+      "artifacts/design/ontology-phase-0/coverage/examples/invalid/authorizes-actions-true.json",
+      "artifacts/design/ontology-phase-0/coverage/examples/invalid/float-ratio.json",
+      "artifacts/design/ontology-phase-0/coverage/examples/invalid/oversize-list.json",
+      "artifacts/design/ontology-phase-0/coverage/examples/invalid/raw-query-field.json",
+      "artifacts/design/ontology-phase-0/coverage/examples/invalid/unknown-status.json",
+      "artifacts/design/ontology-phase-0/coverage/examples/valid/ambiguous.json",
+      "artifacts/design/ontology-phase-0/coverage/examples/valid/answerable-truncated.json",
+      "artifacts/design/ontology-phase-0/coverage/examples/valid/answerable.json",
+      "artifacts/design/ontology-phase-0/coverage/examples/valid/byte-budget-omission.json",
+      "artifacts/design/ontology-phase-0/coverage/examples/valid/partial.json",
+      "artifacts/design/ontology-phase-0/coverage/examples/valid/unanswerable.json",
+      "artifacts/design/ontology-phase-0/coverage/retrieval-coverage.v1.schema.json",
+      "artifacts/ontology/phase-0/receipts/ontology-phase-0-coverage-contract.implementation-receipt.json"
+    ],
+    "ontology-phase-0-integration": [
+      "artifacts/ontology/phase-0/integration/grok-review-prompt.md",
+      "artifacts/ontology/phase-0/integration/ownership-audit.json"
+    ],
+    "ontology-phase-0-registry-contract": [
+      "artifacts/design/ontology-phase-0/registry/SEMANTICS.md",
+      "artifacts/design/ontology-phase-0/registry/check_registry_contract.py",
+      "artifacts/design/ontology-phase-0/registry/concept-registry.v1.schema.json",
+      "artifacts/design/ontology-phase-0/registry/examples/invalid/bad-concept-id.json",
+      "artifacts/design/ontology-phase-0/registry/examples/invalid/bad-locator-digest.json",
+      "artifacts/design/ontology-phase-0/registry/examples/invalid/extra-field.json",
+      "artifacts/design/ontology-phase-0/registry/examples/invalid/oversize-alias-list.json",
+      "artifacts/design/ontology-phase-0/registry/examples/invalid/unknown-status.json",
+      "artifacts/design/ontology-phase-0/registry/examples/invalid/wrong-authorizes-actions.json",
+      "artifacts/design/ontology-phase-0/registry/examples/valid/minimal-approved.json",
+      "artifacts/design/ontology-phase-0/registry/examples/valid/multi-concept-relations.json",
+      "artifacts/design/ontology-phase-0/registry/examples/valid/supersession-chain.json",
+      "artifacts/ontology/phase-0/receipts/ontology-phase-0-registry-contract.implementation-receipt.json"
+    ],
+    "ontology-phase-0-threat-cases": [
+      "artifacts/design/ontology-phase-0/frozen-cases/README.md",
+      "artifacts/design/ontology-phase-0/frozen-cases/cases.v0.json",
+      "artifacts/design/ontology-phase-0/frozen-cases/check_cases.py",
+      "artifacts/design/ontology-phase-0/threat-model/THREAT_MODEL.md",
+      "artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json"
+    ]
+  },
+  "schema": "palimnex:ontology-ownership-audit:v1",
+  "status": "clean",
+  "violations": []
+}

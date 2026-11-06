@@ -60,3 +60,12 @@ than resumed. Pack import, activation and recovery refuse while it exists, and
 it is removed after a verified target. The `<ledger>.retention-v2` guard keeps
 its exact bytes; it is published atomically before the schema change and is
 never removed. No ledger, pack or cache identifier changes.
+
+The unreleased ontology registry foundation (`docs/ONTOLOGY_ADOPTION.md`,
+Phase 1) adds `palimnex:concept-registry:v1` and the `palimnex.concepts`
+module. It is additive: no existing identifier, reader, CLI command,
+configuration key, cache, ledger or pack format changes, and nothing loads a
+registry unless a caller passes its path. Registry documents carry
+`authority: historical_only` and `authorizes_actions: false`. An approved entry
+is reviewed repository source, never runtime authority. Source bindings reuse
+`palimnex:source-locator:v1` unchanged. See `docs/CONCEPT_REGISTRY.md`.

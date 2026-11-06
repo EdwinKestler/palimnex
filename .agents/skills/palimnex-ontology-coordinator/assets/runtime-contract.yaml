@@ -1,0 +1,82 @@
+schema_version: 1
+skill: palimnex-ontology-coordinator
+role: coordinator_integrator
+inputs:
+  - AdoptionRequest
+  - RepositoryState
+  - DesignIdentity
+  - ApprovalEvidence
+outputs:
+  - WorkstreamManifest
+  - IntegrationReceipt
+  - AdoptionGapReport
+statuses:
+  - proposal_only
+  - ready
+  - in_progress
+  - integration_pending
+  - validated
+  - blocked
+required_fields:
+  ApprovalEvidence:
+    - schema
+    - authority_source
+    - evidence_locator
+    - grantor_claim
+    - design_identity
+    - source_proposal_identity
+    - approved_phases
+    - authorized_actions
+    - excluded_actions
+    - recorded_at
+    - implementation_authorized
+    - network_authorized
+    - git_write_authorized
+    - live_state_authorized
+  WorkstreamManifest:
+    - approved_phase
+    - design_identity
+    - workstreams
+    - dependency_dag
+    - exclusive_file_ownership
+    - shared_file_owner
+    - acceptance_gates
+    - authority_limits
+  IntegrationReceipt:
+    - workstream_receipts
+    - reviewed_diff
+    - compatibility_result
+    - validation_commands
+    - validation_results
+    - cache_and_ledger_state
+    - git_state
+    - status
+  AdoptionGapReport:
+    - requested_scope
+    - design_identity
+    - approval_state
+    - missing_requirements
+    - allowed_next_actions
+    - authority_limits
+    - status
+gates:
+  - the named phase has explicit owner approval before implementation
+  - every writable path has one owner per wave
+  - dependency receipts are reviewed before downstream work starts
+  - shared files are integrated serially
+  - independent review is performed by a non-implementing agent
+  - indexed changes are reindexed and evaluated before handoff
+fail_closed_when:
+  - the proposal is treated as approved without owner evidence
+  - writable paths overlap
+  - a reader-breaking change lacks a versioned migration design
+  - a model or network call lacks explicit authority
+  - a candidate ontology entry would gain trusted influence
+  - material validation cannot be reproduced
+schemas:
+  approval_evidence: assets/approval-evidence.v1.schema.json
+  implementation_task: assets/workstream-task.v1.schema.json
+  workstream_manifest: assets/workstream-manifest.v1.schema.json
+  integration_receipt: assets/integration-receipt.v1.schema.json
+  adoption_gap_report: assets/adoption-gap-report.v1.schema.json
+semantic_validator: scripts/validate_contract.py

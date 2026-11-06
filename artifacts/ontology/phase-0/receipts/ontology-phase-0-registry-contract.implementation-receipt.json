@@ -1,0 +1,108 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-0-registry-contract",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "9bfdb51ddec03aa8976206979fc45df5a1c7668579aa855d1cff6cae690686c2"
+  },
+  "task_digest": "637a51963383df523470f8356829e3926f7d13c5af51a21943a9d1cef40c9deb",
+  "approval_evidence_digest": "a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760",
+  "owned_scope": [
+    "artifacts/design/ontology-phase-0/registry",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-registry-contract.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "artifacts/design/ontology-phase-0/registry",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-registry-contract.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [],
+  "commands": [
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-0/tasks/ontology-phase-0-registry-contract.json",
+      "exit_code": 0,
+      "result": "Reissued task and embedded approval evidence validated; task_digest=637a51963383df523470f8356829e3926f7d13c5af51a21943a9d1cef40c9deb; approval_evidence_digest=a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760; authorizes_actions=false."
+    },
+    {
+      "command": "./.venv/bin/python artifacts/design/ontology-phase-0/registry/check_registry_contract.py",
+      "exit_code": 0,
+      "result": "Draft 2020-12 schemas and stable shared definitions passed; 4 valid examples passed schema, semantic, source-resolution, and canonical-digest checks; 7 invalid examples were refused; constructed privacy canary was refused without value echo."
+    },
+    {
+      "command": "python3 palimnex.py status",
+      "exit_code": 1,
+      "result": "Redis Unix socket is missing; cache_consulted=false. Indexing was not attempted because the task forbids cache and Redis writes."
+    },
+    {
+      "command": "python3 palimnex.py validate --deep",
+      "exit_code": 1,
+      "result": "Redis Unix socket is missing; cache_consulted=false. Current repository files and referenced source ranges were inspected directly instead."
+    },
+    {
+      "command": "python3 palimnex.py search \"conceptId alias projectIdentity registry fixture binding_digests_are_placeholders\" --limit 8",
+      "exit_code": 1,
+      "result": "Redis Unix socket is missing; cache_consulted=false. Exact implementation vocabulary was searched directly with rg and the returned source files were opened."
+    },
+    {
+      "command": "python3 palimnex.py ledger-status",
+      "exit_code": 0,
+      "result": "Ledger schema project-memory:ledger:v1 is ready; integrity=ok; semantic_errors empty; scanner policy matches creation; all object counts and projection_pending are zero."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-0/tasks/ontology-phase-0-registry-contract.json --implementation-receipt artifacts/ontology/phase-0/receipts/ontology-phase-0-registry-contract.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Implementation receipt validated against the runtime schema and reissued task identities; status=valid; implementation_receipt_validated=true; authorizes_actions=false."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "The 14 registry deliverables and this receipt are untracked; parallel-lane and pre-existing unrelated untracked files remain present and untouched; no staged or committed work was created."
+    }
+  ],
+  "compatibility_effect": "Phase 0 draft artifacts only. The draft concept-ID contract now additionally permits underscore as a single segment separator while retaining its 3-128 bound and rejection of empty or doubled separators. No product code, public schema, CLI, configuration, existing project-memory:* identifier, cache layout, context envelope, ledger schema, pack format, or runtime behavior changed. The separate proposed palimnex:concept-registry:v1 still reuses palimnex:source-locator:v1 by $id. All registry design files remain under the unindexed artifacts/design/ boundary, so indexed_files_changed=false and no reindex or evaluation was authorized or required.",
+  "privacy_and_authority_checks": [
+    "Source bindings use the existing local source-locator.v1 schema; every valid example is reopened, privacy-scanned before range derivation, version-checked, and range-digest-checked offline.",
+    "The check constructs a credential-shaped canary at runtime, confirms privacy refusal before derivation, and confirms findings do not echo the value; no literal canary or credential value was added.",
+    "Every registry fixes authority=historical_only and authorizes_actions=false; candidate_set remains separated from approved_registry and has no matching or retrieval influence.",
+    "Fixture semantics allow a declared placeholder binding digest only in an explicitly flagged frozen case and state that it is invalid in a committed registry or registry loader.",
+    "No network, model/provider, Git-write, live-state mutation, index, Redis-write, ledger-write, migration, retention, erasure, policy activation, or pack action was performed.",
+    "The repository standard gate was not run because it creates temporary cache/index state, while this task explicitly forbids palimnex index and live-state writes; all task-card acceptance commands were run."
+  ],
+  "integration_patch_proposals": [
+    "workstream_id=ontology-phase-0-registry-contract; task_digest=637a51963383df523470f8356829e3926f7d13c5af51a21943a9d1cef40c9deb; approval_evidence_digest=a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760; design_path=docs/ONTOLOGY_ADOPTION.md; design_sha256=9bfdb51ddec03aa8976206979fc45df5a1c7668579aa855d1cff6cae690686c2; target_path=artifacts/design/ontology-phase-0/coverage/retrieval-coverage.v1.schema.json; requested_change=remove copied concept-ID, matched-alias, and project-identity definitions and reference the registry schema's $defs.conceptId, $defs.alias, and $defs.projectIdentity by absolute $id; rationale=resolves the MAJOR concept-ID and MINOR alias/project definition drift findings under R1-R3; dependency_effect=coverage lane consumes registry shared definitions; compatibility_effect=Phase 0 draft reconciliation only; status=proposed",
+    "workstream_id=ontology-phase-0-registry-contract; task_digest=637a51963383df523470f8356829e3926f7d13c5af51a21943a9d1cef40c9deb; approval_evidence_digest=a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760; design_path=docs/ONTOLOGY_ADOPTION.md; design_sha256=9bfdb51ddec03aa8976206979fc45df5a1c7668579aa855d1cff6cae690686c2; target_path=artifacts/design/ontology-phase-0/frozen-cases/cases.v0.json; requested_change=make every registry_fixture a complete palimnex:concept-registry:v1 document using status, full source-locator.v1 bindings, a correct registry_digest, and one case-level binding_digests_are_placeholders flag when the declared placeholder digest is used; rationale=resolves the MAJOR lifecycle_status and reduced-fixture finding under R4; dependency_effect=frozen cases become directly consumable by the registry contract; compatibility_effect=Phase 0 fixture reconciliation only; status=proposed",
+    "workstream_id=ontology-phase-0-registry-contract; task_digest=637a51963383df523470f8356829e3926f7d13c5af51a21943a9d1cef40c9deb; approval_evidence_digest=a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760; design_path=docs/ONTOLOGY_ADOPTION.md; design_sha256=9bfdb51ddec03aa8976206979fc45df5a1c7668579aa855d1cff6cae690686c2; target_path=artifacts/design/ontology-phase-0/frozen-cases/check_cases.py; requested_change=drop the concept. prefix rule and validate each complete fixture against the registry schema through a local referencing.Registry, including full source-locator shape and registry digest checks; rationale=resolves the MAJOR incompatible-ID and digest-only-locator validation finding under R1 and R4; dependency_effect=frozen-case validation depends on the reconciled registry schema; compatibility_effect=Phase 0 checker reconciliation only; status=proposed"
+  ],
+  "unresolved_risks": [
+    "R1-R7 remain provisional coordinator decisions pending the owner's Phase 0 exit gate; this lane applied only R1-R4 changes within its ownership and left R5-R7 to their owning lanes.",
+    "Owner exit-gate approval is still required for registry_kind, candidate/approved read-path separation, committed registry location and index status, size bounds, NFKC/casefold/punctuation normalization, ambiguity reporting, relation vocabulary, no-fork supersession, and future module name.",
+    "The valid source-bound examples intentionally fail visibly if README.md, docs/DESIGN.md, or docs/ONTOLOGY_ADOPTION.md drifts; their locators and registry digests require reviewed regeneration after such drift.",
+    "Cross-concept normalized alias collisions remain a validation diagnostic and an ambiguous result rather than whole-registry rejection; the owner must confirm that provisional fail-closed behavior.",
+    "Cross-lane MAJOR and MINOR findings remain unresolved until the coordinator integrates and validates the proposed coverage and frozen-case changes."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_status": "unavailable: Redis Unix socket missing",
+    "cache_written": false,
+    "indexed_files_changed": false,
+    "reindex_performed": false,
+    "evaluation_performed": false,
+    "ledger_consulted": true,
+    "ledger_schema": "project-memory:ledger:v1",
+    "ledger_status": "ready",
+    "ledger_integrity": "ok",
+    "ledger_semantic_errors": [],
+    "ledger_written": false,
+    "live_state_written": false
+  },
+  "git_state": {
+    "branch": "main",
+    "head": "b604f83579a55e78fc5ffabdd5b70fa4bd0623e1",
+    "git_writes_performed": false,
+    "staged_by_workstream": false,
+    "commit_created": false,
+    "owned_paths_status": "14 untracked registry deliverables and one untracked implementation receipt",
+    "unrelated_changes_present": true,
+    "unrelated_changes_preserved": true
+  },
+  "status": "tested"
+}

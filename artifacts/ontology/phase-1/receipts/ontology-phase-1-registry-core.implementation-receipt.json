@@ -1,0 +1,89 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-1-registry-core",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "0288521fd44d14333ff059a000596861e2a3babc2ffb0a6c58960ba2a6415856"
+  },
+  "task_digest": "1882e503461032c224d0b22457cf140d1827eaac70652bfc70c6b1dbac0f0eb9",
+  "approval_evidence_digest": "138ad4d34c2874351c67b5687c0ae75af9e3b25ecaf40dca51aaec026450e3db",
+  "owned_scope": [
+    "palimnex/concepts.py",
+    "palimnex/tests/test_concepts.py",
+    "artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-core.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/concepts.py",
+    "palimnex/tests/test_concepts.py",
+    "artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-core.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [],
+  "commands": [
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_concepts -v",
+      "exit_code": 0,
+      "result": "24 tests passed in 0.034s. Query TAB, LF and CR match as spaces; a non-whitespace U+0007 control is refused with forbidden_unicode at query; the same whitespace code points remain refused in stored aliases; privacy and supersession-cycle regression tests remain green."
+    },
+    {
+      "command": "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/concepts.py",
+      "exit_code": 0,
+      "result": "Success: no issues found in 1 source file."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_concepts_frozen -v",
+      "exit_code": 0,
+      "result": "4 tests passed in 0.134s, including ONT-NORM-003 and frozen matrix digest and schema parity checks."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-1/tasks/ontology-phase-1-registry-core.json",
+      "exit_code": 0,
+      "result": "Task and approval evidence valid; task digest 1882e503461032c224d0b22457cf140d1827eaac70652bfc70c6b1dbac0f0eb9; approval evidence digest 138ad4d34c2874351c67b5687c0ae75af9e3b25ecaf40dca51aaec026450e3db."
+    },
+    {
+      "command": "./.venv/bin/python -c 'from pathlib import Path; from palimnex.security import scan_file; paths=(Path(\"palimnex/concepts.py\"),Path(\"palimnex/tests/test_concepts.py\")); print([(str(path), [(item.rule, item.line) for item in scan_file(path)]) for path in paths])'",
+      "exit_code": 0,
+      "result": "No privacy findings in either owned Python file."
+    }
+  ],
+  "compatibility_effect": "The additive palimnex.concepts API is unchanged. Per artifacts/ontology/phase-1/integration/clarification-R9.md, match_aliases now maps every query code point for which str.isspace() is true to U+0020 before applying the unchanged six-step registry-key normalizer. Registry canonical names and stored aliases still reject every C* code point. No project-memory:* identifier, schema, CLI, configuration, retrieval, cache, ledger or pack behavior changed.",
+  "privacy_and_authority_checks": [
+    "Clarification R9 is applied exactly: query whitespace is admitted to U+0020 before normalization, while non-whitespace C* query code points remain typed, non-echoing forbidden_unicode refusals at field query.",
+    "Query privacy scanning still runs on the original UTF-8 bytes before whitespace admission or alias derivation; registry privacy scanning remains unchanged.",
+    "Canonical names and stored aliases still follow SEMANTICS.md steps 1-6 unchanged and refuse TAB, LF, CR and every other C* code point rather than admitting query behavior into registry keys.",
+    "Runtime-built definition, alias and query canaries remain covered by the focused suite without str or repr echo; scan_file found no privacy findings in either owned Python file.",
+    "The fix-1 supersession-cycle detection and its real two-node cycle test remain unchanged and passing.",
+    "authority remains historical_only and authorizes_actions remains false; no network, provider, model, Git write, live Redis, SQLite, migration, retention, erasure or pack action occurred."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "SourceResolver v1 has no required project-identity member. This implementation refuses optional resolver project_id or project_slug claims that are foreign, but a registered resolver that makes no scope claim remains a trusted-code boundary and cannot be independently project-bound by source-locator v1.",
+    "palimnex/concepts.py and palimnex/tests/test_concepts.py match indexed include patterns. Reindex and evaluation were not run because the task card forbids Palimnex index writes; the full suite and standard gate were not run because the fix-round-2 brief explicitly says not to run them."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_status": "Redis connection/protocol failure in the sandbox: operation not permitted",
+    "deep_validation_completed": false,
+    "focused_cache_search_completed": false,
+    "focused_source_inspection_completed": true,
+    "indexed_files_changed": true,
+    "reindex_performed": false,
+    "evaluation_performed": false,
+    "ledger_consulted": false,
+    "ledger_writes": false,
+    "live_state_writes": false,
+    "full_suite": "not run per fix-round-2 brief",
+    "standard_gate": "not run per fix-round-2 brief"
+  },
+  "git_state": {
+    "git_writes": false,
+    "staged": false,
+    "committed": false,
+    "pushed": false,
+    "preexisting_dirty_worktree_preserved": true,
+    "owned_product_files_status": [
+      "?? palimnex/concepts.py",
+      "?? palimnex/tests/test_concepts.py"
+    ]
+  },
+  "status": "tested"
+}

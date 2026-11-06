@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://palimnex.dev/schemas/ontology-integration-patch-proposal.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "workstream_id", "task_digest", "approval_evidence_digest", "design_identity", "target_path", "requested_change", "rationale", "dependency_effect", "compatibility_effect", "status"],
+  "properties": {
+    "schema": {"const": "palimnex:ontology-integration-patch-proposal:v1"},
+    "workstream_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{2,63}$"},
+    "task_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "approval_evidence_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "design_identity": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"$ref": "#/$defs/path"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}},
+    "target_path": {"$ref": "#/$defs/path"},
+    "requested_change": {"type": "string", "minLength": 1, "maxLength": 8192},
+    "rationale": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "dependency_effect": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "compatibility_effect": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "status": {"enum": ["proposed", "blocked"]}
+  },
+  "$defs": {
+    "path": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+", "maxLength": 512}
+  }
+}

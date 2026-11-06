@@ -1,0 +1,51 @@
+schema_version: 1
+skill: palimnex-ontology-review
+role: independent_reviewer
+inputs:
+  - ImplementationReceipt
+  - ReviewedDiff
+  - AcceptanceCriteria
+  - ApprovedDesignIdentity
+  - ApprovalEvidence
+  - WorkstreamTask
+  - RepositoryState
+outputs:
+  - ReviewReceipt
+statuses:
+  - accepted
+  - accepted_with_limits
+  - rejected
+  - blocked
+required_fields:
+  ReviewReceipt:
+    - reviewed_scope
+    - design_identity
+    - workstream_id
+    - task_digest
+    - approval_evidence_digest
+    - evidence
+    - commands
+    - source_grounding_result
+    - privacy_result
+    - retrieval_quality_result
+    - compatibility_result
+    - rollback_result
+    - authority_result
+    - limitations
+    - cache_and_ledger_state
+    - git_state
+    - status
+gates:
+  - the actual diff and current source were reviewed
+  - positive negative ambiguous stale-source and secret cases are represented
+  - material results are independently reproducible
+  - compatibility and rollback are explicit
+  - review is independent from implementation
+fail_closed_when:
+  - only self-reported results are available
+  - ambiguity or negative cases are missing
+  - external model identity or data handling is unbound
+  - compatibility or rollback is unspecified
+  - the reviewer would need to repair the code to accept it
+schemas:
+  review_receipt: assets/review-receipt.v1.schema.json

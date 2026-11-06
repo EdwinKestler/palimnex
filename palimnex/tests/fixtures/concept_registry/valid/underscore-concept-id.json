@@ -1,0 +1,39 @@
+{
+  "schema": "palimnex:concept-registry:v1",
+  "project": {
+    "project_slug": "palimnex",
+    "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+  },
+  "registry_version": 1,
+  "registry_kind": "approved_registry",
+  "concepts": [
+    {
+      "concept_id": "concept.source_locator",
+      "canonical_name": "Source locator",
+      "aliases": [
+        "digest bound locator"
+      ],
+      "definition": "The existing source-locator contract used to bind an approved concept to digest-verified current source.",
+      "source_bindings": [
+        {
+          "scheme": "repo",
+          "source_id": "palimnex/tests/fixtures/concept_registry/sources/source-locator-contract.txt",
+          "version": "e45bea685824ac1cf47f3123c707a4f6f851500dbf52f979ed0f287f806b34ea",
+          "range": {
+            "unit": "lines",
+            "start": 1,
+            "end": 2
+          },
+          "digest": "ababb72bf9a242d8ced4f7029320bbd0b86b884454c97314aac50ae94839cea5"
+        }
+      ],
+      "status": "approved",
+      "provenance": {
+        "origin": "manual"
+      }
+    }
+  ],
+  "registry_digest": "191059581ed98dd29b89185a1d60509b7bf863af22057dcea46ad05df7a896c1",
+  "authority": "historical_only",
+  "authorizes_actions": false
+}

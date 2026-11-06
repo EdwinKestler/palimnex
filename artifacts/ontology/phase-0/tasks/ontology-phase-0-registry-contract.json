@@ -1,0 +1,97 @@
+{
+  "schema": "palimnex:ontology-workstream-task:v1",
+  "workstream_id": "ontology-phase-0-registry-contract",
+  "phase": 0,
+  "action_id": "ontology_phase_0_contract",
+  "objective": "Reconciliation wave 2 for ontology-phase-0-registry-contract: revise your Phase 0 drafts so they conform to artifacts/ontology/phase-0/integration/reconciliation-decisions.v1.md and resolve every MAJOR and MINOR finding addressed to your lane in artifacts/ontology/phase-0/wave-1/reviews/ontology-phase-0-registry-contract.review-receipt.json. Follow artifacts/ontology/phase-0/briefs/wave-2/ontology-phase-0-registry-contract.md. Keep everything else in your drafts unchanged.",
+  "exclusions": [
+    "No edits outside owned_paths; foreign changes are returned as integration patch proposals.",
+    "No product code under palimnex/, no public schema under palimnex/schemas/, no CLI, config or fixture edits.",
+    "No Git staging, commits, branches or pushes.",
+    "No network access, package installs, model or provider calls from the work itself.",
+    "No palimnex index, remember, session, capture, retention, migration, erasure or pack commands; no Redis or SQLite writes.",
+    "Never read or echo credentials; never store literal secret-pattern strings."
+  ],
+  "approved_design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "9bfdb51ddec03aa8976206979fc45df5a1c7668579aa855d1cff6cae690686c2"
+  },
+  "approval_evidence": {
+    "schema": "palimnex:ontology-approval-evidence:v1",
+    "authority_source": "user_message",
+    "evidence_locator": "claude.ai conversation with the repository owner, user message sent 2026-11-05 20:06 America/Guatemala: 'i approve phase 0'",
+    "grantor_claim": "repository owner (Gus, GitHub EdwinKestler)",
+    "design_identity": {
+      "path": "docs/ONTOLOGY_ADOPTION.md",
+      "sha256": "9bfdb51ddec03aa8976206979fc45df5a1c7668579aa855d1cff6cae690686c2"
+    },
+    "source_proposal_identity": {
+      "path": "artifacts/design/Ontologyadoptionplan.md",
+      "sha256": "8fe38bef5f7f25fa8a7d58dad21b89f69c70f4a367d9981c01fdedf6bd165d86"
+    },
+    "approved_phases": [
+      0
+    ],
+    "authorized_actions": [
+      "ontology_phase_0_contract"
+    ],
+    "excluded_actions": [
+      "ontology_phase_1_registry",
+      "ontology_phase_2_coverage",
+      "ontology_phase_3_shadow",
+      "ontology_phase_4_semantic",
+      "ontology_phase_5_extensions"
+    ],
+    "recorded_at": "2026-11-05T20:06:00-06:00",
+    "implementation_authorized": true,
+    "network_authorized": false,
+    "git_write_authorized": false,
+    "live_state_authorized": false
+  },
+  "owned_paths": [
+    "artifacts/design/ontology-phase-0/registry",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-registry-contract.implementation-receipt.json"
+  ],
+  "read_only_paths": [
+    ".agents/skills",
+    ".palimnex.json",
+    "AGENTS.md",
+    "README.md",
+    "artifacts/design/Ontologyadoptionplan.md",
+    "artifacts/design/ontology-phase-0/CONTRACT_FREEZE.md",
+    "artifacts/design/ontology-phase-0/coverage",
+    "artifacts/design/ontology-phase-0/frozen-cases",
+    "artifacts/design/ontology-phase-0/threat-model",
+    "artifacts/ontology/phase-0/approval-evidence.json",
+    "artifacts/ontology/phase-0/briefs",
+    "artifacts/ontology/phase-0/integration",
+    "artifacts/ontology/phase-0/integration/reconciliation-decisions.v1.md",
+    "artifacts/ontology/phase-0/manifest.json",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-coverage-contract.implementation-receipt.json",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-integration.implementation-receipt.json",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json",
+    "artifacts/ontology/phase-0/tasks",
+    "artifacts/ontology/phase-0/wave-1",
+    "docs",
+    "docs/ONTOLOGY_ADOPTION.md",
+    "palimnex"
+  ],
+  "forbidden_paths": [
+    ".palimnex",
+    ".env",
+    ".env.example",
+    "benchmark",
+    "secrets",
+    ".git"
+  ],
+  "dependencies": [],
+  "acceptance_commands": [
+    "./.venv/bin/python artifacts/design/ontology-phase-0/registry/check_registry_contract.py",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-0/tasks/ontology-phase-0-registry-contract.json --implementation-receipt artifacts/ontology/phase-0/receipts/ontology-phase-0-registry-contract.implementation-receipt.json",
+    "git status --short --untracked-files=all"
+  ],
+  "required_output": "ImplementationReceipt",
+  "network_authority": false,
+  "git_write_authority": false,
+  "live_state_authority": false
+}

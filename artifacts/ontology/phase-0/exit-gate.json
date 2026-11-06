@@ -1,0 +1,61 @@
+{
+  "schema": "palimnex:ontology-exit-gate:v1",
+  "phase": 0,
+  "decision": "accepted",
+  "authority_source": "user_message",
+  "evidence_locator": "claude.ai conversation with the repository owner, user message sent 2026-11-05 21:32 America/Guatemala: 'accept phase 0 and authorize to proceed to phase 1'",
+  "grantor_claim": "repository owner (Gus, GitHub EdwinKestler)",
+  "recorded_at": "2026-11-05T21:32:00-06:00",
+  "design_identity_at_acceptance": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "9bfdb51ddec03aa8976206979fc45df5a1c7668579aa855d1cff6cae690686c2"
+  },
+  "contract_freeze": "artifacts/design/ontology-phase-0/CONTRACT_FREEZE.md",
+  "accepted_decisions": "artifacts/ontology/phase-0/integration/reconciliation-decisions.v1.md (R1-R7)",
+  "frozen_case_matrix": {
+    "path": "artifacts/design/ontology-phase-0/frozen-cases/cases.v0.json",
+    "sha256": "a64be4f15fdfb664b3142706e5cef35d10fbaa4ed340aea38f22388404f7314b"
+  },
+  "accepted_artifacts": {
+    "artifacts/design/ontology-phase-0/CONTRACT_FREEZE.md": "8a0a7d462fc528475a98813e740a38bb7b53feaff47b2ff3ebb3c616c203fa5f",
+    "artifacts/design/ontology-phase-0/coverage/SEMANTICS.md": "9b9b0ebdaf6fbb224a7b24a4d00e054806b2ff06a52a0efa5c6d399d4257a0fb",
+    "artifacts/design/ontology-phase-0/coverage/check_coverage_contract.py": "d12bdb1880e0cb3687f06e926e0f8b4cdf09479a5fcbb3bee6c017d08e7cb5b9",
+    "artifacts/design/ontology-phase-0/coverage/examples/invalid/ambiguous-concept-counted-as-covered.json": "59ef0a13ed3326cc38240346eef0e25d95ba734f0dd0e796ee342176b0387471",
+    "artifacts/design/ontology-phase-0/coverage/examples/invalid/authorizes-actions-true.json": "07ae6cc43124e10ab4ae5011986efe4fabdf76c2d772888e4d2a5cf5fb1d9935",
+    "artifacts/design/ontology-phase-0/coverage/examples/invalid/float-ratio.json": "46bd98cf5362a1454ce8fe0ac12abb9febfca684e070b24c6d13edf9fda4cb64",
+    "artifacts/design/ontology-phase-0/coverage/examples/invalid/oversize-list.json": "bfea3db154b52f6fdf9d848ef27711e189374a4cb0d2eb22aa5d0cd7abe6d1c2",
+    "artifacts/design/ontology-phase-0/coverage/examples/invalid/raw-query-field.json": "121fa6c95433b8bb89ddf4857223e512fc0629eb6ad0c82318828d3a7b010cac",
+    "artifacts/design/ontology-phase-0/coverage/examples/invalid/unknown-status.json": "b4b22df34ff3f2b6bdb6d1f599e932b496db2b74e63b4894965c2e146689c115",
+    "artifacts/design/ontology-phase-0/coverage/examples/valid/ambiguous.json": "b7db4b688188e940cf87f2053f33d2c176995eac95ac53bb66a7ab87c32a83c4",
+    "artifacts/design/ontology-phase-0/coverage/examples/valid/answerable-truncated.json": "3665964c3bdc013921b0a54b7817a368fddaef619bf38c03bed1d33f053e3ddb",
+    "artifacts/design/ontology-phase-0/coverage/examples/valid/answerable.json": "f5fca09037433d8586783418df8a04d73cd6277a2a9a2118796368180452e04b",
+    "artifacts/design/ontology-phase-0/coverage/examples/valid/byte-budget-omission.json": "8888e2ae8b8d859317295be8329b60908ef7ce5dc3d509607e1105fab70c0cb3",
+    "artifacts/design/ontology-phase-0/coverage/examples/valid/partial-stale.json": "9bffc7bf8ceff2347d78755997eb25629f1c3aa662d023bba8dad41750d1d899",
+    "artifacts/design/ontology-phase-0/coverage/examples/valid/partial.json": "2399bd001737acb3b180584f47c800dd8a3019e5765ba07882fe8712e6be3e49",
+    "artifacts/design/ontology-phase-0/coverage/examples/valid/unanswerable.json": "da234f6df4877b54a3ddf103b5a21b65ed22546db7047b71a045cbed3ac88c1b",
+    "artifacts/design/ontology-phase-0/coverage/retrieval-coverage.v1.schema.json": "4062e26f2d810018d1e0ffc9e38cc9a0f6366dae7b0ea94bdfe413198c3dc56e",
+    "artifacts/design/ontology-phase-0/frozen-cases/README.md": "48bd84e5ea165b51e8de6fe8c58341f8e9f87d1b8892752a86706eacd081500f",
+    "artifacts/design/ontology-phase-0/frozen-cases/cases.v0.json": "a64be4f15fdfb664b3142706e5cef35d10fbaa4ed340aea38f22388404f7314b",
+    "artifacts/design/ontology-phase-0/frozen-cases/check_cases.py": "8daf9e77b136d9522a905377e4d1240dbdcd3f7315300e2d0ebe06d6f947c635",
+    "artifacts/design/ontology-phase-0/registry/SEMANTICS.md": "d5a4a239f15d6cb07fd2e444b2229e2bc445a1916d00d007b8d9047267a52713",
+    "artifacts/design/ontology-phase-0/registry/check_registry_contract.py": "ef50fb157b2ebf7a500d96e1d6c14338a66c9199a2e0c0c8d57418c87e2baab7",
+    "artifacts/design/ontology-phase-0/registry/concept-registry.v1.schema.json": "20d12e26751185307cc974beaccee3fc8a91858d2ad52648cbcbe7cf676dd008",
+    "artifacts/design/ontology-phase-0/registry/examples/invalid/bad-concept-id.json": "a366a11deff5f2683843796e11bfb89842c098cd86c57a10e246e08976e4b379",
+    "artifacts/design/ontology-phase-0/registry/examples/invalid/bad-locator-digest.json": "7dff6e0b7f0bb12ae613f22de59aa09e1ff19d586534f184ea4659676991e8b1",
+    "artifacts/design/ontology-phase-0/registry/examples/invalid/doubled-separator-concept-id.json": "331f232d3f58177fd3b2fd6c045ba7694635575a43b25174b7ec37c558ec1d51",
+    "artifacts/design/ontology-phase-0/registry/examples/invalid/extra-field.json": "58c0abce46c841d6f68a470bc19d53cb69c5acad4b5ec2697ba8c82d1ebc1a54",
+    "artifacts/design/ontology-phase-0/registry/examples/invalid/oversize-alias-list.json": "7620ae1c01959748db4411c0977a505189c00a59c1aea8e873733b2869baa730",
+    "artifacts/design/ontology-phase-0/registry/examples/invalid/unknown-status.json": "0667672c91f939d133bb41e05e5525bcdc07f0178f2ed9e23d832a91a10d7de0",
+    "artifacts/design/ontology-phase-0/registry/examples/invalid/wrong-authorizes-actions.json": "2b0040ba8403bc3374a98cf1c2ace2f631fbc85fde735d1d5bd631d7867fe72f",
+    "artifacts/design/ontology-phase-0/registry/examples/valid/minimal-approved.json": "cfbad42ba50fd3482483b31b9fd068d1f72b17fb3670e4dedc3d1f320a4baa11",
+    "artifacts/design/ontology-phase-0/registry/examples/valid/multi-concept-relations.json": "e039c35467e58780c788f7fdf6b5f2b0994c9965835d28a1467c686525d30cc1",
+    "artifacts/design/ontology-phase-0/registry/examples/valid/supersession-chain.json": "1eb518666fd7e28876455bdea692f073bd2a7fd7bdff54515a73e92b8f98e375",
+    "artifacts/design/ontology-phase-0/registry/examples/valid/underscore-concept-id.json": "c6ce40d219f45cac861dcefca1ddcaac7a673eca5da448ec3fa826ef9451c925",
+    "artifacts/design/ontology-phase-0/threat-model/THREAT_MODEL.md": "11f8b87ef41cf1287243802ff60ffcd62eb17f029476f9b68367bb5ffac520c3"
+  },
+  "not_decided": [
+    "registry location and indexing",
+    "validator patch R8 (not applied)"
+  ],
+  "authorizes_actions": false
+}

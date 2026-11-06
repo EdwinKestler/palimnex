@@ -1,0 +1,102 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-0-coverage-contract",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "9bfdb51ddec03aa8976206979fc45df5a1c7668579aa855d1cff6cae690686c2"
+  },
+  "task_digest": "49806ed45cf5c8bdb585e5e0b9a9522d5a952cb1195d5f0a57d43f5ed112b609",
+  "approval_evidence_digest": "a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760",
+  "owned_scope": [
+    "artifacts/design/ontology-phase-0/coverage",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-coverage-contract.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "artifacts/design/ontology-phase-0/coverage",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-coverage-contract.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [],
+  "commands": [
+    {
+      "command": "python3 palimnex.py status",
+      "exit_code": 1,
+      "result": "Redis Unix socket is missing and cache_consulted=false. No Redis start or index was attempted because the task forbids cache writes."
+    },
+    {
+      "command": "python3 palimnex.py validate --deep",
+      "exit_code": 1,
+      "result": "Redis Unix socket is missing and cache_consulted=false. Authoritative repository files were inspected directly instead."
+    },
+    {
+      "command": "python3 palimnex.py search \"retrieval coverage source locator checkout corpus semantic provider context envelope receipt digest\" --limit 10",
+      "exit_code": 1,
+      "result": "Focused cache search could not run because the Redis Unix socket is missing; cache_consulted=false. Exact source vocabulary was searched with rg and the returned source files were opened directly."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-0/tasks/ontology-phase-0-coverage-contract.json",
+      "exit_code": 0,
+      "result": "Task and approval evidence validated; task_digest=49806ed45cf5c8bdb585e5e0b9a9522d5a952cb1195d5f0a57d43f5ed112b609 and approval_evidence_digest=a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760."
+    },
+    {
+      "command": "./.venv/bin/python artifacts/design/ontology-phase-0/coverage/check_coverage_contract.py",
+      "exit_code": 0,
+      "result": "Draft 2020-12 schema and local source-locator reference validated; 6 valid examples passed schema, digest, ordering, arithmetic and decision-table checks; 6 invalid examples were rejected."
+    },
+    {
+      "command": "python3 palimnex.py ledger-status",
+      "exit_code": 0,
+      "result": "Ledger status ready; integrity ok; semantic_errors empty; scanner policy matches creation; all object counts and projection_pending are zero."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-0/tasks/ontology-phase-0-coverage-contract.json --implementation-receipt artifacts/ontology/phase-0/receipts/ontology-phase-0-coverage-contract.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Implementation receipt validated against the runtime schema and task identities; status=valid, implementation_receipt_validated=true, authorizes_actions=false."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "All 15 coverage deliverables and this receipt are untracked; parallel-lane and pre-existing unrelated files remain present and untouched; no staged or committed work was created."
+    }
+  ],
+  "compatibility_effect": "Phase 0 draft artifacts only. No product code, public schema, CLI, configuration, project-memory:* identifier, cache layout, context envelope, ledger schema, pack format, Redis namespace, SQLite object, or runtime behavior changed. The draft proposes a separate palimnex:retrieval-coverage:v1 receipt and reuses palimnex:source-locator:v1 by local $id. It fixes the current project-memory:semantic-provider:v1 disclosure to disabled and non-influential rather than broadening that interface. Draft deliverables remain under the unindexed artifacts/design boundary, so indexed_files_changed=false and this lane neither reindexed nor evaluated.",
+  "privacy_and_authority_checks": [
+    "The schema excludes raw query text and source excerpts; the invalid raw-query example is benign fixture text and is rejected by additionalProperties=false.",
+    "The semantics forbid persistence of raw queries, secret findings, refused bytes, provider errors, credentials, model inputs and model outputs; no credential value or literal secret-pattern canary was read or stored.",
+    "Covered bindings reuse palimnex:source-locator:v1; the contract requires privacy admission, source reopening and digest verification before a producer may classify a concept as covered.",
+    "Every receipt fixes authority=evidence_only and authorizes_actions=false; ambiguity has precedence and ambiguous candidates cannot count as covered.",
+    "No network, model/provider, Git-write, live-state mutation, index, Redis-write, ledger-write, migration, retention, erasure, pack, policy activation, publish or deployment action was performed.",
+    "The repository standard gate was not run because it performs cache/index work outside this task's authority; the exact lane acceptance commands were used instead."
+  ],
+  "integration_patch_proposals": [
+    "target_path=.agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py; requested_change=allow files_changed entries that are descendants of a directory-valued owned_path while retaining traversal-free ownership checks; rationale=COMMON.md requires every created file to be listed, but the validator accepts only exact owned_paths, so this receipt must represent 15 files by their owned directory; dependency_effect=receipt detail only; compatibility_effect=no runtime format effect; task_digest=49806ed45cf5c8bdb585e5e0b9a9522d5a952cb1195d5f0a57d43f5ed112b609; approval_evidence_digest=a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760; design_sha256=9bfdb51ddec03aa8976206979fc45df5a1c7668579aa855d1cff6cae690686c2; status=proposed"
+  ],
+  "unresolved_risks": [
+    "Owner exit-gate approval is still required for the query-digest policy, checkout identity, alias-normalization binding, stale-reason vocabulary, collection limits and explain-search output shape recorded in SEMANTICS.md.",
+    "The valid JSON files are contract-shape examples with synthetic locator commitments; the check validates their source-locator shape but does not claim those synthetic digests resolve against current source. A future producer must reopen, privacy-scan and digest-verify every binding before reporting covered.",
+    "Internal arithmetic and decision-table checks validate producer consistency but cannot prove an answer is correct or that concept recognition is complete; readers remain obligated to reopen current source.",
+    "The fixed disabled semantic disclosure preserves the current v1 meaning. Any shadow or promoted provider disclosure needs a separately approved versioned contract rather than an in-place extension."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_status": "unavailable: Redis Unix socket missing",
+    "cache_written": false,
+    "indexed_files_changed": false,
+    "reindex_performed": false,
+    "evaluation_performed": false,
+    "ledger_consulted": true,
+    "ledger_status": "ready",
+    "ledger_integrity": "ok",
+    "ledger_semantic_errors": [],
+    "ledger_written": false,
+    "live_state_written": false
+  },
+  "git_state": {
+    "git_writes_performed": false,
+    "staged_by_workstream": false,
+    "commit_created": false,
+    "owned_paths_status": "untracked draft coverage directory and untracked implementation receipt",
+    "unrelated_changes_present": true,
+    "unrelated_changes_preserved": true
+  },
+  "status": "tested"
+}

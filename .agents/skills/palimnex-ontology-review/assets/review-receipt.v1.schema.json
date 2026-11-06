@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://palimnex.dev/schemas/ontology-review-receipt.v1.schema.json",
+  "title": "Palimnex ontology independent review receipt v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "reviewed_scope", "design_identity", "task_digest", "approval_evidence_digest",
+    "workstream_id", "evidence", "commands", "source_grounding_result",
+    "privacy_result", "retrieval_quality_result", "compatibility_result",
+    "rollback_result", "authority_result", "limitations",
+    "cache_and_ledger_state", "git_state", "status"
+  ],
+  "properties": {
+    "schema": {"const": "palimnex:ontology-review-receipt:v1"},
+    "reviewed_scope": {"$ref": "#/$defs/pathList"},
+    "design_identity": {"$ref": "#/$defs/designIdentity"},
+    "task_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "approval_evidence_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "workstream_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{2,63}$"},
+    "evidence": {"$ref": "#/$defs/nonEmptyTextList"},
+    "commands": {"$ref": "#/$defs/textList"},
+    "source_grounding_result": {"$ref": "#/$defs/result"},
+    "privacy_result": {"$ref": "#/$defs/result"},
+    "retrieval_quality_result": {"$ref": "#/$defs/result"},
+    "compatibility_result": {"$ref": "#/$defs/result"},
+    "rollback_result": {"$ref": "#/$defs/result"},
+    "authority_result": {"$ref": "#/$defs/result"},
+    "limitations": {"$ref": "#/$defs/textList"},
+    "cache_and_ledger_state": {"type": "object"},
+    "git_state": {"type": "object"},
+    "status": {"enum": ["accepted", "accepted_with_limits", "rejected", "blocked"]}
+  },
+  "$defs": {
+    "designIdentity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "path": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+", "maxLength": 512},
+    "pathList": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/path"}},
+    "textList": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 4096}},
+    "nonEmptyTextList": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 4096}},
+    "result": {"type": "string", "minLength": 1, "maxLength": 4096}
+  }
+}

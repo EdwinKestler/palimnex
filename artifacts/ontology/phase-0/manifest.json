@@ -1,0 +1,72 @@
+{
+  "schema": "palimnex:ontology-workstream-manifest:v1",
+  "approved_phase": 0,
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "9bfdb51ddec03aa8976206979fc45df5a1c7668579aa855d1cff6cae690686c2"
+  },
+  "workstreams": [
+    "ontology-phase-0-registry-contract",
+    "ontology-phase-0-coverage-contract",
+    "ontology-phase-0-threat-cases",
+    "ontology-phase-0-integration"
+  ],
+  "dependency_dag": [
+    {
+      "from": "ontology-phase-0-registry-contract",
+      "to": "ontology-phase-0-coverage-contract"
+    },
+    {
+      "from": "ontology-phase-0-registry-contract",
+      "to": "ontology-phase-0-threat-cases"
+    },
+    {
+      "from": "ontology-phase-0-registry-contract",
+      "to": "ontology-phase-0-integration"
+    },
+    {
+      "from": "ontology-phase-0-coverage-contract",
+      "to": "ontology-phase-0-integration"
+    },
+    {
+      "from": "ontology-phase-0-threat-cases",
+      "to": "ontology-phase-0-integration"
+    }
+  ],
+  "exclusive_file_ownership": {
+    "ontology-phase-0-registry-contract": [
+      "artifacts/design/ontology-phase-0/registry",
+      "artifacts/ontology/phase-0/receipts/ontology-phase-0-registry-contract.implementation-receipt.json"
+    ],
+    "ontology-phase-0-coverage-contract": [
+      "artifacts/design/ontology-phase-0/coverage",
+      "artifacts/ontology/phase-0/receipts/ontology-phase-0-coverage-contract.implementation-receipt.json"
+    ],
+    "ontology-phase-0-threat-cases": [
+      "artifacts/design/ontology-phase-0/threat-model",
+      "artifacts/design/ontology-phase-0/frozen-cases",
+      "artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json"
+    ],
+    "ontology-phase-0-integration": [
+      "artifacts/design/ontology-phase-0/CONTRACT_FREEZE.md",
+      "artifacts/ontology/phase-0/integration",
+      "artifacts/ontology/phase-0/receipts/ontology-phase-0-integration.implementation-receipt.json"
+    ]
+  },
+  "shared_file_owner": "ontology-phase-0-integration",
+  "acceptance_gates": [
+    "every lane check script passes offline from the repository root",
+    "every implementation receipt validates against its task card",
+    "post-run file audit shows changes only inside each lane's owned paths",
+    "an independent non-implementing reviewer returns a receipt per implementation lane",
+    "standard gate, deep validation, retrieval evaluation and contract regressions pass",
+    "owner accepts the contract freeze at the Phase 0 exit gate"
+  ],
+  "authority_limits": [
+    "phase 0 contract work only; phases 1-5 excluded",
+    "no network, provider, model, Git-write or live-state authority for any lane",
+    "agent runtimes (Codex, Grok) were launched at the owner's request; that does not extend any lane's authority",
+    "the only Redis activity is the AGENTS.md-required index rebuild by the coordinator; no ledger writes"
+  ],
+  "status": "in_progress"
+}

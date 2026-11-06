@@ -1,0 +1,93 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-1-registry-core",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "0288521fd44d14333ff059a000596861e2a3babc2ffb0a6c58960ba2a6415856"
+  },
+  "task_digest": "1882e503461032c224d0b22457cf140d1827eaac70652bfc70c6b1dbac0f0eb9",
+  "approval_evidence_digest": "138ad4d34c2874351c67b5687c0ae75af9e3b25ecaf40dca51aaec026450e3db",
+  "owned_scope": [
+    "palimnex/concepts.py",
+    "palimnex/tests/test_concepts.py",
+    "artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-core.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/concepts.py",
+    "palimnex/tests/test_concepts.py",
+    "artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-core.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [],
+  "commands": [
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_concepts -v",
+      "exit_code": 0,
+      "result": "22 tests passed; exact fields and bounds, project identity, normalization, canonical digest, candidate separation, ambiguity, supersession, withdrawal, privacy refusal, oversize input, source drift, traversal, symlink, foreign-project resolver scope and deterministic ordering covered."
+    },
+    {
+      "command": "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/concepts.py",
+      "exit_code": 0,
+      "result": "Success: no issues found in 1 source file."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest discover -s palimnex/tests -p 'test_*.py'",
+      "exit_code": 0,
+      "result": "318 tests passed in 62.493 seconds when run with permission for the suite's isolated local Unix sockets; no failures or errors."
+    },
+    {
+      "command": "/bin/bash -lc 'export PATH=\"/home/kestl/github/palimnex/.venv/bin:$PATH\"; ./scripts/palimnex_check.sh'",
+      "exit_code": 0,
+      "result": "318 tests passed; offline challenges and longitudinal replay passed; isolated retrieval passed 20 cases with Recall@5 1.0; no live ledger write or model call."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-1/tasks/ontology-phase-1-registry-core.json",
+      "exit_code": 0,
+      "result": "Task and approval evidence valid; task digest 1882e503461032c224d0b22457cf140d1827eaac70652bfc70c6b1dbac0f0eb9; approval evidence digest 138ad4d34c2874351c67b5687c0ae75af9e3b25ecaf40dca51aaec026450e3db."
+    },
+    {
+      "command": "git diff --check -- palimnex/concepts.py palimnex/tests/test_concepts.py",
+      "exit_code": 0,
+      "result": "No whitespace errors."
+    }
+  ],
+  "compatibility_effect": "Adds the importable palimnex.concepts surface only: accepted registry bounds/constants; ConceptRegistryError with stable reason and field; normalize_alias; canonical_registry_digest; parse_registry and load_registry; match_aliases; verify_source_bindings; and frozen dataclasses for project, relation, provenance, concept, registry, recognized matches, ambiguity, binding verification and source-verification results. The API is additive, stdlib plus palimnex only, explicitly rooted, offline, non-authorizing, and does not change any project-memory:* identifier, existing schema, CLI, configuration, retrieval, cache, ledger or pack behavior.",
+  "privacy_and_authority_checks": [
+    "Registry bytes are bounded and privacy-scanned before JSON decoding or registry derivation; duplicate keys, non-finite numbers and non-UTF-8 input fail visibly without echoed values.",
+    "Query bytes and resolved source bytes are privacy-scanned before normalization, matching or verification results; secret-canary tests construct values at runtime and prove non-echoing typed refusals.",
+    "Candidate registries and inactive concepts have no matching influence; ambiguity is explicit and no collision is silently resolved.",
+    "Repository traversal, symlinks, project mismatch and reported foreign resolver scope are typed refusals; ordinary missing, changed, unavailable, range, version or digest failures are reported as stale.",
+    "authority is fixed to historical_only and authorizes_actions is fixed to false; no network, provider, model, Git write, live Redis, SQLite, migration, retention, erasure or pack action occurred.",
+    "palimnex.security.scan_file reported no findings for palimnex/concepts.py or palimnex/tests/test_concepts.py."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "SourceResolver v1 has no required project-identity member. This implementation refuses optional resolver project_id or project_slug claims that are foreign, but a registered resolver that makes no scope claim remains a trusted-code boundary and cannot be independently project-bound by source-locator v1.",
+    "palimnex/concepts.py and palimnex/tests/test_concepts.py match indexed include patterns. Reindex and evaluate were not run because this task card explicitly forbids palimnex index and live-state writes; the coordinator must reindex and evaluate after integration."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_status": "unavailable because the repository Redis Unix socket is absent",
+    "deep_validation_completed": false,
+    "focused_search_completed": false,
+    "indexed_files_changed": true,
+    "reindex_performed": false,
+    "ledger_consulted": false,
+    "ledger_writes": false,
+    "live_state_writes": false,
+    "isolated_test_redis_only": true,
+    "standard_gate": "passed with an isolated temporary Redis instance"
+  },
+  "git_state": {
+    "git_writes": false,
+    "staged": false,
+    "committed": false,
+    "pushed": false,
+    "preexisting_dirty_worktree_preserved": true,
+    "status_entries_before_receipt": 204,
+    "owned_product_files_status": [
+      "?? palimnex/concepts.py",
+      "?? palimnex/tests/test_concepts.py"
+    ]
+  },
+  "status": "tested"
+}

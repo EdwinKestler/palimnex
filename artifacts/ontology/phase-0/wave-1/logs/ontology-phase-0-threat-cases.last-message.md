@@ -1,0 +1,6 @@
+Implemented and tested the bounded threat-cases lane.
+
+- Created the [threat model](/home/kestl/github/palimnex/artifacts/design/ontology-phase-0/threat-model/THREAT_MODEL.md), [29-case matrix](/home/kestl/github/palimnex/artifacts/design/ontology-phase-0/frozen-cases/cases.v0.json), [README](/home/kestl/github/palimnex/artifacts/design/ontology-phase-0/frozen-cases/README.md), [offline checker](/home/kestl/github/palimnex/artifacts/design/ontology-phase-0/frozen-cases/check_cases.py), and [receipt](/home/kestl/github/palimnex/artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json).
+- All acceptance commands passed. Matrix SHA-256: `fb1070da9ee4f4a1f3e8013391c14dae9d9332cdf6ac25b8bed7796e6b3a5179`.
+- Open questions cover failure-versus-receipt semantics, normalization, cross-project binding, numeric limits, and exit-gate digest freezing.
+- Redis was unavailable (`cache_consulted: false`); ledger integrity was read-only verified as OK. No network, Git writes, live-state changes, or indexed-file changes occurred.

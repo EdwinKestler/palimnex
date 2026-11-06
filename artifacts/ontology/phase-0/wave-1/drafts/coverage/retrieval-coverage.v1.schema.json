@@ -1,0 +1,323 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://palimnex.dev/schemas/retrieval-coverage.v1.schema.json",
+  "title": "Draft Palimnex retrieval coverage receipt v1",
+  "description": "Phase 0 draft. Coverage is evidence about source support, not correctness or operational authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "query_digest",
+    "query_digest_policy",
+    "identities",
+    "recognized_concepts",
+    "covered_concepts",
+    "uncovered_concepts",
+    "ambiguous_concepts",
+    "stale_concepts",
+    "coverage",
+    "retrieval_state",
+    "semantic_disclosure",
+    "status",
+    "receipt_digest",
+    "authority",
+    "authorizes_actions"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "palimnex:retrieval-coverage:v1",
+      "maxLength": 32
+    },
+    "query_digest": {"$ref": "#/$defs/sha256"},
+    "query_digest_policy": {
+      "type": "string",
+      "const": "sha256-utf8-nfc-lf-preserve-whitespace-case:v1",
+      "maxLength": 64
+    },
+    "identities": {"$ref": "#/$defs/identities"},
+    "recognized_concepts": {"$ref": "#/$defs/recognizedCollection"},
+    "covered_concepts": {"$ref": "#/$defs/coveredCollection"},
+    "uncovered_concepts": {"$ref": "#/$defs/conceptIdCollection"},
+    "ambiguous_concepts": {"$ref": "#/$defs/ambiguousCollection"},
+    "stale_concepts": {"$ref": "#/$defs/staleCollection"},
+    "coverage": {"$ref": "#/$defs/coverage"},
+    "retrieval_state": {"$ref": "#/$defs/retrievalState"},
+    "semantic_disclosure": {"$ref": "#/$defs/semanticDisclosure"},
+    "status": {
+      "type": "string",
+      "enum": ["answerable", "partial", "ambiguous", "unanswerable"],
+      "maxLength": 16
+    },
+    "receipt_digest": {"$ref": "#/$defs/sha256"},
+    "authority": {
+      "type": "string",
+      "const": "evidence_only",
+      "maxLength": 16
+    },
+    "authorizes_actions": {"const": false}
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "minLength": 64,
+      "maxLength": 64
+    },
+    "conceptId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9._:-]{0,127}$",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "alias": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "identities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["project", "checkout", "corpus", "registry"],
+      "properties": {
+        "project": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["project_id", "project_slug"],
+          "properties": {
+            "project_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "minLength": 36,
+              "maxLength": 36
+            },
+            "project_slug": {
+              "type": "string",
+              "pattern": "^[a-z0-9](?:[a-z0-9-]{0,126}[a-z0-9])?$",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        },
+        "checkout": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["checkout_id", "derivation"],
+          "properties": {
+            "checkout_id": {"$ref": "#/$defs/sha256"},
+            "derivation": {
+              "type": "string",
+              "const": "sha256-utf8-resolved-root:v1",
+              "maxLength": 40
+            }
+          }
+        },
+        "corpus": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["fingerprint", "index_policy_digest", "derivation"],
+          "properties": {
+            "fingerprint": {"$ref": "#/$defs/sha256"},
+            "index_policy_digest": {"$ref": "#/$defs/sha256"},
+            "derivation": {
+              "type": "string",
+              "const": "palimnex-source-snapshot-fingerprint:v1",
+              "maxLength": 48
+            }
+          }
+        },
+        "registry": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["schema", "digest"],
+          "properties": {
+            "schema": {
+              "type": "string",
+              "const": "palimnex:concept-registry:v1",
+              "maxLength": 32
+            },
+            "digest": {"$ref": "#/$defs/sha256"}
+          }
+        }
+      }
+    },
+    "recognizedItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["concept_id", "matched_aliases", "matched_alias_count", "matched_aliases_truncated"],
+      "properties": {
+        "concept_id": {"$ref": "#/$defs/conceptId"},
+        "matched_aliases": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/alias"}
+        },
+        "matched_alias_count": {"type": "integer", "minimum": 1, "maximum": 64},
+        "matched_aliases_truncated": {"type": "boolean"}
+      }
+    },
+    "coveredItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["concept_id", "verified_bindings", "verified_binding_count", "verified_bindings_truncated"],
+      "properties": {
+        "concept_id": {"$ref": "#/$defs/conceptId"},
+        "verified_bindings": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {"$ref": "https://palimnex.dev/schemas/source-locator.v1.schema.json"}
+        },
+        "verified_binding_count": {"type": "integer", "minimum": 1, "maximum": 64},
+        "verified_bindings_truncated": {"type": "boolean"}
+      }
+    },
+    "ambiguousItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["matched_alias", "candidate_concept_ids", "candidate_count", "candidates_truncated"],
+      "properties": {
+        "matched_alias": {"$ref": "#/$defs/alias"},
+        "candidate_concept_ids": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/conceptId"}
+        },
+        "candidate_count": {"type": "integer", "minimum": 2, "maximum": 64},
+        "candidates_truncated": {"type": "boolean"}
+      }
+    },
+    "staleItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["concept_id", "stale_bindings", "stale_binding_count", "stale_bindings_truncated", "reason"],
+      "properties": {
+        "concept_id": {"$ref": "#/$defs/conceptId"},
+        "stale_bindings": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {"$ref": "https://palimnex.dev/schemas/source-locator.v1.schema.json"}
+        },
+        "stale_binding_count": {"type": "integer", "minimum": 1, "maximum": 64},
+        "stale_bindings_truncated": {"type": "boolean"},
+        "reason": {
+          "type": "string",
+          "enum": ["missing", "version_changed", "digest_changed", "unavailable", "privacy_refused"],
+          "maxLength": 24
+        }
+      }
+    },
+    "recognizedCollection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items", "total_count", "truncated"],
+      "properties": {
+        "items": {"type": "array", "maxItems": 256, "items": {"$ref": "#/$defs/recognizedItem"}},
+        "total_count": {"type": "integer", "minimum": 0, "maximum": 4096},
+        "truncated": {"type": "boolean"}
+      }
+    },
+    "coveredCollection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items", "total_count", "truncated"],
+      "properties": {
+        "items": {"type": "array", "maxItems": 256, "items": {"$ref": "#/$defs/coveredItem"}},
+        "total_count": {"type": "integer", "minimum": 0, "maximum": 4096},
+        "truncated": {"type": "boolean"}
+      }
+    },
+    "conceptIdCollection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items", "total_count", "truncated"],
+      "properties": {
+        "items": {"type": "array", "maxItems": 256, "uniqueItems": true, "items": {"$ref": "#/$defs/conceptId"}},
+        "total_count": {"type": "integer", "minimum": 0, "maximum": 4096},
+        "truncated": {"type": "boolean"}
+      }
+    },
+    "ambiguousCollection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items", "total_count", "distinct_candidate_concept_count", "truncated"],
+      "properties": {
+        "items": {"type": "array", "maxItems": 256, "items": {"$ref": "#/$defs/ambiguousItem"}},
+        "total_count": {"type": "integer", "minimum": 0, "maximum": 4096},
+        "distinct_candidate_concept_count": {"type": "integer", "minimum": 0, "maximum": 4096},
+        "truncated": {"type": "boolean"}
+      }
+    },
+    "staleCollection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items", "total_count", "truncated"],
+      "properties": {
+        "items": {"type": "array", "maxItems": 256, "items": {"$ref": "#/$defs/staleItem"}},
+        "total_count": {"type": "integer", "minimum": 0, "maximum": 4096},
+        "truncated": {"type": "boolean"}
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["numerator", "denominator"],
+      "properties": {
+        "numerator": {"type": "integer", "minimum": 0, "maximum": 4096},
+        "denominator": {"type": "integer", "minimum": 0, "maximum": 4096}
+      }
+    },
+    "retrievalState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "retrieval_truncated",
+        "result_item_count",
+        "omitted_result_count",
+        "coverage_output_truncated",
+        "byte_budget_omission"
+      ],
+      "properties": {
+        "retrieval_truncated": {"type": "boolean"},
+        "result_item_count": {"type": "integer", "minimum": 0, "maximum": 4096},
+        "omitted_result_count": {"type": "integer", "minimum": 0, "maximum": 100000},
+        "coverage_output_truncated": {"type": "boolean"},
+        "byte_budget_omission": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["omitted", "omitted_item_count", "byte_budget", "used_bytes"],
+          "properties": {
+            "omitted": {"type": "boolean"},
+            "omitted_item_count": {"type": "integer", "minimum": 0, "maximum": 100000},
+            "byte_budget": {"type": "integer", "minimum": 1, "maximum": 67108864},
+            "used_bytes": {"type": "integer", "minimum": 0, "maximum": 67108864}
+          }
+        }
+      }
+    },
+    "semanticDisclosure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["interface", "mode", "external_network_enabled", "provider_registered", "hnsw_enabled", "retrieval_influence"],
+      "properties": {
+        "interface": {
+          "type": "string",
+          "const": "project-memory:semantic-provider:v1",
+          "maxLength": 40
+        },
+        "mode": {"type": "string", "const": "disabled", "maxLength": 16},
+        "external_network_enabled": {"const": false},
+        "provider_registered": {"const": false},
+        "hnsw_enabled": {"const": false},
+        "retrieval_influence": {"const": false}
+      }
+    }
+  }
+}

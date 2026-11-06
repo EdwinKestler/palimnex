@@ -1,0 +1,90 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "artifacts/design/ontology-phase-0/frozen-cases/README.md",
+    "artifacts/design/ontology-phase-0/frozen-cases/cases.v0.json",
+    "artifacts/design/ontology-phase-0/frozen-cases/check_cases.py",
+    "artifacts/design/ontology-phase-0/threat-model/THREAT_MODEL.md",
+    "artifacts/ontology/phase-0/briefs/ontology-phase-0-threat-cases.md",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json",
+    "artifacts/ontology/phase-0/tasks/ontology-phase-0-threat-cases.json",
+    "docs/ONTOLOGY_ADOPTION.md",
+    "palimnex/cache_v3.py",
+    "palimnex/challenge.py",
+    "palimnex/durable.py",
+    "palimnex/experience.py",
+    "palimnex/locators.py",
+    "palimnex/retrieval.py",
+    "palimnex/security.py",
+    "palimnex/semantic.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "9bfdb51ddec03aa8976206979fc45df5a1c7668579aa855d1cff6cae690686c2"
+  },
+  "task_digest": "7d5afda31848b7d097b39b123e2606344296a75a2b9bbbb989669f3e543e3e39",
+  "approval_evidence_digest": "a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760",
+  "workstream_id": "ontology-phase-0-threat-cases",
+  "evidence": [
+    "MAJOR: All 40 frozen concept_id values in artifacts/design/ontology-phase-0/frozen-cases/cases.v0.json fail the registry conceptId pattern because they contain underscores (concept.source_locator). check_cases.py requires startswith(\"concept.\"), so registry example IDs such as palimnex-memory also fail this checker. Coverage example IDs (source.binding, cache.identity) match both schema patterns and fail this prefix rule.",
+    "MAJOR: Frozen concept objects use lifecycle_status; palimnex:concept-registry:v1 uses status. Bindings are wrapped as {locator, digest_is_placeholder} rather than source-locator.v1 objects. README.md does not define a fixture-to-schema mapping for Phase 1-3 consumption.",
+    "MAJOR: Stale-source cases ONT-STALE-001 and ONT-STALE-002 list drifted concepts in expected_uncovered_concept_ids. Coverage SEMANTICS.md gives stale its own collection and uses S in coverage arithmetic. check_cases.py also requires ambiguous cases to have an empty covered set, which disagrees with the coverage table that allows other concepts to remain covered under status ambiguous.",
+    "MAJOR: Adversarial probe: copying frozen-cases to /tmp and replacing a locator with {digest: placeholder} only, check_cases.py exited 0. The checker requires digest_is_placeholder and the placeholder digest, and does not require scheme, source_id, version, or range. Delivered cases currently include those fields.",
+    "MINOR: Several fixtures store display-case aliases (Release Gate, Coverage Receipt, café source) while registry SEMANTICS.md requires aliases to be stored already normalized. ONT-NORM-002/003 remain expected_status_disputed after the registry lane proposed NFKC+casefold.",
+    "NOTE: 29 cases cover all 14 required categories with at least two each; normalization covers case, unicode, and whitespace. Status vocabulary is answerable|partial|ambiguous|unanswerable. Candidate, superseded, and withdrawn cases keep those IDs out of recognized/covered sets. Secret cases store join recipes; fragments are clean and reconstructions hit openai-token / github-token without value echo.",
+    "NOTE: THREAT_MODEL.md citations match current source: locators.resolve_locator and RepositoryResolver path rejection; security.scan_text/scan_bytes/read_bounded_file; retrieval.retrieve_sources authorizes_actions false and checkout_id; cache_v3.project_id/namespace; experience.is_capture/apply_capture historical_only; durable write receipts historical_only; semantic.semantic_status disabled; challenge.evaluate_challenges promotion_eligible false; validate_contract.validate_task/validate_manifest/validate_receipts."
+  ],
+  "commands": [
+    "./.venv/bin/python artifacts/design/ontology-phase-0/frozen-cases/check_cases.py -> exit 0; 29 cases; 14 categories; matrix_sha256 fb1070da9ee4f4a1f3e8013391c14dae9d9332cdf6ac25b8bed7796e6b3a5179; owned_files_scanned 5; canary_cases_verified 2",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-0/tasks/ontology-phase-0-threat-cases.json --implementation-receipt artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json -> exit 0; status valid; task_digest 7d5afda31848b7d097b39b123e2606344296a75a2b9bbbb989669f3e543e3e39; approval_evidence_digest a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760; authorizes_actions false",
+    "python3 palimnex.py status -> exit 1; Redis Unix socket missing; cache_consulted false",
+    "python3 palimnex.py ledger-status -> exit 0; ledger ready; integrity ok",
+    "git status --short --untracked-files=all -- artifacts/design/ontology-phase-0/threat-model artifacts/design/ontology-phase-0/frozen-cases artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json -> five owned files untracked",
+    "/tmp copy: inject a GitHub-token-shaped adversarial canary into a query, overlap covered with ambiguous, change a placeholder digest, drop a secret case below category minimum -> check_cases.py exit 1 each time",
+    "/tmp copy: locator reduced to digest-only still passed check_cases.py exit 0; concept_id source-locator without concept. prefix failed as invalid concept_id"
+  ],
+  "source_grounding_result": "Accepted with limits. Threat-model file and function citations to locators, security, retrieval, cache_v3, experience, durable, semantic, challenge, and validate_contract match current source. Frozen locator inner objects use source-locator keys, with placeholder digest 0×64. Concept IDs, lifecycle field name, and stale/uncovered taxonomy disagree with the registry and coverage contracts. The checker does not enforce full locator shape.",
+  "privacy_result": "Accepted. check_cases.py scans owned files with palimnex.security.scan_bytes; injecting a github-token-shaped literal made the check fail. Secret cases store split fragments; scan_text on each fragment is clean; joined canaries are detected; reconstructed values are not printed. No literal secret is stored in the matrix.",
+  "retrieval_quality_result": "Accepted with limits. Positive, partial, ambiguous, negative, stale, secret, truncation, byte-budget, supersession, withdrawn, candidate-non-influence, path, cross-project, and normalization cases are present. Labels are frozen as a draft pending the exit-gate digest. Checker overlap rules forbid covered+ambiguous. Stale is labeled uncovered. No retrieval engine was executed.",
+  "compatibility_result": "Accepted. Draft-only unindexed artifacts. No public schema, product code, or existing project-memory:* identifier changed. Placeholder locators are marked digest_is_placeholder true.",
+  "rollback_result": "Accepted. Rollback is deletion of the untracked threat-model, frozen-cases, and receipt files. The matrix digest is draft evidence until the owner records it at the exit gate.",
+  "authority_result": "Accepted. Draft pending Phase 0 exit gate. Candidate/superseded/withdrawn cases have no recognized coverage influence. Receipt validation returned authorizes_actions false. Disputed statuses are explicit rather than silently chosen. No Git write, network, index, or live-state mutation.",
+  "limitations": [
+    "Redis unavailable; cache_consulted false; deep validation and the standard gate were not run",
+    "check_cases.py is structural; it does not run alias normalization or resolve locators",
+    "Open owner questions remain in THREAT_MODEL.md: typed error versus unanswerable receipt, Unicode/whitespace freeze, inactive-concept diagnostics, project binding for non-repo resolvers, numeric limits, and recording the matrix digest at the exit gate"
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_status": "unavailable: Redis Unix socket missing",
+    "cache_written": false,
+    "indexed_files_changed": false,
+    "reindex_performed": false,
+    "ledger_consulted": true,
+    "ledger_schema": "project-memory:ledger:v1",
+    "ledger_status": "ready",
+    "ledger_integrity": "ok",
+    "ledger_semantic_errors": [],
+    "ledger_written": false,
+    "live_state_written": false,
+    "network_used": false
+  },
+  "git_state": {
+    "branch": "main",
+    "head": "b604f83579a55e78fc5ffabdd5b70fa4bd0623e1",
+    "git_writes_performed": false,
+    "staged": false,
+    "committed": false,
+    "owned_paths_status": "untracked threat-model, frozen-cases, and implementation receipt",
+    "lane_files": [
+      "artifacts/design/ontology-phase-0/frozen-cases/README.md",
+      "artifacts/design/ontology-phase-0/frozen-cases/cases.v0.json",
+      "artifacts/design/ontology-phase-0/frozen-cases/check_cases.py",
+      "artifacts/design/ontology-phase-0/threat-model/THREAT_MODEL.md",
+      "artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json"
+    ],
+    "product_code_changed": false,
+    "reviewer_modified_repository": false
+  },
+  "status": "accepted_with_limits"
+}

@@ -1,0 +1,77 @@
+schema_version: 1
+skill: palimnex-ontology-workstream
+role: bounded_implementer
+inputs:
+  - WorkstreamTask
+  - DependencyReceipts
+  - ApprovedDesignIdentity
+outputs:
+  - ImplementationReceipt
+  - IntegrationPatchProposal
+statuses:
+  - implemented
+  - tested
+  - partial
+  - blocked
+  - refused
+required_fields:
+  WorkstreamTask:
+    - workstream_id
+    - phase
+    - action_id
+    - objective
+    - exclusions
+    - approved_design_identity
+    - approval_evidence
+    - owned_paths
+    - read_only_paths
+    - forbidden_paths
+    - dependencies
+    - acceptance_commands
+    - required_output
+    - network_authority
+    - git_write_authority
+    - live_state_authority
+  ImplementationReceipt:
+    - workstream_id
+    - design_identity
+    - task_digest
+    - approval_evidence_digest
+    - owned_scope
+    - files_changed
+    - dependencies_consumed
+    - commands
+    - compatibility_effect
+    - privacy_and_authority_checks
+    - integration_patch_proposals
+    - unresolved_risks
+    - cache_and_ledger_state
+    - git_state
+    - status
+  IntegrationPatchProposal:
+    - workstream_id
+    - task_digest
+    - approval_evidence_digest
+    - design_identity
+    - target_path
+    - requested_change
+    - rationale
+    - dependency_effect
+    - compatibility_effect
+    - status
+gates:
+  - the phase and task card are explicitly approved
+  - every changed file is inside the assigned owned paths
+  - candidate ontology content has no trusted or retrieval influence
+  - focused tests cover the assigned acceptance criteria
+fail_closed_when:
+  - the design is proposal-only
+  - required ownership or dependency fields are missing
+  - a shared or foreign file would need direct editing
+  - existing wire identifiers would change without migration approval
+  - source bytes would reach an unapproved remote provider
+schemas:
+  approval_evidence: ../../palimnex-ontology-coordinator/assets/approval-evidence.v1.schema.json
+  workstream_task: ../../palimnex-ontology-coordinator/assets/workstream-task.v1.schema.json
+  implementation_receipt: assets/implementation-receipt.v1.schema.json
+  integration_patch_proposal: assets/integration-patch-proposal.v1.schema.json

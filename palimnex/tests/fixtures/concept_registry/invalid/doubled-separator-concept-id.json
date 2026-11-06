@@ -1,0 +1,39 @@
+{
+  "schema": "palimnex:concept-registry:v1",
+  "project": {
+    "project_slug": "palimnex",
+    "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+  },
+  "registry_version": 1,
+  "registry_kind": "approved_registry",
+  "concepts": [
+    {
+      "concept_id": "a__b",
+      "canonical_name": "Invalid doubled separator",
+      "aliases": [
+        "invalid doubled separator"
+      ],
+      "definition": "An invalid example isolated to a doubled concept-ID separator.",
+      "source_bindings": [
+        {
+          "scheme": "repo",
+          "source_id": "docs/ONTOLOGY_ADOPTION.md",
+          "version": "9bfdb51ddec03aa8976206979fc45df5a1c7668579aa855d1cff6cae690686c2",
+          "range": {
+            "unit": "lines",
+            "start": 159,
+            "end": 173
+          },
+          "digest": "15de6dbc285ee595dde0e1db01b0ddea2852f405c49dc818f6436d8fcb3fff60"
+        }
+      ],
+      "status": "approved",
+      "provenance": {
+        "origin": "manual"
+      }
+    }
+  ],
+  "registry_digest": "5a7f8fc833cd450d0c028a2431c16563e138cdef92332e7bea1061f72b711701",
+  "authority": "historical_only",
+  "authorizes_actions": false
+}

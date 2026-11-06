@@ -1,0 +1,115 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-0-threat-cases",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "9bfdb51ddec03aa8976206979fc45df5a1c7668579aa855d1cff6cae690686c2"
+  },
+  "task_digest": "93b79d121ae51f1eff9ab71a1f1f030c7d996793bb282b1b36e35918b4aeae35",
+  "approval_evidence_digest": "a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760",
+  "owned_scope": [
+    "artifacts/design/ontology-phase-0/threat-model",
+    "artifacts/design/ontology-phase-0/frozen-cases",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "artifacts/design/ontology-phase-0/threat-model",
+    "artifacts/design/ontology-phase-0/frozen-cases",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [
+    "ontology-phase-0-registry-contract: artifacts/ontology/phase-0/receipts/ontology-phase-0-registry-contract.implementation-receipt.json; receipt_sha256=c87751f1dc5f02d6724d90b70911c7a344d4d628459ca5bdba43c4d028c4c56e; task_digest=637a51963383df523470f8356829e3926f7d13c5af51a21943a9d1cef40c9deb; status=tested"
+  ],
+  "commands": [
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-0/tasks/ontology-phase-0-threat-cases.json",
+      "exit_code": 0,
+      "result": "Reissued task and approval evidence validated; task_digest=93b79d121ae51f1eff9ab71a1f1f030c7d996793bb282b1b36e35918b4aeae35; approval_evidence_digest=a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760; authorizes_actions=false."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-0/tasks/ontology-phase-0-registry-contract.json --implementation-receipt artifacts/ontology/phase-0/receipts/ontology-phase-0-registry-contract.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Required registry dependency receipt validated; implementation_receipt_validated=true; dependency task_digest=637a51963383df523470f8356829e3926f7d13c5af51a21943a9d1cef40c9deb; authorizes_actions=false."
+    },
+    {
+      "command": "python3 palimnex.py status",
+      "exit_code": 1,
+      "result": "Redis Unix socket is missing; cache_consulted=false. Indexing was not attempted because this task forbids cache and Redis writes."
+    },
+    {
+      "command": "python3 palimnex.py validate --deep",
+      "exit_code": 1,
+      "result": "Redis Unix socket is missing; cache_consulted=false. Repository contracts and current source were validated directly instead."
+    },
+    {
+      "command": "python3 palimnex.py search \"concept ID alias normalization source locator registry digest stale ambiguity\" --limit 10",
+      "exit_code": 1,
+      "result": "Redis Unix socket is missing; cache_consulted=false. Exact implementation vocabulary was searched with rg and the registry, coverage, locator, security, and validator sources were opened."
+    },
+    {
+      "command": "python3 palimnex.py ledger-status",
+      "exit_code": 0,
+      "result": "Ledger schema project-memory:ledger:v1 is ready; integrity=ok; semantic_errors empty; scanner policy matches creation; all object counts and projection_pending are zero."
+    },
+    {
+      "command": "./.venv/bin/python artifacts/design/ontology-phase-0/frozen-cases/check_cases.py",
+      "exit_code": 0,
+      "result": "Passed 29 cases across all 14 required categories; validated 30 complete registry fixtures through a local referencing.Registry; matrix_sha256=a64be4f15fdfb664b3142706e5cef35d10fbaa4ed340aea38f22388404f7314b; rejected the digest-only locator probe; verified 2 constructed canaries without value echo; scanned 5 owned files."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-0/tasks/ontology-phase-0-threat-cases.json --implementation-receipt artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Implementation receipt validated against the runtime schema and reissued task identities; status=valid; implementation_receipt_validated=true; authorizes_actions=false."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "Five lane deliverables are untracked, including this receipt; parallel-lane and pre-existing unrelated untracked files remain present and untouched; no staged or committed work was created."
+    }
+  ],
+  "compatibility_effect": "Phase 0 draft artifacts only. Frozen fixtures now directly consume the draft palimnex:concept-registry:v1 and existing palimnex:source-locator:v1 contracts, using status, shared concept IDs and project identity, normalized aliases, complete locators, and canonical registry digests. The case model adds expected stale IDs and error-versus-receipt outcomes without changing product code, public schemas, CLI behavior, configuration, existing project-memory:* identifiers, cache layout, context envelopes, ledger schemas, pack formats, or runtime behavior. All changed design and coordination paths are unindexed, so indexed_files_changed=false and no reindex or evaluation was authorized or required.",
+  "privacy_and_authority_checks": [
+    "Every complete registry fixture is validated offline against the registry and source-locator schemas through a local referencing.Registry; canonical registry digests are recomputed and matched.",
+    "The checker constructs two credential-shaped canaries only in memory, confirms each fragment is clean and each joined canary is refused, and never prints or persists the reconstructed values.",
+    "Placeholder digests are direct locator values marked once at case level; the checker proves a digest-only locator fails schema validation and no wrapper locator shape remains.",
+    "Candidate content is separated into candidate_set fixtures when an approved registry is also needed; it has no recognized, covered, or retrieval influence.",
+    "Every fixture fixes authority=historical_only and authorizes_actions=false; every expected coverage result remains evidence-only and non-authorizing.",
+    "No network, model/provider, Git-write, live-state mutation, index, Redis-write, ledger-write, migration, retention, erasure, policy activation, or pack action was performed.",
+    "The repository standard gate was not run because it creates temporary cache/index state, while this task explicitly forbids palimnex index and live-state writes; all task-card acceptance commands were run."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "R1-R7 are provisional coordinator reconciliation decisions and remain subject to the owner's Phase 0 exit-gate decision; these drafts and a tested receipt do not approve implementation or retrieval influence.",
+    "R7's error-versus-receipt split remains disputed in all six typed-error cases and both stale-receipt cases until the owner confirms it.",
+    "Placeholder source digests are structural fixture commitments, not current-source evidence; consuming Phase 1-3 tests must materialize isolated sources and replace them with locally computed digests.",
+    "The checker validates structure, canonical digests, expected-set arithmetic, normalization, privacy recipes, and the digest-only adversarial probe; it does not implement or execute the future ontology matcher, coverage engine, or resolver race tests.",
+    "R8 remains deferred: the authority validator currently requires directory-valued owned roots in files_changed, so this receipt lists owned roots instead of each descendant deliverable."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_status": "unavailable: Redis Unix socket missing",
+    "cache_written": false,
+    "indexed_files_changed": false,
+    "reindex_performed": false,
+    "evaluation_performed": false,
+    "ledger_consulted": true,
+    "ledger_schema": "project-memory:ledger:v1",
+    "ledger_status": "ready",
+    "ledger_integrity": "ok",
+    "ledger_semantic_errors": [],
+    "ledger_written": false,
+    "live_state_written": false,
+    "network_used": false
+  },
+  "git_state": {
+    "branch": "main",
+    "head": "b604f83579a55e78fc5ffabdd5b70fa4bd0623e1",
+    "git_writes_performed": false,
+    "staged_by_workstream": false,
+    "commit_created": false,
+    "owned_paths_status": "five untracked lane deliverables including this receipt",
+    "unrelated_changes_present": true,
+    "unrelated_changes_preserved": true
+  },
+  "status": "tested"
+}

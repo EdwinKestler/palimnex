@@ -1,0 +1,2 @@
+Concept source bindings use the existing source-locator v1 contract.
+They bind reviewed concepts to digest-verified current repository source.

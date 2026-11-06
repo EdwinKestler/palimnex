@@ -1,0 +1,47 @@
+{
+  "authorizes_actions": false,
+  "changed_by_lane": {
+    "ontology-phase-1-frozen-conformance": [
+      "artifacts/ontology/phase-1/receipts/ontology-phase-1-frozen-conformance.implementation-receipt.json",
+      "palimnex/tests/fixtures/ontology/cases.v0.json",
+      "palimnex/tests/test_concepts_frozen.py"
+    ],
+    "ontology-phase-1-integration": [
+      "artifacts/ontology/phase-1/integration/grok-review-prompt.md",
+      "docs/COMPATIBILITY.md",
+      "palimnex/CHANGELOG.md",
+      "pyproject.toml"
+    ],
+    "ontology-phase-1-registry-core": [
+      "artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-core.implementation-receipt.json",
+      "palimnex/concepts.py",
+      "palimnex/tests/test_concepts.py"
+    ],
+    "ontology-phase-1-registry-schema": [
+      "artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-schema.implementation-receipt.json",
+      "docs/CONCEPT_REGISTRY.md",
+      "palimnex/schemas/concept-registry.v1.schema.json",
+      "palimnex/tests/fixtures/concept_registry/invalid/bad-concept-id.json",
+      "palimnex/tests/fixtures/concept_registry/invalid/bad-locator-digest.json",
+      "palimnex/tests/fixtures/concept_registry/invalid/doubled-separator-concept-id.json",
+      "palimnex/tests/fixtures/concept_registry/invalid/extra-field.json",
+      "palimnex/tests/fixtures/concept_registry/invalid/oversize-alias-list.json",
+      "palimnex/tests/fixtures/concept_registry/invalid/unknown-status.json",
+      "palimnex/tests/fixtures/concept_registry/invalid/wrong-authorizes-actions.json",
+      "palimnex/tests/fixtures/concept_registry/sources/source-locator-contract.txt",
+      "palimnex/tests/fixtures/concept_registry/valid/minimal-approved.json",
+      "palimnex/tests/fixtures/concept_registry/valid/multi-concept-relations.json",
+      "palimnex/tests/fixtures/concept_registry/valid/supersession-chain.json",
+      "palimnex/tests/fixtures/concept_registry/valid/underscore-concept-id.json",
+      "palimnex/tests/test_concept_registry_schema.py"
+    ]
+  },
+  "schema": "palimnex:ontology-ownership-audit:v1",
+  "status": "violation",
+  "violations": [
+    {
+      "change": "modified",
+      "path": "artifacts/ontology/phase-1/tools/launch.sh"
+    }
+  ]
+}

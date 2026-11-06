@@ -1,0 +1,76 @@
+{
+  "schema": "palimnex:concept-registry:v1",
+  "project": {
+    "project_slug": "palimnex",
+    "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+  },
+  "registry_version": 1,
+  "registry_kind": "approved_registry",
+  "concepts": [
+    {
+      "concept_id": "discovery-cache",
+      "canonical_name": "Discovery cache",
+      "aliases": [
+        "redis discovery cache"
+      ],
+      "definition": "A rebuildable source-discovery projection identified by the project slug and UUID.",
+      "relations": [
+        {
+          "relation_type": "related_to",
+          "target_concept_id": "durable-ledger"
+        }
+      ],
+      "source_bindings": [
+        {
+          "scheme": "repo",
+          "source_id": "docs/DESIGN.md",
+          "version": "4d9f26d4cc618ea3efcae3a6061faaeed0dba9c1cd0ad7932078931075e00b7b",
+          "range": {
+            "unit": "lines",
+            "start": 43,
+            "end": 47
+          },
+          "digest": "e1f18fc8296a9a1a7c4bfb055f5764cfd406ea51b68d5908a818a4e19c0ccb07"
+        }
+      ],
+      "status": "approved",
+      "provenance": {
+        "origin": "deterministic"
+      }
+    },
+    {
+      "concept_id": "durable-ledger",
+      "canonical_name": "Durable ledger",
+      "aliases": [
+        "sqlite historical ledger"
+      ],
+      "definition": "The durable, project-bound historical evidence store, distinct from the rebuildable cache.",
+      "relations": [
+        {
+          "relation_type": "related_to",
+          "target_concept_id": "discovery-cache"
+        }
+      ],
+      "source_bindings": [
+        {
+          "scheme": "repo",
+          "source_id": "docs/DESIGN.md",
+          "version": "4d9f26d4cc618ea3efcae3a6061faaeed0dba9c1cd0ad7932078931075e00b7b",
+          "range": {
+            "unit": "lines",
+            "start": 37,
+            "end": 41
+          },
+          "digest": "0ae769aa28523ba95f1e9d927b53a8e697d0c6f3a0e03542263b5419701e607b"
+        }
+      ],
+      "status": "approved",
+      "provenance": {
+        "origin": "manual"
+      }
+    }
+  ],
+  "registry_digest": "94cfb9da2c6d48d2b3662b78fb8aacd9f0fac803710fa688dae27005027e0e6f",
+  "authority": "historical_only",
+  "authorizes_actions": false
+}

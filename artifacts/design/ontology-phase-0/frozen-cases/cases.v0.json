@@ -1,0 +1,2013 @@
+{
+  "schema": "palimnex:ontology-frozen-cases:v0",
+  "status": "draft_pending_phase_0_exit_gate",
+  "placeholder_locator_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+  "cases": [
+    {
+      "case_id": "ONT-POS-001",
+      "category": "positive",
+      "description": "One approved exact alias has one current verified source binding.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.source_locator",
+            "canonical_name": "Source Locator Fixture Concept",
+            "aliases": [
+              "source locator"
+            ],
+            "definition": "Frozen fixture concept for ONT-POS-001.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "palimnex/locators.py",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 95,
+                  "end": 139
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "f471a130776df1a0f65114e2cff364a8167ef1a9c29bc09b4093082ddca448f7",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "How does the source locator verify current bytes?",
+      "expected_status": "answerable",
+      "expected_recognized_concept_ids": [
+        "concept.source_locator"
+      ],
+      "expected_covered_concept_ids": [
+        "concept.source_locator"
+      ],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 2,
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-POS-002",
+      "category": "positive",
+      "description": "Two distinct approved aliases both resolve to current source bindings.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.privacy_admission",
+            "canonical_name": "Privacy Admission Fixture Concept",
+            "aliases": [
+              "privacy admission"
+            ],
+            "definition": "Frozen fixture concept for ONT-POS-002.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "palimnex/security.py",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 242,
+                  "end": 270
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          },
+          {
+            "concept_id": "concept.bounded_read",
+            "canonical_name": "Bounded Read Fixture Concept",
+            "aliases": [
+              "bounded read"
+            ],
+            "definition": "Frozen fixture concept for ONT-POS-002.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "palimnex/security.py",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 282,
+                  "end": 330
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "bcd4bc9c911caeaa1b61babfca70e4f58f56e13ab70c4822a17a231c7852d28d",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "Explain privacy admission before a bounded read.",
+      "expected_status": "answerable",
+      "expected_recognized_concept_ids": [
+        "concept.bounded_read",
+        "concept.privacy_admission"
+      ],
+      "expected_covered_concept_ids": [
+        "concept.bounded_read",
+        "concept.privacy_admission"
+      ],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 2,
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-PAR-001",
+      "category": "partial",
+      "description": "One recognized concept is source-bound and a second recognized concept has no source binding.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.cache_namespace",
+            "canonical_name": "Cache Namespace Fixture Concept",
+            "aliases": [
+              "cache namespace"
+            ],
+            "definition": "Frozen fixture concept for ONT-PAR-001.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "palimnex/cache_v3.py",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 100,
+                  "end": 107
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          },
+          {
+            "concept_id": "concept.ontology_namespace",
+            "canonical_name": "Ontology Namespace Fixture Concept",
+            "aliases": [
+              "ontology namespace"
+            ],
+            "definition": "Frozen fixture concept for ONT-PAR-001.",
+            "source_bindings": [
+              {
+                "scheme": "fixture",
+                "source_id": "missing/concept.ontology_namespace",
+                "version": "v1",
+                "range": {
+                  "unit": "bytes",
+                  "start": 0,
+                  "end": 1
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "0a90fc5eecbe4a2042fda610bba12e67fa87e7e10993bd51afe3d503cd25df05",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "Compare the cache namespace with the ontology namespace.",
+      "expected_status": "partial",
+      "expected_recognized_concept_ids": [
+        "concept.cache_namespace",
+        "concept.ontology_namespace"
+      ],
+      "expected_covered_concept_ids": [
+        "concept.cache_namespace"
+      ],
+      "expected_uncovered_concept_ids": [
+        "concept.ontology_namespace"
+      ],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 2,
+      "runtime_condition": "concept.ontology_namespace binding is unavailable at runtime",
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-PAR-002",
+      "category": "partial",
+      "description": "Three recognized concepts include current, missing, and current bindings without treating the whole query as covered.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.registry_digest",
+            "canonical_name": "Registry Digest Fixture Concept",
+            "aliases": [
+              "registry digest"
+            ],
+            "definition": "Frozen fixture concept for ONT-PAR-002.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "docs/ONTOLOGY_ADOPTION.md",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 159,
+                  "end": 174
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          },
+          {
+            "concept_id": "concept.alias_cap",
+            "canonical_name": "Alias Cap Fixture Concept",
+            "aliases": [
+              "alias cap"
+            ],
+            "definition": "Frozen fixture concept for ONT-PAR-002.",
+            "source_bindings": [
+              {
+                "scheme": "fixture",
+                "source_id": "missing/concept.alias_cap",
+                "version": "v1",
+                "range": {
+                  "unit": "bytes",
+                  "start": 0,
+                  "end": 1
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          },
+          {
+            "concept_id": "concept.coverage_ratio",
+            "canonical_name": "Coverage Ratio Fixture Concept",
+            "aliases": [
+              "coverage ratio"
+            ],
+            "definition": "Frozen fixture concept for ONT-PAR-002.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "docs/ONTOLOGY_ADOPTION.md",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 178,
+                  "end": 196
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "0498c6df0a8f947a34a06739d7e5c07a33319b3d5bf92d218fcb0d70f3a9c584",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "How do the registry digest, alias cap, and coverage ratio interact?",
+      "expected_status": "partial",
+      "expected_recognized_concept_ids": [
+        "concept.alias_cap",
+        "concept.coverage_ratio",
+        "concept.registry_digest"
+      ],
+      "expected_covered_concept_ids": [
+        "concept.coverage_ratio",
+        "concept.registry_digest"
+      ],
+      "expected_uncovered_concept_ids": [
+        "concept.alias_cap"
+      ],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 2,
+      "runtime_condition": "concept.alias_cap binding is unavailable at runtime",
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-AMB-001",
+      "category": "ambiguous",
+      "description": "One exact alias is assigned to two incompatible approved concepts.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.audit_graph",
+            "canonical_name": "Audit Graph Fixture Concept",
+            "aliases": [
+              "memory graph"
+            ],
+            "definition": "Frozen fixture concept for ONT-AMB-001.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "docs/ONTOLOGY_ADOPTION.md",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 51,
+                  "end": 58
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          },
+          {
+            "concept_id": "concept.concept_graph",
+            "canonical_name": "Concept Graph Fixture Concept",
+            "aliases": [
+              "memory graph"
+            ],
+            "definition": "Frozen fixture concept for ONT-AMB-001.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "docs/ONTOLOGY_ADOPTION.md",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 51,
+                  "end": 58
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "50fa71ef05c273925bc5d5ec80a594bcdda50b43519feceaf787b213b32e910e",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "What authority does the memory graph have?",
+      "expected_status": "ambiguous",
+      "expected_recognized_concept_ids": [
+        "concept.audit_graph",
+        "concept.concept_graph"
+      ],
+      "expected_covered_concept_ids": [],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [
+        "concept.audit_graph",
+        "concept.concept_graph"
+      ],
+      "gates_phase": 1,
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-AMB-002",
+      "category": "ambiguous",
+      "description": "Normalized aliases collide after case folding and must not be resolved by insertion order.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.registry_release",
+            "canonical_name": "Registry Release Fixture Concept",
+            "aliases": [
+              "release gate"
+            ],
+            "definition": "Frozen fixture concept for ONT-AMB-002.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "docs/ONTOLOGY_ADOPTION.md",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 223,
+                  "end": 237
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          },
+          {
+            "concept_id": "concept.provider_release",
+            "canonical_name": "Provider Release Fixture Concept",
+            "aliases": [
+              "release gate"
+            ],
+            "definition": "Frozen fixture concept for ONT-AMB-002.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "docs/ONTOLOGY_ADOPTION.md",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 321,
+                  "end": 330
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          },
+          {
+            "concept_id": "concept.release_audit",
+            "canonical_name": "Release Audit Fixture Concept",
+            "aliases": [
+              "audit trail"
+            ],
+            "definition": "Frozen fixture concept for ONT-AMB-002.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "docs/ONTOLOGY_ADOPTION.md",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 481,
+                  "end": 500
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "0eead15f4d6dce419d685b5d68c98ee71cc7b4e186816b2c6f8cffac14aac656",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "Explain the release gate and audit trail.",
+      "expected_status": "ambiguous",
+      "expected_recognized_concept_ids": [
+        "concept.provider_release",
+        "concept.registry_release",
+        "concept.release_audit"
+      ],
+      "expected_covered_concept_ids": [
+        "concept.release_audit"
+      ],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [
+        "concept.provider_release",
+        "concept.registry_release"
+      ],
+      "gates_phase": 1,
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-NEG-001",
+      "category": "negative/unrelated",
+      "description": "An unrelated weather query matches no approved alias.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.source_locator",
+            "canonical_name": "Source Locator Fixture Concept",
+            "aliases": [
+              "source locator"
+            ],
+            "definition": "Frozen fixture concept for ONT-NEG-001.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "palimnex/locators.py",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 95,
+                  "end": 139
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "3d3125aa011216bd261b37a0fbc05ab39868ee65df7032e18ea34cf4136e8653",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "Will it rain near the harbor tomorrow?",
+      "expected_status": "unanswerable",
+      "expected_recognized_concept_ids": [],
+      "expected_covered_concept_ids": [],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 2,
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-NEG-002",
+      "category": "negative/unrelated",
+      "description": "A plausible repository phrase that is not an approved exact alias does not receive semantic credit.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.semantic_provider",
+            "canonical_name": "Semantic Provider Fixture Concept",
+            "aliases": [
+              "semantic provider"
+            ],
+            "definition": "Frozen fixture concept for ONT-NEG-002.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "palimnex/semantic.py",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 48,
+                  "end": 64
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "3f415c3514a3f7494217e9ddd1207dde732090a021f0cd862c6af9413df73a54",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "meaning service",
+      "expected_status": "unanswerable",
+      "expected_recognized_concept_ids": [],
+      "expected_covered_concept_ids": [],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 2,
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-STALE-001",
+      "category": "stale-source",
+      "description": "The alias matches but the source range digest differs from current bytes.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.source_drift",
+            "canonical_name": "Source Drift Fixture Concept",
+            "aliases": [
+              "source drift"
+            ],
+            "definition": "Frozen fixture concept for ONT-STALE-001.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "palimnex/locators.py",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 124,
+                  "end": 139
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "b3adf22dfcd3097c0b2e4d3f3bad5c43921169d9b14ac84d3f218dcd37199a03",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "How is source drift detected?",
+      "expected_status": "unanswerable",
+      "expected_status_disputed": true,
+      "dispute_reason": "R7 provisional default selects a stale-source receipt state; the owner must confirm it at the Phase 0 exit gate.",
+      "expected_recognized_concept_ids": [
+        "concept.source_drift"
+      ],
+      "expected_covered_concept_ids": [],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 2,
+      "runtime_condition": "replace placeholder with a non-current digest",
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [
+        "concept.source_drift"
+      ],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-STALE-002",
+      "category": "stale-source",
+      "description": "The locator version changes between registry review and resolution.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.version_drift",
+            "canonical_name": "Version Drift Fixture Concept",
+            "aliases": [
+              "version drift"
+            ],
+            "definition": "Frozen fixture concept for ONT-STALE-002.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "docs/DESIGN.md",
+                "version": "reviewed-version",
+                "range": {
+                  "unit": "lines",
+                  "start": 79,
+                  "end": 86
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "9bc3444295d62ee191ac4e1e69f026d13a08da6e8355975e0ed3a31dbd9d24fa",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "What happens on version drift?",
+      "expected_status": "unanswerable",
+      "expected_status_disputed": true,
+      "dispute_reason": "R7 provisional default selects a stale-source receipt state; the owner must confirm it at the Phase 0 exit gate.",
+      "expected_recognized_concept_ids": [
+        "concept.version_drift"
+      ],
+      "expected_covered_concept_ids": [],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 2,
+      "runtime_condition": "resolver returns a different version",
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [
+        "concept.version_drift"
+      ],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-SEC-001",
+      "category": "secret",
+      "description": "A credential-shaped query assembled only at test time is refused before alias derivation.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.benign_registry",
+            "canonical_name": "Benign Registry Fixture Concept",
+            "aliases": [
+              "benign registry"
+            ],
+            "definition": "Frozen fixture concept for ONT-SEC-001.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "docs/ONTOLOGY_ADOPTION.md",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 1,
+                  "end": 8
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "fc70f9ed92698fbd703c83de0e1df6a745d7dc052b3eb2ead61588831d7513dd",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "<constructed-at-runtime-from-canary-recipe>",
+      "canary_recipe": {
+        "operation": "join",
+        "fragments": [
+          "sk-",
+          "AlphaNumericSegment",
+          "9876543210"
+        ]
+      },
+      "runtime_condition": "use the constructed canary as the query",
+      "expected_status": "unanswerable",
+      "expected_recognized_concept_ids": [],
+      "expected_covered_concept_ids": [],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 1,
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "error",
+      "expected_status_disputed": true,
+      "dispute_reason": "R7 provisional default selects a typed operation error with no receipt; the owner must confirm it at the Phase 0 exit gate."
+    },
+    {
+      "case_id": "ONT-SEC-002",
+      "category": "secret",
+      "description": "Credential-shaped admitted source bytes assembled only at test time are refused before embedding or reranking.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.private_source",
+            "canonical_name": "Private Source Fixture Concept",
+            "aliases": [
+              "private source"
+            ],
+            "definition": "Frozen fixture concept for ONT-SEC-002.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "runtime/canary.txt",
+                "version": "current",
+                "range": {
+                  "unit": "bytes",
+                  "start": 0,
+                  "end": 32
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "910b3969962815509f8718a3d2a9491762a9070554f4a7918335fecf710fc842",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "private source",
+      "canary_recipe": {
+        "operation": "join",
+        "fragments": [
+          "ghp_",
+          "Ab9Cd8Ef7Gh6",
+          "Jk5Lm4No3Pq2"
+        ]
+      },
+      "expected_status": "unanswerable",
+      "expected_status_disputed": true,
+      "dispute_reason": "R7 provisional default selects a typed operation error with no receipt; the owner must confirm it at the Phase 0 exit gate.",
+      "expected_recognized_concept_ids": [
+        "concept.private_source"
+      ],
+      "expected_covered_concept_ids": [],
+      "expected_uncovered_concept_ids": [
+        "concept.private_source"
+      ],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 3,
+      "runtime_condition": "source bytes are the constructed canary",
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "error"
+    },
+    {
+      "case_id": "ONT-TRUNC-001",
+      "category": "truncation",
+      "description": "Retrieval truncates unrelated candidates after the recognized concept's binding is verified.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.truncation_state",
+            "canonical_name": "Truncation State Fixture Concept",
+            "aliases": [
+              "truncation state"
+            ],
+            "definition": "Frozen fixture concept for ONT-TRUNC-001.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "docs/ONTOLOGY_ADOPTION.md",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 188,
+                  "end": 194
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "38ac11d5374ede7f6e76f23d7a1f0cb0a2712e3ef73cb4c813fdf574d0f9d06d",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "How is truncation state disclosed?",
+      "runtime_condition": "retrieval_truncated is true after the supporting binding was verified",
+      "expected_status": "answerable",
+      "expected_recognized_concept_ids": [
+        "concept.truncation_state"
+      ],
+      "expected_covered_concept_ids": [
+        "concept.truncation_state"
+      ],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 2,
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-TRUNC-002",
+      "category": "truncation",
+      "description": "Retrieval truncation coexists with independently partial concept coverage.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.current_binding",
+            "canonical_name": "Current Binding Fixture Concept",
+            "aliases": [
+              "current binding"
+            ],
+            "definition": "Frozen fixture concept for ONT-TRUNC-002.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "palimnex/locators.py",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 124,
+                  "end": 139
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          },
+          {
+            "concept_id": "concept.unbound_term",
+            "canonical_name": "Unbound Term Fixture Concept",
+            "aliases": [
+              "unbound term"
+            ],
+            "definition": "Frozen fixture concept for ONT-TRUNC-002.",
+            "source_bindings": [
+              {
+                "scheme": "fixture",
+                "source_id": "missing/concept.unbound_term",
+                "version": "v1",
+                "range": {
+                  "unit": "bytes",
+                  "start": 0,
+                  "end": 1
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "71e5e05fbb0a25297c3daaf4c8542dc9d571b74aaaf06e84b8c5dae0c4726af5",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "Compare the current binding with the unbound term.",
+      "runtime_condition": "retrieval_truncated is true for additional unrelated candidates; concept.unbound_term binding is unavailable at runtime",
+      "expected_status": "partial",
+      "expected_recognized_concept_ids": [
+        "concept.current_binding",
+        "concept.unbound_term"
+      ],
+      "expected_covered_concept_ids": [
+        "concept.current_binding"
+      ],
+      "expected_uncovered_concept_ids": [
+        "concept.unbound_term"
+      ],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 2,
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-BUDGET-001",
+      "category": "byte-budget",
+      "description": "Output detail is omitted by the byte budget after a recognized binding is verified.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.byte_budget",
+            "canonical_name": "Byte Budget Fixture Concept",
+            "aliases": [
+              "byte budget"
+            ],
+            "definition": "Frozen fixture concept for ONT-BUDGET-001.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "palimnex/retrieval.py",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 18,
+                  "end": 28
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "a9f90e325c6de5010759f4dacf6e89b85efaaa17c90b83f5d4d9c40780ca633d",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "What bounds the byte budget?",
+      "runtime_condition": "receipt detail is omitted but the source verification result is retained",
+      "expected_status": "answerable",
+      "expected_recognized_concept_ids": [
+        "concept.byte_budget"
+      ],
+      "expected_covered_concept_ids": [
+        "concept.byte_budget"
+      ],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 2,
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-BUDGET-002",
+      "category": "byte-budget",
+      "description": "Byte-budget omission does not hide a separate unbound recognized concept.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.budget_unit",
+            "canonical_name": "Budget Unit Fixture Concept",
+            "aliases": [
+              "budget unit"
+            ],
+            "definition": "Frozen fixture concept for ONT-BUDGET-002.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "palimnex/retrieval.py",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 136,
+                  "end": 145
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          },
+          {
+            "concept_id": "concept.unbound_budget_policy",
+            "canonical_name": "Unbound Budget Policy Fixture Concept",
+            "aliases": [
+              "unbound budget policy"
+            ],
+            "definition": "Frozen fixture concept for ONT-BUDGET-002.",
+            "source_bindings": [
+              {
+                "scheme": "fixture",
+                "source_id": "missing/concept.unbound_budget_policy",
+                "version": "v1",
+                "range": {
+                  "unit": "bytes",
+                  "start": 0,
+                  "end": 1
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "b1e948a8c7d6608f88e3fbf3bdbae0f81a1cc6ba5653258e04ee3834a0c9f8eb",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "Explain the budget unit and unbound budget policy.",
+      "runtime_condition": "byte_budget_omitted is true for receipt detail; concept.unbound_budget_policy binding is unavailable at runtime",
+      "expected_status": "partial",
+      "expected_recognized_concept_ids": [
+        "concept.budget_unit",
+        "concept.unbound_budget_policy"
+      ],
+      "expected_covered_concept_ids": [
+        "concept.budget_unit"
+      ],
+      "expected_uncovered_concept_ids": [
+        "concept.unbound_budget_policy"
+      ],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 2,
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-SUPER-001",
+      "category": "supersession",
+      "description": "A reviewed successor owns the shared alias and the superseded predecessor has no influence.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.coverage_v0",
+            "canonical_name": "Coverage V0 Fixture Concept",
+            "aliases": [
+              "coverage contract"
+            ],
+            "definition": "Frozen fixture concept for ONT-SUPER-001.",
+            "source_bindings": [],
+            "status": "superseded",
+            "provenance": {
+              "origin": "manual"
+            }
+          },
+          {
+            "concept_id": "concept.coverage_v1",
+            "canonical_name": "Coverage V1 Fixture Concept",
+            "aliases": [
+              "coverage contract"
+            ],
+            "definition": "Frozen fixture concept for ONT-SUPER-001.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "docs/ONTOLOGY_ADOPTION.md",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 176,
+                  "end": 196
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            },
+            "predecessor_concept_id": "concept.coverage_v0"
+          }
+        ],
+        "registry_digest": "31ca17d58512507827c022998d840b8dfcf22bc77d5eb97e8437cad7406871e2",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "What does the coverage contract report?",
+      "expected_status": "answerable",
+      "expected_recognized_concept_ids": [
+        "concept.coverage_v1"
+      ],
+      "expected_covered_concept_ids": [
+        "concept.coverage_v1"
+      ],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 1,
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-SUPER-002",
+      "category": "supersession",
+      "description": "An alias retained only by a superseded concept does not count as recognized or covered.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.retired_alias",
+            "canonical_name": "Retired Alias Fixture Concept",
+            "aliases": [
+              "retired coverage name"
+            ],
+            "definition": "Frozen fixture concept for ONT-SUPER-002.",
+            "source_bindings": [],
+            "status": "superseded",
+            "provenance": {
+              "origin": "manual"
+            }
+          },
+          {
+            "concept_id": "concept.current_alias",
+            "canonical_name": "Current Alias Fixture Concept",
+            "aliases": [
+              "current coverage name"
+            ],
+            "definition": "Frozen fixture concept for ONT-SUPER-002.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "docs/ONTOLOGY_ADOPTION.md",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 176,
+                  "end": 196
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            },
+            "predecessor_concept_id": "concept.retired_alias"
+          }
+        ],
+        "registry_digest": "bcf227bdfafbc6f2526169a4603dbd55fa85ed68a652a8a93e805dad06d8d086",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "retired coverage name",
+      "expected_status": "unanswerable",
+      "expected_recognized_concept_ids": [],
+      "expected_covered_concept_ids": [],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 1,
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-WITH-001",
+      "category": "withdrawn",
+      "description": "A withdrawn concept's unique alias has no coverage influence.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.withdrawn_provider",
+            "canonical_name": "Withdrawn Provider Fixture Concept",
+            "aliases": [
+              "retired provider mode"
+            ],
+            "definition": "Frozen fixture concept for ONT-WITH-001.",
+            "source_bindings": [],
+            "status": "withdrawn",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "6ee07000e39fa44a7e896e0101d5a1440a130ec6cd9aa7dd45eea2ce11262b08",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "retired provider mode",
+      "expected_status": "unanswerable",
+      "expected_recognized_concept_ids": [],
+      "expected_covered_concept_ids": [],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 1,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-WITH-002",
+      "category": "withdrawn",
+      "description": "A withdrawn collision does not make an approved concept ambiguous.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.withdrawn_graph",
+            "canonical_name": "Withdrawn Graph Fixture Concept",
+            "aliases": [
+              "source graph"
+            ],
+            "definition": "Frozen fixture concept for ONT-WITH-002.",
+            "source_bindings": [],
+            "status": "withdrawn",
+            "provenance": {
+              "origin": "manual"
+            }
+          },
+          {
+            "concept_id": "concept.structural_graph",
+            "canonical_name": "Structural Graph Fixture Concept",
+            "aliases": [
+              "source graph"
+            ],
+            "definition": "Frozen fixture concept for ONT-WITH-002.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "docs/ONTOLOGY_ADOPTION.md",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 51,
+                  "end": 58
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "3168fe19544dd579dbcfeebd85b38c1aadfb226acd0d06798e02e86d9302cc31",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "source graph",
+      "expected_status": "answerable",
+      "expected_recognized_concept_ids": [
+        "concept.structural_graph"
+      ],
+      "expected_covered_concept_ids": [
+        "concept.structural_graph"
+      ],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 1,
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-CAND-001",
+      "category": "candidate-non-influence",
+      "description": "A persisted candidate with a unique alias remains invisible to coverage.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "candidate_set",
+        "concepts": [
+          {
+            "concept_id": "concept.candidate_only",
+            "canonical_name": "Candidate Only Fixture Concept",
+            "aliases": [
+              "candidate insight"
+            ],
+            "definition": "Frozen fixture concept for ONT-CAND-001.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "candidate/private.json",
+                "version": "current",
+                "range": {
+                  "unit": "bytes",
+                  "start": 0,
+                  "end": 16
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "candidate",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "ad6d695c1760a96b2bae3b498a6071bd0c1e2dbda59094e4c818ac58115b393a",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "candidate insight",
+      "expected_status": "unanswerable",
+      "expected_recognized_concept_ids": [],
+      "expected_covered_concept_ids": [],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 1,
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-CAND-002",
+      "category": "candidate-non-influence",
+      "description": "A candidate alias collision does not make an approved concept ambiguous or alter ranking.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.approved_source",
+            "canonical_name": "Approved Source Fixture Concept",
+            "aliases": [
+              "verified source"
+            ],
+            "definition": "Frozen fixture concept for ONT-CAND-002.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "palimnex/locators.py",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 124,
+                  "end": 139
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "57ade531b8a7fbe13e059c6770b7f85d979157ee24c768e64d82ae05d042f1e0",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "verified source",
+      "expected_status": "answerable",
+      "expected_recognized_concept_ids": [
+        "concept.approved_source"
+      ],
+      "expected_covered_concept_ids": [
+        "concept.approved_source"
+      ],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 3,
+      "candidate_registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "candidate_set",
+        "concepts": [
+          {
+            "concept_id": "concept.candidate_shadow",
+            "canonical_name": "Candidate Shadow Fixture Concept",
+            "aliases": [
+              "verified source"
+            ],
+            "definition": "Frozen fixture concept for ONT-CAND-002.",
+            "source_bindings": [],
+            "status": "candidate",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "0cfaaa21fed412ff38ee90d4e41510fdf9e6d16c38774d7c8e08e0da0be38c64",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-PATH-001",
+      "category": "path-traversal/symlink",
+      "description": "A traversal-bearing repository locator is refused before any file read.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.escape_attempt",
+            "canonical_name": "Escape Attempt Fixture Concept",
+            "aliases": [
+              "escape attempt"
+            ],
+            "definition": "Frozen fixture concept for ONT-PATH-001.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "../outside.txt",
+                "version": "current",
+                "range": {
+                  "unit": "bytes",
+                  "start": 0,
+                  "end": 8
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "c8a29ad8fcea4536b85e1e785a3a75701483c2b948ff4d2b600576cd0da34f63",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "escape attempt",
+      "expected_status": "unanswerable",
+      "expected_status_disputed": true,
+      "dispute_reason": "R7 provisional default selects a typed operation error with no receipt; the owner must confirm it at the Phase 0 exit gate.",
+      "expected_recognized_concept_ids": [
+        "concept.escape_attempt"
+      ],
+      "expected_covered_concept_ids": [],
+      "expected_uncovered_concept_ids": [
+        "concept.escape_attempt"
+      ],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 1,
+      "runtime_condition": "path contains a parent traversal component",
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "error"
+    },
+    {
+      "case_id": "ONT-PATH-002",
+      "category": "path-traversal/symlink",
+      "description": "A normalized repository locator whose parent component is replaced by a symlink is refused.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.symlink_attempt",
+            "canonical_name": "Symlink Attempt Fixture Concept",
+            "aliases": [
+              "symlink attempt"
+            ],
+            "definition": "Frozen fixture concept for ONT-PATH-002.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "linked/source.txt",
+                "version": "current",
+                "range": {
+                  "unit": "bytes",
+                  "start": 0,
+                  "end": 8
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "f83c8df8ed88ccc1e676f35c37c08c084709de6e6d468bb468c4eb4284576446",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "symlink attempt",
+      "expected_status": "unanswerable",
+      "expected_status_disputed": true,
+      "dispute_reason": "R7 provisional default selects a typed operation error with no receipt; the owner must confirm it at the Phase 0 exit gate.",
+      "expected_recognized_concept_ids": [
+        "concept.symlink_attempt"
+      ],
+      "expected_covered_concept_ids": [],
+      "expected_uncovered_concept_ids": [
+        "concept.symlink_attempt"
+      ],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 1,
+      "runtime_condition": "linked is a symlinked parent directory",
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "error"
+    },
+    {
+      "case_id": "ONT-CROSS-001",
+      "category": "cross-project",
+      "description": "A registry fixture bound to another project identity cannot support this checkout.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "foreign-project",
+          "project_id": "00000000-0000-4000-8000-000000000002"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.foreign_registry",
+            "canonical_name": "Foreign Registry Fixture Concept",
+            "aliases": [
+              "foreign registry"
+            ],
+            "definition": "Frozen fixture concept for ONT-CROSS-001.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "docs/DESIGN.md",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 1,
+                  "end": 8
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "10cd18bed1dde25622847167778794b18466e04b0a6b05ecb59cccbdf51262a0",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "foreign registry",
+      "runtime_condition": "current_project_id is 00000000-0000-4000-8000-000000000001",
+      "expected_status": "unanswerable",
+      "expected_status_disputed": true,
+      "dispute_reason": "R7 provisional default selects a typed operation error with no receipt; the owner must confirm it at the Phase 0 exit gate.",
+      "expected_recognized_concept_ids": [],
+      "expected_covered_concept_ids": [],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 1,
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "error"
+    },
+    {
+      "case_id": "ONT-CROSS-002",
+      "category": "cross-project",
+      "description": "A non-repository resolver returning a source owned by another project cannot satisfy a local binding.",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.foreign_source",
+            "canonical_name": "Foreign Source Fixture Concept",
+            "aliases": [
+              "foreign source"
+            ],
+            "definition": "Frozen fixture concept for ONT-CROSS-002.",
+            "source_bindings": [
+              {
+                "scheme": "fixture",
+                "source_id": "project-two/source",
+                "version": "v1",
+                "range": {
+                  "unit": "bytes",
+                  "start": 0,
+                  "end": 8
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "b26d7d7de56350282caefd0a922c8d9443649497e22ddfeb9cc052c77ff38c4c",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "foreign source",
+      "expected_status": "unanswerable",
+      "expected_status_disputed": true,
+      "dispute_reason": "R7 provisional default selects a typed operation error with no receipt; the owner must confirm it at the Phase 0 exit gate.",
+      "expected_recognized_concept_ids": [
+        "concept.foreign_source"
+      ],
+      "expected_covered_concept_ids": [],
+      "expected_uncovered_concept_ids": [
+        "concept.foreign_source"
+      ],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 1,
+      "runtime_condition": "resolver reports a foreign project identity",
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "error"
+    },
+    {
+      "case_id": "ONT-NORM-001",
+      "category": "normalization",
+      "description": "Case-only differences normalize to one approved exact alias.",
+      "normalization_dimension": "case",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.case_fold",
+            "canonical_name": "Case Fold Fixture Concept",
+            "aliases": [
+              "coverage receipt"
+            ],
+            "definition": "Frozen fixture concept for ONT-NORM-001.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "docs/ONTOLOGY_ADOPTION.md",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 176,
+                  "end": 196
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "c1ccac8765eefde91614469a9f596323ceab66e29ee2aa12647c4a58edb10381",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "coverage receipt",
+      "expected_status": "answerable",
+      "expected_recognized_concept_ids": [
+        "concept.case_fold"
+      ],
+      "expected_covered_concept_ids": [
+        "concept.case_fold"
+      ],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 1,
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-NORM-002",
+      "category": "normalization",
+      "description": "Canonically equivalent composed and decomposed Unicode forms normalize to one alias.",
+      "normalization_dimension": "unicode",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.unicode_alias",
+            "canonical_name": "Unicode Alias Fixture Concept",
+            "aliases": [
+              "café source"
+            ],
+            "definition": "Frozen fixture concept for ONT-NORM-002.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "docs/ONTOLOGY_ADOPTION.md",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 159,
+                  "end": 174
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "72b2ba7d48cdd9b394b1214fec68b52306252554517b7c070eb73f7112228756",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "café source",
+      "expected_status": "answerable",
+      "expected_recognized_concept_ids": [
+        "concept.unicode_alias"
+      ],
+      "expected_covered_concept_ids": [
+        "concept.unicode_alias"
+      ],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 1,
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    },
+    {
+      "case_id": "ONT-NORM-003",
+      "category": "normalization",
+      "description": "Repeated horizontal and vertical whitespace normalize to single spaces before exact alias matching.",
+      "normalization_dimension": "whitespace",
+      "registry_fixture": {
+        "schema": "palimnex:concept-registry:v1",
+        "project": {
+          "project_slug": "palimnex",
+          "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+        },
+        "registry_version": 1,
+        "registry_kind": "approved_registry",
+        "concepts": [
+          {
+            "concept_id": "concept.whitespace_alias",
+            "canonical_name": "Whitespace Alias Fixture Concept",
+            "aliases": [
+              "source binding verification"
+            ],
+            "definition": "Frozen fixture concept for ONT-NORM-003.",
+            "source_bindings": [
+              {
+                "scheme": "repo",
+                "source_id": "palimnex/locators.py",
+                "version": "current",
+                "range": {
+                  "unit": "lines",
+                  "start": 124,
+                  "end": 139
+                },
+                "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "status": "approved",
+            "provenance": {
+              "origin": "manual"
+            }
+          }
+        ],
+        "registry_digest": "631a7f2927db53ac21fa640bd3f2db3cfb30c425a5414e1294658c262200ea50",
+        "authority": "historical_only",
+        "authorizes_actions": false
+      },
+      "query": "source\t binding\nverification",
+      "expected_status": "answerable",
+      "expected_recognized_concept_ids": [
+        "concept.whitespace_alias"
+      ],
+      "expected_covered_concept_ids": [
+        "concept.whitespace_alias"
+      ],
+      "expected_uncovered_concept_ids": [],
+      "expected_ambiguous_concept_ids": [],
+      "gates_phase": 1,
+      "binding_digests_are_placeholders": true,
+      "expected_stale_concept_ids": [],
+      "expected_outcome": "receipt"
+    }
+  ]
+}

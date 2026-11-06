@@ -1,0 +1,65 @@
+{
+  "schema": "palimnex:concept-registry:v1",
+  "project": {
+    "project_slug": "palimnex",
+    "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+  },
+  "registry_version": 1,
+  "registry_kind": "approved_registry",
+  "concepts": [
+    {
+      "concept_id": "project-memory-bundle",
+      "canonical_name": "Project Memory bundle",
+      "aliases": [
+        "embedded project memory"
+      ],
+      "definition": "The earlier embedded bundle from which the independent Palimnex repository continued.",
+      "source_bindings": [
+        {
+          "scheme": "repo",
+          "source_id": "README.md",
+          "version": "0b8ce96b6a21a042feb840ae41b10678ae01eba50e61377cd87f5590e0ade96d",
+          "range": {
+            "unit": "lines",
+            "start": 8,
+            "end": 12
+          },
+          "digest": "c8e52b2e294f2f0e113da2a8524c81c603c0059acca0b2cd26951caafb07a2bd"
+        }
+      ],
+      "status": "superseded",
+      "provenance": {
+        "origin": "manual"
+      }
+    },
+    {
+      "concept_id": "palimnex-repository",
+      "canonical_name": "Palimnex",
+      "aliases": [
+        "repository local memory"
+      ],
+      "definition": "The independent repository-local memory system that succeeds the embedded bundle.",
+      "source_bindings": [
+        {
+          "scheme": "repo",
+          "source_id": "README.md",
+          "version": "0b8ce96b6a21a042feb840ae41b10678ae01eba50e61377cd87f5590e0ade96d",
+          "range": {
+            "unit": "lines",
+            "start": 3,
+            "end": 6
+          },
+          "digest": "0e39c0cf84bbde5b330edd3cb48baeb7171c821eee37cb59c9a3c706f114f620"
+        }
+      ],
+      "status": "approved",
+      "predecessor_concept_id": "project-memory-bundle",
+      "provenance": {
+        "origin": "manual"
+      }
+    }
+  ],
+  "registry_digest": "3616f771253a01189d3dc215f77aac90b277460d8b7f7d77c70e2f1a119f56a4",
+  "authority": "historical_only",
+  "authorizes_actions": false
+}

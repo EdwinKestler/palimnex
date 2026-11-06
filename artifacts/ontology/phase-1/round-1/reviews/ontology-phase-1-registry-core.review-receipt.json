@@ -1,0 +1,58 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "palimnex/concepts.py",
+    "palimnex/tests/test_concepts.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "0288521fd44d14333ff059a000596861e2a3babc2ffb0a6c58960ba2a6415856"
+  },
+  "task_digest": "1882e503461032c224d0b22457cf140d1827eaac70652bfc70c6b1dbac0f0eb9",
+  "approval_evidence_digest": "138ad4d34c2874351c67b5687c0ae75af9e3b25ecaf40dca51aaec026450e3db",
+  "workstream_id": "ontology-phase-1-registry-core",
+  "evidence": [
+    "NOTE: Focused tests palimnex.tests.test_concepts: 22 passed in 0.023s. Strict mypy on palimnex/concepts.py succeeded. Implementation receipt validated against the task card (task_digest 1882e503461032c224d0b22457cf140d1827eaac70652bfc70c6b1dbac0f0eb9, approval_evidence_digest 138ad4d34c2874351c67b5687c0ae75af9e3b25ecaf40dca51aaec026450e3db).",
+    "NOTE: Independent probes against palimnex.concepts confirmed NFKC ligature query matching, Cyrillic homoglyph non-unification, stored ligature/punctuation alias rejection, cross-concept NFKC collision as ambiguity, supersession-cycle refusal, withdrawn non-matching, placeholder-digest default refusal, oversize/traversal/symlink load refusal, load_registry secret non-echo in str/repr/cause, canonical digest excluding registry_digest, candidate_set rejected as approved_registry, candidate non-influence, frozen dataclasses, input-order-independent matching, R1 concept.source_locator accept / a__b reject, and traversal typed refusal without path echo.",
+    "MINOR: normalize_alias maps Cc whitespace (TAB, LF) to U+0020 before the C* refusal, so tabbed queries match as spaces. SEMANTICS.md step 3 rejects C* first. Stored aliases and canonical names still reject C0 via bounded_text; private-use U+E000 remains forbidden_unicode.",
+    "MINOR: parse_registry accepted an in-memory document whose definition was a constructed credential canary. load_registry, match_aliases (query bytes), and verify_source_bindings (source bytes) privacy-scan; the in-memory parser does not.",
+    "MINOR: palimnex/concepts.py imports project_id from palimnex.cache_v3 and project_slug from palimnex.core, so importing the registry loads the cache and CLI modules. There is no import cycle through concepts and retrieval is not imported. palimnex.identity is Ed25519 signing, not project identity, and must not replace those helpers. SEMANTICS.md names cache_v3.project_id and core.project_slug, so this is residual coupling rather than a spec violation.",
+    "MINOR: test_supersession_forks_cycles_and_missing_relations_are_rejected does not construct a cycle. The implementation refuses supersession_cycle; an independent probe confirmed it.",
+    "NOTE: palimnex.concepts is imported only from palimnex/tests/test_concepts.py and palimnex/tests/test_concepts_frozen.py. No CLI, MCP, retrieval, cache, ledger, or configuration wiring, and no default registry location.",
+    "NOTE: Runtime is standard library plus palimnex modules. jsonschema/referencing appear only in tests."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_concepts -v",
+    "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/concepts.py",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-1/tasks/ontology-phase-1-registry-core.json --implementation-receipt artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-core.implementation-receipt.json",
+    "./.venv/bin/python /tmp/phase1_adversarial_probes.py",
+    "git status --short --untracked-files=all"
+  ],
+  "source_grounding_result": "Accepted SEMANTICS.md behavior is implemented: exact fields, R1 IDs, stored-normalized aliases, candidate/approved separation, supersession graph including cycles/forks, withdrawal exclusion, canonical digest with registry_digest excluded, placeholder digests only behind allow_placeholder_digests, source drift as stale, R7 typed refusals for traversal/symlink/cross-project/privacy. Cc-whitespace query mapping is the only normalization-order deviation.",
+  "privacy_result": "load_registry scans registry bytes before JSON derivation and refuses constructed canaries without echoing them in str, repr, or chained cause. match_aliases scans the query before normalize_alias. verify_source_bindings scans resolved source bytes. parse_registry does not scan in-memory field values.",
+  "retrieval_quality_result": "The module does not touch retrieval, ranking, or context. palimnex.retrieval is not imported. Feature-absent retrieval output is unchanged by this lane.",
+  "compatibility_result": "Additive palimnex.concepts API only. No existing project-memory:* identifier, schema, or test expectation in this owned scope changed. Frozen dataclasses and deterministic ordering hold.",
+  "rollback_result": "Rollback is omitting the optional import and any explicit path passed to load_registry. There is no default location, projection, or ledger state to undo.",
+  "authority_result": "No CLI, config, retrieval, cache, ledger, or MCP change in owned files. authority is historical_only and authorizes_actions is false. Implementation receipt git_write_authority is false. This review performed no Git writes, network, or palimnex write commands.",
+  "limitations": [
+    "Redis was absent; cache_consulted is false and the standard gate plus retrieval evaluation were not rerun.",
+    "Adversarial ligature probe initially collided with canonical_name 'File'; the corrected probe with canonical_name 'Document file' matched."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_mutated": false,
+    "ledger_consulted": false,
+    "ledger_mutated": false,
+    "reindexed": false,
+    "evaluated": false
+  },
+  "git_state": {
+    "git_writes": false,
+    "owned_product_files": [
+      "?? palimnex/concepts.py",
+      "?? palimnex/tests/test_concepts.py"
+    ],
+    "worktree": "dirty with pre-existing untracked ontology artifacts and integration-owned modifications to pyproject.toml, palimnex/CHANGELOG.md, and docs/COMPATIBILITY.md"
+  },
+  "status": "accepted"
+}

@@ -1,0 +1,79 @@
+{
+  "schema": "palimnex:ontology-workstream-manifest:v1",
+  "approved_phase": 1,
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "0288521fd44d14333ff059a000596861e2a3babc2ffb0a6c58960ba2a6415856"
+  },
+  "workstreams": [
+    "ontology-phase-1-registry-core",
+    "ontology-phase-1-registry-schema",
+    "ontology-phase-1-frozen-conformance",
+    "ontology-phase-1-integration"
+  ],
+  "dependency_dag": [
+    {
+      "from": "ontology-phase-1-registry-core",
+      "to": "ontology-phase-1-frozen-conformance"
+    },
+    {
+      "from": "ontology-phase-1-registry-schema",
+      "to": "ontology-phase-1-frozen-conformance"
+    },
+    {
+      "from": "ontology-phase-1-registry-core",
+      "to": "ontology-phase-1-integration"
+    },
+    {
+      "from": "ontology-phase-1-registry-schema",
+      "to": "ontology-phase-1-integration"
+    },
+    {
+      "from": "ontology-phase-1-frozen-conformance",
+      "to": "ontology-phase-1-integration"
+    }
+  ],
+  "exclusive_file_ownership": {
+    "ontology-phase-1-registry-core": [
+      "palimnex/concepts.py",
+      "palimnex/tests/test_concepts.py",
+      "artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-core.implementation-receipt.json"
+    ],
+    "ontology-phase-1-registry-schema": [
+      "palimnex/schemas/concept-registry.v1.schema.json",
+      "palimnex/tests/test_concept_registry_schema.py",
+      "palimnex/tests/fixtures/concept_registry",
+      "docs/CONCEPT_REGISTRY.md",
+      "artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-schema.implementation-receipt.json"
+    ],
+    "ontology-phase-1-frozen-conformance": [
+      "palimnex/tests/test_concepts_frozen.py",
+      "palimnex/tests/fixtures/ontology",
+      "artifacts/ontology/phase-1/receipts/ontology-phase-1-frozen-conformance.implementation-receipt.json"
+    ],
+    "ontology-phase-1-integration": [
+      "pyproject.toml",
+      "palimnex/CHANGELOG.md",
+      "docs/COMPATIBILITY.md",
+      "artifacts/ontology/phase-1/integration",
+      "artifacts/ontology/phase-1/receipts/ontology-phase-1-integration.implementation-receipt.json"
+    ]
+  },
+  "shared_file_owner": "ontology-phase-1-integration",
+  "acceptance_gates": [
+    "focused lane tests pass from the repository root with the repository venv",
+    "palimnex/concepts.py passes strict mypy and imports only the standard library and palimnex modules",
+    "every implementation receipt validates against its task card",
+    "ownership audit shows changes only inside owned paths",
+    "independent non-implementing review returns a receipt per implementation lane",
+    "existing retrieval output unchanged: evaluation Recall@5 1.0 and MRR 0.8917 with no critical regression",
+    "standard gate, deep validation, mypy and ledger status pass; no ledger writes"
+  ],
+  "authority_limits": [
+    "phase 1 registry foundation only; phases 2-5 excluded",
+    "no network, provider, model, Git-write or live-state authority for any lane",
+    "no default registry location, configuration key, CLI or retrieval wiring",
+    "Redis activity limited to the coordinator's AGENTS.md-required reindex and gate; no ledger writes"
+  ],
+  "status": "ready"
+}

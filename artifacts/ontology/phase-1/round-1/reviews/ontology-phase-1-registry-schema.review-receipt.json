@@ -1,0 +1,60 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "docs/CONCEPT_REGISTRY.md",
+    "palimnex/schemas/concept-registry.v1.schema.json",
+    "palimnex/tests/fixtures/concept_registry",
+    "palimnex/tests/test_concept_registry_schema.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "0288521fd44d14333ff059a000596861e2a3babc2ffb0a6c58960ba2a6415856"
+  },
+  "task_digest": "c0b0acf941b9b7f8956b5d32c1075471678cf26b132303d8c6a1147b3e0c33a2",
+  "approval_evidence_digest": "138ad4d34c2874351c67b5687c0ae75af9e3b25ecaf40dca51aaec026450e3db",
+  "workstream_id": "ontology-phase-1-registry-schema",
+  "evidence": [
+    "NOTE: Public palimnex/schemas/concept-registry.v1.schema.json differs from the accepted Phase 0 draft only by title (Draft Palimnex concept registry v1 -> Palimnex concept registry v1). $id, $defs.conceptId, $defs.alias, $defs.projectIdentity, and contract meaning are unchanged.",
+    "NOTE: palimnex.tests.test_concept_registry_schema plus palimnex.tests.test_sdk: 25 tests passed. Local referencing.Registry resolves source-locator.v1 without network. R1 accepts concept.source_locator and rejects a__b, A.b, -x, ab, and x.",
+    "NOTE: All seven invalid fixtures are byte-identical to the accepted examples. Three valid fixtures are byte-identical; underscore-concept-id.json is rebound from docs/ONTOLOGY_ADOPTION.md to palimnex/tests/fixtures/concept_registry/sources/source-locator-contract.txt with recomputed locator and registry digests, matching the brief's drift instruction.",
+    "MAJOR: docs/CONCEPT_REGISTRY.md states that missing, excluded, unreadable, changed, symlinked, or digest-mismatched source is stale. Accepted R7 and palimnex.concepts treat symlink and traversal as typed operation errors with no receipt. The public reader doc also omits typed refusals for cross-project bindings and privacy.",
+    "NOTE: JSON Schema cannot encode NFKC stored-alias equality; an unnormalized alias is schema-valid and runtime-invalid (alias_not_normalized). Fixture-level runtime/schema parity still holds.",
+    "NOTE: palimnex.tests.test_sdk.test_public_wire_schemas does not enumerate concept-registry.v1.schema.json. Existing SDK tests still pass; listing the new schema is integration-owned.",
+    "NOTE: Documentation correctly states that registry location is not yet decided and that Phase 1 defines no default location, configuration key, CLI loading path, or retrieval influence, with authority historical_only and authorizes_actions false."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_concept_registry_schema palimnex.tests.test_sdk -v",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-1/tasks/ontology-phase-1-registry-schema.json --implementation-receipt artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-schema.implementation-receipt.json",
+    "./.venv/bin/python /tmp/phase1_adversarial_probes.py",
+    "git status --short --untracked-files=all"
+  ],
+  "source_grounding_result": "The promoted schema matches the accepted draft after the documented title edit. Valid fixture locators resolve against current repository source. Reader documentation restates identity, lifecycle, normalization, ambiguity, supersession, digest, bounds, privacy, and non-authority, but misstates R7 symlink handling as stale.",
+  "privacy_result": "Fixtures do not store complete credential-shaped strings. Schema tests resolve locators locally. Documentation requires privacy admission before derivation and non-echoing refusals.",
+  "retrieval_quality_result": "This lane adds a public schema, fixtures, tests, and docs only. test_sdk public-contract tests still pass. No retrieval wiring.",
+  "compatibility_result": "Additive palimnex:concept-registry:v1 at the frozen $id. Existing source-locator.v1 is referenced, not forked. Existing SDK wire-schema tests remain green because they use a hardcoded name list that does not yet include the new schema.",
+  "rollback_result": "Rollback is deleting the public schema, docs, fixtures, and schema tests. No runtime default location or retrieval path is introduced.",
+  "authority_result": "Owned files do not change CLI, config, retrieval, cache, ledger, or MCP. The lane does not import palimnex.concepts. Implementation receipt validated; no Git writes in this review.",
+  "limitations": [
+    "Redis was absent; cache_consulted is false.",
+    "Public-docs R7 contradiction is documentation-only; runtime refusals were verified in the registry-core lane."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_mutated": false,
+    "ledger_consulted": false,
+    "ledger_mutated": false,
+    "reindexed": false,
+    "evaluated": false
+  },
+  "git_state": {
+    "git_writes": false,
+    "owned_product_files": [
+      "?? docs/CONCEPT_REGISTRY.md",
+      "?? palimnex/schemas/concept-registry.v1.schema.json",
+      "?? palimnex/tests/test_concept_registry_schema.py",
+      "?? palimnex/tests/fixtures/concept_registry/"
+    ],
+    "worktree": "dirty with pre-existing untracked ontology artifacts and integration-owned modifications to pyproject.toml, palimnex/CHANGELOG.md, and docs/COMPATIBILITY.md"
+  },
+  "status": "accepted_with_limits"
+}

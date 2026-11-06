@@ -1,0 +1,126 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-1-integration",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "0288521fd44d14333ff059a000596861e2a3babc2ffb0a6c58960ba2a6415856"
+  },
+  "task_digest": "6a255bae40b682aff7ba4e0c8eed387b5e2550803d6e6d08ac6d953dac4ed7dd",
+  "approval_evidence_digest": "138ad4d34c2874351c67b5687c0ae75af9e3b25ecaf40dca51aaec026450e3db",
+  "owned_scope": [
+    "pyproject.toml",
+    "palimnex/CHANGELOG.md",
+    "docs/COMPATIBILITY.md",
+    "artifacts/ontology/phase-1/integration",
+    "artifacts/ontology/phase-1/receipts/ontology-phase-1-integration.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "pyproject.toml",
+    "palimnex/CHANGELOG.md",
+    "docs/COMPATIBILITY.md",
+    "artifacts/ontology/phase-1/integration",
+    "artifacts/ontology/phase-1/receipts/ontology-phase-1-integration.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [
+    "artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-core.implementation-receipt.json",
+    "artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-schema.implementation-receipt.json",
+    "artifacts/ontology/phase-1/receipts/ontology-phase-1-frozen-conformance.implementation-receipt.json",
+    "artifacts/ontology/phase-1/reviews/ontology-phase-1-registry-core.review-receipt.json",
+    "artifacts/ontology/phase-1/reviews/ontology-phase-1-registry-schema.review-receipt.json",
+    "artifacts/ontology/phase-1/reviews/ontology-phase-1-frozen-conformance.review-receipt.json"
+  ],
+  "commands": [
+    {
+      "command": "./.venv/bin/python -m unittest discover -s palimnex/tests -p 'test_*.py'",
+      "exit_code": 0,
+      "result": "324 tests OK, unsandboxed; closes the frozen-conformance lane's sandbox-limited partial status"
+    },
+    {
+      "command": "./.venv/bin/python -m mypy",
+      "exit_code": 0,
+      "result": "no issues in 13 source files including palimnex/concepts.py"
+    },
+    {
+      "command": "python3 palimnex.py index",
+      "exit_code": 0,
+      "result": "fresh index, 103 files"
+    },
+    {
+      "command": "python3 palimnex.py validate --deep",
+      "exit_code": 0,
+      "result": "fresh, deep validation passed"
+    },
+    {
+      "command": "python3 palimnex.py evaluate --limit 5",
+      "exit_code": 0,
+      "result": "20 cases, critical passed, recall_at_limit 1.0, MRR 0.8917 (unchanged baseline)"
+    },
+    {
+      "command": "PATH=\"$PWD/.venv/bin:$PATH\" ./scripts/palimnex_check.sh",
+      "exit_code": 0,
+      "result": "standalone gate passed; isolated retrieval recall 1.0; no live ledger write or model call"
+    },
+    {
+      "command": "python3 palimnex.py ledger-status",
+      "exit_code": 0,
+      "result": "integrity ok, 0 events"
+    },
+    {
+      "command": "./.venv/bin/python artifacts/ontology/phase-1/tools/ownership_audit.py audit",
+      "exit_code": 0,
+      "result": "clean after lanes, fix-1, fix-2 and both reviews (only coordinator edits outside lane paths: launch.sh approval_policy)"
+    }
+  ],
+  "compatibility_effect": "Additive: new palimnex.concepts module, new public schema palimnex:concept-registry:v1, docs/CONCEPT_REGISTRY.md, tests and fixtures. No existing identifier, reader, CLI, MCP, config key, cache, ledger, pack or retrieval behavior changed; nothing imports palimnex.concepts outside tests; no default registry location. Tracked edits: pyproject.toml mypy file list, CHANGELOG Unreleased entry, COMPATIBILITY paragraph.",
+  "privacy_and_authority_checks": [
+    "no Git writes",
+    "no model or provider calls from Palimnex",
+    "no ledger writes (0 events)",
+    "Redis started only for reindex and gate, then stopped",
+    "in-memory and file registries privacy-scanned before derivation; refusals non-echoing (reviewer-probed)",
+    "Codex lane registry-schema escalated outside its workspace-write sandbox once to run socket tests (round 1); later lanes ran with approval_policy=never; ownership audits clean throughout",
+    "schema lane fix-1 ran a read-only ledger-status that read forbidden .palimnex; disclosed, no mutation"
+  ],
+  "integration_patch_proposals": [
+    "R8 (from Phase 0): validator should accept files_changed descendants of directory-valued owned paths; still not applied"
+  ],
+  "unresolved_risks": [
+    "Registry location and indexing still undecided; Phase 1 loads only explicit paths",
+    "Accepted residual: palimnex.concepts imports cache_v3.project_id and core.project_slug (contract-named); importing it loads cache and CLI modules",
+    "R9 query-whitespace clarification recorded for owner visibility (reviewer judged it faithful)",
+    "Grok tool-level write block only removed Write; reviewer read-only status verified by snapshot audits"
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": true,
+    "index_fresh_at_gate": true,
+    "redis_final_state": "stopped (restored)",
+    "ledger_integrity": "ok",
+    "ledger_events": 0
+  },
+  "git_state": {
+    "head": "b604f83",
+    "staged": [],
+    "status": [
+      " M docs/COMPATIBILITY.md",
+      " M palimnex/CHANGELOG.md",
+      " M pyproject.toml",
+      "?? .agents/skills/palimnex-ontology-coordinator/",
+      "?? .agents/skills/palimnex-ontology-review/",
+      "?? .agents/skills/palimnex-ontology-workstream/",
+      "?? .env.example",
+      "?? artifacts/design/Ontologyadoptionplan.md",
+      "?? artifacts/design/ontology-phase-0/",
+      "?? artifacts/ontology/",
+      "?? benchmark/",
+      "?? docs/CONCEPT_REGISTRY.md",
+      "?? docs/ONTOLOGY_ADOPTION.md",
+      "?? palimnex/concepts.py",
+      "?? palimnex/schemas/concept-registry.v1.schema.json",
+      "?? palimnex/tests/fixtures/",
+      "?? palimnex/tests/test_concept_registry_schema.py",
+      "?? palimnex/tests/test_concepts.py",
+      "?? palimnex/tests/test_concepts_frozen.py"
+    ]
+  },
+  "status": "tested"
+}

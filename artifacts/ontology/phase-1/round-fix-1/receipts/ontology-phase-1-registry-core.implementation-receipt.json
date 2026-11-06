@@ -1,0 +1,94 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-1-registry-core",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "0288521fd44d14333ff059a000596861e2a3babc2ffb0a6c58960ba2a6415856"
+  },
+  "task_digest": "1882e503461032c224d0b22457cf140d1827eaac70652bfc70c6b1dbac0f0eb9",
+  "approval_evidence_digest": "138ad4d34c2874351c67b5687c0ae75af9e3b25ecaf40dca51aaec026450e3db",
+  "owned_scope": [
+    "palimnex/concepts.py",
+    "palimnex/tests/test_concepts.py",
+    "artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-core.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/concepts.py",
+    "palimnex/tests/test_concepts.py",
+    "artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-core.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [],
+  "commands": [
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_concepts -v",
+      "exit_code": 0,
+      "result": "24 tests passed in 0.034s. Added coverage proves TAB, LF and CR alias refusal; TAB, LF and CR query refusal before tokenization; in-memory definition and alias privacy refusal without str or repr echo; and a real two-node supersession_cycle refusal."
+    },
+    {
+      "command": "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/concepts.py",
+      "exit_code": 0,
+      "result": "Success: no issues found in 1 source file."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_concepts_frozen -v",
+      "exit_code": 1,
+      "result": "Ran 4 test methods in 0.127s; 3 passed and test_every_phase_1_frozen_case errored only for ONT-NORM-003 because its TAB/LF query expects matching while accepted SEMANTICS.md lines 110-117 require C* refusal before whitespace replacement."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-1/tasks/ontology-phase-1-registry-core.json",
+      "exit_code": 0,
+      "result": "Task and approval evidence valid; task digest 1882e503461032c224d0b22457cf140d1827eaac70652bfc70c6b1dbac0f0eb9; approval evidence digest 138ad4d34c2874351c67b5687c0ae75af9e3b25ecaf40dca51aaec026450e3db."
+    },
+    {
+      "command": "./.venv/bin/python -c 'from pathlib import Path; from palimnex.security import scan_file; paths=(Path(\"palimnex/concepts.py\"),Path(\"palimnex/tests/test_concepts.py\")); print([(str(path), [(item.rule, item.line) for item in scan_file(path)]) for path in paths])'",
+      "exit_code": 0,
+      "result": "No privacy findings in either owned Python file."
+    },
+    {
+      "command": "git diff --check -- palimnex/concepts.py palimnex/tests/test_concepts.py",
+      "exit_code": 0,
+      "result": "No whitespace errors; both product files remain untracked, so Git had no tracked diff to print."
+    }
+  ],
+  "compatibility_effect": "The additive palimnex.concepts API is unchanged. normalize_alias now applies the accepted v1 ordering and refuses C* code points before punctuation, separator or whitespace mapping. parse_registry now privacy-scans the canonical in-memory JSON bytes before structural or alias derivation. No project-memory:* identifier, schema, CLI, configuration, retrieval, cache, ledger or pack behavior changed.",
+  "privacy_and_authority_checks": [
+    "Governing accepted text, artifacts/design/ontology-phase-0/registry/SEMANTICS.md lines 110-117: '1. Apply Unicode NFKC normalization. 2. Apply Unicode default casefold. 3. Reject any resulting code point whose Unicode general category begins with C ... 4. Replace every Unicode punctuation (P*), Unicode separator (Z*), and whitespace code point with U+0020 SPACE. 5. Collapse consecutive whitespace to one U+0020 and trim both ends. 6. Reject an empty result or one longer than 128 code points.'",
+    "parse_registry canonicalizes the supplied in-memory mapping only to obtain bounded scan bytes, calls palimnex.security.scan_bytes before copying fields or deriving concepts and aliases, and raises registry_privacy_refused without storing or echoing findings or values.",
+    "Runtime-built canaries in both definition and aliases are refused; neither str(exception) nor repr(exception) contains the canary.",
+    "TAB, LF and CR are Unicode Cc characters, so normalize_alias refuses each before whitespace handling; match_aliases preserves the same typed refusal as field query and performs no invented pre-tokenization rewrite.",
+    "The supersession test now constructs two superseded concepts that name each other as predecessor and proves supersession_cycle.",
+    "authority remains historical_only and authorizes_actions remains false; no network, provider, model, Git write, live Redis, SQLite, migration, retention, erasure or pack action occurred."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "Accepted artifacts conflict: immutable frozen case ONT-NORM-003 expects the query 'source\\t binding\\nverification' to match, while accepted registry SEMANTICS.md lines 110-117 and this fix brief require C* refusal before whitespace handling and forbid inventing a separate query-tokenization rule. The coordinator must reconcile the frozen expectation with the accepted contract; this lane cannot edit the foreign frozen fixture or harness.",
+    "SourceResolver v1 has no required project-identity member. This implementation refuses optional resolver project_id or project_slug claims that are foreign, but a registered resolver that makes no scope claim remains a trusted-code boundary and cannot be independently project-bound by source-locator v1.",
+    "palimnex/concepts.py and palimnex/tests/test_concepts.py match indexed include patterns. Reindex, evaluation, the full suite and the standard gate were not run because the task card forbids index/live-state writes and the fix brief explicitly delegates the socket-dependent full suite and standard gate to the coordinator."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_status": "Redis connection/protocol failure in the sandbox: operation not permitted",
+    "deep_validation_completed": false,
+    "focused_search_completed": true,
+    "indexed_files_changed": true,
+    "reindex_performed": false,
+    "evaluation_performed": false,
+    "ledger_consulted": false,
+    "ledger_writes": false,
+    "live_state_writes": false,
+    "full_suite": "delegated to coordinator by fix brief",
+    "standard_gate": "delegated to coordinator by fix brief"
+  },
+  "git_state": {
+    "git_writes": false,
+    "staged": false,
+    "committed": false,
+    "pushed": false,
+    "preexisting_dirty_worktree_preserved": true,
+    "owned_product_files_status": [
+      "?? palimnex/concepts.py",
+      "?? palimnex/tests/test_concepts.py"
+    ]
+  },
+  "status": "partial"
+}

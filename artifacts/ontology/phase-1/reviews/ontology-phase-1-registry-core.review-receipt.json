@@ -1,0 +1,60 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "palimnex/concepts.py",
+    "palimnex/tests/test_concepts.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "0288521fd44d14333ff059a000596861e2a3babc2ffb0a6c58960ba2a6415856"
+  },
+  "task_digest": "1882e503461032c224d0b22457cf140d1827eaac70652bfc70c6b1dbac0f0eb9",
+  "approval_evidence_digest": "138ad4d34c2874351c67b5687c0ae75af9e3b25ecaf40dca51aaec026450e3db",
+  "workstream_id": "ontology-phase-1-registry-core",
+  "evidence": [
+    "NOTE: Independent re-review after fix-1 and fix-2. palimnex.tests.test_concepts: 24 passed in 0.033s. Strict mypy on palimnex/concepts.py: Success: no issues found in 1 source file. palimnex.tests.test_concepts_frozen: 4/4 passed in 0.126s. Implementation receipt validated (task_digest 1882e503461032c224d0b22457cf140d1827eaac70652bfc70c6b1dbac0f0eb9, approval_evidence_digest 138ad4d34c2874351c67b5687c0ae75af9e3b25ecaf40dca51aaec026450e3db).",
+    "NOTE: Coordinator clarification R9 is a faithful reading of the accepted contract, not an unauthorized contract change. SEMANTICS.md lines 107-117 define the six-step procedure for matching keys derived from canonical names and stored aliases. The frozen matrix is the accepted query oracle and its labels never change; ONT-NORM-003 requires query source<TAB> binding<LF>verification to recognize stored alias 'source binding verification'. Applying stored-key step 3 to raw query text would refuse that case. R9 keeps steps 1-6 unchanged for registry keys and admits query str.isspace() to U+0020 before those steps. Code in match_aliases (palimnex/concepts.py) implements that split.",
+    "RESOLVED: Round-1 MINOR normalize_alias mapped Cc whitespace before C* refusal. normalize_alias now NFKC/casefold then refuses any C* (TAB/LF/CR/VT/FF/U+0007/U+200B/U+E000 all forbidden_unicode at alias). match_aliases maps query isspace() to space first; TAB, LF, CR, VT and FF queries match alias 'alpha concept'. Independent /tmp probes confirmed.",
+    "RESOLVED: Round-1 MINOR parse_registry skipped in-memory privacy admission. parse_registry now scan_bytes(canonical_json(document)) before _parse_concept. Runtime-built sk- canaries in definition, aliases, canonical_name, a relation note, and a provenance comment all raised registry_privacy_refused at registry with zero normalize_alias and zero _parse_concept calls; canary absent from str(), repr(), and __cause__. A combined canary-plus-TAB-alias document also failed closed on privacy first.",
+    "ACCEPTED-RESIDUAL: Round-1 MINOR palimnex/concepts.py still imports project_id from palimnex.cache_v3 and project_slug from palimnex.core. SEMANTICS.md names those helpers; fix-1 kept them. No import cycle through retrieval.",
+    "RESOLVED: Round-1 MINOR cycle test did not construct a cycle. test_supersession_forks_cycles_and_missing_relations_are_rejected now builds a two-superseded mutual predecessor pair and asserts supersession_cycle. Independent probes: 2-node and 3-node cycles raise supersession_cycle at concepts; a linear superseded-to-approved chain parses.",
+    "NOTE: Stored TAB/LF/CR/VT/FF in an alias or canonical_name are refused as forbidden_control by bounded_text, with no echo in str() or repr(). Query U+0007, U+200B and U+E000 raise forbidden_unicode at query with no echo. Python isspace() also admits U+001C and U+0085 in queries; that follows R9's stated isspace() rule rather than ONT-NORM-003's TAB/LF examples alone.",
+    "NOTE: palimnex.concepts is imported only from palimnex/tests/test_concepts.py and palimnex/tests/test_concepts_frozen.py. No CLI, MCP, retrieval, cache, ledger, or default registry location wiring."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_concepts -v",
+    "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/concepts.py",
+    "./.venv/bin/python -m unittest palimnex.tests.test_concepts_frozen -v",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-1/tasks/ontology-phase-1-registry-core.json --implementation-receipt artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-core.implementation-receipt.json",
+    "./.venv/bin/python /tmp/phase1_rereview_probes.py",
+    "./.venv/bin/python /tmp/phase1_cycle_probe.py",
+    "git status --short -- palimnex/concepts.py palimnex/tests/test_concepts.py"
+  ],
+  "source_grounding_result": "Accepted SEMANTICS.md stored-key procedure, R7 refusals, candidate/approved separation, supersession graph, withdrawal exclusion, canonical digest, and placeholder-digest flag are implemented. Query whitespace follows frozen case ONT-NORM-003 as read by R9: isspace() admitted to U+0020, then steps 1-6, so remaining C* is forbidden_unicode at query. R9 does not rewrite SEMANTICS.md registry-key rules.",
+  "privacy_result": "load_registry scans file bytes before JSON derivation. parse_registry scans canonical in-memory JSON before concept or alias derivation and refuses constructed canaries in definition, alias, canonical_name, relation text, and provenance text without echo. match_aliases scans original query UTF-8 before whitespace admission. verify_source_bindings scans resolved source bytes and raises source_privacy_refused.",
+  "retrieval_quality_result": "This module does not touch retrieval, ranking, or context. palimnex.retrieval is not imported. Feature-absent retrieval output is unchanged.",
+  "compatibility_result": "Additive palimnex.concepts API only. No existing project-memory:* identifier, schema, or test expectation in this owned scope changed. Frozen dataclasses and deterministic ordering hold. Query admission is the R9 interpolation required for ONT-NORM-003.",
+  "rollback_result": "Rollback is omitting the optional import and any explicit path passed to load_registry. There is no default location, projection, or ledger state to undo.",
+  "authority_result": "No CLI, config, retrieval, cache, ledger, or MCP change in owned files. authority is historical_only and authorizes_actions is false. R9 is a coordinator reading of already-accepted SEMANTICS.md plus the frozen matrix, listed for the owner at handoff, not a new owner grant. This review performed no Git writes, network, or palimnex write commands.",
+  "limitations": [
+    "Redis was absent; cache_consulted is false. palimnex.py was not run because this review forbids palimnex write commands and .palimnex reads.",
+    "The full unittest suite and ./scripts/palimnex_check.sh were not rerun in this review."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_mutated": false,
+    "ledger_consulted": false,
+    "ledger_mutated": false,
+    "reindexed": false,
+    "evaluated": false
+  },
+  "git_state": {
+    "git_writes": false,
+    "owned_product_files": [
+      "?? palimnex/concepts.py",
+      "?? palimnex/tests/test_concepts.py"
+    ],
+    "worktree": "dirty with tracked integration-owned edits to docs/COMPATIBILITY.md, palimnex/CHANGELOG.md, and pyproject.toml, plus pre-existing untracked ontology artifacts"
+  },
+  "status": "accepted"
+}

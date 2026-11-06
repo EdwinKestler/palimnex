@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://palimnex.dev/schemas/ontology-adoption-gap-report.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "requested_scope", "design_identity", "approval_state", "missing_requirements", "allowed_next_actions", "authority_limits", "status"],
+  "properties": {
+    "schema": {"const": "palimnex:ontology-adoption-gap-report:v1"},
+    "requested_scope": {"type": "string", "minLength": 1, "maxLength": 2048},
+    "design_identity": {"type": ["object", "null"]},
+    "approval_state": {"enum": ["missing", "ambiguous", "proposal_only", "approved"]},
+    "missing_requirements": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 1024}},
+    "allowed_next_actions": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 1024}},
+    "authority_limits": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 1024}},
+    "status": {"enum": ["proposal_only", "blocked"]}
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-0-registry-contract",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "9bfdb51ddec03aa8976206979fc45df5a1c7668579aa855d1cff6cae690686c2"
+  },
+  "task_digest": "5373c71b37177efa20bec64039a81f1950fc2b73982c602743edcd2b91529678",
+  "approval_evidence_digest": "a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760",
+  "owned_scope": [
+    "artifacts/design/ontology-phase-0/registry",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-registry-contract.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "artifacts/design/ontology-phase-0/registry",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-registry-contract.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [],
+  "commands": [
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-0/tasks/ontology-phase-0-registry-contract.json",
+      "exit_code": 0,
+      "result": "Task and embedded approval evidence validated; task_digest=5373c71b37177efa20bec64039a81f1950fc2b73982c602743edcd2b91529678 and approval_evidence_digest=a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760."
+    },
+    {
+      "command": "./.venv/bin/python artifacts/design/ontology-phase-0/registry/check_registry_contract.py",
+      "exit_code": 0,
+      "result": "Draft 2020-12 schema passed; 3 valid examples passed schema, semantic, source-resolution, and canonical-digest checks; 6 invalid examples were refused; constructed privacy canary was refused without value echo."
+    },
+    {
+      "command": "python3 palimnex.py status",
+      "exit_code": 1,
+      "result": "Redis Unix socket is missing; cache_consulted=false. Indexing was not attempted because this task forbids index and Redis writes."
+    },
+    {
+      "command": "python3 palimnex.py validate --deep",
+      "exit_code": 1,
+      "result": "Redis Unix socket is missing; cache_consulted=false. Source files were inspected directly instead."
+    },
+    {
+      "command": "python3 palimnex.py ledger-status",
+      "exit_code": 0,
+      "result": "Ledger status ready; integrity ok; semantic_errors empty; scanner policy matches creation; all object counts and projection_pending are zero."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-0/tasks/ontology-phase-0-registry-contract.json --implementation-receipt artifacts/ontology/phase-0/receipts/ontology-phase-0-registry-contract.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Implementation receipt validated against the runtime schema and task identities; status=valid, implementation_receipt_validated=true, authorizes_actions=false."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "All 12 registry deliverables and the receipt are untracked; parallel-lane and pre-existing unrelated untracked files remain present and untouched; no staged or committed work was created."
+    }
+  ],
+  "compatibility_effect": "Phase 0 draft artifacts only. No product code, public schema, CLI, configuration, existing project-memory:* identifier, cache layout, context envelope, ledger schema, pack format, or runtime behavior changed. The draft adds a separate proposed palimnex:concept-registry:v1 document that reuses palimnex:source-locator:v1 by $id. All changed design files are under an unindexed artifacts/design/ boundary, so indexed_files_changed=false and no reindex or evaluation is authorized or required in this lane.",
+  "privacy_and_authority_checks": [
+    "Source bindings use the existing local source-locator.v1 schema and valid examples are reopened, privacy-scanned, version-checked, and range-digest-checked offline.",
+    "The check constructs a credential-shaped canary at runtime, confirms privacy refusal before derivation, and confirms findings do not echo the value; no literal canary or credential value is stored.",
+    "Every registry fixes authority=historical_only and authorizes_actions=false; candidate_set is separated from approved_registry and has no matching or retrieval influence.",
+    "No network, model/provider, Git-write, live-state mutation, index, Redis-write, ledger-write, migration, retention, erasure, or pack action was performed.",
+    "The repository standard gate was not run because it builds a temporary Redis index, while this task card explicitly forbids index commands and Redis writes; the lane-specific acceptance commands are the authorized gates."
+  ],
+  "integration_patch_proposals": [
+    "target_path=.agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py; requested_change=allow files_changed entries that are descendants of a directory-valued owned_path while retaining traversal-free ownership checks; rationale=COMMON.md requires every created file to be listed, but the current exact-set subset check accepts only the owned directory and receipt path; dependency_effect=receipt detail only; compatibility_effect=no runtime format effect; task_digest=5373c71b37177efa20bec64039a81f1950fc2b73982c602743edcd2b91529678; approval_evidence_digest=a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760; design_sha256=9bfdb51ddec03aa8976206979fc45df5a1c7668579aa855d1cff6cae690686c2; status=proposed"
+  ],
+  "unresolved_risks": [
+    "Owner exit-gate approval is still required for registry_kind, candidate/approved read-path separation, committed registry location and index status, size bounds, NFKC/casefold/punctuation normalization, ambiguity reporting, relation vocabulary, no-fork supersession, and future module name.",
+    "The valid source-bound examples intentionally fail visibly if README.md or docs/DESIGN.md drifts; their locators and registry digests must be regenerated through review if those sources change before contract acceptance.",
+    "Cross-concept normalized alias collisions are retained and reported as ambiguous by design; the owner must confirm that a diagnostic rather than whole-registry rejection is the intended fail-closed behavior."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_status": "unavailable: Redis Unix socket missing",
+    "cache_written": false,
+    "indexed_files_changed": false,
+    "reindex_performed": false,
+    "ledger_consulted": true,
+    "ledger_status": "ready",
+    "ledger_integrity": "ok",
+    "ledger_semantic_errors": [],
+    "ledger_written": false,
+    "live_state_written": false
+  },
+  "git_state": {
+    "git_writes_performed": false,
+    "staged_by_workstream": false,
+    "commit_created": false,
+    "owned_paths_status": "untracked draft registry directory and untracked implementation receipt",
+    "unrelated_changes_present": true,
+    "unrelated_changes_preserved": true
+  },
+  "status": "tested"
+}

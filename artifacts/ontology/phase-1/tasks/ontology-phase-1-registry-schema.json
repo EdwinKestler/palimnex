@@ -1,0 +1,103 @@
+{
+  "schema": "palimnex:ontology-workstream-task:v1",
+  "workstream_id": "ontology-phase-1-registry-schema",
+  "phase": 1,
+  "action_id": "ontology_phase_1_registry",
+  "objective": "Promote the accepted Phase 0 registry contract into the public schema palimnex/schemas/concept-registry.v1.schema.json, public reader documentation docs/CONCEPT_REGISTRY.md, valid/invalid fixtures, and schema tests that resolve source-locator.v1 locally. Follow the brief.",
+  "exclusions": [
+    "No edits outside owned_paths; foreign changes are returned as integration patch proposals.",
+    "No retrieval, ranking, context, cache, ledger, CLI dispatch, MCP, configuration or default-registry-location changes.",
+    "No runtime dependency: palimnex/concepts.py uses only the standard library and palimnex modules.",
+    "No change to any existing project-memory:* identifier, existing schema or existing test expectation.",
+    "No Git staging, commits, branches or pushes; no network, installs, model or provider calls.",
+    "No palimnex index, remember, session, capture, retention, migration, erasure or pack commands; no Redis or SQLite writes.",
+    "Never read or echo credentials; never store literal secret-pattern strings."
+  ],
+  "approved_design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "0288521fd44d14333ff059a000596861e2a3babc2ffb0a6c58960ba2a6415856"
+  },
+  "approval_evidence": {
+    "schema": "palimnex:ontology-approval-evidence:v1",
+    "authority_source": "user_message",
+    "evidence_locator": "claude.ai conversation with the repository owner, user message sent 2026-11-05 21:32 America/Guatemala: 'accept phase 0 and authorize to proceed to phase 1'",
+    "grantor_claim": "repository owner (Gus, GitHub EdwinKestler)",
+    "design_identity": {
+      "path": "docs/ONTOLOGY_ADOPTION.md",
+      "sha256": "0288521fd44d14333ff059a000596861e2a3babc2ffb0a6c58960ba2a6415856"
+    },
+    "source_proposal_identity": {
+      "path": "artifacts/design/Ontologyadoptionplan.md",
+      "sha256": "8fe38bef5f7f25fa8a7d58dad21b89f69c70f4a367d9981c01fdedf6bd165d86"
+    },
+    "approved_phases": [
+      1
+    ],
+    "authorized_actions": [
+      "ontology_phase_1_registry"
+    ],
+    "excluded_actions": [
+      "ontology_phase_2_coverage",
+      "ontology_phase_3_shadow",
+      "ontology_phase_4_semantic",
+      "ontology_phase_5_extensions"
+    ],
+    "recorded_at": "2026-11-05T21:32:00-06:00",
+    "implementation_authorized": true,
+    "network_authorized": false,
+    "git_write_authorized": false,
+    "live_state_authorized": false
+  },
+  "owned_paths": [
+    "palimnex/schemas/concept-registry.v1.schema.json",
+    "palimnex/tests/test_concept_registry_schema.py",
+    "palimnex/tests/fixtures/concept_registry",
+    "docs/CONCEPT_REGISTRY.md",
+    "artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-schema.implementation-receipt.json"
+  ],
+  "read_only_paths": [
+    ".agents/skills",
+    ".palimnex.json",
+    "AGENTS.md",
+    "README.md",
+    "artifacts/design/Ontologyadoptionplan.md",
+    "artifacts/design/ontology-phase-0",
+    "artifacts/ontology/phase-0",
+    "artifacts/ontology/phase-1/approval-evidence.json",
+    "artifacts/ontology/phase-1/briefs",
+    "artifacts/ontology/phase-1/integration",
+    "artifacts/ontology/phase-1/manifest.json",
+    "artifacts/ontology/phase-1/receipts/ontology-phase-1-frozen-conformance.implementation-receipt.json",
+    "artifacts/ontology/phase-1/receipts/ontology-phase-1-integration.implementation-receipt.json",
+    "artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-core.implementation-receipt.json",
+    "artifacts/ontology/phase-1/tasks",
+    "docs",
+    "docs/COMPATIBILITY.md",
+    "docs/ONTOLOGY_ADOPTION.md",
+    "palimnex",
+    "palimnex/CHANGELOG.md",
+    "palimnex/concepts.py",
+    "palimnex/tests/fixtures/ontology",
+    "palimnex/tests/test_concepts.py",
+    "palimnex/tests/test_concepts_frozen.py",
+    "pyproject.toml"
+  ],
+  "forbidden_paths": [
+    ".palimnex",
+    ".env",
+    ".env.example",
+    "benchmark",
+    "secrets",
+    ".git"
+  ],
+  "dependencies": [],
+  "acceptance_commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_concept_registry_schema palimnex.tests.test_sdk -v",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-1/tasks/ontology-phase-1-registry-schema.json --implementation-receipt artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-schema.implementation-receipt.json",
+    "git status --short --untracked-files=all"
+  ],
+  "required_output": "ImplementationReceipt",
+  "network_authority": false,
+  "git_write_authority": false,
+  "live_state_authority": false
+}

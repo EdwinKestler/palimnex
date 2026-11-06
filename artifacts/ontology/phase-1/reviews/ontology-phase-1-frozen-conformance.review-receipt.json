@@ -1,0 +1,55 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "palimnex/tests/fixtures/ontology/cases.v0.json",
+    "palimnex/tests/test_concepts_frozen.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "0288521fd44d14333ff059a000596861e2a3babc2ffb0a6c58960ba2a6415856"
+  },
+  "task_digest": "977fcceacf128218b630f462fa34c7a7f571b97728475f214ae6acd0e09be8fc",
+  "approval_evidence_digest": "138ad4d34c2874351c67b5687c0ae75af9e3b25ecaf40dca51aaec026450e3db",
+  "workstream_id": "ontology-phase-1-frozen-conformance",
+  "evidence": [
+    "NOTE: Frozen-conformance owned files are unchanged since round 1. palimnex/tests/fixtures/ontology/ contains only cases.v0.json, SHA-256 a64be4f15fdfb664b3142706e5cef35d10fbaa4ed340aea38f22388404f7314b, byte-identical to artifacts/design/ontology-phase-0/frozen-cases/cases.v0.json. palimnex/tests/test_concepts_frozen.py SHA-256 63ec5178c37f56651fb283f873a10808d9a7aa903b8fd0904e65cbe756cd3bd3, mtime 2026-11-05 22:11, before round-1 review 22:39 and both fix rounds. The frozen implementation receipt is byte-identical to the round-1 copy. No fix brief targeted this lane.",
+    "NOTE: palimnex.tests.test_concepts_frozen: 4/4 passed in 0.126s (test_frozen_matrix_digest, test_every_phase_1_frozen_case, test_runtime_and_schema_parity_for_every_frozen_registry, test_runtime_and_schema_parity_for_schema_lane_fixtures). ONT-NORM-003 now passes because registry-core applies R9 query admission; frozen labels were not edited.",
+    "NOTE: Round-1 frozen receipt had no MAJOR or MINOR findings. Implementation receipt status remains partial because the original sandbox could not finish the full suite and standard gate; this review independently reproduced the focused 4/4 pass and did not rerun the full suite.",
+    "NOTE: Secret canaries are reconstructed at runtime from fragment recipes; ONT-SEC-001 refuses query_privacy_refused without echoing the canary. Traversal, symlink, and cross-project cases still assert typed refusals."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_concepts_frozen -v",
+    "sha256sum palimnex/tests/fixtures/ontology/cases.v0.json artifacts/design/ontology-phase-0/frozen-cases/cases.v0.json palimnex/tests/test_concepts_frozen.py",
+    "cmp palimnex/tests/fixtures/ontology/cases.v0.json artifacts/design/ontology-phase-0/frozen-cases/cases.v0.json",
+    "cmp artifacts/ontology/phase-1/receipts/ontology-phase-1-frozen-conformance.implementation-receipt.json artifacts/ontology/phase-1/round-1/receipts/ontology-phase-1-frozen-conformance.implementation-receipt.json",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-1/tasks/ontology-phase-1-frozen-conformance.json --implementation-receipt artifacts/ontology/phase-1/receipts/ontology-phase-1-frozen-conformance.implementation-receipt.json",
+    "git status --short -- palimnex/tests/test_concepts_frozen.py palimnex/tests/fixtures/ontology"
+  ],
+  "source_grounding_result": "The frozen matrix remains the accepted byte-exact artifact. Phase 1 cases call only the public palimnex.concepts API. Coverage status labels are asserted to be in the vocabulary and are not used as Phase 1 pass/fail except through matching and R7 refusals. Labels were not rewritten after fix rounds.",
+  "privacy_result": "ONT-SEC-001 rebuilds the canary from fragments and asserts query_privacy_refused with no echo. Traversal, symlink, and cross-project cases assert typed refusals and non-echo of rejected values. Fixture fragments are not complete credentials.",
+  "retrieval_quality_result": "This lane adds tests and a fixture copy only. No retrieval, ranking, or CLI change. Feature-absent retrieval behavior is untouched.",
+  "compatibility_result": "No runtime API or wire-format change in this lane. Labels were not edited to make the implementation pass. Runtime/schema accept-reject parity holds for all owned and schema-lane registry fixtures under the placeholder-digest flag.",
+  "rollback_result": "Rollback is deleting the frozen test module and fixture copy. No operational state is created.",
+  "authority_result": "Owned paths are tests and fixtures only. No CLI, config, retrieval, cache, ledger, or MCP change. palimnex.concepts is imported only from tests. Implementation receipt validated; no Git writes in this review. Fix rounds did not touch this lane.",
+  "limitations": [
+    "Redis was absent; cache_consulted is false.",
+    "The full unittest suite and ./scripts/palimnex_check.sh were not rerun in this review."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_mutated": false,
+    "ledger_consulted": false,
+    "ledger_mutated": false,
+    "reindexed": false,
+    "evaluated": false
+  },
+  "git_state": {
+    "git_writes": false,
+    "owned_product_files": [
+      "?? palimnex/tests/test_concepts_frozen.py",
+      "?? palimnex/tests/fixtures/ontology/"
+    ],
+    "worktree": "dirty with tracked integration-owned edits to docs/COMPATIBILITY.md, palimnex/CHANGELOG.md, and pyproject.toml, plus pre-existing untracked ontology artifacts"
+  },
+  "status": "accepted"
+}

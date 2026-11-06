@@ -5,6 +5,17 @@ operator-facing behavior; cache and graph schemas are versioned independently.
 
 ## Unreleased
 
+- Added `palimnex.concepts`, the reviewed concept-registry foundation
+  (ontology adoption Phase 1, `docs/ONTOLOGY_ADOPTION.md`). It is a
+  standard-library loader and validator for `palimnex:concept-registry:v1`
+  (`palimnex/schemas/concept-registry.v1.schema.json`, documented in
+  `docs/CONCEPT_REGISTRY.md`), with a canonical digest, deterministic alias
+  normalization, exact-alias matching with explicit ambiguity, candidate and
+  approved separation, and source-binding verification that reports drift as
+  stale. It is opt-in and loads only from an explicitly passed path. There is
+  no default location, configuration key, CLI command or retrieval influence,
+  so behavior without a registry is unchanged.
+
 ## 2.9.0 - 2026-10-02
 
 - Deprecated the copied bundle (copying `palimnex.py` and `palimnex/` into a

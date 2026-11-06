@@ -1,0 +1,13 @@
+{
+  "schema": "palimnex:ontology-workstream-bundle-validation:v1",
+  "manifest_digest": "fc19388db8370ec178f2887c228d0f70c177cf3db93aa95dc2cac6dcb4cfa280",
+  "task_digests": {
+    "ontology-phase-0-coverage-contract": "49806ed45cf5c8bdb585e5e0b9a9522d5a952cb1195d5f0a57d43f5ed112b609",
+    "ontology-phase-0-integration": "2370473741747afd48a87889d9f1e7b2babdb61e860106fdbf3bf837104b3fc3",
+    "ontology-phase-0-registry-contract": "5373c71b37177efa20bec64039a81f1950fc2b73982c602743edcd2b91529678",
+    "ontology-phase-0-threat-cases": "7d5afda31848b7d097b39b123e2606344296a75a2b9bbbb989669f3e543e3e39"
+  },
+  "status": "valid",
+  "authorizes_actions": false,
+  "approval_evidence_digest": "a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760"
+}

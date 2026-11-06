@@ -1,0 +1,39 @@
+{
+  "schema": "palimnex:concept-registry:v1",
+  "project": {
+    "project_slug": "palimnex",
+    "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+  },
+  "registry_version": 1,
+  "registry_kind": "approved_registry",
+  "concepts": [
+    {
+      "concept_id": "palimnex-memory",
+      "canonical_name": "Palimnex repository memory",
+      "aliases": [
+        "palimnex memory"
+      ],
+      "definition": "A repository-local memory system with rebuildable source discovery and durable historical evidence.",
+      "source_bindings": [
+        {
+          "scheme": "repo",
+          "source_id": "README.md",
+          "version": "0b8ce96b6a21a042feb840ae41b10678ae01eba50e61377cd87f5590e0ade96d",
+          "range": {
+            "unit": "lines",
+            "start": 3,
+            "end": 6
+          },
+          "digest": "0e39c0cf84bbde5b330edd3cb48baeb7171c821eee37cb59c9a3c706f114f620"
+        }
+      ],
+      "status": "approved",
+      "provenance": {
+        "origin": "manual"
+      }
+    }
+  ],
+  "registry_digest": "0a0ef4d7c8c7a92c5e05e0383b78b4ac26323d681d3d9efcb4780b19d47a5316",
+  "authority": "historical_only",
+  "authorizes_actions": false
+}

@@ -1,0 +1,106 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-0-integration",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "9bfdb51ddec03aa8976206979fc45df5a1c7668579aa855d1cff6cae690686c2"
+  },
+  "task_digest": "2b37438d291fe2b598fcb3f96507003df639add9c0ccc2e329e5d687494b2447",
+  "approval_evidence_digest": "a6c833078a9ee2b444d3af378b3367ebea26fe7aae476b3297ded4a48b042760",
+  "owned_scope": [
+    "artifacts/design/ontology-phase-0/CONTRACT_FREEZE.md",
+    "artifacts/ontology/phase-0/integration",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-integration.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "artifacts/design/ontology-phase-0/CONTRACT_FREEZE.md",
+    "artifacts/ontology/phase-0/integration",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-integration.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-registry-contract.implementation-receipt.json",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-coverage-contract.implementation-receipt.json",
+    "artifacts/ontology/phase-0/receipts/ontology-phase-0-threat-cases.implementation-receipt.json",
+    "artifacts/ontology/phase-0/reviews/ontology-phase-0-registry-contract.review-receipt.json",
+    "artifacts/ontology/phase-0/reviews/ontology-phase-0-coverage-contract.review-receipt.json",
+    "artifacts/ontology/phase-0/reviews/ontology-phase-0-threat-cases.review-receipt.json"
+  ],
+  "commands": [
+    {
+      "command": "python3 palimnex.py index",
+      "exit_code": 0,
+      "result": "fresh v3 index, 97 files"
+    },
+    {
+      "command": "python3 palimnex.py validate --deep",
+      "exit_code": 0,
+      "result": "fresh, deep validation passed"
+    },
+    {
+      "command": "python3 palimnex.py evaluate --limit 5",
+      "exit_code": 0,
+      "result": "20 cases, critical passed, recall_at_limit 1.0, MRR 0.8917"
+    },
+    {
+      "command": "PATH=\"$PWD/.venv/bin:$PATH\" ./scripts/palimnex_check.sh",
+      "exit_code": 0,
+      "result": "standalone gate passed; offline gates passed; isolated retrieval recall 1.0; no ledger write or model call"
+    },
+    {
+      "command": "python3 palimnex.py ledger-status",
+      "exit_code": 0,
+      "result": "integrity ok, 0 events"
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/test_validate_contract.py",
+      "exit_code": 0,
+      "result": "9 tests OK"
+    },
+    {
+      "command": "./.venv/bin/python artifacts/ontology/phase-0/tools/ownership_audit.py audit",
+      "exit_code": 0,
+      "result": "clean after wave 1, wave 2 and both reviews"
+    }
+  ],
+  "compatibility_effect": "No existing identifier, schema, reader, CLI, cache, ledger or config changed. Only indexed change: docs/ONTOLOGY_ADOPTION.md. New contracts are additive drafts under unindexed artifacts/.",
+  "privacy_and_authority_checks": [
+    "no Git writes",
+    "no Palimnex model or provider calls",
+    "no ledger writes (0 events)",
+    "Redis started only for the AGENTS.md-required reindex and gate, then stopped",
+    "agent runtimes (Codex, Grok) launched at the owner's request; lane authority unchanged",
+    "frozen cases verified free of literal secret material by check_cases.py"
+  ],
+  "integration_patch_proposals": [
+    "R8: validate_contract.py should accept files_changed entries that are descendants of directory-valued owned_paths (requested by all three lanes; not applied pending owner)"
+  ],
+  "unresolved_risks": [
+    "Owner exit-gate decisions listed in artifacts/design/ontology-phase-0/CONTRACT_FREEZE.md",
+    "MINOR open: ONT-NORM-001 does not encode a mixed-case query",
+    "8 frozen cases remain expected_status_disputed pending R7 confirmation",
+    "Grok --disallowed-tools removed only Write; reviewer read-only status was enforced by prompt and verified by snapshot audit (no repository changes)"
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": true,
+    "index_fresh_at_gate": true,
+    "redis_final_state": "stopped (restored)",
+    "ledger_integrity": "ok",
+    "ledger_events": 0
+  },
+  "git_state": {
+    "head": "b604f83",
+    "staged": [],
+    "untracked": [
+      "?? .agents/skills/palimnex-ontology-coordinator/",
+      "?? .agents/skills/palimnex-ontology-review/",
+      "?? .agents/skills/palimnex-ontology-workstream/",
+      "?? .env.example",
+      "?? artifacts/design/Ontologyadoptionplan.md",
+      "?? artifacts/design/ontology-phase-0/",
+      "?? artifacts/ontology/",
+      "?? benchmark/",
+      "?? docs/ONTOLOGY_ADOPTION.md"
+    ]
+  },
+  "status": "tested"
+}

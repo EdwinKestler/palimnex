@@ -1,0 +1,78 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-1-registry-schema",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "0288521fd44d14333ff059a000596861e2a3babc2ffb0a6c58960ba2a6415856"
+  },
+  "task_digest": "c0b0acf941b9b7f8956b5d32c1075471678cf26b132303d8c6a1147b3e0c33a2",
+  "approval_evidence_digest": "138ad4d34c2874351c67b5687c0ae75af9e3b25ecaf40dca51aaec026450e3db",
+  "owned_scope": [
+    "palimnex/schemas/concept-registry.v1.schema.json",
+    "palimnex/tests/test_concept_registry_schema.py",
+    "palimnex/tests/fixtures/concept_registry",
+    "docs/CONCEPT_REGISTRY.md",
+    "artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-schema.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/schemas/concept-registry.v1.schema.json",
+    "palimnex/tests/test_concept_registry_schema.py",
+    "palimnex/tests/fixtures/concept_registry",
+    "docs/CONCEPT_REGISTRY.md",
+    "artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-schema.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [],
+  "commands": [
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_concept_registry_schema palimnex.tests.test_sdk -v",
+      "exit_code": 0,
+      "result": "Fix Round 2 focused suite passed: 25 tests ran in 1.422 seconds. The fix brief overrides COMMON.md on tests, so the full suite was not run."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-1/tasks/ontology-phase-1-registry-schema.json",
+      "exit_code": 0,
+      "result": "Task and approval evidence are valid; task digest c0b0acf941b9b7f8956b5d32c1075471678cf26b132303d8c6a1147b3e0c33a2 and approval evidence digest 138ad4d34c2874351c67b5687c0ae75af9e3b25ecaf40dca51aaec026450e3db."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-1/tasks/ontology-phase-1-registry-schema.json --implementation-receipt artifacts/ontology/phase-1/receipts/ontology-phase-1-registry-schema.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Implementation receipt validated against the runtime contract, receipt schema, task digest, approval digest, and owned roots."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "Owned deliverables and extensive pre-existing or parallel-lane files are untracked; all unrelated changes remain preserved. No Git write was performed."
+    }
+  ],
+  "compatibility_effect": "Fix Round 2 changes only the public Alias normalization and ambiguity documentation to state clarification R9: the six-step normalization procedure governs registry keys from canonical names and stored aliases and refuses every C* code point there, including TAB, LF, and CR; query whitespace is first treated as U+0020 SPACE before the same procedure, while other query control characters are refused. No schema, fixture, runtime API, existing project-memory:* identifier, test expectation, retrieval behavior, configuration, cache, ledger, CLI, or MCP surface changed in this fix round.",
+  "privacy_and_authority_checks": [
+    "The documentation cites artifacts/ontology/phase-1/integration/clarification-R9.md and describes only R9's registry-key and query-whitespace distinction.",
+    "Focused tests used only existing offline fixtures; no credential values, secret findings, provider responses, Redis data, or SQLite data were read or persisted in this fix round.",
+    "No network, model, provider, Git write, live-state write, migration, policy activation, erasure, pack activation, staging, commit, branch, or push was performed.",
+    "Only task-card owned paths were written; unrelated and parallel-lane files were preserved."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "Registry location remains intentionally undecided; Phase 1 adds no default location, configuration key, CLI loader, or retrieval influence.",
+    "docs/CONCEPT_REGISTRY.md is an indexed file, but task authority forbids reading .palimnex and running index commands; reindex and evaluation are deferred to coordinator integration."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_status": "not_consulted_task_forbids_palimnex_state_read",
+    "cache_mutated": false,
+    "reindexed": false,
+    "evaluated": false,
+    "indexed_files_changed": true,
+    "ledger_consulted": false,
+    "ledger_status": "not_consulted_task_forbids_palimnex_state_read",
+    "ledger_mutated": false,
+    "live_state_authority_used": false
+  },
+  "git_state": {
+    "git_write_authority": false,
+    "git_writes_performed": false,
+    "owned_deliverables": "untracked",
+    "unrelated_changes_preserved": true
+  },
+  "status": "tested"
+}

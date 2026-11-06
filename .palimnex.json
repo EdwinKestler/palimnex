@@ -33,7 +33,8 @@
   "exclude_paths": [
     "palimnex/evaluation/v25.json",
     "palimnex/evaluation/v26.json",
-    "palimnex/evaluation/v27.json"
+    "palimnex/evaluation/v27.json",
+    "palimnex/evaluation/ontology-shadow.v1.json"
   ],
   "include_palimnex": true,
   "cache_mode": "on",

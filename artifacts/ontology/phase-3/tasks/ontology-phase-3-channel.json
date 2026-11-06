@@ -1,0 +1,100 @@
+{
+  "schema": "palimnex:ontology-workstream-task:v1",
+  "workstream_id": "ontology-phase-3-channel",
+  "phase": 3,
+  "action_id": "ontology_phase_3_shadow",
+  "objective": "Implement palimnex/ontology_shadow.py: the stdlib-only ontology channel ranking over retrieval chunks, the palimnex:ontology-shadow-comparison:v1 builder and runtime validator, the public schema and reader documentation. Follow the brief and SHADOW_SPEC.md.",
+  "exclusions": [
+    "No edits outside owned_paths; foreign changes are returned as integration patch proposals.",
+    "Shadow never alters returned results: retrieve_sources, search, context, explain-search and every existing output stay byte-identical.",
+    "No promotion, retrieval influence or configuration switch that would enable either.",
+    "Do not create or populate ontology/concept-registry.v1.json or any approved registry; the cohort registry is evaluation-only test data.",
+    "No change to any existing identifier, schema, frozen fixture or test expectation; v25-v27 and cases.v0.json are read-only.",
+    "No runtime dependency: runtime modules use only the standard library and palimnex modules.",
+    "No Git staging, commits, branches or pushes; no network, installs, model or provider calls.",
+    "No palimnex index, remember, session, capture, retention, migration, erasure or pack commands; no Redis or SQLite writes.",
+    "Never read or echo credentials; never store literal secret-pattern strings."
+  ],
+  "approved_design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f97c4f426960b1e4011ef825380f1c7cbe87e393e7ab773b408eb65cb3360b65"
+  },
+  "approval_evidence": {
+    "schema": "palimnex:ontology-approval-evidence:v1",
+    "authority_source": "user_message",
+    "evidence_locator": "claude.ai conversation with the repository owner, user message sent 2026-11-06 11:20 America/Guatemala ('ok phase 3 is approved'), plus the owner's answers to the shadow-visibility and evaluation-registry questions in the same conversation; Phase 2 exit gate commit 2558092",
+    "grantor_claim": "repository owner (Gus, GitHub EdwinKestler)",
+    "design_identity": {
+      "path": "docs/ONTOLOGY_ADOPTION.md",
+      "sha256": "f97c4f426960b1e4011ef825380f1c7cbe87e393e7ab773b408eb65cb3360b65"
+    },
+    "source_proposal_identity": {
+      "path": "artifacts/design/Ontologyadoptionplan.md",
+      "sha256": "8fe38bef5f7f25fa8a7d58dad21b89f69c70f4a367d9981c01fdedf6bd165d86"
+    },
+    "approved_phases": [
+      3
+    ],
+    "authorized_actions": [
+      "ontology_phase_3_shadow"
+    ],
+    "excluded_actions": [
+      "ontology_phase_0_contract",
+      "ontology_phase_1_registry",
+      "ontology_phase_2_coverage",
+      "ontology_phase_4_semantic",
+      "ontology_phase_5_extensions"
+    ],
+    "recorded_at": "2026-11-06T11:20:00-06:00",
+    "implementation_authorized": true,
+    "network_authorized": false,
+    "git_write_authorized": false,
+    "live_state_authorized": false
+  },
+  "owned_paths": [
+    "palimnex/ontology_shadow.py",
+    "palimnex/tests/test_ontology_shadow.py",
+    "palimnex/schemas/ontology-shadow-comparison.v1.schema.json",
+    "docs/ONTOLOGY_SHADOW.md",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-channel.implementation-receipt.json"
+  ],
+  "read_only_paths": [
+    ".agents/skills",
+    ".palimnex.json",
+    "AGENTS.md",
+    "README.md",
+    "artifacts/design/Ontologyadoptionplan.md",
+    "artifacts/design/ontology-phase-0",
+    "artifacts/ontology/phase-0",
+    "artifacts/ontology/phase-1",
+    "artifacts/ontology/phase-2",
+    "artifacts/ontology/phase-3/approval-evidence.json",
+    "artifacts/ontology/phase-3/briefs",
+    "artifacts/ontology/phase-3/manifest.json",
+    "artifacts/ontology/phase-3/tasks",
+    "docs",
+    "docs/ONTOLOGY_ADOPTION.md",
+    "palimnex",
+    "pyproject.toml"
+  ],
+  "forbidden_paths": [
+    ".palimnex",
+    ".env",
+    ".env.example",
+    "benchmark",
+    "secrets",
+    ".git"
+  ],
+  "dependencies": [],
+  "acceptance_commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_ontology_shadow -v",
+    "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/ontology_shadow.py",
+    "./.venv/bin/python -m unittest palimnex.tests.test_concepts palimnex.tests.test_coverage",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-channel.json --implementation-receipt artifacts/ontology/phase-3/receipts/ontology-phase-3-channel.implementation-receipt.json",
+    "git status --short --untracked-files=all"
+  ],
+  "required_output": "ImplementationReceipt",
+  "network_authority": false,
+  "git_write_authority": false,
+  "live_state_authority": false
+}

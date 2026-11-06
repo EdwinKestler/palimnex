@@ -1,0 +1,65 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "artifacts/ontology/phase-3/briefs/fix-1-ontology-phase-3-channel.md",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-channel.implementation-receipt.json",
+    "artifacts/ontology/phase-3/round-1/reviews/ontology-phase-3-channel.review-receipt.json",
+    "artifacts/ontology/phase-3/tasks/ontology-phase-3-channel.json",
+    "docs/ONTOLOGY_SHADOW.md",
+    "palimnex/ontology_shadow.py",
+    "palimnex/schemas/ontology-shadow-comparison.v1.schema.json",
+    "palimnex/tests/test_ontology_shadow.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f97c4f426960b1e4011ef825380f1c7cbe87e393e7ab773b408eb65cb3360b65"
+  },
+  "task_digest": "fbf11323f0dd3d0698a011bd0f3719b9755bf24395decc0ad28fcb1c0e08e592",
+  "approval_evidence_digest": "ec00128c1f81803aebfd100d4322973f497090c187d47d55a1a452997c3bd78d",
+  "workstream_id": "ontology-phase-3-channel",
+  "evidence": [
+    "RESOLVED: Round-1 MINOR on concept-ID length parity. _concept_list now requires palimnex.concepts MIN_CONCEPT_ID_CHARS=3 and MAX_CONCEPT_ID_CHARS=128 plus _CONCEPT_ID_RE.fullmatch. Independent rehashed documents: length 2 (ab) and 129 (a*129) are rejected by both validate_shadow_comparison (invalid_concept_id) and Draft 2020-12 via a local referencing.Registry; length 3 (abc, a-b) and 128 (a*128) are accepted by both. Schema and docs SHA-256 are unchanged from round 1.",
+    "NOTE: Empty string and 128-character pattern violations (trailing separator, uppercase, leading digit, consecutive separators, trailing space) are rejected by both runtime and schema. Comparison $defs.conceptId equals registry $defs.conceptId. palimnex.tests.test_ontology_shadow covers the 2/3/128/129 length cases.",
+    "NOTE: unittest palimnex.tests.test_ontology_shadow palimnex.tests.test_retrieval_shadow palimnex.tests.test_ontology_eval ran 38 tests, OK in 107.229s. Strict mypy on palimnex/ontology_shadow.py reported no issues. Contract validator status valid with implementation_receipt_validated true, task_digest fbf11323f0dd3d0698a011bd0f3719b9755bf24395decc0ad28fcb1c0e08e592, approval_evidence_digest ec00128c1f81803aebfd100d4322973f497090c187d47d55a1a452997c3bd78d.",
+    "NOTE: Working-tree SHA-256 matches the implementation receipt: palimnex/ontology_shadow.py d7f372a71e3752d7760ec035a9f534e8c33515bab3eb7ab1bc1387490fa786c7; palimnex/tests/test_ontology_shadow.py 9f52cd97e09595d0ddd08b3025704a5502a739f451ef2772cd0017d7f665b8e1; schema 37f20db889dc3fbd6d937901c1bba6d9beb451b25a5aa7e21cb4eedc825bfafd; docs d6dab36630dbd0c726731e8007b7863fa9524a116e6d9b49cb50605b711978c5. docs/ONTOLOGY_ADOPTION.md SHA-256 matches the task-card design identity.",
+    "NOTE: shadow_retrieve over the repository for queries 'retention authorized erasure' and 'audit graph' returns keys baseline and comparison; comparison fields match palimnex:ontology-shadow-comparison:v1; retrieval_influence false; returned_ranking_changed false; authority evidence_only; authorizes_actions false. The comparison JSON omits the raw query; baseline.query still carries it as retrieve_sources. python3 palimnex.py evaluate-ontology-shadow exited 0 with all eight gates true.",
+    "NOTE: Unsorted concept-id lists fail runtime as ordering_or_duplicate and pass JSON Schema. The fix brief required keeping this stricter cross-field rule; ontology_shadow.py comments that JSON Schema cannot express lexicographic array ordering."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_ontology_shadow palimnex.tests.test_retrieval_shadow palimnex.tests.test_ontology_eval",
+    "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/ontology_shadow.py",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-channel.json --implementation-receipt artifacts/ontology/phase-3/receipts/ontology-phase-3-channel.implementation-receipt.json",
+    "python3 palimnex.py evaluate-ontology-shadow",
+    "python3 palimnex.py status",
+    "./.venv/bin/python /tmp/probe_concept_id_parity.py",
+    "./.venv/bin/python /tmp/probe_shadow_retrieve.py",
+    "./.venv/bin/python /tmp/probe_comparison_query_leak.py"
+  ],
+  "source_grounding_result": "Channel ranking still uses match_aliases and verify_source_bindings. A chunk qualifies when a contributing approved concept has a verified repo binding whose inclusive line range overlaps the chunk. Byte ranges convert from current file bytes; empty byte ranges overlap no chunk. Non-repo verified bindings can establish contribution and do not map to repository chunks. Fix-round-1 changed only concept-ID length enforcement in the comparison validator.",
+  "privacy_result": "Query and source privacy admission still run before derivation. Focused tests cover secret-query and R7 symlink refusals. Independent shadow_retrieve probes show the comparison document omits raw query text; baseline.query remains the retrieve_sources field.",
+  "retrieval_quality_result": "Score remains distinct contributing concepts overlapping a chunk, sorted by descending score then ascending pointer, capped at 512 with truncated disclosure. Candidate registries never rank. Ambiguous, stale, and uncovered concepts never contribute. evaluate-ontology-shadow gates all passed, including no_critical_regression, abstention_not_regressed, and ambiguity_never_contributes.",
+  "compatibility_result": "Adds palimnex:ontology-shadow-comparison:v1, OntologyChannel, ontology_channel, build_shadow_comparison, and validate_shadow_comparison. Runtime concept-ID bounds now match schema $defs.conceptId (3-128) and palimnex.concepts constants. The runtime remains stricter on lexicographic list ordering, as required by the fix brief. Existing retrieval identifiers and evaluate-ontology-shadow gate results are unchanged.",
+  "rollback_result": "Delete palimnex/ontology_shadow.py, palimnex/tests/test_ontology_shadow.py, palimnex/schemas/ontology-shadow-comparison.v1.schema.json, and docs/ONTOLOGY_SHADOW.md, and revert the channel implementation receipt. palimnex/retrieval.py imports this module, so rollback of the channel files alone requires a matching retrieval-lane revert.",
+  "authority_result": "Every comparison hard-codes retrieval_influence false, returned_ranking_changed false, authority evidence_only, and authorizes_actions false. Independent shadow_retrieve and evaluate-ontology-shadow runs confirmed those flags. No approved product registry is created. Reviewer performed no Git writes, network calls, or live-state mutation.",
+  "limitations": [
+    "Length and pattern probes used rehashed comparison documents; the builder emits only concept-registry IDs that already satisfy 3-128.",
+    "Unsorted concept-id lists remain a runtime-only cross-field rule, as required by the fix brief.",
+    "python3 palimnex.py status consulted the local cache as fresh; evaluate-ontology-shadow and shadow_retrieve used file snapshots with client=None."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": true,
+    "ledger_consulted": false,
+    "redis_mutated": false,
+    "sqlite_mutated": false,
+    "reason": "python3 palimnex.py status reported cache status fresh; evaluate-ontology-shadow and shadow_retrieve used source snapshots with client=None; no Redis or SQLite writes."
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "branch": "main",
+    "head": "2558092b5c0b4a47c27c038be8ed4e6ae30c62dc",
+    "dirty_tree": true,
+    "reviewer_modified_repository": false
+  },
+  "status": "accepted"
+}

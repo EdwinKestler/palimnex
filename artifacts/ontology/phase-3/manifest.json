@@ -1,0 +1,98 @@
+{
+  "schema": "palimnex:ontology-workstream-manifest:v1",
+  "approved_phase": 3,
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f97c4f426960b1e4011ef825380f1c7cbe87e393e7ab773b408eb65cb3360b65"
+  },
+  "workstreams": [
+    "ontology-phase-3-channel",
+    "ontology-phase-3-cohort",
+    "ontology-phase-3-retrieval",
+    "ontology-phase-3-evaluation",
+    "ontology-phase-3-integration"
+  ],
+  "dependency_dag": [
+    {
+      "from": "ontology-phase-3-channel",
+      "to": "ontology-phase-3-retrieval"
+    },
+    {
+      "from": "ontology-phase-3-retrieval",
+      "to": "ontology-phase-3-evaluation"
+    },
+    {
+      "from": "ontology-phase-3-cohort",
+      "to": "ontology-phase-3-evaluation"
+    },
+    {
+      "from": "ontology-phase-3-channel",
+      "to": "ontology-phase-3-integration"
+    },
+    {
+      "from": "ontology-phase-3-cohort",
+      "to": "ontology-phase-3-integration"
+    },
+    {
+      "from": "ontology-phase-3-retrieval",
+      "to": "ontology-phase-3-integration"
+    },
+    {
+      "from": "ontology-phase-3-evaluation",
+      "to": "ontology-phase-3-integration"
+    }
+  ],
+  "exclusive_file_ownership": {
+    "ontology-phase-3-channel": [
+      "palimnex/ontology_shadow.py",
+      "palimnex/tests/test_ontology_shadow.py",
+      "palimnex/schemas/ontology-shadow-comparison.v1.schema.json",
+      "docs/ONTOLOGY_SHADOW.md",
+      "artifacts/ontology/phase-3/receipts/ontology-phase-3-channel.implementation-receipt.json"
+    ],
+    "ontology-phase-3-cohort": [
+      "palimnex/evaluation/ontology-shadow.v1.json",
+      "palimnex/tests/test_ontology_shadow_cohort.py",
+      "artifacts/ontology/phase-3/receipts/ontology-phase-3-cohort.implementation-receipt.json"
+    ],
+    "ontology-phase-3-retrieval": [
+      "palimnex/retrieval.py",
+      "palimnex/tests/test_retrieval_shadow.py",
+      "artifacts/ontology/phase-3/receipts/ontology-phase-3-retrieval.implementation-receipt.json"
+    ],
+    "ontology-phase-3-evaluation": [
+      "palimnex/ontology_eval.py",
+      "palimnex/tests/test_ontology_eval.py",
+      "artifacts/ontology/phase-3/receipts/ontology-phase-3-evaluation.implementation-receipt.json"
+    ],
+    "ontology-phase-3-integration": [
+      "palimnex/core.py",
+      "palimnex/tests/test_evaluate_ontology_shadow_cli.py",
+      ".palimnex.json",
+      "pyproject.toml",
+      "palimnex/CHANGELOG.md",
+      "docs/COMPATIBILITY.md",
+      "artifacts/ontology/phase-3/integration",
+      "artifacts/ontology/phase-3/receipts/ontology-phase-3-integration.implementation-receipt.json"
+    ]
+  },
+  "shared_file_owner": "ontology-phase-3-integration",
+  "acceptance_gates": [
+    "baseline identity: retrieve_sources, search, context and explain-search outputs are byte-identical with and without shadow",
+    "all current critical retrieval cases remain green; no new forbidden-path hits",
+    "negative-query abstention does not regress under the shadow ranking",
+    "ambiguous, stale, uncovered and candidate concepts never contribute to the ontology channel",
+    "lexical, symbol, graph and ontology channel ranks stay separately visible in the comparison",
+    "candidate caps, byte budgets and deterministic tie-breaking stay bounded",
+    "evaluation reports promotion_authorized false; promotion needs separate owner approval",
+    "focused tests and strict mypy pass; receipts validate; ownership audit clean; independent review per lane",
+    "full suite (unsandboxed), standard gate, deep validation, evaluation and ledger status pass; no ledger writes"
+  ],
+  "authority_limits": [
+    "phase 3 shadow only; phases 4-5 excluded; no retrieval influence or promotion",
+    "no network, provider, model, Git-write or live-state authority for any lane",
+    "shadow visible only through evaluate-ontology-shadow; no approved registry created",
+    "Codex lanes run with approval_policy=never inside workspace-write; the coordinator runs socket tests unsandboxed"
+  ],
+  "status": "ready"
+}

@@ -1,0 +1,95 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-3-channel",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f97c4f426960b1e4011ef825380f1c7cbe87e393e7ab773b408eb65cb3360b65"
+  },
+  "task_digest": "fbf11323f0dd3d0698a011bd0f3719b9755bf24395decc0ad28fcb1c0e08e592",
+  "approval_evidence_digest": "ec00128c1f81803aebfd100d4322973f497090c187d47d55a1a452997c3bd78d",
+  "owned_scope": [
+    "palimnex/ontology_shadow.py",
+    "palimnex/tests/test_ontology_shadow.py",
+    "palimnex/schemas/ontology-shadow-comparison.v1.schema.json",
+    "docs/ONTOLOGY_SHADOW.md",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-channel.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/ontology_shadow.py",
+    "palimnex/tests/test_ontology_shadow.py",
+    "palimnex/schemas/ontology-shadow-comparison.v1.schema.json",
+    "docs/ONTOLOGY_SHADOW.md",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-channel.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [],
+  "commands": [
+    {
+      "command": "sha256sum docs/ONTOLOGY_ADOPTION.md artifacts/design/Ontologyadoptionplan.md",
+      "exit_code": 0,
+      "result": "Approved design and source-proposal digests matched the task card."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_ontology_shadow -v",
+      "exit_code": 0,
+      "result": "17 focused tests passed, covering channel classification and ranking, overlap edges, byte ranges, cap disclosure, typed privacy and R7 refusals, comparison diffs and digest validation, and runtime-schema parity."
+    },
+    {
+      "command": "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/ontology_shadow.py",
+      "exit_code": 0,
+      "result": "Strict focused mypy check passed with no issues."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_concepts palimnex.tests.test_coverage",
+      "exit_code": 0,
+      "result": "43 Phase 1 and Phase 2 regression tests passed."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-channel.json",
+      "exit_code": 0,
+      "result": "Task and approval evidence validated; task digest fbf11323f0dd3d0698a011bd0f3719b9755bf24395decc0ad28fcb1c0e08e592 and approval evidence digest ec00128c1f81803aebfd100d4322973f497090c187d47d55a1a452997c3bd78d."
+    },
+    {
+      "command": "sha256sum palimnex/ontology_shadow.py palimnex/tests/test_ontology_shadow.py palimnex/schemas/ontology-shadow-comparison.v1.schema.json docs/ONTOLOGY_SHADOW.md",
+      "exit_code": 0,
+      "result": "Implementation SHA-256 88a5128a1ad76640af52352c29e9a99d36628edf5d46fa6ce26461ac24b9b703; tests f0c42f995d8d2982540a04c734842f07f129fa67eac3cf99aa7e861e4246fbaf; schema 37f20db889dc3fbd6d937901c1bba6d9beb451b25a5aa7e21cb4eedc825bfafd; docs d6dab36630dbd0c726731e8007b7863fa9524a116e6d9b49cb50605b711978c5."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-channel.json --implementation-receipt artifacts/ontology/phase-3/receipts/ontology-phase-3-channel.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Implementation receipt validated against the task, approval evidence, runtime contract, and receipt schema."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "Five owned channel files are untracked; extensive pre-existing and concurrent foreign-lane changes remain present and untouched."
+    }
+  ],
+  "compatibility_effect": "Adds the public palimnex.ontology_shadow module with OntologyChannel, ontology_channel, build_shadow_comparison, validate_shadow_comparison, ShadowComparisonError, and MAX_ONTOLOGY_CANDIDATES; adds the additive palimnex:ontology-shadow-comparison:v1 Draft 2020-12 schema and reader documentation. Existing retrieval APIs, outputs, identifiers, configuration, cache, ledger, and ranking behavior are unchanged; every comparison declares retrieval_influence false and returned_ranking_changed false.",
+  "privacy_and_authority_checks": [
+    "Alias matching and binding verification reuse palimnex.concepts; source bytes are privacy-admitted before byte-range line derivation, and R7 path, project, symlink, and privacy refusals propagate without source values.",
+    "Comparison documents contain query and registry digests, pointers, ranks, counts, and diffs only; they contain no raw query, source text, or excerpts, and their canonical digest is runtime-validated.",
+    "Candidate registries are refused, ambiguous concepts never contribute, and absent, stale, uncovered, and verified support remain distinct.",
+    "No network, provider, model, Redis, SQLite, Git-write, migration, activation, erasure, retention, pack, publication, or deployment authority was used."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "The coordinator must run the full suite and scripts/palimnex_check.sh unsandboxed; this lane ran only its task-card acceptance commands as required.",
+    "The retrieval and evaluation lanes must integrate this API and establish byte-identical baseline retrieval plus end-to-end frozen-cohort gates before Phase 3 can be accepted.",
+    "Indexed source and documentation changed, but task authority forbids indexing and evaluation commands; the coordinator must reindex and evaluate after integration."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_mutated": false,
+    "ledger_consulted": false,
+    "ledger_mutated": false,
+    "reason": "Redis was unavailable and reported cache_consulted false; the task card forbids indexing and forbids reading .palimnex or writing Redis or SQLite, so source files were used directly."
+  },
+  "git_state": {
+    "git_writes_performed": false,
+    "staging_performed": false,
+    "commit_performed": false,
+    "preexisting_worktree_changes_preserved": true,
+    "owned_paths_state": "Five owned files are untracked for coordinator integration."
+  },
+  "status": "tested"
+}

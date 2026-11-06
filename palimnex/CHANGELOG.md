@@ -28,6 +28,19 @@ operator-facing behavior; cache and graph schemas are versioned independently.
   `--backend local|cache`, `--no-graph`. Read-only, with no ranking influence;
   `search`, `context` and every existing format are unchanged. See
   `docs/COVERAGE_RECEIPT.md`.
+- Added ontology-aware retrieval in shadow mode (ontology adoption Phase 3).
+  `palimnex.ontology_shadow` ranks chunks that overlap the verified source
+  bindings of approved, unambiguous concepts named in the query.
+  `palimnex.retrieval.shadow_retrieve` fuses that fourth channel beside
+  lexical, symbol and graph in a separate shadow ranking and reports it as
+  `palimnex:ontology-shadow-comparison:v1`. The returned ranking is never
+  changed. `palimnex evaluate-ontology-shadow [--limit N]` compares baseline
+  and shadow over the frozen v27 cases, the v26 challenge negatives and a new
+  frozen evaluation-only cohort with its own test registry
+  (`palimnex/evaluation/ontology-shadow.v1.json`). It reports the Phase 3 gates
+  and always `promotion_authorized: false`, exiting 2 when a gate fails.
+  `retrieve_sources`, `search`, `context` and `explain-search` output is
+  byte-identical. See `docs/ONTOLOGY_SHADOW.md`.
 
 ## 2.9.0 - 2026-10-02
 

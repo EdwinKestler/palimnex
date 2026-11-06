@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://palimnex.dev/schemas/ontology-shadow-comparison.v1.schema.json",
+  "title": "Palimnex ontology shadow comparison v1",
+  "description": "Bounded pointer-only evidence comparing baseline and ontology-shadow rankings without retrieval influence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "query_digest", "query_digest_policy", "registry", "channels",
+    "ontology_channel", "limit", "byte_budget", "baseline", "shadow", "diff",
+    "retrieval_influence", "returned_ranking_changed", "authority",
+    "authorizes_actions", "comparison_digest"
+  ],
+  "properties": {
+    "schema": {"const": "palimnex:ontology-shadow-comparison:v1"},
+    "query_digest": {"$ref": "#/$defs/sha256"},
+    "query_digest_policy": {"const": "sha256-utf8-nfc-lf-preserve-whitespace-case:v1"},
+    "registry": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["schema", "digest"],
+          "properties": {
+            "schema": {"const": "palimnex:concept-registry:v1"},
+            "digest": {"$ref": "#/$defs/sha256"}
+          }
+        }
+      ]
+    },
+    "channels": {
+      "type": "array",
+      "prefixItems": [
+        {"const": "lexical"}, {"const": "symbol"},
+        {"const": "graph"}, {"const": "ontology"}
+      ],
+      "items": false,
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "ontology_channel": {"$ref": "#/$defs/ontologyChannel"},
+    "limit": {"type": "integer", "minimum": 1, "maximum": 100},
+    "byte_budget": {"type": "integer", "minimum": 128, "maximum": 65536},
+    "baseline": {"$ref": "#/$defs/baseline"},
+    "shadow": {"$ref": "#/$defs/shadow"},
+    "diff": {"$ref": "#/$defs/diff"},
+    "retrieval_influence": {"const": false},
+    "returned_ranking_changed": {"const": false},
+    "authority": {"const": "evidence_only"},
+    "authorizes_actions": {"const": false},
+    "comparison_digest": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "minLength": 64,
+      "maxLength": 64
+    },
+    "conceptId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "conceptIds": {
+      "type": "array",
+      "maxItems": 100,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/conceptId"}
+    },
+    "pointer": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "pattern": "^[^\\u0000-\\u001f]+$"
+    },
+    "pointers": {
+      "type": "array",
+      "maxItems": 100,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/pointer"}
+    },
+    "count": {"type": "integer", "minimum": 0, "maximum": 1000000},
+    "ontologyChannel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "recognized_concept_ids", "ambiguous_concept_ids",
+        "contributing_concept_ids", "excluded_ambiguous", "excluded_stale",
+        "excluded_uncovered", "candidate_count", "truncated"
+      ],
+      "properties": {
+        "recognized_concept_ids": {"$ref": "#/$defs/conceptIds"},
+        "ambiguous_concept_ids": {"$ref": "#/$defs/conceptIds"},
+        "contributing_concept_ids": {"$ref": "#/$defs/conceptIds"},
+        "excluded_ambiguous": {"$ref": "#/$defs/conceptIds"},
+        "excluded_stale": {"$ref": "#/$defs/conceptIds"},
+        "excluded_uncovered": {"$ref": "#/$defs/conceptIds"},
+        "candidate_count": {"$ref": "#/$defs/count"},
+        "truncated": {"type": "boolean"}
+      }
+    },
+    "baseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pointers", "candidate_count"],
+      "properties": {
+        "pointers": {"$ref": "#/$defs/pointers"},
+        "candidate_count": {"$ref": "#/$defs/count"}
+      }
+    },
+    "channelRanks": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "lexical": {"type": "integer", "minimum": 1, "maximum": 512},
+        "symbol": {"type": "integer", "minimum": 1, "maximum": 512},
+        "graph": {"type": "integer", "minimum": 1, "maximum": 512},
+        "ontology": {"type": "integer", "minimum": 1, "maximum": 512}
+      }
+    },
+    "shadowItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pointer", "rank", "channels"],
+      "properties": {
+        "pointer": {"$ref": "#/$defs/pointer"},
+        "rank": {"type": "integer", "minimum": 1, "maximum": 100},
+        "channels": {"$ref": "#/$defs/channelRanks"}
+      }
+    },
+    "shadow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items", "candidate_count", "items_bytes"],
+      "properties": {
+        "items": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {"$ref": "#/$defs/shadowItem"}
+        },
+        "candidate_count": {"$ref": "#/$defs/count"},
+        "items_bytes": {"type": "integer", "minimum": 0, "maximum": 65536}
+      }
+    },
+    "nullableRank": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "integer", "minimum": 1, "maximum": 100}
+      ]
+    },
+    "rankChange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pointer", "baseline_rank", "shadow_rank"],
+      "properties": {
+        "pointer": {"$ref": "#/$defs/pointer"},
+        "baseline_rank": {"$ref": "#/$defs/nullableRank"},
+        "shadow_rank": {"$ref": "#/$defs/nullableRank"}
+      }
+    },
+    "diff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identical", "overlap_count", "entered", "left", "rank_changes"],
+      "properties": {
+        "identical": {"type": "boolean"},
+        "overlap_count": {"type": "integer", "minimum": 0, "maximum": 100},
+        "entered": {"$ref": "#/$defs/pointers"},
+        "left": {"$ref": "#/$defs/pointers"},
+        "rank_changes": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {"$ref": "#/$defs/rankChange"}
+        }
+      }
+    }
+  }
+}

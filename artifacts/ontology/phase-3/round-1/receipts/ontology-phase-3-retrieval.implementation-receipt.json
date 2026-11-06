@@ -1,0 +1,110 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-3-retrieval",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f97c4f426960b1e4011ef825380f1c7cbe87e393e7ab773b408eb65cb3360b65"
+  },
+  "task_digest": "534e1338027a4a0e6157adabe102f5e1191161ec12558c3596c7109b9d9889e0",
+  "approval_evidence_digest": "ec00128c1f81803aebfd100d4322973f497090c187d47d55a1a452997c3bd78d",
+  "owned_scope": [
+    "palimnex/retrieval.py",
+    "palimnex/tests/test_retrieval_shadow.py",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-retrieval.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/retrieval.py",
+    "palimnex/tests/test_retrieval_shadow.py",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-retrieval.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [
+    "ontology-phase-3-channel: tested implementation receipt validated with task digest fbf11323f0dd3d0698a011bd0f3719b9755bf24395decc0ad28fcb1c0e08e592"
+  ],
+  "commands": [
+    {
+      "command": "sha256sum docs/ONTOLOGY_ADOPTION.md artifacts/design/Ontologyadoptionplan.md",
+      "exit_code": 0,
+      "result": "Approved design and source-proposal digests matched the task card exactly."
+    },
+    {
+      "command": "python3 palimnex.py status",
+      "exit_code": 1,
+      "result": "Redis Unix socket was unavailable; the command reported cache_consulted false. No cache start or mutation was authorized."
+    },
+    {
+      "command": "python3 palimnex.py validate --deep",
+      "exit_code": 1,
+      "result": "Deep cache validation could not run because the Redis Unix socket was unavailable; the command reported cache_consulted false."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_retrieval_shadow -v",
+      "exit_code": 0,
+      "result": "9 focused tests passed, exercising 96 pinned temporary-corpus golden combinations, six repository same-snapshot identities, ontology-only shadow promotion, excluded classifications, candidate refusal, all four channel ranks, fusion bounds, and frozen ONT-SEC-002 and ONT-CAND-002."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_ontology_shadow palimnex.tests.test_coverage palimnex.tests.test_explain_search palimnex.tests.test_coverage_frozen",
+      "exit_code": 0,
+      "result": "48 channel, coverage, explain-search, and frozen-coverage regression tests passed."
+    },
+    {
+      "command": "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/retrieval.py palimnex/tests/test_retrieval_shadow.py",
+      "exit_code": 0,
+      "result": "Strict focused mypy check passed with no issues in the two owned Python files."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-channel.json --implementation-receipt artifacts/ontology/phase-3/receipts/ontology-phase-3-channel.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "The required ontology-phase-3-channel dependency receipt validated successfully."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-retrieval.json",
+      "exit_code": 0,
+      "result": "Task and approval evidence validated; task digest 534e1338027a4a0e6157adabe102f5e1191161ec12558c3596c7109b9d9889e0 and approval evidence digest ec00128c1f81803aebfd100d4322973f497090c187d47d55a1a452997c3bd78d."
+    },
+    {
+      "command": "sha256sum palimnex/retrieval.py palimnex/tests/test_retrieval_shadow.py",
+      "exit_code": 0,
+      "result": "Implementation SHA-256 74f383122f37d3df0272b0219541fdb24a932f47c585f69f4b390ce775824870; tests a25d2e6f72d5df2de53f6c19a48f96cec8114cba278f20cd31df25ca34bb4608."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-retrieval.json --implementation-receipt artifacts/ontology/phase-3/receipts/ontology-phase-3-retrieval.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Implementation receipt validated against the task, approval evidence, runtime contract, and receipt schema."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "The three owned retrieval-lane paths are modified or untracked; extensive pre-existing and concurrent foreign-lane changes remain present and untouched."
+    }
+  ],
+  "compatibility_effect": "Adds the public palimnex.retrieval.shadow_retrieve function with the approved Phase 3 keyword-only contract. It returns the unchanged retrieve_sources baseline plus a palimnex:ontology-shadow-comparison:v1 document. retrieve_sources retains its signature, validation order, errors, ranking, byte budgeting, result fields, and behavior; its lexical, symbol, and graph rankings now flow through private shared helpers so the shadow fusion can add the ontology channel without changing any returned retrieval, search, context, or explain-search output.",
+  "privacy_and_authority_checks": [
+    "The ontology channel is called exactly once after the source-backed baseline rankings are computed; its approved-registry, source-reopen, digest, project, symlink, and privacy refusals propagate without silent fallback.",
+    "Frozen ONT-SEC-002 proves credential-shaped source bytes fail before comparison construction, return no shadow document, and do not appear in the exception.",
+    "The comparison builder emits only query and registry digests, pointers, ranks, counts, bounded classifications, and fixed evidence-only authority fields; raw query text and source excerpts are not persisted.",
+    "Candidate registries are refused, while ambiguous, stale, and uncovered concepts contribute no rank; frozen ONT-CAND-002 proves a separate candidate alias collision does not make the approved concept ambiguous or alter the returned baseline.",
+    "No network, provider, model, Redis, SQLite, Git-write, migration, activation, erasure, retention, pack, publication, or deployment authority was used."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "The coordinator must run the full suite and scripts/palimnex_check.sh unsandboxed; this lane ran only its task-card acceptance commands as required.",
+    "The evaluation lane and coordinator must run the complete frozen Phase 3 evaluation gates before Phase 3 integration can be accepted; this receipt proves the retrieval component and its specified regressions only.",
+    "Indexed product and test files changed, but this task forbids indexing and evaluation commands; the coordinator must reindex and evaluate after serial integration.",
+    "Redis was unavailable, so cache-backed deep validation was not exercised in this lane; existing cache failures remain fail-closed and the coordinator owns the final cache-backed gate."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_mutated": false,
+    "ledger_consulted": false,
+    "ledger_mutated": false,
+    "reason": "Both status and deep validation reported the Redis Unix socket missing and cache_consulted false. The task card forbids starting or mutating Redis and forbids reading or writing live ledger state, so current repository source was used directly."
+  },
+  "git_state": {
+    "git_writes_performed": false,
+    "staging_performed": false,
+    "commit_performed": false,
+    "preexisting_worktree_changes_preserved": true,
+    "owned_paths_state": "palimnex/retrieval.py is modified; the focused test and implementation receipt are untracked for coordinator integration."
+  },
+  "status": "tested"
+}

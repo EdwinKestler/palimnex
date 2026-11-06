@@ -78,3 +78,13 @@ embedded in a context envelope, and neither document is persisted. Both carry
 `authority: evidence_only` and `authorizes_actions: false`. The default
 registry `ontology/concept-registry.v1.json` is not part of the source index,
 and its absence leaves behavior unchanged. See `docs/COVERAGE_RECEIPT.md`.
+
+Phase 3 adds `palimnex:ontology-shadow-comparison:v1`,
+`palimnex:ontology-shadow-evaluation:v1`, the frozen
+`palimnex:ontology-shadow-cohort:v1` fixture, and the read-only
+`evaluate-ontology-shadow` command. Shadow ranking is computed beside the
+baseline and never returned in its place: `retrieve_sources`, `search`,
+`context` and `explain-search` produce byte-identical output. The cohort's test
+registry is evaluation-only and is never loaded as the approved registry. Moving
+from shadow to retrieval influence requires a separate owner approval and a new
+versioned behavior. See `docs/ONTOLOGY_SHADOW.md`.

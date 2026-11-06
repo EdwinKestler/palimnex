@@ -1,0 +1,126 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-3-evaluation",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f97c4f426960b1e4011ef825380f1c7cbe87e393e7ab773b408eb65cb3360b65"
+  },
+  "task_digest": "6842dd51fe3eb0e94c641018a0c7b5dfac96da7dbec2067355c422bb7963b30c",
+  "approval_evidence_digest": "ec00128c1f81803aebfd100d4322973f497090c187d47d55a1a452997c3bd78d",
+  "owned_scope": [
+    "palimnex/ontology_eval.py",
+    "palimnex/tests/test_ontology_eval.py",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-evaluation.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/ontology_eval.py",
+    "palimnex/tests/test_ontology_eval.py",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-evaluation.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [
+    "ontology-phase-3-retrieval: tested implementation receipt validated with task digest 534e1338027a4a0e6157adabe102f5e1191161ec12558c3596c7109b9d9889e0",
+    "ontology-phase-3-cohort: tested implementation receipt validated with task digest 40a9960f21a401960779d4cefb6d0b6d69309345041cf8f79bb214e10180c143"
+  ],
+  "commands": [
+    {
+      "command": "sha256sum docs/ONTOLOGY_ADOPTION.md",
+      "exit_code": 0,
+      "result": "Approved design SHA-256 f97c4f426960b1e4011ef825380f1c7cbe87e393e7ab773b408eb65cb3360b65 matched the task card."
+    },
+    {
+      "command": "python3 palimnex.py status",
+      "exit_code": 1,
+      "result": "Redis Unix socket was unavailable; the command reported cache_consulted false. Starting or mutating Redis was not authorized."
+    },
+    {
+      "command": "python3 palimnex.py validate --deep",
+      "exit_code": 1,
+      "result": "Deep cache validation could not run because the Redis Unix socket was unavailable; the command reported cache_consulted false."
+    },
+    {
+      "command": "python3 palimnex.py search 'baseline_identical no_critical_regression ontology shadow evaluation'",
+      "exit_code": 1,
+      "result": "Focused cache search could not run because the Redis Unix socket was unavailable; the command reported cache_consulted false, so exact-vocabulary source search used rg instead."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-retrieval.json --implementation-receipt artifacts/ontology/phase-3/receipts/ontology-phase-3-retrieval.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Required retrieval dependency receipt validated successfully with task digest 534e1338027a4a0e6157adabe102f5e1191161ec12558c3596c7109b9d9889e0."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-cohort.json --implementation-receipt artifacts/ontology/phase-3/receipts/ontology-phase-3-cohort.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Required cohort dependency receipt validated successfully with task digest 40a9960f21a401960779d4cefb6d0b6d69309345041cf8f79bb214e10180c143."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-evaluation.json",
+      "exit_code": 0,
+      "result": "Task and approval evidence validated; task digest 6842dd51fe3eb0e94c641018a0c7b5dfac96da7dbec2067355c422bb7963b30c and approval evidence digest ec00128c1f81803aebfd100d4322973f497090c187d47d55a1a452997c3bd78d."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_ontology_eval -v",
+      "exit_code": 0,
+      "result": "11 focused tests passed in 96.792 seconds. They cover two equal 45-case real-checkout reports; direct-baseline mismatch; critical and noncritical regressions; baseline-fail shadow-pass improvement; every unchanged gate's defining failure condition; per-suite regressed case IDs; exact v26 parity; corrupt-cohort refusal; stale bindings; metrics; and non-authorizing structure."
+    },
+    {
+      "command": "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/ontology_eval.py",
+      "exit_code": 0,
+      "result": "Strict focused mypy check passed with no issues in the owned runtime module."
+    },
+    {
+      "command": "./.venv/bin/python -c 'import json; from pathlib import Path; from palimnex.ontology_eval import evaluate_ontology_shadow; r=evaluate_ontology_shadow(Path.cwd()); print(json.dumps({\"gates\":r[\"gates\"],\"suites\":{k:{\"baseline_critical\":v[\"baseline\"][\"critical_pass_count\"],\"critical_cases\":v[\"baseline\"][\"critical_case_count\"],\"shadow_critical\":v[\"shadow\"][\"critical_pass_count\"],\"regressed_case_ids\":v[\"regressed_case_ids\"]} for k,v in r[\"suites\"].items()}},sort_keys=True))'",
+      "exit_code": 0,
+      "result": "One real run reported all gates true: abstention_not_regressed, ambiguity_never_contributes, baseline_identical, bounded, channels_visible, no_case_regression, no_critical_regression and no_new_forbidden. Regressed case IDs were empty for all suites. Critical counts were v27 baseline 4/12 and shadow 5/12, cohort baseline and shadow 3/3, and challenges_v26 0/0."
+    },
+    {
+      "command": "sha256sum palimnex/ontology_eval.py palimnex/tests/test_ontology_eval.py",
+      "exit_code": 0,
+      "result": "Implementation SHA-256 4a8534bda64f129af10086c632b764c1ce8b50fdaf6a99468bcdd89bcace3397; tests SHA-256 2a5e253b6a82d96b28cb7055953d7a139812b3abebebc3f404c5caec54037b92."
+    },
+    {
+      "command": "git diff --check -- palimnex/ontology_eval.py palimnex/tests/test_ontology_eval.py",
+      "exit_code": 0,
+      "result": "No whitespace errors were reported in the owned Python files."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-evaluation.json --implementation-receipt artifacts/ontology/phase-3/receipts/ontology-phase-3-evaluation.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Implementation receipt validated against the task, approval evidence, runtime contract and receipt schema."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "The three owned evaluation-lane paths remain untracked for coordinator integration; extensive pre-existing and concurrent foreign-lane changes remain present and untouched."
+    }
+  ],
+  "compatibility_effect": "Implements the accepted Phase 3 clarification R12 in the existing palimnex:ontology-shadow-evaluation:v1 evidence report: removes critical_green, adds baseline_identical, no_critical_regression and no_case_regression, and adds a deterministic regressed_case_ids list to every suite while retaining absolute critical counts. baseline_identical compares canonical JSON from the shadow_retrieve baseline with one direct retrieve_sources call using the same bounded local arguments; that direct result is reused for baseline metrics. This changes only the evaluation-only evidence surface. Production retrieve_sources, search, context, explain-search, ranking, cache, ledger, pack and approved-registry behavior remain unchanged, and promotion_authorized remains false.",
+  "privacy_and_authority_checks": [
+    "Clarification R12 was treated as a correction to the approved Phase 3 evaluation gates, not as promotion or retrieval-influence authority.",
+    "Every evaluated case uses local client=None retrieval with one fixed source snapshot; direct and shadow baseline calls use the same query, root, limit, byte budget, graph setting, client and snapshot.",
+    "Canonical baseline comparison uses palimnex.durable.canonical_json and persists only a boolean; no query, source bytes or excerpts are added to the report.",
+    "Per-suite regression reporting contains only bounded existing case identifiers, sorted deterministically, and is empty when no baseline-passing case regresses.",
+    "Existing fixture, query, source, path, symlink, digest and privacy refusals remain unchanged and fail visibly without echoing admitted bytes.",
+    "No network, provider, model, Redis, SQLite, Git-write, migration, activation, erasure, retention, pack, publication or deployment authority was used."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "The coordinator must run the full suite and scripts/palimnex_check.sh unsandboxed; this lane ran only the task-card focused acceptance commands as required by COMMON.md.",
+    "Indexed product and test files changed, but this task forbids Palimnex indexing and evaluation commands; the coordinator must reindex and run final cache-backed validation after serial integration.",
+    "Redis was unavailable, so cache-backed status, deep validation and focused search were not exercised; repository source, frozen fixtures and direct local retrieval were used instead."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_mutated": false,
+    "ledger_consulted": false,
+    "ledger_mutated": false,
+    "reason": "Status, deep validation and focused search reported the Redis Unix socket missing and cache_consulted false. The task card forbids starting or mutating Redis and forbids live ledger access, so repository files and frozen fixtures remained authoritative."
+  },
+  "git_state": {
+    "git_writes_performed": false,
+    "staging_performed": false,
+    "commit_performed": false,
+    "preexisting_worktree_changes_preserved": true,
+    "owned_paths_state": "palimnex/ontology_eval.py, palimnex/tests/test_ontology_eval.py and the implementation receipt are untracked for coordinator integration."
+  },
+  "status": "tested"
+}

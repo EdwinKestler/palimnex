@@ -1,0 +1,55 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f97c4f426960b1e4011ef825380f1c7cbe87e393e7ab773b408eb65cb3360b65"
+  },
+  "approval_evidence_digest": "ec00128c1f81803aebfd100d4322973f497090c187d47d55a1a452997c3bd78d",
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "ledger_consulted": false,
+    "redis_mutated": false,
+    "sqlite_mutated": false
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "branch": "main",
+    "head": "2558092b5c0b4a47c27c038be8ed4e6ae30c62dc",
+    "dirty_tree": true,
+    "reviewer_modified_repository": false
+  },
+  "workstream_id": "ontology-phase-3-channel",
+  "task_digest": "fbf11323f0dd3d0698a011bd0f3719b9755bf24395decc0ad28fcb1c0e08e592",
+  "reviewed_scope": [
+    "palimnex/ontology_shadow.py",
+    "palimnex/tests/test_ontology_shadow.py",
+    "palimnex/schemas/ontology-shadow-comparison.v1.schema.json",
+    "docs/ONTOLOGY_SHADOW.md",
+    "artifacts/ontology/phase-3/tasks/ontology-phase-3-channel.json",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-channel.implementation-receipt.json"
+  ],
+  "evidence": [
+    "NOTE: palimnex.tests.test_ontology_shadow 17/17 passed. Contract validator status valid for the channel implementation receipt. Strict mypy on palimnex/ontology_shadow.py reported no issues.",
+    "NOTE: ontology_channel refuses registry_kind other than approved_registry with registry_kind_mismatch. registry is None yields an empty channel. Contributing ids are recognized, unambiguous, and have at least one verified binding. Ambiguous, stale, and uncovered ids are listed in excluded_* and never scored.",
+    "NOTE: build_shadow_comparison emits pointers and digests only. Independent probe: query text absent from the document; digest tamper raises comparison_digest_mismatch; retrieval_influence, returned_ranking_changed, and authorizes_actions stay false; authority is evidence_only.",
+    "NOTE: Secret query refused as query_privacy_refused without echoing the query. R7 symlink refusal propagates as a typed ShadowComparisonError without path echo. scan_bytes findings on a bound source refuse as source_privacy_refused.",
+    "MINOR: Runtime _CONCEPT_ID_RE is [a-z][a-z0-9]*(?:[._-][a-z0-9]+)* with no length bound, while schema $defs.conceptId has minLength 3 and maxLength 128. After rehashing, validate_shadow_comparison accepts concept id ab and a 129-character id; Draft 2020-12 rejects both. The builder emits only concept-registry ids, which already satisfy 3-128. Unsorted ids fail runtime as ordering_or_duplicate while the schema accepts them.",
+    "NOTE: A verified empty byte range is contributing with an empty ranking, matching docs/ONTOLOGY_SHADOW.md (empty byte ranges overlap no chunk). Ranking is (-score, pointer) capped at MAX_ONTOLOGY_CANDIDATES 512."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_ontology_shadow palimnex.tests.test_concepts palimnex.tests.test_coverage -v",
+    "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/ontology_shadow.py palimnex/ontology_eval.py",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-channel.json --implementation-receipt artifacts/ontology/phase-3/receipts/ontology-phase-3-channel.implementation-receipt.json"
+  ],
+  "source_grounding_result": "Channel ranking uses match_aliases and verify_source_bindings. A chunk qualifies when a contributing approved concept has a verified repo binding whose inclusive line range overlaps the chunk. Byte ranges convert from current file bytes; empty byte ranges overlap no chunk. Non-repo verified bindings can establish contribution and do not map to repository chunks.",
+  "privacy_result": "Query and source privacy admission run before derivation. Refusals are ShadowComparisonError with reason and field only. Comparison documents carry query_digest and never the raw query, source text, or excerpts. Pointers and paths are scan_text gated.",
+  "retrieval_quality_result": "Score is distinct contributing concepts overlapping a chunk. Sort is descending score then ascending pointer. Cap 512 with truncated disclosure. Candidate registries never rank. Ambiguous, stale, and uncovered concepts never contribute.",
+  "compatibility_result": "Adds palimnex:ontology-shadow-comparison:v1, OntologyChannel, ontology_channel, build_shadow_comparison, and validate_shadow_comparison. Existing retrieval identifiers are unchanged. MINOR validator-versus-schema gap on concept-id length; runtime is stricter on list ordering.",
+  "rollback_result": "Delete palimnex/ontology_shadow.py, palimnex/tests/test_ontology_shadow.py, palimnex/schemas/ontology-shadow-comparison.v1.schema.json, and docs/ONTOLOGY_SHADOW.md, and revert the channel implementation receipt. Retrieval.py currently imports this module, so rollback of the channel alone would break that import until retrieval.py is also reverted.",
+  "authority_result": "Every comparison hard-codes retrieval_influence false, returned_ranking_changed false, authority evidence_only, and authorizes_actions false. No approved registry is created. No configuration switch exists.",
+  "limitations": [
+    "Concept-id length parity was probed with rehashed documents; the builder cannot emit those ids from a valid registry."
+  ],
+  "status": "accepted"
+}

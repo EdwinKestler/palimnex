@@ -1,0 +1,619 @@
+{
+  "schema": "palimnex:ontology-shadow-cohort:v1",
+  "status": "frozen",
+  "binding_digests_are_placeholders": true,
+  "registry": {
+    "schema": "palimnex:concept-registry:v1",
+    "project": {
+      "project_slug": "palimnex",
+      "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8"
+    },
+    "registry_version": 1,
+    "registry_kind": "approved_registry",
+    "concepts": [
+      {
+        "concept_id": "concept.audit_graph",
+        "canonical_name": "Audit graph projection",
+        "aliases": [
+          "audit graph",
+          "memory graph"
+        ],
+        "definition": "The bounded projection of durable historical events, evidence, and tombstones into a non-authorizing audit graph.",
+        "source_bindings": [
+          {
+            "scheme": "repo",
+            "source_id": "palimnex/audit.py",
+            "version": "0000000000000000000000000000000000000000000000000000000000000000",
+            "range": {
+              "unit": "lines",
+              "start": 66,
+              "end": 90
+            },
+            "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ],
+        "status": "approved",
+        "provenance": {
+          "origin": "manual"
+        }
+      },
+      {
+        "concept_id": "concept.concept_registry",
+        "canonical_name": "Concept registry",
+        "aliases": [
+          "concept registry parser",
+          "reviewed concept registry"
+        ],
+        "definition": "The bounded and source-backed registry of reviewed concepts, normalized aliases, and source bindings.",
+        "source_bindings": [
+          {
+            "scheme": "repo",
+            "source_id": "palimnex/concepts.py",
+            "version": "0000000000000000000000000000000000000000000000000000000000000000",
+            "range": {
+              "unit": "lines",
+              "start": 106,
+              "end": 121
+            },
+            "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ],
+        "status": "approved",
+        "provenance": {
+          "origin": "manual"
+        }
+      },
+      {
+        "concept_id": "concept.coverage_receipt",
+        "canonical_name": "Coverage receipt",
+        "aliases": [
+          "answerability receipt",
+          "retrieval coverage"
+        ],
+        "definition": "The deterministic evidence-only receipt that reports recognized, covered, ambiguous, stale, and uncovered concepts.",
+        "source_bindings": [
+          {
+            "scheme": "repo",
+            "source_id": "palimnex/coverage.py",
+            "version": "0000000000000000000000000000000000000000000000000000000000000000",
+            "range": {
+              "unit": "lines",
+              "start": 118,
+              "end": 144
+            },
+            "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ],
+        "status": "approved",
+        "provenance": {
+          "origin": "manual"
+        }
+      },
+      {
+        "concept_id": "concept.durable_ledger",
+        "canonical_name": "Durable memory ledger",
+        "aliases": [
+          "durable history",
+          "sqlite memory ledger"
+        ],
+        "definition": "The repository-local SQLite authority for durable historical memory and its guarded filesystem location.",
+        "source_bindings": [
+          {
+            "scheme": "repo",
+            "source_id": "palimnex/durable.py",
+            "version": "0000000000000000000000000000000000000000000000000000000000000000",
+            "range": {
+              "unit": "lines",
+              "start": 655,
+              "end": 700
+            },
+            "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ],
+        "status": "approved",
+        "provenance": {
+          "origin": "manual"
+        }
+      },
+      {
+        "concept_id": "concept.migration_registry",
+        "canonical_name": "Ledger migration registry",
+        "aliases": [
+          "migration registry",
+          "schema migration chain"
+        ],
+        "definition": "The ordered registry of adjacent durable-ledger schema steps and exact readers.",
+        "source_bindings": [
+          {
+            "scheme": "repo",
+            "source_id": "palimnex/migrations.py",
+            "version": "0000000000000000000000000000000000000000000000000000000000000000",
+            "range": {
+              "unit": "lines",
+              "start": 66,
+              "end": 130
+            },
+            "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ],
+        "status": "approved",
+        "provenance": {
+          "origin": "manual"
+        }
+      },
+      {
+        "concept_id": "concept.privacy_scanner",
+        "canonical_name": "Privacy scanner",
+        "aliases": [
+          "content admission scanner",
+          "privacy admission"
+        ],
+        "definition": "The deterministic scan of exact UTF-8 bytes for credential-shaped findings before content is admitted.",
+        "source_bindings": [
+          {
+            "scheme": "repo",
+            "source_id": "palimnex/security.py",
+            "version": "0000000000000000000000000000000000000000000000000000000000000000",
+            "range": {
+              "unit": "lines",
+              "start": 242,
+              "end": 270
+            },
+            "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ],
+        "status": "approved",
+        "provenance": {
+          "origin": "manual"
+        }
+      },
+      {
+        "concept_id": "concept.reader_leases",
+        "canonical_name": "Redis reader leases",
+        "aliases": [
+          "cache generation lease",
+          "reader lease"
+        ],
+        "definition": "The bounded lease that protects an active Redis cache generation while a reader verifies and consumes it.",
+        "source_bindings": [
+          {
+            "scheme": "repo",
+            "source_id": "palimnex/cache_v3.py",
+            "version": "0000000000000000000000000000000000000000000000000000000000000000",
+            "range": {
+              "unit": "lines",
+              "start": 630,
+              "end": 692
+            },
+            "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ],
+        "status": "approved",
+        "provenance": {
+          "origin": "manual"
+        }
+      },
+      {
+        "concept_id": "concept.repository_graph",
+        "canonical_name": "Repository structural graph",
+        "aliases": [
+          "memory graph",
+          "source dependency graph"
+        ],
+        "definition": "The deterministic graph of repository symbols, document structure, imports, calls, and resolved source relationships.",
+        "source_bindings": [
+          {
+            "scheme": "repo",
+            "source_id": "palimnex/core.py",
+            "version": "0000000000000000000000000000000000000000000000000000000000000000",
+            "range": {
+              "unit": "lines",
+              "start": 869,
+              "end": 925
+            },
+            "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ],
+        "status": "approved",
+        "provenance": {
+          "origin": "manual"
+        }
+      },
+      {
+        "concept_id": "concept.retention_policy",
+        "canonical_name": "Retention policy",
+        "aliases": [
+          "manual retention controls",
+          "retention ledger"
+        ],
+        "definition": "The explicit manual policy and control ledger governing holds, pins, authorization, and retention actions.",
+        "source_bindings": [
+          {
+            "scheme": "repo",
+            "source_id": "palimnex/retention.py",
+            "version": "0000000000000000000000000000000000000000000000000000000000000000",
+            "range": {
+              "unit": "lines",
+              "start": 63,
+              "end": 96
+            },
+            "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ],
+        "status": "approved",
+        "provenance": {
+          "origin": "manual"
+        }
+      },
+      {
+        "concept_id": "concept.rrf_fusion",
+        "canonical_name": "Reciprocal rank fusion",
+        "aliases": [
+          "multi channel ranking",
+          "rrf channel fusion"
+        ],
+        "definition": "The deterministic fusion of lexical, symbol, and graph rankings with bounded candidates and pointer tie-breaking.",
+        "source_bindings": [
+          {
+            "scheme": "repo",
+            "source_id": "palimnex/retrieval.py",
+            "version": "0000000000000000000000000000000000000000000000000000000000000000",
+            "range": {
+              "unit": "lines",
+              "start": 167,
+              "end": 181
+            },
+            "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ],
+        "status": "approved",
+        "provenance": {
+          "origin": "manual"
+        }
+      },
+      {
+        "concept_id": "concept.semantic_hold",
+        "canonical_name": "Semantic provider hold",
+        "aliases": [
+          "disabled semantic provider",
+          "semantic promotion gate"
+        ],
+        "definition": "The disabled-by-default semantic provider contract and evidence gate that prevents unapproved retrieval influence.",
+        "source_bindings": [
+          {
+            "scheme": "repo",
+            "source_id": "palimnex/semantic.py",
+            "version": "0000000000000000000000000000000000000000000000000000000000000000",
+            "range": {
+              "unit": "lines",
+              "start": 48,
+              "end": 64
+            },
+            "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ],
+        "status": "approved",
+        "provenance": {
+          "origin": "manual"
+        }
+      },
+      {
+        "concept_id": "concept.source_locators",
+        "canonical_name": "Source locators",
+        "aliases": [
+          "source binding",
+          "source locator"
+        ],
+        "definition": "Versioned and bounded references that reopen source objects and verify selected-byte digests.",
+        "source_bindings": [
+          {
+            "scheme": "repo",
+            "source_id": "palimnex/locators.py",
+            "version": "0000000000000000000000000000000000000000000000000000000000000000",
+            "range": {
+              "unit": "lines",
+              "start": 36,
+              "end": 78
+            },
+            "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ],
+        "status": "approved",
+        "provenance": {
+          "origin": "manual"
+        }
+      }
+    ],
+    "registry_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+    "authority": "historical_only",
+    "authorizes_actions": false
+  },
+  "cases": [
+    {
+      "id": "alias-source-locator",
+      "category": "alias",
+      "query": "How does the source locator validate bounded source ranges?",
+      "limit": 5,
+      "expected_paths": ["palimnex/locators.py"],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": true,
+      "note": "Exercises a normalized singular alias for the source-locator binding."
+    },
+    {
+      "id": "alias-privacy-scanner",
+      "category": "alias",
+      "query": "Where does the content admission scanner reject source bytes?",
+      "limit": 5,
+      "expected_paths": ["palimnex/security.py"],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": true,
+      "note": "Exercises the admission-scanner alias without changing baseline output."
+    },
+    {
+      "id": "alias-retention-ledger",
+      "category": "alias",
+      "query": "How does the retention ledger preserve manual policy controls?",
+      "limit": 5,
+      "expected_paths": ["palimnex/retention.py"],
+      "forbidden_paths": [],
+      "critical": true,
+      "expect_ontology_contribution": true,
+      "note": "The current lexical baseline already returns the bound retention module."
+    },
+    {
+      "id": "alias-migration-registry",
+      "category": "alias",
+      "query": "Where is the migration registry chain validated?",
+      "limit": 5,
+      "expected_paths": ["palimnex/migrations.py"],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": true,
+      "note": "Exercises the reviewed migration-registry alias."
+    },
+    {
+      "id": "alias-audit-graph",
+      "category": "alias",
+      "query": "How is the audit graph built from durable events?",
+      "limit": 5,
+      "expected_paths": ["palimnex/audit.py"],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": true,
+      "note": "Uses the unambiguous audit-graph alias rather than the collision key."
+    },
+    {
+      "id": "alias-concept-registry",
+      "category": "alias",
+      "query": "How does the concept registry parser enforce approved entries?",
+      "limit": 5,
+      "expected_paths": ["palimnex/concepts.py"],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": true,
+      "note": "Targets the Phase 1 registry parser through an approved alias."
+    },
+    {
+      "id": "alias-coverage-receipt",
+      "category": "alias",
+      "query": "How is the answerability receipt digest computed?",
+      "limit": 5,
+      "expected_paths": ["palimnex/coverage.py"],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": true,
+      "note": "Uses the owner-selected vocabulary for the evidence-only receipt."
+    },
+    {
+      "id": "alias-rrf-fusion",
+      "category": "alias",
+      "query": "Where does reciprocal rank fusion combine retrieval channels?",
+      "limit": 5,
+      "expected_paths": ["palimnex/retrieval.py"],
+      "forbidden_paths": [],
+      "critical": true,
+      "expect_ontology_contribution": true,
+      "note": "The current lexical baseline already returns the bound retrieval module."
+    },
+    {
+      "id": "alias-reader-lease",
+      "category": "alias",
+      "query": "How does the reader lease protect active cache generations?",
+      "limit": 5,
+      "expected_paths": ["palimnex/cache_v3.py"],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": true,
+      "note": "Exercises the cache-generation reader lease alias."
+    },
+    {
+      "id": "alias-durable-history",
+      "category": "alias",
+      "query": "What safeguards the durable history ledger?",
+      "limit": 5,
+      "expected_paths": ["palimnex/durable.py"],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": true,
+      "note": "Targets the durable ledger with a reviewed synonym."
+    },
+    {
+      "id": "paraphrase-locator-verification",
+      "category": "paraphrase",
+      "query": "Where are versioned references to repository text reopened and checked against a hash?",
+      "limit": 5,
+      "expected_paths": ["palimnex/locators.py"],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": false,
+      "note": "Meaning is related to locators but contains no approved matching key."
+    },
+    {
+      "id": "paraphrase-content-scan",
+      "category": "paraphrase",
+      "query": "Which code inspects admitted bytes for credential shaped findings before persistence?",
+      "limit": 5,
+      "expected_paths": ["palimnex/security.py"],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": false,
+      "note": "A semantic description must not be treated as exact alias recognition."
+    },
+    {
+      "id": "paraphrase-migration-chain",
+      "category": "paraphrase",
+      "query": "How are adjacent database schema steps required to form one acyclic sequence?",
+      "limit": 5,
+      "expected_paths": ["palimnex/migrations.py"],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": false,
+      "note": "Describes the migration invariant without using a registry key."
+    },
+    {
+      "id": "paraphrase-rank-combination",
+      "category": "paraphrase",
+      "query": "Where are lexical symbol and dependency neighbor scores combined to order chunks?",
+      "limit": 5,
+      "expected_paths": ["palimnex/retrieval.py"],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": false,
+      "note": "Describes rank combination without an approved ontology key."
+    },
+    {
+      "id": "paraphrase-cache-read-guard",
+      "category": "paraphrase",
+      "query": "What keeps a Redis backed generation alive while a read is in progress?",
+      "limit": 5,
+      "expected_paths": ["palimnex/cache_v3.py"],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": false,
+      "note": "Describes generation protection without the reader-lease key."
+    },
+    {
+      "id": "ambiguity-memory-graph-evidence",
+      "category": "ambiguity",
+      "query": "How is memory graph evidence represented?",
+      "limit": 5,
+      "expected_paths": ["palimnex/audit.py", "palimnex/core.py"],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": false,
+      "note": "The sole intentional collision fails closed across audit and repository graphs."
+    },
+    {
+      "id": "ambiguity-memory-graph-source",
+      "category": "ambiguity",
+      "query": "Which memory graph is relevant to source relationships?",
+      "limit": 5,
+      "expected_paths": ["palimnex/audit.py", "palimnex/core.py"],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": false,
+      "note": "Context does not permit the exact alias matcher to choose one collision target."
+    },
+    {
+      "id": "negative-bread",
+      "category": "negative",
+      "query": "How do I bake sourdough bread?",
+      "limit": 5,
+      "expected_paths": [],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": false,
+      "note": "Unrelated cooking question with no approved matching key."
+    },
+    {
+      "id": "negative-weather",
+      "category": "negative",
+      "query": "What is the weather forecast for Guatemala City?",
+      "limit": 5,
+      "expected_paths": [],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": false,
+      "note": "Unrelated forecast question with no approved matching key."
+    },
+    {
+      "id": "negative-orbital-window",
+      "category": "negative",
+      "query": "Compare orbital launch windows for Mars.",
+      "limit": 5,
+      "expected_paths": [],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": false,
+      "note": "Unrelated aerospace question with no approved matching key."
+    },
+    {
+      "id": "negative-watercolor",
+      "category": "negative",
+      "query": "Which watercolor paper works best for landscapes?",
+      "limit": 5,
+      "expected_paths": [],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": false,
+      "note": "Unrelated art-material question with no approved matching key."
+    },
+    {
+      "id": "negative-bicycle",
+      "category": "negative",
+      "query": "Explain bicycle tire pressure for a gravel route.",
+      "limit": 5,
+      "expected_paths": [],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": false,
+      "note": "Unrelated cycling question with no approved matching key."
+    },
+    {
+      "id": "control-retrieval-chunks",
+      "category": "control",
+      "query": "How are repository files split into retrieval chunks?",
+      "limit": 5,
+      "expected_paths": ["palimnex/retrieval.py"],
+      "forbidden_paths": [],
+      "critical": true,
+      "expect_ontology_contribution": false,
+      "note": "The ordinary baseline already returns retrieval code without ontology recognition."
+    },
+    {
+      "id": "control-canonical-json",
+      "category": "control",
+      "query": "Where is canonical JSON serialization defined?",
+      "limit": 5,
+      "expected_paths": ["palimnex/durable.py"],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": false,
+      "note": "Ordinary implementation query intentionally outside the evaluation registry vocabulary."
+    },
+    {
+      "id": "control-project-identity",
+      "category": "control",
+      "query": "How is project identity loaded from repository configuration?",
+      "limit": 5,
+      "expected_paths": ["palimnex/cache_v3.py", "palimnex/core.py"],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": false,
+      "note": "Ordinary identity query must remain a baseline-only control."
+    },
+    {
+      "id": "control-query-bounds",
+      "category": "control",
+      "query": "What validates a bounded query token list?",
+      "limit": 5,
+      "expected_paths": ["palimnex/cache_v3.py"],
+      "forbidden_paths": [],
+      "critical": false,
+      "expect_ontology_contribution": false,
+      "note": "Ordinary token-bound query must not activate the ontology channel."
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-3-evaluation",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f97c4f426960b1e4011ef825380f1c7cbe87e393e7ab773b408eb65cb3360b65"
+  },
+  "task_digest": "6842dd51fe3eb0e94c641018a0c7b5dfac96da7dbec2067355c422bb7963b30c",
+  "approval_evidence_digest": "ec00128c1f81803aebfd100d4322973f497090c187d47d55a1a452997c3bd78d",
+  "owned_scope": [
+    "palimnex/ontology_eval.py",
+    "palimnex/tests/test_ontology_eval.py",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-evaluation.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/ontology_eval.py",
+    "palimnex/tests/test_ontology_eval.py",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-evaluation.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [
+    "ontology-phase-3-retrieval: tested implementation receipt validated with task digest 534e1338027a4a0e6157adabe102f5e1191161ec12558c3596c7109b9d9889e0",
+    "ontology-phase-3-cohort: tested implementation receipt validated with task digest 40a9960f21a401960779d4cefb6d0b6d69309345041cf8f79bb214e10180c143"
+  ],
+  "commands": [
+    {
+      "command": "sha256sum docs/ONTOLOGY_ADOPTION.md artifacts/design/Ontologyadoptionplan.md",
+      "exit_code": 0,
+      "result": "Approved design and source-proposal digests matched the task card exactly."
+    },
+    {
+      "command": "python3 palimnex.py status",
+      "exit_code": 1,
+      "result": "Redis Unix socket was unavailable; the command reported cache_consulted false. No cache start or mutation was authorized."
+    },
+    {
+      "command": "python3 palimnex.py validate --deep",
+      "exit_code": 1,
+      "result": "Deep cache validation could not run because the Redis Unix socket was unavailable; the command reported cache_consulted false."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-retrieval.json --implementation-receipt artifacts/ontology/phase-3/receipts/ontology-phase-3-retrieval.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "The required retrieval dependency receipt validated successfully."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-cohort.json --implementation-receipt artifacts/ontology/phase-3/receipts/ontology-phase-3-cohort.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "The required cohort dependency receipt validated successfully."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-evaluation.json",
+      "exit_code": 0,
+      "result": "Task and approval evidence validated; task digest 6842dd51fe3eb0e94c641018a0c7b5dfac96da7dbec2067355c422bb7963b30c and approval evidence digest ec00128c1f81803aebfd100d4322973f497090c187d47d55a1a452997c3bd78d."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_ontology_eval -v",
+      "exit_code": 1,
+      "result": "Initial implementation iteration ran all six tests and exposed two test-only assumptions: the frozen v27 fixture has 13 search cases and unittest.TestCase reserves _outcome. Product evaluation completed; the tests were corrected without changing foreign paths."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_ontology_eval -v",
+      "exit_code": 0,
+      "result": "6 focused tests passed in 51.317 seconds, covering two equal 45-case real-checkout reports, non-authorizing structure, typed corrupt-cohort refusal, stale-binding reporting, exact v26 baseline-shadow parity, MRR, recall, forbidden hits, critical counts and abstention edges."
+    },
+    {
+      "command": "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/ontology_eval.py",
+      "exit_code": 0,
+      "result": "Strict focused mypy check passed with no issues in the owned runtime module."
+    },
+    {
+      "command": "./.venv/bin/python -c 'import json; from pathlib import Path; from palimnex.ontology_eval import evaluate_ontology_shadow; r=evaluate_ontology_shadow(Path.cwd()); print(json.dumps({\"gates\":r[\"gates\"],\"stale\":r[\"stale_concept_ids\"],\"suites\":{k:{\"baseline\":v[\"baseline\"],\"shadow\":v[\"shadow\"],\"identical\":v[\"identical_ranking_count\"],\"changed\":v[\"changed_ranking_count\"]} for k,v in r[\"suites\"].items()}},sort_keys=True))'",
+      "exit_code": 0,
+      "result": "The deterministic current-checkout report had no stale concepts. Five gates were true; critical_green was false. Shadow critical passes were 5 of 12 for v27 and 3 of 3 for the cohort; v26 baseline and shadow were identical for all 6 cases."
+    },
+    {
+      "command": "sha256sum palimnex/ontology_eval.py palimnex/tests/test_ontology_eval.py",
+      "exit_code": 0,
+      "result": "Implementation SHA-256 f1aa1d484601f851aa1b87710be501ce2fea23db719810f12caf8fa6e56c1d07; tests 63df136ed05007b61c00efa2253bafc7c6e8965bc8825ec0821403d319d46dbb."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-evaluation.json --implementation-receipt artifacts/ontology/phase-3/receipts/ontology-phase-3-evaluation.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Implementation receipt validated against the task, approval evidence, runtime contract and receipt schema."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "The three owned evaluation-lane paths are untracked; extensive pre-existing and concurrent foreign-lane changes remain present and untouched."
+    }
+  ],
+  "compatibility_effect": "Adds the public palimnex.ontology_eval.evaluate_ontology_shadow(root=core.ROOT, *, limit=5) function. It returns the additive palimnex:ontology-shadow-evaluation:v1 evidence document with v27, v26 challenge and cohort baseline-shadow metrics, per-case rows, materialized registry and cohort digests, stale concepts and six boolean Phase 3 gates. It is local-only, deterministic, non-persistent and always reports promotion_authorized false, retrieval_influence false, authority evidence_only and authorizes_actions false. No existing identifier, retrieval result, cache, ledger, context, pack or approved-registry behavior changes.",
+  "privacy_and_authority_checks": [
+    "Fixture, cohort, query and source bytes are bounded and privacy-scanned before JSON derivation, registry materialization or temporary-project admission; typed refusals expose only stable reason and field names.",
+    "The frozen cohort registry is validated as an approved evaluation registry, placeholder binding versions and selected-range digests are materialized from current privacy-admitted source bytes, and its registry digest is recomputed canonically.",
+    "Missing files and out-of-range bindings remain zero-placeholder locators and are reported as stale rather than aborting the evaluation; unsafe paths, symlinks, corrupt fixtures and privacy findings fail visibly.",
+    "The v27 fixture is checked against the digest pinned by repository configuration and the v26 fixture against its challenge-module digest before either suite runs.",
+    "Every retrieval call uses client=None and a fixed current-source snapshot; the evaluator refuses a repository fingerprint change during the run and uses only a temporary isolated checkout for v26.",
+    "The report omits raw queries, source excerpts and comparison documents; it contains bounded case identifiers, categories, metrics, digests, counts and authority fields only.",
+    "No network, provider, model, Redis, SQLite, Git-write, migration, activation, erasure, retention, pack, publication or deployment authority was used."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "The current local shadow evaluation reports critical_green false: v27 shadow passes 5 of 12 critical search cases, versus 4 of 12 for its local baseline. This is a real exit-gate result, not a test failure; the coordinator must reconcile the approved local shadow harness with the cache-backed frozen v27 acceptance baseline before Phase 3 can be accepted.",
+    "The cohort negative-abstention metric is 0.0 for both baseline and shadow because ordinary local lexical retrieval returns chunks for all five unrelated cohort queries. The abstention_not_regressed gate remains true because shadow does not worsen the baseline, but absolute negative abstention is not green evidence.",
+    "The coordinator must run the full suite and scripts/palimnex_check.sh unsandboxed; this lane ran only its task-card focused acceptance commands as required.",
+    "Indexed product and test files changed, but this task forbids indexing and evaluation commands through the Palimnex cache; the coordinator must reindex and run final cache-backed validation after serial integration.",
+    "Redis was unavailable, so cache-backed deep validation was not exercised in this lane; repository source and pinned fixtures were used directly."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_mutated": false,
+    "ledger_consulted": false,
+    "ledger_mutated": false,
+    "reason": "Both status and deep validation reported the Redis Unix socket missing and cache_consulted false. The task card forbids starting or mutating Redis and forbids reading or writing live ledger state, so current repository source and frozen fixtures were used directly."
+  },
+  "git_state": {
+    "git_writes_performed": false,
+    "staging_performed": false,
+    "commit_performed": false,
+    "preexisting_worktree_changes_preserved": true,
+    "owned_paths_state": "palimnex/ontology_eval.py, palimnex/tests/test_ontology_eval.py and the implementation receipt are untracked for coordinator integration."
+  },
+  "status": "tested"
+}

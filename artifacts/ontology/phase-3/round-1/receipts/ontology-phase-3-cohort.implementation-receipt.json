@@ -1,0 +1,99 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-3-cohort",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f97c4f426960b1e4011ef825380f1c7cbe87e393e7ab773b408eb65cb3360b65"
+  },
+  "task_digest": "40a9960f21a401960779d4cefb6d0b6d69309345041cf8f79bb214e10180c143",
+  "approval_evidence_digest": "ec00128c1f81803aebfd100d4322973f497090c187d47d55a1a452997c3bd78d",
+  "owned_scope": [
+    "palimnex/evaluation/ontology-shadow.v1.json",
+    "palimnex/tests/test_ontology_shadow_cohort.py",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-cohort.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/evaluation/ontology-shadow.v1.json",
+    "palimnex/tests/test_ontology_shadow_cohort.py",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-cohort.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [],
+  "commands": [
+    {
+      "command": "python3 palimnex.py status",
+      "exit_code": 1,
+      "result": "Redis Unix socket was missing; source cache was unavailable and cache_consulted was false. No Redis start or index was authorized."
+    },
+    {
+      "command": "python3 palimnex.py validate --deep",
+      "exit_code": 1,
+      "result": "Deep cache validation could not consult the missing Redis Unix socket and reported cache_consulted false; repository files remained authoritative."
+    },
+    {
+      "command": "sha256sum docs/ONTOLOGY_ADOPTION.md artifacts/design/Ontologyadoptionplan.md",
+      "exit_code": 0,
+      "result": "Approved design and source-proposal digests matched the task card."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_ontology_shadow_cohort -v",
+      "exit_code": 0,
+      "result": "6 tests passed: structure and category bounds, placeholder registry parsing, current path/range bounds with per-concept source anchors, sole alias collision, case vocabulary, and privacy admission."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-cohort.json",
+      "exit_code": 0,
+      "result": "Task and approval evidence validated; task digest 40a9960f21a401960779d4cefb6d0b6d69309345041cf8f79bb214e10180c143 and approval evidence digest ec00128c1f81803aebfd100d4322973f497090c187d47d55a1a452997c3bd78d."
+    },
+    {
+      "command": "sha256sum palimnex/evaluation/ontology-shadow.v1.json palimnex/tests/test_ontology_shadow_cohort.py",
+      "exit_code": 0,
+      "result": "Cohort SHA-256 f71f3fb923c4f9d8084ffc2ae5c450049f692a5ad93e305afedc5a040b2b435c; structural test SHA-256 8946117e34be01a6d6806715f55d5670d2bcfddd899d96d50bff181f1fdddd6c."
+    },
+    {
+      "command": "git diff --check -- palimnex/evaluation/ontology-shadow.v1.json palimnex/tests/test_ontology_shadow_cohort.py",
+      "exit_code": 0,
+      "result": "No whitespace errors."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-cohort.json --implementation-receipt artifacts/ontology/phase-3/receipts/ontology-phase-3-cohort.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Implementation receipt validated against the task, approval evidence, runtime contract, and receipt schema."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "Owned cohort, structural test, and receipt are untracked; extensive pre-existing and concurrent foreign-lane changes remain present and untouched."
+    }
+  ],
+  "compatibility_effect": "Rebinds four source ranges in the frozen evaluation-only palimnex:ontology-shadow-cohort:v1 contract and adds structural anchor coverage. It adds no runtime API, configuration switch, approved production registry, retrieval influence, case or label change, or change to existing output; the cohort remains consumed only by the separately integrated evaluate-ontology-shadow path.",
+  "privacy_and_authority_checks": [
+    "The exact cohort bytes pass palimnex.security.scan_bytes with no findings.",
+    "Binding changes: concept.concept_registry 105-121 to 106-121; concept.migration_registry 65-130 to 66-130; concept.rrf_fusion 128-146 to 167-181; concept.source_locators 35-78 to 36-78. The other eight bindings were checked against current source and remain unchanged.",
+    "Every binding now starts on its per-concept expected def or class anchor; concept.rrf_fusion spans the exact _fuse_rankings function from its def line through its final return line.",
+    "Every bound source file passed privacy scanning before concept metadata was authored, and every binding is a bounded repository-relative line range.",
+    "All locator version and digest values and the frozen registry digest are explicit zero placeholders; the structural test recomputes only the registry digest before parse_registry with allow_placeholder_digests enabled.",
+    "Aliases are stored normalized; the registry has exactly one intentional key collision across exactly two concepts, and ambiguity cases expect no contribution.",
+    "No network, provider, model, Redis, SQLite, Git-write, migration, activation, erasure, retention, or pack authority was used."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "The coordinator must run the full suite and scripts/palimnex_check.sh unsandboxed; this lane ran only its task-card acceptance commands as required.",
+    "Future source edits can make frozen line ranges stale; the structural test now detects anchor drift, and the evaluation lane must still report stale concepts rather than silently treating them as covered.",
+    "The evaluation and retrieval lanes must materialize placeholders and preserve byte-identical baseline retrieval before the Phase 3 integration gate can establish end-to-end behavior."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_mutated": false,
+    "ledger_consulted": false,
+    "ledger_mutated": false,
+    "reason": "Palimnex status and deep validation could not consult the missing Redis Unix socket and reported cache_consulted false. The task card forbids starting Redis, indexing, or reading and writing live ledger state, so repository source was used directly."
+  },
+  "git_state": {
+    "git_writes_performed": false,
+    "staging_performed": false,
+    "commit_performed": false,
+    "preexisting_worktree_changes_preserved": true,
+    "owned_paths_state": "Three owned files are untracked for coordinator integration."
+  },
+  "status": "tested"
+}

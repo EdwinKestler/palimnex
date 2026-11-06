@@ -2761,6 +2761,11 @@ def parser() -> argparse.ArgumentParser:
         "--registry",
         help=f"approved concept registry, repository-relative (default: {DEFAULT_CONCEPT_REGISTRY})",
     )
+    shadow_parser = commands.add_parser(
+        "evaluate-ontology-shadow",
+        help="read-only Phase 3 comparison of baseline and ontology-shadow rankings",
+    )
+    shadow_parser.add_argument("--limit", type=int, default=5)
     symbols_parser = commands.add_parser("symbols")
     symbols_parser.add_argument("query")
     symbols_parser.add_argument("--limit", type=int, default=20)
@@ -3057,6 +3062,15 @@ def main(argv: list[str] | None = None) -> int:
             )
             print(json.dumps(output, sort_keys=True))
             return 0
+        if args.command == "evaluate-ontology-shadow":
+            if not config_present(ROOT):
+                raise ValueError(
+                    f"no {CONFIG_FILE} in {ROOT}; run `palimnex init` to create one (see docs/INSTALL.md)"
+                )
+            from .ontology_eval import evaluate_ontology_shadow
+            report = evaluate_ontology_shadow(ROOT, limit=args.limit)
+            print(json.dumps(report, sort_keys=True))
+            return 0 if all(report["gates"].values()) else 2
 
         cache_commands = {
             "status", "validate", "index", "search", "symbols", "impact", "path",

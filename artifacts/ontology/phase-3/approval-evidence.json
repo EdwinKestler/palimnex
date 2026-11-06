@@ -1,0 +1,32 @@
+{
+  "schema": "palimnex:ontology-approval-evidence:v1",
+  "authority_source": "user_message",
+  "evidence_locator": "claude.ai conversation with the repository owner, user message sent 2026-11-06 11:20 America/Guatemala ('ok phase 3 is approved'), plus the owner's answers to the shadow-visibility and evaluation-registry questions in the same conversation; Phase 2 exit gate commit 2558092",
+  "grantor_claim": "repository owner (Gus, GitHub EdwinKestler)",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f97c4f426960b1e4011ef825380f1c7cbe87e393e7ab773b408eb65cb3360b65"
+  },
+  "source_proposal_identity": {
+    "path": "artifacts/design/Ontologyadoptionplan.md",
+    "sha256": "8fe38bef5f7f25fa8a7d58dad21b89f69c70f4a367d9981c01fdedf6bd165d86"
+  },
+  "approved_phases": [
+    3
+  ],
+  "authorized_actions": [
+    "ontology_phase_3_shadow"
+  ],
+  "excluded_actions": [
+    "ontology_phase_0_contract",
+    "ontology_phase_1_registry",
+    "ontology_phase_2_coverage",
+    "ontology_phase_4_semantic",
+    "ontology_phase_5_extensions"
+  ],
+  "recorded_at": "2026-11-06T11:20:00-06:00",
+  "implementation_authorized": true,
+  "network_authorized": false,
+  "git_write_authorized": false,
+  "live_state_authorized": false
+}

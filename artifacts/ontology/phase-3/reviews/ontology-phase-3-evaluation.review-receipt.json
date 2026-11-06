@@ -1,0 +1,56 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f97c4f426960b1e4011ef825380f1c7cbe87e393e7ab773b408eb65cb3360b65"
+  },
+  "approval_evidence_digest": "ec00128c1f81803aebfd100d4322973f497090c187d47d55a1a452997c3bd78d",
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "ledger_consulted": false,
+    "redis_mutated": false,
+    "sqlite_mutated": false
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "branch": "main",
+    "head": "2558092b5c0b4a47c27c038be8ed4e6ae30c62dc",
+    "dirty_tree": true,
+    "reviewer_modified_repository": false
+  },
+  "workstream_id": "ontology-phase-3-evaluation",
+  "task_digest": "6842dd51fe3eb0e94c641018a0c7b5dfac96da7dbec2067355c422bb7963b30c",
+  "reviewed_scope": [
+    "palimnex/ontology_eval.py",
+    "palimnex/tests/test_ontology_eval.py",
+    "artifacts/ontology/phase-3/tasks/ontology-phase-3-evaluation.json",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-evaluation.implementation-receipt.json",
+    "artifacts/ontology/phase-3/integration/clarification-R12.md",
+    "docs/ONTOLOGY_ADOPTION.md"
+  ],
+  "evidence": [
+    "NOTE: palimnex.tests.test_ontology_eval 11/11 passed in 97.348s. Contract validator status valid.",
+    "NOTE: Independent evaluate_ontology_shadow and python3 palimnex.py evaluate-ontology-shadow: gates baseline_identical, no_critical_regression, no_case_regression, no_new_forbidden, abstention_not_regressed, ambiguity_never_contributes, channels_visible, bounded all true. promotion_authorized false. retrieval_influence false. authority evidence_only. stale_concept_ids []. regressed_case_ids [] on v27, challenges_v26, and cohort. Two runs produced the same cohort_digest f71f3fb923c4f9d8084ffc2ae5c450049f692a5ad93e305afedc5a040b2b435c.",
+    "NOTE: v27: baseline critical_pass_count 4/12, shadow 5/12 (content-admission entered at rank 1), changed_ranking_count 2, no regressions. Cohort: 10 alias rows ontology_contributed true; both ambiguity rows false; changed_ranking_count 5; no regressions. challenges_v26: registry=None, 6/6 identical rankings, negative unanswerable abstains on both sides.",
+    "NOTE: Metric formulas match palimnex/cache_v3.py _evaluate_loaded: recall_at_limit = found_total/expected_total; mrr = mean of 1/first_relevant_rank with 0.0 on misses. palimnex/core.py evaluate remains the v2 pass-rate helper over evaluation_queries.",
+    "NOTE: Gates are computed from case outcomes in _gates. promotion_authorized is hardcoded False. A stale cohort binding is collected into stale_concept_ids; test_stale_binding_is_reported_instead_of_raising passed. Corrupt cohort raises OntologyEvaluationError invalid_fields.",
+    "NOTE: Clarification R12 is a faithful reading of the design exit gate all current critical retrieval cases remain green. Remain names the already-green production surface (cache-backed palimnex evaluate / v27 search, Phase 2 Recall@5 1.0). Absolute retrieve_sources critical pass is 4/12 at limit 5 on the baseline itself, so SHADOW_SPEC critical_green measured retrieve_sources against search calibration. R12 keeps production identity plus no_critical_regression and no_case_regression, which is the design's remain-green property. It replaces the coordinator's original critical_green operationalization recorded in clarification-R12.md. Phase 4 separately requires no critical regression as a later gate.",
+    "NOTE: No public Draft schema file exists for palimnex:ontology-shadow-evaluation:v1. SHADOW_SPEC requires a public schema only for the comparison document. Case rows contain ids, ranks, and booleans; they omit query text and excerpts."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_ontology_eval -v",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-evaluation.json --implementation-receipt artifacts/ontology/phase-3/receipts/ontology-phase-3-evaluation.implementation-receipt.json",
+    "python3 palimnex.py evaluate-ontology-shadow"
+  ],
+  "source_grounding_result": "evaluate_ontology_shadow is local-only. v27 search cases run through shadow_retrieve with the materialized cohort registry. v26 challenges write a temporary checkout and pass registry=None. Cohort cases use the same materialized registry. Materialization reopens current files, privacy-scans, and treats missing or range-drift bindings as stale.",
+  "privacy_result": "Query admission uses the same scan as the channel. v26 document bytes are scan_bytes gated. Typed OntologyEvaluationError messages carry reason and field. Live reports contain no query text. --limit 0 CLI stderr is JSON status/error without a document.",
+  "retrieval_quality_result": "All eight R12 gates were independently true on this checkout. No suite listed a regressed_case_id. Ambiguity never contributed. v26 shadow equals baseline. Cohort negatives fail on both sides because retrieve_sources returns hits; that is non-regression, with abstention evidence from v26 unanswerable.",
+  "compatibility_result": "Adds palimnex.ontology_eval.evaluate_ontology_shadow returning palimnex:ontology-shadow-evaluation:v1. Existing evaluate, search, and explain-search APIs are unchanged. R12 amends evaluation gates only.",
+  "rollback_result": "Delete palimnex/ontology_eval.py and palimnex/tests/test_ontology_eval.py and revert the evaluation implementation receipt. The CLI handler in core.py must be reverted with integration.",
+  "authority_result": "promotion_authorized is always false. retrieval_influence is always false. authority is evidence_only. authorizes_actions is false. Passing gates is evidence, not promotion.",
+  "limitations": [
+    "Cache-backed palimnex evaluate was not re-run; sockets were skipped per review instructions. R12 clause that palimnex evaluate still passes therefore rests on retrieve_sources identity plus an unmodified cache_v3.py."
+  ],
+  "status": "accepted"
+}

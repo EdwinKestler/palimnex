@@ -1,0 +1,50 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f97c4f426960b1e4011ef825380f1c7cbe87e393e7ab773b408eb65cb3360b65"
+  },
+  "approval_evidence_digest": "ec00128c1f81803aebfd100d4322973f497090c187d47d55a1a452997c3bd78d",
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "ledger_consulted": false,
+    "redis_mutated": false,
+    "sqlite_mutated": false
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "branch": "main",
+    "head": "2558092b5c0b4a47c27c038be8ed4e6ae30c62dc",
+    "dirty_tree": true,
+    "reviewer_modified_repository": false
+  },
+  "workstream_id": "ontology-phase-3-cohort",
+  "task_digest": "40a9960f21a401960779d4cefb6d0b6d69309345041cf8f79bb214e10180c143",
+  "reviewed_scope": [
+    "palimnex/evaluation/ontology-shadow.v1.json",
+    "palimnex/tests/test_ontology_shadow_cohort.py",
+    "artifacts/ontology/phase-3/tasks/ontology-phase-3-cohort.json",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-cohort.implementation-receipt.json"
+  ],
+  "evidence": [
+    "NOTE: palimnex.tests.test_ontology_shadow_cohort 6/6 passed. Contract validator status valid for the cohort implementation receipt.",
+    "NOTE: Document schema palimnex:ontology-shadow-cohort:v1, status frozen, registry_kind approved_registry, binding_digests_are_placeholders true. 12 concepts and 26 cases. Categories: alias 10, paraphrase 5, ambiguity 2, negative 5, control 4. Placeholder version and digest fields are 64 zeros; registry_digest is a placeholder until materialization.",
+    "NOTE: Sole two-concept alias collision is memory graph (concept.audit_graph vs concept.repository_graph). Live evaluate-ontology-shadow rows ambiguity-memory-graph-evidence and ambiguity-memory-graph-source have ontology_contributed false.",
+    "NOTE: Bindings point at the named code: source-locator start 36 is class SourceLocator:; rrf_fusion lines 167-181 are def _fuse_rankings through return _Fusion(...). After materialization, only version, digest, and registry_digest change (materialized registry_digest 4a07ddf01761c648aaf2525e01c7e7ab489225509e0b5511e710588c5967a808). 12 anchors are current.",
+    "NOTE: .palimnex.json exclude_paths lists palimnex/evaluation/ontology-shadow.v1.json. explain-search with the default registry reports coverage_present false. Passing the cohort path as --registry raises ConceptRegistryError invalid_fields because placeholders are forbidden on that path. scan_bytes on the cohort file is empty.",
+    "NOTE: Project identity in the embedded registry matches this repository .palimnex.json identity. The file is evaluation-only and is never an approved registry."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_ontology_shadow_cohort palimnex.tests.test_evaluate_ontology_shadow_cli palimnex.tests.test_explain_search -v",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-cohort.json --implementation-receipt artifacts/ontology/phase-3/receipts/ontology-phase-3-cohort.implementation-receipt.json"
+  ],
+  "source_grounding_result": "Each concept binds repo line ranges to current files whose names match the concept. Structural tests require current anchors, unique case ids, and exactly one two-concept alias collision. Materialization at evaluation time rewrites only version, digest, and registry_digest under binding_digests_are_placeholders.",
+  "privacy_result": "Cohort bytes pass scan_bytes. No literal secret-pattern strings. Placeholder digests are zeros. explain-search refuses this file as a registry.",
+  "retrieval_quality_result": "Alias cases expect contribution; paraphrase, ambiguity, negative, and control cases do not. Ambiguity never contributes in the live report. Negative cases share expected_paths [] with the retrieve_sources non-abstention behavior; that is measured as a non-regression against baseline.",
+  "compatibility_result": "New evaluation-only fixture. v25-v27 and cases.v0.json are untouched. Index exclusion is additive in .palimnex.json (integration-owned).",
+  "rollback_result": "Delete palimnex/evaluation/ontology-shadow.v1.json and palimnex/tests/test_ontology_shadow_cohort.py, and revert the cohort implementation receipt. Integration must also drop the exclude_paths entry.",
+  "authority_result": "The embedded registry is a frozen evaluation-only test registry. It does not authorize retrieval influence, promotion, or loading as ontology/concept-registry.v1.json.",
+  "limitations": [],
+  "status": "accepted"
+}

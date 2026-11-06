@@ -1,0 +1,65 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f97c4f426960b1e4011ef825380f1c7cbe87e393e7ab773b408eb65cb3360b65"
+  },
+  "approval_evidence_digest": "ec00128c1f81803aebfd100d4322973f497090c187d47d55a1a452997c3bd78d",
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "ledger_consulted": false,
+    "redis_mutated": false,
+    "sqlite_mutated": false
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "branch": "main",
+    "head": "2558092b5c0b4a47c27c038be8ed4e6ae30c62dc",
+    "dirty_tree": true,
+    "reviewer_modified_repository": false
+  },
+  "workstream_id": "ontology-phase-3-integration",
+  "task_digest": "c4226c6fdfac206f356a33e44617c61153ef484581457ae89e6f66c0fe114d45",
+  "reviewed_scope": [
+    "palimnex/core.py",
+    "palimnex/tests/test_evaluate_ontology_shadow_cli.py",
+    ".palimnex.json",
+    "pyproject.toml",
+    "palimnex/CHANGELOG.md",
+    "docs/COMPATIBILITY.md",
+    "docs/ONTOLOGY_ADOPTION.md",
+    "artifacts/ontology/phase-3/integration/clarification-R12.md",
+    "artifacts/ontology/phase-3/integration/bundle-validation.json",
+    "artifacts/ontology/phase-3/tasks/ontology-phase-3-integration.json"
+  ],
+  "evidence": [
+    "NOTE: palimnex.tests.test_evaluate_ontology_shadow_cli 6/6 passed. Combined focused Phase 1-3 run 94/94 plus evaluation 11/11. Real CLI python3 palimnex.py evaluate-ontology-shadow exited 0 with a 12361-byte report and empty stderr; all gates true; promotion_authorized false.",
+    "NOTE: CLI exits independently confirmed: --limit 0 returns 1 with JSON {status:error, error: ontology shadow evaluation refused: invalid_limit at limit} and no stdout document; --limit nope returns argparse 2; --help returns 0. Gate-fail path is unit-tested to print the report and return 2.",
+    "NOTE: git diff HEAD palimnex/core.py is additive: evaluate-ontology-shadow subparser with --limit default 5, config_present check, lazy import of evaluate_ontology_shadow, print canonical JSON, return 0 if all(report['gates'].values()) else 2. test_search_and_explain_search_parsers_are_unchanged passed.",
+    "NOTE: .palimnex.json adds palimnex/evaluation/ontology-shadow.v1.json to exclude_paths. docs/COMPATIBILITY.md and palimnex/CHANGELOG.md add Phase 3 notes that shadow ranking is never returned in place of baseline. pyproject.toml adds palimnex/ontology_shadow.py and palimnex/ontology_eval.py to tool.mypy.files.",
+    "NOTE: docs/ONTOLOGY_ADOPTION.md was edited outside integration owned_paths (it is listed read_only). The diff records Phase 3 approval, the evaluation-command visibility decision, and the evaluation-only cohort decision. The Phase 3 exit-gate bullet list is unchanged. Working-tree SHA-256 matches the task-card design identity f97c4f426960b1e4011ef825380f1c7cbe87e393e7ab773b408eb65cb3360b65.",
+    "NOTE: No artifacts/ontology/phase-3/receipts/ontology-phase-3-integration.implementation-receipt.json exists. bundle-validation.json status valid; authorizes_actions false.",
+    "NOTE: No retrieval_influence or promotion configuration key was added. core.search remains the Redis cache path and does not import retrieval.py. explain-search still embeds retrieve_sources. argparse usage code 2 coincides with gate-fail 2, which is the existing palimnex evaluate / ledger-status pattern."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_evaluate_ontology_shadow_cli palimnex.tests.test_explain_search palimnex.tests.test_coverage_frozen -v",
+    "python3 palimnex.py evaluate-ontology-shadow",
+    "python3 palimnex.py evaluate-ontology-shadow --limit 0",
+    "python3 palimnex.py evaluate-ontology-shadow --limit nope",
+    "python3 palimnex.py evaluate-ontology-shadow --help",
+    "git diff HEAD -- palimnex/core.py palimnex/tests/test_evaluate_ontology_shadow_cli.py .palimnex.json pyproject.toml palimnex/CHANGELOG.md docs/COMPATIBILITY.md docs/ONTOLOGY_ADOPTION.md"
+  ],
+  "source_grounding_result": "The new command requires project configuration, runs evaluate_ontology_shadow locally, and prints the evaluation document. It does not index, remember, or write cache or ledger state. Cohort exclusion from the source index is the only .palimnex.json change.",
+  "privacy_result": "Typed evaluation errors exit 1 as JSON status/error on stderr without a report body. Argparse errors exit 2 with usage text. The success report contains ids, ranks, digests, and booleans.",
+  "retrieval_quality_result": "Live evaluate-ontology-shadow gates all true; promotion_authorized false. Independent retrieve_sources HEAD-versus-working identity 246/246. Search and explain-search parsers are unchanged. Full palimnex evaluate and palimnex_check.sh were not run.",
+  "compatibility_result": "Additive command, docs, mypy file list, changelog, compatibility note, and index exclusion. No existing identifier, schema, or frozen fixture changed. R12 lives in artifacts/ontology/phase-3/integration/clarification-R12.md and is implemented in ontology_eval.py.",
+  "rollback_result": "Revert palimnex/core.py, .palimnex.json, pyproject.toml, palimnex/CHANGELOG.md, docs/COMPATIBILITY.md, and docs/ONTOLOGY_ADOPTION.md; delete palimnex/tests/test_evaluate_ontology_shadow_cli.py. Lane modules must be removed with their receipts. retrieve_sources identity makes the retrieval.py revert safe.",
+  "authority_result": "Phase 3 approval evidence authorizes ontology_phase_3_shadow only. The CLI cannot set promotion_authorized true. Git writes, network, and live-state remain unauthorized. This review does not authorize commit, promotion, or Phase 4.",
+  "limitations": [
+    "Integration task-card acceptance commands that need sockets (full suite, mypy-all via palimnex_check.sh, index, palimnex evaluate, ledger-status) were skipped as instructed.",
+    "No integration implementation receipt existed to validate.",
+    "Cache-backed palimnex evaluate was not independently re-run, so R12 production-search greenness is inferred from retrieve_sources identity and an unmodified cache_v3.py."
+  ],
+  "status": "accepted_with_limits"
+}

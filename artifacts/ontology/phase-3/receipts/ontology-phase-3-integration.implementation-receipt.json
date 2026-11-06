@@ -1,0 +1,203 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-3-integration",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f97c4f426960b1e4011ef825380f1c7cbe87e393e7ab773b408eb65cb3360b65"
+  },
+  "task_digest": "c4226c6fdfac206f356a33e44617c61153ef484581457ae89e6f66c0fe114d45",
+  "approval_evidence_digest": "ec00128c1f81803aebfd100d4322973f497090c187d47d55a1a452997c3bd78d",
+  "owned_scope": [
+    "palimnex/core.py",
+    "palimnex/tests/test_evaluate_ontology_shadow_cli.py",
+    ".palimnex.json",
+    "pyproject.toml",
+    "palimnex/CHANGELOG.md",
+    "docs/COMPATIBILITY.md",
+    "artifacts/ontology/phase-3/integration",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-integration.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/core.py",
+    "palimnex/tests/test_evaluate_ontology_shadow_cli.py",
+    ".palimnex.json",
+    "pyproject.toml",
+    "palimnex/CHANGELOG.md",
+    "docs/COMPATIBILITY.md",
+    "artifacts/ontology/phase-3/integration",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-integration.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-channel.implementation-receipt.json",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-cohort.implementation-receipt.json",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-retrieval.implementation-receipt.json",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-evaluation.implementation-receipt.json",
+    "artifacts/ontology/phase-3/reviews/ontology-phase-3-channel.review-receipt.json",
+    "artifacts/ontology/phase-3/reviews/ontology-phase-3-cohort.review-receipt.json",
+    "artifacts/ontology/phase-3/reviews/ontology-phase-3-retrieval.review-receipt.json",
+    "artifacts/ontology/phase-3/reviews/ontology-phase-3-evaluation.review-receipt.json",
+    "artifacts/ontology/phase-3/reviews/ontology-phase-3-integration.review-receipt.json"
+  ],
+  "commands": [
+    {
+      "command": "./.venv/bin/python -m unittest discover -s palimnex/tests -p 'test_*.py'",
+      "exit_code": 0,
+      "result": "411 tests OK, unsandboxed (artifacts/ontology/phase-3/integration/gate-final.log)"
+    },
+    {
+      "command": "./.venv/bin/python -m mypy",
+      "exit_code": 0,
+      "result": "no issues in 16 source files including ontology_shadow.py and ontology_eval.py"
+    },
+    {
+      "command": "python3 palimnex.py index",
+      "exit_code": 0,
+      "result": "fresh index, 120 files"
+    },
+    {
+      "command": "python3 palimnex.py validate --deep",
+      "exit_code": 0,
+      "result": "fresh, deep validation passed"
+    },
+    {
+      "command": "python3 palimnex.py evaluate --limit 5",
+      "exit_code": 0,
+      "result": "cache-backed production search: 20 cases, critical passed, recall_at_limit 1.0, MRR 0.9 (unchanged from Phase 2)"
+    },
+    {
+      "command": "python3 palimnex.py evaluate-ontology-shadow",
+      "exit_code": 0,
+      "result": "all eight gates true, promotion_authorized false, cohort sha256 f71f3fb9..., report artifacts/ontology/phase-3/integration/shadow-evaluation.final.json"
+    },
+    {
+      "command": "PATH=\"$PWD/.venv/bin:$PATH\" ./scripts/palimnex_check.sh",
+      "exit_code": 0,
+      "result": "standalone gate passed; isolated retrieval recall 1.0; no live ledger write or model call"
+    },
+    {
+      "command": "python3 palimnex.py ledger-status",
+      "exit_code": 0,
+      "result": "integrity ok, 0 events"
+    },
+    {
+      "command": "coordinator identity check: git archive HEAD palimnex vs working tree, retrieve_sources over 40 inputs on the repository",
+      "exit_code": 0,
+      "result": "40/40 canonical-JSON digests identical"
+    },
+    {
+      "command": "./.venv/bin/python artifacts/ontology/phase-3/tools/ownership_audit.py audit",
+      "exit_code": 1,
+      "result": "final rerun against the pre-rereview snapshot flags two expected coordination-record deltas outside implementation-lane ownership: the post-fix channel review receipt and the coordinator one-shot integration-receipt helper; recorded implementation-wave audits were clean, no implementation lane wrote outside its owned paths, and no reviewer changed product/source files"
+    }
+  ],
+  "compatibility_effect": "Additive: palimnex.ontology_shadow, palimnex.ontology_eval, retrieval.shadow_retrieve, public schema palimnex:ontology-shadow-comparison:v1, report palimnex:ontology-shadow-evaluation:v1, frozen cohort palimnex:ontology-shadow-cohort:v1 (excluded from the index), read-only evaluate-ontology-shadow command, docs/ONTOLOGY_SHADOW.md. retrieve_sources refactored with byte-identical output; search, context, explain-search, cache, ledger, pack, MCP unchanged; no retrieval influence; no approved registry created.",
+  "privacy_and_authority_checks": [
+    "no Git writes",
+    "no model or provider calls",
+    "no ledger writes (0 events)",
+    "Redis used for the gate only, then stopped",
+    "comparison documents carry pointers only: no query text or excerpts",
+    "shadow_retrieve imported only by ontology_eval and tests; no configuration switch enables influence",
+    "Codex lanes ran with approval_policy=never; no sandbox escapes"
+  ],
+  "integration_patch_proposals": [
+    "R8 (from Phase 0): validator should accept files_changed descendants of directory-valued owned paths; still not applied"
+  ],
+  "unresolved_risks": [
+    "Integration review status is accepted_with_limits. Each limit is closed by coordinator evidence: (1) socket-backed commands (full suite, palimnex_check.sh, index, palimnex evaluate, ledger-status) ran unsandboxed and passed, see gate-final.log; (2) the missing integration receipt is this receipt, validated against the task card; (3) cache-backed palimnex evaluate was re-run and passes every critical case with Recall@5 1.0 and MRR 0.9",
+    "R12 (gate meaning) was confirmed by the owner on 2026-11-06; the reviewer judged it faithful; the confirmation does not authorize retrieval influence or Phase 4",
+    "retrieve_sources passes only 4/12 critical v27 search cases at limit 5 under both baseline and shadow (pre-existing; v27 is calibrated for cache-backed search)",
+    "on the real repository retrieve_sources never abstains for unrelated queries; abstention evidence comes from the v26 challenge negatives",
+    "cohort line bindings drift when bound source moves; anchor tests in test_ontology_shadow_cohort.py catch it",
+    "Grok tool-level write block only removed Write; reviewer read-only status verified by snapshot audits"
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": true,
+    "index_fresh_at_gate": true,
+    "redis_final_state": "stopped (restored)",
+    "ledger_integrity": "ok",
+    "ledger_events": 0
+  },
+  "git_state": {
+    "head": "2558092",
+    "staged": [],
+    "status": [
+      " M .palimnex.json",
+      " M docs/COMPATIBILITY.md",
+      " M docs/ONTOLOGY_ADOPTION.md",
+      " M palimnex/CHANGELOG.md",
+      " M palimnex/core.py",
+      " M palimnex/retrieval.py",
+      " M pyproject.toml",
+      "?? .env.example",
+      "?? artifacts/ontology/phase-0/integration/gate.log",
+      "?? artifacts/ontology/phase-0/integration/standard-gate.log",
+      "?? artifacts/ontology/phase-0/logs/grok-review-wave-2.log",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-coverage-contract.log",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-coverage-contract.pid",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-registry-contract.log",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-registry-contract.pid",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-threat-cases.log",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-threat-cases.pid",
+      "?? artifacts/ontology/phase-0/wave-1/logs/grok-review.log",
+      "?? artifacts/ontology/phase-0/wave-1/logs/grok-review.pid",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-coverage-contract.log",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-coverage-contract.pid",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-registry-contract.log",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-registry-contract.pid",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-threat-cases.log",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-threat-cases.pid",
+      "?? artifacts/ontology/phase-1/integration/gate-final.log",
+      "?? artifacts/ontology/phase-1/integration/gate.log",
+      "?? artifacts/ontology/phase-1/logs/grok-rereview.log",
+      "?? artifacts/ontology/phase-1/logs/grok-review.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-frozen-conformance.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-frozen-conformance.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.fix-1.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.fix-1.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.fix-2.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.fix-2.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.fix-1.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.fix-1.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.fix-2.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.fix-2.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.pid",
+      "?? artifacts/ontology/phase-1/round-1/grok-review.log",
+      "?? artifacts/ontology/phase-2/integration/gate-final.log",
+      "?? artifacts/ontology/phase-2/integration/gate.log",
+      "?? artifacts/ontology/phase-2/logs/grok-rereview.log",
+      "?? artifacts/ontology/phase-2/logs/grok-review.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-core.fix-1.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-core.fix-1.pid",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-core.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-core.pid",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-core.refresh.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-core.refresh.pid",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-schema.fix-r10.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-schema.fix-r10.pid",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-schema.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-schema.pid",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-frozen-conformance.fix-1.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-frozen-conformance.fix-1.pid",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-frozen-conformance.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-frozen-conformance.pid",
+      "?? artifacts/ontology/phase-2/round-1/grok-review.log",
+      "?? artifacts/ontology/phase-3/",
+      "?? benchmark/",
+      "?? docs/ONTOLOGY_SHADOW.md",
+      "?? palimnex/evaluation/ontology-shadow.v1.json",
+      "?? palimnex/ontology_eval.py",
+      "?? palimnex/ontology_shadow.py",
+      "?? palimnex/schemas/ontology-shadow-comparison.v1.schema.json",
+      "?? palimnex/tests/test_evaluate_ontology_shadow_cli.py",
+      "?? palimnex/tests/test_ontology_eval.py",
+      "?? palimnex/tests/test_ontology_shadow.py",
+      "?? palimnex/tests/test_ontology_shadow_cohort.py",
+      "?? palimnex/tests/test_retrieval_shadow.py"
+    ]
+  },
+  "status": "tested"
+}

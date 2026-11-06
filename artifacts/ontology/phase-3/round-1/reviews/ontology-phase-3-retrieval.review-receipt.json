@@ -1,0 +1,53 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f97c4f426960b1e4011ef825380f1c7cbe87e393e7ab773b408eb65cb3360b65"
+  },
+  "approval_evidence_digest": "ec00128c1f81803aebfd100d4322973f497090c187d47d55a1a452997c3bd78d",
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "ledger_consulted": false,
+    "redis_mutated": false,
+    "sqlite_mutated": false
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "branch": "main",
+    "head": "2558092b5c0b4a47c27c038be8ed4e6ae30c62dc",
+    "dirty_tree": true,
+    "reviewer_modified_repository": false
+  },
+  "workstream_id": "ontology-phase-3-retrieval",
+  "task_digest": "534e1338027a4a0e6157adabe102f5e1191161ec12558c3596c7109b9d9889e0",
+  "reviewed_scope": [
+    "palimnex/retrieval.py",
+    "palimnex/tests/test_retrieval_shadow.py",
+    "artifacts/ontology/phase-3/tasks/ontology-phase-3-retrieval.json",
+    "artifacts/ontology/phase-3/receipts/ontology-phase-3-retrieval.implementation-receipt.json"
+  ],
+  "evidence": [
+    "NOTE: palimnex.tests.test_retrieval_shadow 9/9 passed, including 96 pinned temporary-corpus golden combinations. Contract validator status valid.",
+    "NOTE: Independent BASELINE IDENTITY: git archive HEAD palimnex extracted to /tmp/palimnex-phase3-review/head and imported beside the working tree. retrieve_sources matched on 246/246 queries and settings (limits, byte budgets, include_graph true/false, empty and no-match queries). mismatch_count 0.",
+    "NOTE: retrieve_sources calls _rank_channels, _fuse_rankings, and _retrieval_result only. ontology_channel is invoked only from shadow_retrieve. grep of palimnex/*.py: shadow_retrieve is imported by palimnex/ontology_eval.py and by tests.",
+    "NOTE: Fusion parity: RRF_K remains 60; ontology ranking is capped at 512 before fusion; budget_items and [:limit] apply to both baseline and shadow. Null-registry shadow baseline JSON equals retrieve_sources. Candidate registry refused as registry_kind_mismatch with no shadow result. All four channel names appear in comparison.channels.",
+    "NOTE: Frozen ONT-SEC-002 raises ConceptRegistryError source_privacy_refused, does not echo the canary, and does not call build_shadow_comparison. Frozen ONT-CAND-002 does not mark the approved concept ambiguous. Ambiguous, stale, and uncovered concepts leave the shadow ranking identical to baseline.",
+    "NOTE: palimnex/retrieval.py now imports palimnex.ontology_shadow at module level. retrieve_sources output identity holds; rollback of the shadow channel must revert this import together with retrieval.py."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_retrieval_shadow palimnex.tests.test_ontology_shadow palimnex.tests.test_coverage palimnex.tests.test_explain_search palimnex.tests.test_coverage_frozen -v",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3/tasks/ontology-phase-3-retrieval.json --implementation-receipt artifacts/ontology/phase-3/receipts/ontology-phase-3-retrieval.implementation-receipt.json",
+    "git archive HEAD palimnex"
+  ],
+  "source_grounding_result": "Shadow fusion reuses the same lexical, symbol, and graph rankings produced for retrieve_sources and appends (ontology, channel.ranking). Baseline in the shadow_retrieve return is the retrieve_sources document for the same arguments. Independent HEAD-versus-working comparison found no byte difference.",
+  "privacy_result": "Secret bound sources refuse on the verify_source_bindings path before comparison construction. Candidate registries refuse before fusion. Query privacy is enforced inside ontology_channel/build_shadow_comparison. No secret value is echoed.",
+  "retrieval_quality_result": "Shadow uses the same RRF_K, pointer tie-break, 512 candidate cap, budget_items, and limit as baseline. Ontology can admit a bound chunk into the shadow ranking while the returned baseline stays unchanged. Channel ranks for lexical, symbol, graph, and ontology remain visible on shadow items.",
+  "compatibility_result": "Adds public palimnex.retrieval.shadow_retrieve with the keyword-only contract. retrieve_sources signature, validation, errors, ranking, budgeting, and result fields stay the same. search, context, and explain-search still consume retrieve_sources and do not call shadow_retrieve.",
+  "rollback_result": "Revert palimnex/retrieval.py and delete palimnex/tests/test_retrieval_shadow.py together with the channel module it imports. HEAD retrieve_sources behavior is the rollback target and was byte-identical in this review.",
+  "authority_result": "No configuration key enables retrieval influence. shadow_retrieve is an evidence API for evaluation. retrieve_sources remains the production ranking.",
+  "limitations": [
+    "Cache-backed core.search was not live-compared; cache_v3.py is unmodified and search does not import retrieval.py."
+  ],
+  "status": "accepted"
+}

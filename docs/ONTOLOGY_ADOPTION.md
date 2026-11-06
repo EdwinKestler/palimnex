@@ -2,29 +2,35 @@
 
 Status: **Phase 0 accepted at its exit gate on 2026-11-05. Phase 1
 (reviewed concept-registry foundation) accepted and committed on 2026-11-06.
-Phase 2 (deterministic coverage receipt) approved on 2026-11-06. Phases 3-5
-remain proposals and each requires a separate named approval.**
+Phase 2 (deterministic coverage receipt) accepted at its exit gate on
+2026-11-06 (commit 2558092). Phase 3 (ontology-aware retrieval in shadow mode)
+approved on 2026-11-06. Phases 4-5 remain proposals and each requires a
+separate named approval.**
 
 Source proposal: `artifacts/design/Ontologyadoptionplan.md` (SHA-256 `8fe38bef5f7f25fa8a7d58dad21b89f69c70f4a367d9981c01fdedf6bd165d86`), which stays
 unchanged. Approval evidence: Phase 0 `artifacts/ontology/phase-0/approval-evidence.json`
 and exit gate `artifacts/ontology/phase-0/exit-gate.json`; Phase 1
 `artifacts/ontology/phase-1/approval-evidence.json` and exit gate
 `artifacts/ontology/phase-1/exit-gate.json`; Phase 2
-`artifacts/ontology/phase-2/approval-evidence.json`.
+`artifacts/ontology/phase-2/approval-evidence.json` and exit gate
+`artifacts/ontology/phase-2/exit-gate.json`; Phase 3
+`artifacts/ontology/phase-3/approval-evidence.json`.
 
-Phase 2 approval authorizes the deterministic coverage receipt (see "Phase 2"
-below): `palimnex/coverage.py`, the public `palimnex:retrieval-coverage:v1` and
-`palimnex:explain-search:v1` schemas, their tests and documentation, and the
-read-only `explain-search` command, which loads the approved registry from
-`ontology/concept-registry.v1.json` or `--registry PATH`, within exact Phase 2 task cards. It
-does not authorize retrieval or ranking influence (aliases stay shadow-only
-through Phase 3), creating or populating the approved registry, changes to the
-`search` command output or `project-memory:context:v1`, model or network calls,
-changes to live Redis or SQLite state, ledger migration, retention-policy
-activation, erasure, pack activation, Git writes, publication, deployment, or
-any other external action. Accepted Phase 0 drafts remain under
-`artifacts/design/ontology-phase-0/`; coordination records live under
-`artifacts/ontology/`.
+Phase 3 approval authorizes ontology-aware retrieval in shadow mode (see
+"Phase 3" below): a concept/alias channel computed beside the lexical, symbol and
+graph channels of `retrieve_sources`, a shadow fusion and the
+`palimnex:ontology-shadow-comparison:v1` report, a frozen evaluation-only
+cohort and test registry (`palimnex/evaluation/ontology-shadow.v1.json`), and the read-only
+`evaluate-ontology-shadow` command, within exact Phase 3 task cards. Shadow
+output is visible only through that evaluation command (owner decision
+2026-11-06). It does not authorize any change to returned rankings, `search`,
+`context`, `explain-search` or their formats, creating or populating the
+approved registry, retrieval influence or promotion (a separate owner
+approval), model or network calls, changes to live Redis or SQLite state,
+ledger migration, retention-policy activation, erasure, pack activation, Git
+writes, publication, deployment, or any other external action. Accepted Phase 0
+drafts remain under `artifacts/design/ontology-phase-0/`; coordination records
+live under `artifacts/ontology/`.
 
 ## Decision requested
 
@@ -607,6 +613,9 @@ provider data. Those surfaces require their own documented controls.
 | `explain-search` output | One new `palimnex:explain-search:v1` document holding the unchanged `search` result and the coverage receipt as sibling objects (owner decision 2026-11-06) |
 | Query whitespace (R9) | Registry keys refuse every C* code point; in queries, whitespace becomes U+0020 before the same procedure (confirmed 2026-11-06) |
 | Import residual | `palimnex.concepts` imports the contract-named `cache_v3.project_id` and `core.project_slug` (accepted 2026-11-06) |
+| Shadow visibility (Phase 3) | Evaluation command only: `palimnex evaluate-ontology-shadow` compares baseline and shadow rankings; no user-facing retrieval output changes (owner decision 2026-11-06) |
+| Phase 3 evaluation concepts | A hand-written, frozen, evaluation-only test registry and ontology cohort in `palimnex/evaluation/ontology-shadow.v1.json`; never loaded by `explain-search` and never an approved registry (owner decision 2026-11-06) |
+| Phase 2 coordinator decisions | R10, R11, the byte-budget attribution fix and independent truncation flags confirmed at the Phase 2 exit gate |
 
 ## Original open owner decisions (settled above)
 

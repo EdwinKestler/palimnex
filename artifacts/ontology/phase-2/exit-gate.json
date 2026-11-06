@@ -1,0 +1,48 @@
+{
+  "schema": "palimnex:ontology-exit-gate:v1",
+  "phase": 2,
+  "decision": "accepted",
+  "authority_source": "user_message",
+  "evidence_locator": "current repository-owner conversation, user message dated 2026-11-06: Phase 2 is done; confirm R10, R11 and review decisions; commit when ready",
+  "grantor_claim": "repository owner (Gus, GitHub EdwinKestler)",
+  "recorded_at": "2026-11-06T10:48:24-06:00",
+  "commit": "3084b7ef8c9167b87404e538ddadfbaa97810866",
+  "design_identity_at_acceptance": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "e04a0f878539eb8670e15155ca505497c08284d2e0b39e78c82872ab5badb8a6"
+  },
+  "handoff": "artifacts/ontology/phase-2/integration/PHASE2_HANDOFF.md",
+  "confirmed": [
+    "R10: explain-search embeds the unchanged bounded retrieve_sources result used by context",
+    "R11: query text uses an 8 KiB UTF-8 bound and normalization steps 1-5; stored registry keys retain the 128-code-point step 6",
+    "retrieval truncation and byte-budget omission are independent disclosures",
+    "when the result limit binds, additional byte-budget drops cannot be attributed from retrieve_sources v1 fields",
+    "mixed stale reasons for one concept aggregate to unavailable in v1"
+  ],
+  "review_evidence": {
+    "implementation_lanes": "three independent review receipts accepted",
+    "integration_lane": "independent receipt accepted_with_limits because socket-backed gates were intentionally not run by the reviewer",
+    "environment_limits_closed_by": [
+      "coordinator integration receipt",
+      "Codex technical review on 2026-11-06"
+    ]
+  },
+  "validation": {
+    "tests": "361 passed",
+    "focused_tests": "61 passed",
+    "mypy": "14 source files clean",
+    "standard_gate": "passed",
+    "retrieval_evaluation": "20/20, Recall@5 1.0, MRR 0.9, no critical regression",
+    "explain_search_backends": "local and verified cache passed",
+    "ledger": "integrity ok, zero events"
+  },
+  "registry_state": "no approved ontology/concept-registry.v1.json committed; coverage reports registry_absent",
+  "not_authorized": [
+    "Phase 3 shadow matching",
+    "retrieval or ranking influence",
+    "model or provider calls",
+    "push, publication or deployment"
+  ],
+  "pushed": false,
+  "authorizes_actions": false
+}

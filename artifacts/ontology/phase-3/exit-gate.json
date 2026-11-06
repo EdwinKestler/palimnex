@@ -1,0 +1,59 @@
+{
+  "schema": "palimnex:ontology-exit-gate:v1",
+  "phase": 3,
+  "decision": "accepted",
+  "authority_source": "user_message",
+  "evidence_locator": "current repository-owner conversation, user message dated 2026-11-06: Phase 3 is done; confirm R12 and commit when ready",
+  "grantor_claim": "repository owner (Gus, GitHub EdwinKestler)",
+  "recorded_at": "2026-11-06T16:31:33-06:00",
+  "commit": "ad96d3760b62e288e00c9e95f52f364249e23705",
+  "design_identity_at_acceptance": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f97c4f426960b1e4011ef825380f1c7cbe87e393e7ab773b408eb65cb3360b65"
+  },
+  "handoff": "artifacts/ontology/phase-3/integration/PHASE3_HANDOFF.md",
+  "confirmed": [
+    "R12: production retrieval remains byte-identical and the shadow must not regress any baseline-passing critical case",
+    "the cache-backed production evaluator remains the absolute critical-case gate for the v27 fixture",
+    "absolute retrieve_sources critical counts remain visible but are not relabeled or treated as production-search failures",
+    "promotion_authorized and retrieval_influence remain false",
+    "the frozen Phase 3 cohort is evaluation-only and is not an approved registry"
+  ],
+  "review_evidence": {
+    "implementation_lanes": "channel, cohort, retrieval and evaluation independently accepted",
+    "integration_lane": "independently accepted_with_limits",
+    "integration_limits_closed_by": [
+      "coordinator full suite, standard gate, cache evaluation and ledger checks",
+      "validated integration implementation receipt",
+      "Codex technical review and owner confirmation of R12 on 2026-11-06"
+    ],
+    "ownership_note": "implementation-wave ownership checks were clean; the final audit against the pre-rereview snapshot reports only the post-fix review receipt and a coordinator helper as coordination-record deltas, not implementation-lane product/source edits"
+  },
+  "validation": {
+    "tests": "411 passed",
+    "mypy": "16 source files clean",
+    "standard_gate": "passed",
+    "production_retrieval": "20/20, Recall@5 1.0, MRR 0.9, every critical case passed",
+    "shadow_gates": "8/8 true with no regressed case IDs",
+    "v27_shadow": "5 baseline cases passed at MRR 0.2692307692307692; 6 shadow cases passed at MRR 0.38461538461538464",
+    "cohort_shadow": "3 baseline cases passed at MRR 0.09615384615384616; 7 shadow cases passed at MRR 0.2692307692307692",
+    "v26_challenges": "baseline and shadow identical",
+    "cache": "fresh after incremental index and deep validation",
+    "ledger": "integrity ok, zero events",
+    "staged_privacy_scan": "79 implementation files scanned, zero findings"
+  },
+  "known_limits": [
+    "retrieve_sources does not abstain on unrelated queries in the real repository; abstention parity evidence comes from v26 negatives",
+    "the Phase 3 evaluation cohort is not evidence from a real approved registry",
+    "the integration review receipt remains accepted_with_limits; its environmental limits were closed by coordinator evidence rather than a second reviewer run"
+  ],
+  "not_authorized": [
+    "returned-ranking influence or concept promotion",
+    "Phase 4 local semantic experiment",
+    "creating or populating the approved concept registry",
+    "model, provider or network calls",
+    "push, publication or deployment"
+  ],
+  "pushed": false,
+  "authorizes_actions": false
+}

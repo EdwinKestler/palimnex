@@ -1,0 +1,55 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "palimnex/coverage.py",
+    "palimnex/tests/test_coverage.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "e04a0f878539eb8670e15155ca505497c08284d2e0b39e78c82872ab5badb8a6"
+  },
+  "task_digest": "bc6ca8e5141a11a3fa174f54cb73fef22dab11197fd8e40a3fbd4042228dfa31",
+  "approval_evidence_digest": "5916fd688b541c28a332bb0fe4eac0fa045009a62d9199ea2dcbf30c2c81499f",
+  "workstream_id": "ontology-phase-2-coverage-core",
+  "evidence": [
+    "NOTE: Focused tests passed (18/18 palimnex.tests.test_coverage; 3/3 palimnex.tests.test_coverage_frozen including 12 gates_phase 2 cases; 4/4 palimnex.tests.test_concepts_frozen). Strict mypy on palimnex/coverage.py is clean. Implementation receipt validates: task_digest bc6ca8e5141a11a3fa174f54cb73fef22dab11197fd8e40a3fbd4042228dfa31, approval_evidence_digest 5916fd688b541c28a332bb0fe4eac0fa045009a62d9199ea2dcbf30c2c81499f.",
+    "RESOLVED: Round-1 MINOR 1. _retrieval_state now attributes from n=len(results) and retrieval_limit; the used>=budget heuristic is gone. Independent explain_search probe: retrieve_sources(byte_budget=128, limit=5) yields results=0 omitted=1 used=2; the coverage sibling reports retrieval_truncated=false and byte_budget_omission.omitted=true omitted_item_count=1 byte_budget=128 used_bytes=2; search sibling equals retrieve_sources and is not mutated.",
+    "NOTE: Additional probes: explain_search(limit=1, byte_budget=8192) over three alpha files returns n=1 omitted=2 retrieval_truncated=true byte_budget_omission.omitted=false; retrieval_limit=None with omitted=1 reports truncation and budget omitted=false; n=2 with retrieval_limit=1 is CoverageError retrieval_limit_mismatch; retrieval_limit in {0, 101, True, -1} is invalid_retrieval_limit.",
+    "ACCEPTED-RESIDUAL: Round-1 MINOR 2. Coordinator declined exclusivity of retrieval_truncated and byte_budget_omission.omitted. SEMANTICS.md names them independent completeness disclosures (retrieval candidate/result limits versus serialized UTF-8 budget use). validate_receipt still accepts a digest-consistent dual-true pair; the producer never emits that pair. Reviewer accepts that residual.",
+    "NOTE: Fix-round diff is confined to _retrieval_state, keyword-only retrieval_limit (1-100) on build_coverage_receipt, two typed refusals, and tests (retrieve_sources import; helper wiring; one truncation/budget test replaced by three attribution tests). validate_receipt semantics, schema, status table, and search consumption are unchanged."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_coverage palimnex.tests.test_coverage_frozen -v",
+    "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/coverage.py",
+    "./.venv/bin/python -m unittest palimnex.tests.test_explain_search -v",
+    "./.venv/bin/python -m unittest palimnex.tests.test_concepts_frozen -v",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-2/tasks/ontology-phase-2-coverage-core.json --implementation-receipt artifacts/ontology/phase-2/receipts/ontology-phase-2-coverage-core.implementation-receipt.json",
+    "./.venv/bin/python /tmp/phase2_rereview_probes.py"
+  ],
+  "source_grounding_result": "Unchanged from round 1: receipts bind project identity, checkout_id against sha256(utf-8 of root.resolve()), corpus fingerprint plus index_policy_digest, and registry digest. Bindings reopen through verify_source_bindings; source_drift is refined to missing, version_changed, digest_changed, or unavailable. Traversal, symlink, cross-project, and privacy failures remain typed errors with no receipt.",
+  "privacy_result": "The receipt still carries query_digest only. Query and source privacy refusals use stable reason/field strings. Invalid and inconsistent retrieval_limit refusals echo neither query nor source. Nothing is persisted. The explain_search byte-budget probe left the search object unmutated.",
+  "retrieval_quality_result": "The search object is consumed unchanged and is never re-ranked. Truncation and byte-budget flags never change answerability. With retrieval_limit, omitted==0 clears both flags; n<limit attributes every omission to the byte budget; n==limit discloses retrieval truncation only because further budget drops cannot be recovered from retrieve_sources fields; n>limit is refused; retrieval_limit=None keeps the unknown-cause truncation disclosure. explain_search now supplies retrieval_limit=limit, so the original budget-drop probe is attributed correctly.",
+  "compatibility_result": "Additive keyword-only retrieval_limit: int | None = None on build_coverage_receipt. Default None preserves the prior unknown-cause disclosure. No change to search output, context v1, cache, ledger, MCP, configuration, or validate_receipt cross-field rules.",
+  "rollback_result": "Delete palimnex/coverage.py and palimnex/tests/test_coverage.py. No wire identifier, cache, or ledger migration is involved.",
+  "authority_result": "approved_registry bound to the checkout project is required. candidate_set, foreign project, unsafe paths, and authorizes_actions true are refused. Documents remain evidence_only with authorizes_actions false. No approved registry was created.",
+  "limitations": [
+    "Full unittest suite and scripts/palimnex_check.sh were not run, as instructed.",
+    "Redis and .palimnex/ were not consulted."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "ledger_consulted": false,
+    "redis_mutated": false,
+    "sqlite_mutated": false,
+    "reason": "Review instructions forbid reading .palimnex/ and write-capable palimnex commands; Redis was not used."
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "branch": "main",
+    "head": "80d94c43a93a33508f2519d5cb44b358c62b35a5",
+    "dirty_tree": true,
+    "reviewer_modified_repository": false
+  },
+  "status": "accepted"
+}

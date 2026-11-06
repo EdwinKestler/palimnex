@@ -1,0 +1,37 @@
+{
+  "schema": "palimnex:explain-search:v1",
+  "search": {"query": "where is coverage explained", "results": []},
+  "coverage_state": "enabled",
+  "coverage": {
+    "schema": "palimnex:retrieval-coverage:v1",
+    "query_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "query_digest_policy": "sha256-utf8-nfc-lf-preserve-whitespace-case:v1",
+    "identities": {
+      "project": {"project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8", "project_slug": "palimnex"},
+      "checkout": {"checkout_id": "adc401aa920bf66f02fa4989e05b6e79d85eda69955d4c384235997c0b08947f", "derivation": "sha256-utf8-resolved-root:v1"},
+      "corpus": {"fingerprint": "5528eedce84cff21ba3635185e7d2993a41fb11c502403cdae9f101565622828", "index_policy_digest": "3678a9d26c4bdc3b914d7adc9a573782afd6bb78902eb52f77983c1418ba4257", "derivation": "palimnex-source-snapshot-fingerprint:v1"},
+      "registry": {"schema": "palimnex:concept-registry:v1", "digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"}
+    },
+    "recognized_concepts": {"items": [], "total_count": 0, "truncated": false},
+    "covered_concepts": {"items": [], "total_count": 0, "truncated": false},
+    "uncovered_concepts": {"items": [], "total_count": 0, "truncated": false},
+    "ambiguous_concepts": {"items": [], "total_count": 0, "distinct_candidate_concept_count": 0, "truncated": false},
+    "stale_concepts": {"items": [], "total_count": 0, "truncated": false},
+    "coverage": {"numerator": 0, "denominator": 0},
+    "retrieval_state": {
+      "retrieval_truncated": false,
+      "result_item_count": 0,
+      "omitted_result_count": 0,
+      "coverage_output_truncated": false,
+      "byte_budget_omission": {"omitted": false, "omitted_item_count": 0, "byte_budget": 8192, "used_bytes": 0}
+    },
+    "semantic_disclosure": {"interface": "project-memory:semantic-provider:v1", "mode": "disabled", "external_network_enabled": false, "provider_registered": false, "hnsw_enabled": false, "retrieval_influence": false},
+    "status": "unanswerable",
+    "receipt_digest": "6c2e360065219b4efd6ce170c2a46f778c96464e94131219bbcb5a7b5749fd1c",
+    "authority": "evidence_only",
+    "authorizes_actions": false
+  },
+  "registry": {"path": "ontology/concept-registry.v1.json", "source": "default"},
+  "authority": "evidence_only",
+  "authorizes_actions": false
+}

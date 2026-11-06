@@ -1,0 +1,112 @@
+{
+  "schema": "palimnex:ontology-workstream-task:v1",
+  "workstream_id": "ontology-phase-2-frozen-conformance",
+  "phase": 2,
+  "action_id": "ontology_phase_2_coverage",
+  "objective": "Add Phase 2 frozen conformance: every gates_phase 2 case in the committed frozen matrix asserted against palimnex.coverage (status and covered/uncovered/stale/ambiguous sets), plus runtime-validator/JSON-Schema parity over produced receipts and the schema-lane fixtures. Follow the brief.",
+  "exclusions": [
+    "No edits outside owned_paths; foreign changes are returned as integration patch proposals.",
+    "No retrieval or ranking influence; the search result is consumed unchanged and never modified or re-ranked.",
+    "No change to the search command output, project-memory:context:v1, cache, ledger, MCP, configuration or any existing identifier, schema or test expectation.",
+    "Do not create or populate ontology/concept-registry.v1.json or any approved registry.",
+    "No runtime dependency: runtime modules use only the standard library and palimnex modules.",
+    "No Git staging, commits, branches or pushes; no network, installs, model or provider calls.",
+    "No palimnex index, remember, session, capture, retention, migration, erasure or pack commands; no Redis or SQLite writes.",
+    "Never read or echo credentials; never store literal secret-pattern strings."
+  ],
+  "approved_design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "e04a0f878539eb8670e15155ca505497c08284d2e0b39e78c82872ab5badb8a6"
+  },
+  "approval_evidence": {
+    "schema": "palimnex:ontology-approval-evidence:v1",
+    "authority_source": "user_message",
+    "evidence_locator": "claude.ai conversation with the repository owner, user message sent 2026-11-06 07:45 America/Guatemala (R9 confirmed, import residual accepted, sandbox escape recorded, commit 80d94c4, 'Phase 2 approved'), plus the owner's answers to the registry-location and explain-search output questions in the same conversation",
+    "grantor_claim": "repository owner (Gus, GitHub EdwinKestler)",
+    "design_identity": {
+      "path": "docs/ONTOLOGY_ADOPTION.md",
+      "sha256": "e04a0f878539eb8670e15155ca505497c08284d2e0b39e78c82872ab5badb8a6"
+    },
+    "source_proposal_identity": {
+      "path": "artifacts/design/Ontologyadoptionplan.md",
+      "sha256": "8fe38bef5f7f25fa8a7d58dad21b89f69c70f4a367d9981c01fdedf6bd165d86"
+    },
+    "approved_phases": [
+      2
+    ],
+    "authorized_actions": [
+      "ontology_phase_2_coverage"
+    ],
+    "excluded_actions": [
+      "ontology_phase_0_contract",
+      "ontology_phase_1_registry",
+      "ontology_phase_3_shadow",
+      "ontology_phase_4_semantic",
+      "ontology_phase_5_extensions"
+    ],
+    "recorded_at": "2026-11-06T07:45:00-06:00",
+    "implementation_authorized": true,
+    "network_authorized": false,
+    "git_write_authorized": false,
+    "live_state_authorized": false
+  },
+  "owned_paths": [
+    "palimnex/tests/test_coverage_frozen.py",
+    "artifacts/ontology/phase-2/receipts/ontology-phase-2-frozen-conformance.implementation-receipt.json"
+  ],
+  "read_only_paths": [
+    ".agents/skills",
+    ".palimnex.json",
+    "AGENTS.md",
+    "README.md",
+    "artifacts/design/Ontologyadoptionplan.md",
+    "artifacts/design/ontology-phase-0",
+    "artifacts/ontology/phase-0",
+    "artifacts/ontology/phase-1",
+    "artifacts/ontology/phase-2/approval-evidence.json",
+    "artifacts/ontology/phase-2/briefs",
+    "artifacts/ontology/phase-2/integration",
+    "artifacts/ontology/phase-2/manifest.json",
+    "artifacts/ontology/phase-2/receipts/ontology-phase-2-coverage-core.implementation-receipt.json",
+    "artifacts/ontology/phase-2/receipts/ontology-phase-2-coverage-schema.implementation-receipt.json",
+    "artifacts/ontology/phase-2/receipts/ontology-phase-2-integration.implementation-receipt.json",
+    "artifacts/ontology/phase-2/tasks",
+    "docs",
+    "docs/COMPATIBILITY.md",
+    "docs/CONCEPT_REGISTRY.md",
+    "docs/COVERAGE_RECEIPT.md",
+    "docs/ONTOLOGY_ADOPTION.md",
+    "palimnex",
+    "palimnex/CHANGELOG.md",
+    "palimnex/core.py",
+    "palimnex/coverage.py",
+    "palimnex/schemas/explain-search.v1.schema.json",
+    "palimnex/schemas/retrieval-coverage.v1.schema.json",
+    "palimnex/tests/fixtures/retrieval_coverage",
+    "palimnex/tests/test_coverage.py",
+    "palimnex/tests/test_explain_search.py",
+    "palimnex/tests/test_retrieval_coverage_schema.py",
+    "pyproject.toml"
+  ],
+  "forbidden_paths": [
+    ".palimnex",
+    ".env",
+    ".env.example",
+    "benchmark",
+    "secrets",
+    ".git"
+  ],
+  "dependencies": [
+    "ontology-phase-2-coverage-core",
+    "ontology-phase-2-coverage-schema"
+  ],
+  "acceptance_commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_coverage_frozen palimnex.tests.test_coverage palimnex.tests.test_concepts_frozen -v",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-2/tasks/ontology-phase-2-frozen-conformance.json --implementation-receipt artifacts/ontology/phase-2/receipts/ontology-phase-2-frozen-conformance.implementation-receipt.json",
+    "git status --short --untracked-files=all"
+  ],
+  "required_output": "ImplementationReceipt",
+  "network_authority": false,
+  "git_write_authority": false,
+  "live_state_authority": false
+}

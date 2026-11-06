@@ -12,9 +12,22 @@ operator-facing behavior; cache and graph schemas are versioned independently.
   `docs/CONCEPT_REGISTRY.md`), with a canonical digest, deterministic alias
   normalization, exact-alias matching with explicit ambiguity, candidate and
   approved separation, and source-binding verification that reports drift as
-  stale. It is opt-in and loads only from an explicitly passed path. There is
-  no default location, configuration key, CLI command or retrieval influence,
-  so behavior without a registry is unchanged.
+  stale. It is opt-in: only `explain-search` (below) loads a registry, no
+  configuration key does, and concepts have no retrieval influence, so behavior
+  without a registry is unchanged.
+- Added `palimnex explain-search QUERY` (ontology adoption Phase 2), which
+  prints one `palimnex:explain-search:v1` document. It holds the unchanged
+  bounded source retrieval result (`retrieve_sources`, as used by `context`) and
+  a `palimnex:retrieval-coverage:v1` receipt from the new `palimnex.coverage`
+  module. The receipt reports which approved concepts the query names and
+  whether their bound sources are covered, uncovered, stale or ambiguous, as
+  `answerable`, `partial`, `ambiguous` or `unanswerable`. Coverage is not
+  correctness. The registry defaults to `ontology/concept-registry.v1.json`
+  (never indexed) and is overridden with `--registry`. Without it, coverage is
+  `registry_absent`. Options: `--limit`, `--byte-budget`,
+  `--backend local|cache`, `--no-graph`. Read-only, with no ranking influence;
+  `search`, `context` and every existing format are unchanged. See
+  `docs/COVERAGE_RECEIPT.md`.
 
 ## 2.9.0 - 2026-10-02
 

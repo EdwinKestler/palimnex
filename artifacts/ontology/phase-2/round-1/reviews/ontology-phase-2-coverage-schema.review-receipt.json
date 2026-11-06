@@ -1,0 +1,54 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "docs/COVERAGE_RECEIPT.md",
+    "palimnex/schemas/explain-search.v1.schema.json",
+    "palimnex/schemas/retrieval-coverage.v1.schema.json",
+    "palimnex/tests/fixtures/retrieval_coverage",
+    "palimnex/tests/test_retrieval_coverage_schema.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "e04a0f878539eb8670e15155ca505497c08284d2e0b39e78c82872ab5badb8a6"
+  },
+  "task_digest": "47f0afb3db098f37a7f7368d7ef24766f792a80bd28e767d7501ef280f83a666",
+  "approval_evidence_digest": "5916fd688b541c28a332bb0fe4eac0fa045009a62d9199ea2dcbf30c2c81499f",
+  "workstream_id": "ontology-phase-2-coverage-schema",
+  "evidence": [
+    "NOTE: Focused tests passed (30 tests: retrieval-coverage schema, concept-registry schema regression, SDK regression). The implementation receipt validates.",
+    "NOTE: palimnex/schemas/retrieval-coverage.v1.schema.json differs from the accepted Phase 0 schema only by dropping Draft from the title. Identifier, $defs, $refs, fields, and meaning are unchanged.",
+    "NOTE: explain-search.v1 has exactly the seven specified keys, additionalProperties false, search as type object, coverage as $ref or null, and if/then tying coverage null to registry_absent. Valid enabled and registry_absent fixtures validate; extra key, null-while-enabled, present-while-absent, and authorizes_actions true are rejected.",
+    "NOTE: Accepted Phase 0 coverage examples are byte-identical in palimnex/tests/fixtures/retrieval_coverage. docs/COVERAGE_RECEIPT.md records the reader obligation, status table, R7, R10 retrieve_sources sibling, and CLI defaults.",
+    "NOTE: Draft 2020-12 JSON Schema accepts the overlap fixture and float-ratio 0.0; palimnex.coverage.validate_receipt refuses them (classification_overlap, invalid_integer). Schema-lane tests add coverage_contract_errors for integer type, disjointness, and digest. That split is expected and is not a silent accept of those invalid documents.",
+    "NOTE: registry.path uses the repository traversal-free pattern (no leading /, no .., max 512). The CLI also refuses backslash and NUL; the schema does not. Producer output never contains those paths."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_retrieval_coverage_schema palimnex.tests.test_concept_registry_schema palimnex.tests.test_sdk -v",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-2/tasks/ontology-phase-2-coverage-schema.json --implementation-receipt artifacts/ontology/phase-2/receipts/ontology-phase-2-coverage-schema.implementation-receipt.json",
+    "./.venv/bin/python /tmp/phase2_review_probes.py"
+  ],
+  "source_grounding_result": "Public coverage schema $refs conceptId, alias, and projectIdentity from concept-registry.v1 and locators from source-locator.v1 through a local referencing.Registry. No network $ref resolution.",
+  "privacy_result": "Both schemas require authority evidence_only and authorizes_actions false. Coverage has query_digest only. Registry paths are bounded and traversal-free. Fixtures contain no credential-shaped literals.",
+  "retrieval_quality_result": "The wrapper does not constrain search beyond type object, matching EXPLAIN_SEARCH_SPEC.md. Coverage collections, integer coverage, truncation flags, and semantic disclosure consts match the accepted contract.",
+  "compatibility_result": "Additive identifiers palimnex:retrieval-coverage:v1 and palimnex:explain-search:v1. test_sdk public_wire_schemas still passes. No project-memory:* or existing schema change. pyproject.toml already packages schemas/*.json.",
+  "rollback_result": "Delete the two public schema files, their tests and fixtures, and docs/COVERAGE_RECEIPT.md. Existing readers are unaffected.",
+  "authority_result": "Schemas cannot authorize actions. Documentation states the document is printed, never persisted, and does not alter search or context v1.",
+  "limitations": [
+    "Full suite and palimnex_check.sh were not run, as instructed."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "ledger_consulted": false,
+    "redis_mutated": false,
+    "sqlite_mutated": false
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "branch": "main",
+    "head": "80d94c43a93a33508f2519d5cb44b358c62b35a5",
+    "dirty_tree": true,
+    "reviewer_modified_repository": false
+  },
+  "status": "accepted"
+}

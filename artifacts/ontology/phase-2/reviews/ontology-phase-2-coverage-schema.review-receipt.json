@@ -1,0 +1,50 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "docs/COVERAGE_RECEIPT.md",
+    "palimnex/schemas/explain-search.v1.schema.json",
+    "palimnex/schemas/retrieval-coverage.v1.schema.json",
+    "palimnex/tests/fixtures/retrieval_coverage",
+    "palimnex/tests/test_retrieval_coverage_schema.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "e04a0f878539eb8670e15155ca505497c08284d2e0b39e78c82872ab5badb8a6"
+  },
+  "task_digest": "47f0afb3db098f37a7f7368d7ef24766f792a80bd28e767d7501ef280f83a666",
+  "approval_evidence_digest": "5916fd688b541c28a332bb0fe4eac0fa045009a62d9199ea2dcbf30c2c81499f",
+  "workstream_id": "ontology-phase-2-coverage-schema",
+  "evidence": [
+    "NOTE: Schema-lane implementation receipt is byte-identical to round 1 (sha256 e51dad42dde17766a0274d4ed84a41ae47c1ab4281bd9e9286adc2dd2cb43caa). Owned files are unchanged: retrieval-coverage.v1.schema.json b47ae60107bd9ceeaec491070a94dc26e3e6663248399d88a4007c517f08d206, explain-search.v1.schema.json 924ea9d2c255f3d4264bfe6724b2034c8d08c53e2151a985d4aea9991c3fc9f6, test_retrieval_coverage_schema.py 203e9df738c0672c5dd28d328501ee2384d0900ac89d3d54fd7879149a30845b, docs/COVERAGE_RECEIPT.md b971e16f2aeba8c89719c62db261f7a0d581a4a126195994253978540e1082d9; all 19 retrieval_coverage fixtures match their prior digests.",
+    "NOTE: Receipt validator still reports status valid, implementation_receipt_validated true, task_digest 47f0afb3db098f37a7f7368d7ef24766f792a80bd28e767d7501ef280f83a666. Round-1 accepted verdict is carried forward because this lane is outside the fix-round scope."
+  ],
+  "commands": [
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-2/tasks/ontology-phase-2-coverage-schema.json --implementation-receipt artifacts/ontology/phase-2/receipts/ontology-phase-2-coverage-schema.implementation-receipt.json",
+    "sha256sum palimnex/schemas/retrieval-coverage.v1.schema.json palimnex/schemas/explain-search.v1.schema.json palimnex/tests/test_retrieval_coverage_schema.py docs/COVERAGE_RECEIPT.md artifacts/ontology/phase-2/receipts/ontology-phase-2-coverage-schema.implementation-receipt.json artifacts/ontology/phase-2/round-1/receipts/ontology-phase-2-coverage-schema.implementation-receipt.json"
+  ],
+  "source_grounding_result": "Unchanged from round 1: public coverage schema $refs conceptId, alias, and projectIdentity from concept-registry.v1 and locators from source-locator.v1 through a local referencing.Registry. No network $ref resolution.",
+  "privacy_result": "Both schemas require authority evidence_only and authorizes_actions false. Coverage has query_digest only. Registry paths are bounded and traversal-free. Fixtures contain no credential-shaped literals.",
+  "retrieval_quality_result": "The wrapper does not constrain search beyond type object, matching EXPLAIN_SEARCH_SPEC.md. Coverage collections, integer coverage, truncation flags, and semantic disclosure consts match the accepted contract. The schema still treats the two retrieval_state flags as independent fields.",
+  "compatibility_result": "Additive identifiers palimnex:retrieval-coverage:v1 and palimnex:explain-search:v1 remain as in round 1. No project-memory:* or existing schema change. Fix round 1 did not touch this lane.",
+  "rollback_result": "Delete the two public schema files, their tests and fixtures, and docs/COVERAGE_RECEIPT.md. Existing readers are unaffected.",
+  "authority_result": "Schemas cannot authorize actions. Documentation states the document is printed, never persisted, and does not alter search or context v1.",
+  "limitations": [
+    "Schema-lane unittest suite was not re-run because owned files and the implementation receipt are unchanged from round 1.",
+    "Full suite and palimnex_check.sh were not run, as instructed."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "ledger_consulted": false,
+    "redis_mutated": false,
+    "sqlite_mutated": false
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "branch": "main",
+    "head": "80d94c43a93a33508f2519d5cb44b358c62b35a5",
+    "dirty_tree": true,
+    "reviewer_modified_repository": false
+  },
+  "status": "accepted"
+}

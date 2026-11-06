@@ -1,0 +1,55 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "palimnex/coverage.py",
+    "palimnex/tests/test_coverage.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "e04a0f878539eb8670e15155ca505497c08284d2e0b39e78c82872ab5badb8a6"
+  },
+  "task_digest": "bc6ca8e5141a11a3fa174f54cb73fef22dab11197fd8e40a3fbd4042228dfa31",
+  "approval_evidence_digest": "5916fd688b541c28a332bb0fe4eac0fa045009a62d9199ea2dcbf30c2c81499f",
+  "workstream_id": "ontology-phase-2-coverage-core",
+  "evidence": [
+    "NOTE: Focused tests passed (16/16 in palimnex.tests.test_coverage); strict mypy on palimnex/coverage.py is clean; the implementation receipt validates against the task card.",
+    "NOTE: Status table, ambiguity precedence, R = C+U+S+A, integer 0/0, query-digest vectors, canonical receipt digest, deterministic ordering, semantic disclosure (disabled/no influence), and R7 typed refusals without a receipt all match coverage SEMANTICS.md.",
+    "NOTE: Adversarial probes: overlap of an ambiguous candidate with covered is refused (classification_overlap); inconsistent status, tampered digest, and float coverage are refused; 0/0 stays integers; candidate_set and foreign project refuse; 1014-character query is answerable; query over 8 KiB is query_byte_bound; search_result is not mutated; secret canary is query_privacy_refused with no echo.",
+    "NOTE: Mixed stale reasons on one concept collapse to unavailable. That is faithful to the v1 schema (one reason per stale concept, duplicate concept IDs forbidden) and is documented in the implementation receipt.",
+    "MINOR: byte_omitted = omitted > 0 and used >= budget does not follow retrieve_sources. budget_items then selected[:limit] mix both causes into omitted_count, then used is recomputed on the already-truncated list and is almost always strictly below budget (start used=2, add only if used+size <= budget). Probe: retrieve_sources(byte_budget=128) omitted=1 used=2 results=0, so the only candidate was budget-dropped, yet the receipt reports retrieval_truncated and byte_budget_omission.omitted=false. Status is unaffected; used_bytes and byte_budget remain accurate. Documented as an unresolved risk.",
+    "MINOR: validate_receipt accepts a digest-consistent receipt with retrieval_truncated true and byte_budget_omission.omitted true at the same time. The producer never emits that pair; the cross-field validator does not enforce exclusivity."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_coverage -v",
+    "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/coverage.py",
+    "./.venv/bin/python -m unittest palimnex.tests.test_concepts palimnex.tests.test_concepts_frozen",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-2/tasks/ontology-phase-2-coverage-core.json --implementation-receipt artifacts/ontology/phase-2/receipts/ontology-phase-2-coverage-core.implementation-receipt.json",
+    "./.venv/bin/python /tmp/phase2_review_probes.py"
+  ],
+  "source_grounding_result": "Receipts bind project identity, checkout_id from retrieve_sources checked against sha256(utf-8 of root.resolve()), corpus fingerprint plus index_policy_digest, and the registry digest. Bindings are reopened through palimnex.concepts.verify_source_bindings, then source_drift is refined to missing, version_changed, digest_changed, or unavailable. Traversal, symlink, cross-project, and privacy failures remain typed errors with no receipt.",
+  "privacy_result": "The receipt carries query_digest only. Query and source privacy refusals use stable reason/field strings; a runtime canary was not echoed. Nothing is persisted. scan_bytes runs on source content before range selection in the stale diagnostic, matching locators.py.",
+  "retrieval_quality_result": "The search object is consumed unchanged and is never re-ranked. Truncation and byte-budget flags never change answerability. Retrieval versus byte-budget cause flags are a best-effort saturation heuristic over fields that do not encode the cause; see MINOR evidence.",
+  "compatibility_result": "Additive palimnex.coverage API only. No change to search output, context v1, cache, ledger, MCP, or configuration. palimnex.coverage is imported from palimnex/core.py:explain_search and from tests only.",
+  "rollback_result": "Delete palimnex/coverage.py and palimnex/tests/test_coverage.py. No wire identifier, cache, or ledger migration is involved.",
+  "authority_result": "approved_registry bound to the checkout project is required. candidate_set, foreign project, unsafe paths, and authorizes_actions true are refused. Documents are evidence_only with authorizes_actions false. No approved registry was created.",
+  "limitations": [
+    "Full unittest suite and scripts/palimnex_check.sh were not run, as instructed.",
+    "Redis and .palimnex/ were not consulted."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "ledger_consulted": false,
+    "redis_mutated": false,
+    "sqlite_mutated": false,
+    "reason": "Review instructions forbid reading .palimnex/ and write-capable palimnex commands; Redis was not used."
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "branch": "main",
+    "head": "80d94c43a93a33508f2519d5cb44b358c62b35a5",
+    "dirty_tree": true,
+    "reviewer_modified_repository": false
+  },
+  "status": "accepted_with_limits"
+}

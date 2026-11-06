@@ -1,0 +1,87 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-2-coverage-core",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "e04a0f878539eb8670e15155ca505497c08284d2e0b39e78c82872ab5badb8a6"
+  },
+  "task_digest": "bc6ca8e5141a11a3fa174f54cb73fef22dab11197fd8e40a3fbd4042228dfa31",
+  "approval_evidence_digest": "5916fd688b541c28a332bb0fe4eac0fa045009a62d9199ea2dcbf30c2c81499f",
+  "owned_scope": [
+    "palimnex/coverage.py",
+    "palimnex/tests/test_coverage.py",
+    "artifacts/ontology/phase-2/receipts/ontology-phase-2-coverage-core.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/coverage.py",
+    "palimnex/tests/test_coverage.py",
+    "artifacts/ontology/phase-2/receipts/ontology-phase-2-coverage-core.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [],
+  "commands": [
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_coverage -v",
+      "exit_code": 0,
+      "result": "16 tests passed, covering every status row, ambiguity precedence, uncovered and all four stale reasons, R7 refusals without echo, identity and kind refusals, integer 0/0, retrieval and coverage truncation, byte-budget omission, canonical digests, deterministic ordering, runtime validation, accepted examples, both explain-search states, and unchanged deep-copied inputs."
+    },
+    {
+      "command": "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/coverage.py",
+      "exit_code": 0,
+      "result": "Strict focused mypy completed with no issues in palimnex/coverage.py."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_concepts palimnex.tests.test_concepts_frozen",
+      "exit_code": 0,
+      "result": "28 Phase 1 registry and frozen-conformance regression tests passed."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_retrieval_coverage_schema -v",
+      "exit_code": 0,
+      "result": "5 supplemental parallel-lane schema and fixture tests passed, including local reference resolution and canonical fixture digests."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_explain_search -v",
+      "exit_code": 0,
+      "result": "10 supplemental coordinator-lane explain-search API and CLI tests passed, including absent/default/explicit registry behavior, candidate and unsafe-path refusals, non-echoing CLI errors, receipt production and unchanged search output."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-2/tasks/ontology-phase-2-coverage-core.json",
+      "exit_code": 0,
+      "result": "Task contract status valid; task digest bc6ca8e5141a11a3fa174f54cb73fef22dab11197fd8e40a3fbd4042228dfa31; approval evidence digest 5916fd688b541c28a332bb0fe4eac0fa045009a62d9199ea2dcbf30c2c81499f."
+    }
+  ],
+  "compatibility_effect": "Added the additive public palimnex.coverage API: CoverageError, query_digest, canonical_receipt_digest, build_coverage_receipt, validate_receipt and build_explain_search, plus the accepted coverage and explain-search identifiers and bounds as constants. The engine consumes search output unchanged, performs no retrieval or ranking, emits only evidence_only and non-authorizing documents, and changes no existing project-memory:* identifier, schema, CLI output, cache, ledger, pack, configuration key or retrieval behavior.",
+  "privacy_and_authority_checks": [
+    "Registry and query privacy refusals are inherited from palimnex.concepts and wrapped using stable reason and field only; source bytes, matched rejected values, scanner findings and provider exceptions are never echoed or persisted.",
+    "Only approved_registry inputs bound to the checkout project are accepted; candidate sets, foreign projects, checkout mismatches, unsafe repository paths, symlinks, cross-project resolvers and privacy findings fail with no receipt.",
+    "Source verification is restricted to recognized non-ambiguous concepts with applicable bindings; ambiguity is disjoint from covered results and has status precedence.",
+    "The receipt contains a query digest but no raw query or source excerpt; raw query remains only in the deep-copied unchanged search sibling of explain-search.",
+    "No network, provider, model, install, Git write, Redis mutation, SQLite mutation, registry population, migration, retention, erasure, pack activation or policy activation occurred.",
+    "All changes are inside the task card's three owned paths; unrelated and parallel changes were preserved."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "The existing search result exposes omitted_count, byte_budget and items_bytes but no independent omission-cause count. The implementation reports byte-budget omission only when omitted_count is positive and items_bytes saturates byte_budget; otherwise it reports retrieval truncation. This is deterministic and matches accepted examples, but an oversized skipped item can leave items_bytes below the budget and cannot be distinguished faithfully from limit truncation without a future additive search diagnostic.",
+    "Phase 1 match_aliases applies the 128-character alias-normalization bound to the entire normalized query, while query_digest accepts the approved 8 KiB query bound. Coverage therefore surfaces alias_bound for a longer otherwise admitted query; changing palimnex/concepts.py is outside this lane and needs coordinator review if the 8 KiB coverage path must accept such queries.",
+    "When one stale concept has multiple applicable failed bindings with different refined reasons, the single-reason v1 stale item uses unavailable as the conservative aggregate reason because the schema cannot express per-binding reasons without duplicate concept IDs.",
+    "The full unittest suite, reindex/evaluate cycle and scripts/palimnex_check.sh are delegated to the coordinator as required by the Phase 2 common brief."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_reason": "python3 palimnex.py status, validate --deep and focused search all failed because the Redis Unix socket was absent; the task forbids starting Redis or indexing.",
+    "ledger_consulted": true,
+    "ledger_status": "Read-only ledger-status reported ready with integrity ok; no ledger command that writes was run.",
+    "redis_mutated": false,
+    "sqlite_mutated": false
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "preexisting_dirty_tree": true,
+    "owned_paths_only": true,
+    "unrelated_changes_preserved": true,
+    "indexed_files_changed": true,
+    "reindex_delegated_to_coordinator": true
+  },
+  "status": "tested"
+}

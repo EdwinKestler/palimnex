@@ -1,0 +1,24 @@
+{
+  "schema": "palimnex:retrieval-coverage:v1",
+  "query_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "query_digest_policy": "sha256-utf8-nfc-lf-preserve-whitespace-case:v1",
+  "raw_query": "where is the source binding",
+  "identities": {
+    "project": {"project_id": "11111111-1111-4111-8111-111111111111", "project_slug": "palimnex"},
+    "checkout": {"checkout_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "derivation": "sha256-utf8-resolved-root:v1"},
+    "corpus": {"fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "index_policy_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "derivation": "palimnex-source-snapshot-fingerprint:v1"},
+    "registry": {"schema": "palimnex:concept-registry:v1", "digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"}
+  },
+  "recognized_concepts": {"items": [], "total_count": 0, "truncated": false},
+  "covered_concepts": {"items": [], "total_count": 0, "truncated": false},
+  "uncovered_concepts": {"items": [], "total_count": 0, "truncated": false},
+  "ambiguous_concepts": {"items": [], "total_count": 0, "distinct_candidate_concept_count": 0, "truncated": false},
+  "stale_concepts": {"items": [], "total_count": 0, "truncated": false},
+  "coverage": {"numerator": 0, "denominator": 0},
+  "retrieval_state": {"retrieval_truncated": false, "result_item_count": 0, "omitted_result_count": 0, "coverage_output_truncated": false, "byte_budget_omission": {"omitted": false, "omitted_item_count": 0, "byte_budget": 8192, "used_bytes": 0}},
+  "semantic_disclosure": {"interface": "project-memory:semantic-provider:v1", "mode": "disabled", "external_network_enabled": false, "provider_registered": false, "hnsw_enabled": false, "retrieval_influence": false},
+  "status": "unanswerable",
+  "receipt_digest": "995aa195bd8b9e7a3a898ac026ed4b24443efeb303c23e8e8fbb8ec15aae8165",
+  "authority": "evidence_only",
+  "authorizes_actions": false
+}

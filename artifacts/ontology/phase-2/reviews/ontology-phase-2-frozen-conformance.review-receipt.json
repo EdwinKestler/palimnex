@@ -1,0 +1,47 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "palimnex/tests/test_coverage_frozen.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "e04a0f878539eb8670e15155ca505497c08284d2e0b39e78c82872ab5badb8a6"
+  },
+  "task_digest": "412d9eec9efda6b6490e3ec7463486b0652a2c7b70560db6f1a1f6df5f0e92c0",
+  "approval_evidence_digest": "5916fd688b541c28a332bb0fe4eac0fa045009a62d9199ea2dcbf30c2c81499f",
+  "workstream_id": "ontology-phase-2-frozen-conformance",
+  "evidence": [
+    "NOTE: palimnex/tests/fixtures/ontology/cases.v0.json sha256 remains a64be4f15fdfb664b3142706e5cef35d10fbaa4ed340aea38f22388404f7314b. MATRIX_SHA256 in the harness matches. All 12 gates_phase 2 cases passed (ONT-POS-001/002, ONT-PAR-001/002, ONT-NEG-001/002, ONT-STALE-001/002, ONT-TRUNC-001/002, ONT-BUDGET-001/002). Status and ID-set assertions still read expected_* from the fixture.",
+    "NOTE: Fix-round diff adds SYNTHETIC_RETRIEVAL_LIMIT=1, passes it on every build_coverage_receipt call, keeps exactly one dummy result for truncation, and keeps zero results for byte-budget. No label, skip, expectedFailure, or fixture byte was changed. The two expected_status_disputed stale cases remain labeled unanswerable.",
+    "NOTE: retrieval_limit modelling is faithful: ONT-TRUNC-* have n==1==limit and omitted=1 so retrieval_truncated is true per runtime_condition; ONT-BUDGET-* have n=0<limit and omitted=1 so byte_budget_omission.omitted is true per runtime_condition. Other categories have omitted=0, so both flags stay false. Focused frozen+coverage+concepts_frozen acceptance is 25/25. Implementation receipt validates."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_coverage_frozen palimnex.tests.test_coverage palimnex.tests.test_concepts_frozen -v",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-2/tasks/ontology-phase-2-frozen-conformance.json --implementation-receipt artifacts/ontology/phase-2/receipts/ontology-phase-2-frozen-conformance.implementation-receipt.json",
+    "sha256sum palimnex/tests/fixtures/ontology/cases.v0.json"
+  ],
+  "source_grounding_result": "Each case is materialized in an isolated temporary checkout whose project identity matches the fixture registry. Bindings are digest-verified against locally written bytes. The committed matrix is not rewritten.",
+  "privacy_result": "Sources are synthetic admissible fixture lines or repeated x bytes. No repository source bytes, rejected values, or reconstructed canaries are persisted by the test.",
+  "retrieval_quality_result": "Assertions cover expected_status and the exact covered, uncovered, stale, and ambiguous ID sets. Truncation cases now bind the synthetic limit (n=1); byte-budget cases model fewer results than that limit (n=0). Status still comes from registry verification, independent of the dummy search payload.",
+  "compatibility_result": "Test-only file. No public API, wire identifier, label, or frozen-fixture change.",
+  "rollback_result": "Delete palimnex/tests/test_coverage_frozen.py. Frozen matrix bytes are unchanged.",
+  "authority_result": "Search objects are synthetic and consumed unchanged. Coverage remains evidence_only. No registry is populated in the repository.",
+  "limitations": [
+    "Full suite and palimnex_check.sh were not run, as instructed."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "ledger_consulted": false,
+    "redis_mutated": false,
+    "sqlite_mutated": false
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "branch": "main",
+    "head": "80d94c43a93a33508f2519d5cb44b358c62b35a5",
+    "dirty_tree": true,
+    "reviewer_modified_repository": false
+  },
+  "status": "accepted"
+}

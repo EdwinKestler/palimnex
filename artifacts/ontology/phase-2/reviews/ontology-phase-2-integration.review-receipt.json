@@ -1,0 +1,57 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "docs/COMPATIBILITY.md",
+    "docs/CONCEPT_REGISTRY.md",
+    "palimnex/CHANGELOG.md",
+    "palimnex/concepts.py",
+    "palimnex/core.py",
+    "palimnex/tests/test_concepts.py",
+    "palimnex/tests/test_explain_search.py",
+    "pyproject.toml"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "e04a0f878539eb8670e15155ca505497c08284d2e0b39e78c82872ab5badb8a6"
+  },
+  "task_digest": "36dbdca0d3c067af3aae41bddabb5a98fafa2d728e8187a9df91e24eb5f8caf8",
+  "approval_evidence_digest": "5916fd688b541c28a332bb0fe4eac0fa045009a62d9199ea2dcbf30c2c81499f",
+  "workstream_id": "ontology-phase-2-integration",
+  "evidence": [
+    "NOTE: The only integration delta since round 1 is palimnex/core.py explain_search passing retrieval_limit=limit into build_coverage_receipt. Round-1 source was build_coverage_receipt(loaded, query, search_result, root=root). test_explain_search.py does not mention retrieval_limit. palimnex.tests.test_explain_search is 10/10.",
+    "RESOLVED: Through explain_search, a real retrieve_sources(byte_budget=128, limit=5) budget drop now reports byte_budget_omission and retrieval_truncated=false. Limit binding through explain_search(limit=1) reports n=1 omitted=2 retrieval_truncated=true. Search sibling still equals retrieve_sources and is not mutated.",
+    "NOTE: Round-1 R10/R11, default registry_absent, typed path refusals, non-echoing CLI errors, lazy palimnex.coverage import, and additive COMPATIBILITY/CHANGELOG/CONCEPT_REGISTRY/pyproject.toml notes remain as previously reviewed. No ontology/concept-registry.v1.json was created. No integration implementation receipt is present.",
+    "NOTE: Full suite, mypy-all, index, evaluate, palimnex_check.sh, ledger-status, and --backend cache remain unrun as instructed; Redis was not used. Round-1 accepted_with_limits verdict is therefore carried forward."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_explain_search -v",
+    "./.venv/bin/python /tmp/phase2_rereview_probes.py",
+    "git diff -- palimnex/core.py palimnex/concepts.py palimnex/tests/test_concepts.py palimnex/tests/test_explain_search.py docs/COMPATIBILITY.md docs/CONCEPT_REGISTRY.md palimnex/CHANGELOG.md pyproject.toml"
+  ],
+  "source_grounding_result": "explain_search loads an approved_registry via load_registry (bounded, nofollow, privacy-scanned) and builds a coverage receipt over the same retrieve_sources object it embeds, now with retrieval_limit=limit. Checkout and project identity checks remain in coverage.py and concepts.py.",
+  "privacy_result": "Refusals use CoverageError or ConceptRegistryError messages that contain reason and field only. CLI errors go to stderr as JSON status/error without the registry argument or query. Query secrets are not printed. When coverage is disabled, the raw query remains inside search, which is existing retrieve_sources behavior.",
+  "retrieval_quality_result": "search is a deep copy of retrieve_sources. Flags mirror context: --limit default 5, --byte-budget default 8192, --backend local|cache, --no-graph, --registry. Ranking is unchanged. The limit used for retrieve_sources is now the same value passed as retrieval_limit, so byte-budget versus truncation attribution on the CLI path matches the coverage engine.",
+  "compatibility_result": "New command only, plus the additive retrieval_limit keyword at the existing explain_search call site. search, context v1, cache, ledger, MCP, and configuration remain unchanged in the diff.",
+  "rollback_result": "Revert palimnex/core.py, palimnex/concepts.py, palimnex/tests/test_concepts.py, docs/COMPATIBILITY.md, docs/CONCEPT_REGISTRY.md, palimnex/CHANGELOG.md, and pyproject.toml; delete palimnex/tests/test_explain_search.py. Phase 1 matching behavior returns to the 128-character query cap.",
+  "authority_result": "Read-only command. No ranking influence, no approved registry created, no config key, no MCP tool, no ledger or cache write on the default local backend. Git writes were not performed.",
+  "limitations": [
+    "Integration task-card acceptance commands that need sockets (full suite, palimnex_check.sh, index, evaluate) were skipped as instructed.",
+    "No artifacts/ontology/phase-2/receipts/ontology-phase-2-integration.implementation-receipt.json existed to validate.",
+    "--backend cache was not run; Redis was not used."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "ledger_consulted": false,
+    "redis_mutated": false,
+    "sqlite_mutated": false
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "branch": "main",
+    "head": "80d94c43a93a33508f2519d5cb44b358c62b35a5",
+    "dirty_tree": true,
+    "reviewer_modified_repository": false
+  },
+  "status": "accepted_with_limits"
+}

@@ -1,0 +1,86 @@
+{
+  "schema": "palimnex:ontology-workstream-manifest:v1",
+  "approved_phase": 2,
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "e04a0f878539eb8670e15155ca505497c08284d2e0b39e78c82872ab5badb8a6"
+  },
+  "workstreams": [
+    "ontology-phase-2-coverage-core",
+    "ontology-phase-2-coverage-schema",
+    "ontology-phase-2-frozen-conformance",
+    "ontology-phase-2-integration"
+  ],
+  "dependency_dag": [
+    {
+      "from": "ontology-phase-2-coverage-core",
+      "to": "ontology-phase-2-frozen-conformance"
+    },
+    {
+      "from": "ontology-phase-2-coverage-schema",
+      "to": "ontology-phase-2-frozen-conformance"
+    },
+    {
+      "from": "ontology-phase-2-coverage-core",
+      "to": "ontology-phase-2-integration"
+    },
+    {
+      "from": "ontology-phase-2-coverage-schema",
+      "to": "ontology-phase-2-integration"
+    },
+    {
+      "from": "ontology-phase-2-frozen-conformance",
+      "to": "ontology-phase-2-integration"
+    }
+  ],
+  "exclusive_file_ownership": {
+    "ontology-phase-2-coverage-core": [
+      "palimnex/coverage.py",
+      "palimnex/tests/test_coverage.py",
+      "artifacts/ontology/phase-2/receipts/ontology-phase-2-coverage-core.implementation-receipt.json"
+    ],
+    "ontology-phase-2-coverage-schema": [
+      "palimnex/schemas/retrieval-coverage.v1.schema.json",
+      "palimnex/schemas/explain-search.v1.schema.json",
+      "palimnex/tests/test_retrieval_coverage_schema.py",
+      "palimnex/tests/fixtures/retrieval_coverage",
+      "docs/COVERAGE_RECEIPT.md",
+      "artifacts/ontology/phase-2/receipts/ontology-phase-2-coverage-schema.implementation-receipt.json"
+    ],
+    "ontology-phase-2-frozen-conformance": [
+      "palimnex/tests/test_coverage_frozen.py",
+      "artifacts/ontology/phase-2/receipts/ontology-phase-2-frozen-conformance.implementation-receipt.json"
+    ],
+    "ontology-phase-2-integration": [
+      "artifacts/ontology/phase-2/integration",
+      "artifacts/ontology/phase-2/receipts/ontology-phase-2-integration.implementation-receipt.json",
+      "docs/COMPATIBILITY.md",
+      "docs/CONCEPT_REGISTRY.md",
+      "palimnex/CHANGELOG.md",
+      "palimnex/concepts.py",
+      "palimnex/core.py",
+      "palimnex/tests/test_concepts.py",
+      "palimnex/tests/test_explain_search.py",
+      "pyproject.toml"
+    ]
+  },
+  "shared_file_owner": "ontology-phase-2-integration",
+  "acceptance_gates": [
+    "focused lane tests pass from the repository root with the repository venv",
+    "palimnex/coverage.py passes strict mypy and imports only the standard library and palimnex modules",
+    "every gates_phase 2 frozen case passes without label changes; runtime validator and JSON Schema agree",
+    "every implementation receipt validates against its task card",
+    "ownership audit shows changes only inside owned paths",
+    "independent non-implementing review returns a receipt per implementation lane",
+    "search output and retrieval unchanged: evaluation Recall@5 1.0 and MRR 0.8917, no critical regression",
+    "full suite (unsandboxed), standard gate, deep validation, mypy and ledger status pass; no ledger writes"
+  ],
+  "authority_limits": [
+    "phase 2 coverage receipt only; phases 3-5 excluded",
+    "no network, provider, model, Git-write or live-state authority for any lane",
+    "no retrieval or ranking influence; no change to search output or context v1",
+    "no approved registry is created or populated",
+    "Codex lanes run with approval_policy=never inside workspace-write; the coordinator runs socket tests unsandboxed"
+  ],
+  "status": "in_progress"
+}

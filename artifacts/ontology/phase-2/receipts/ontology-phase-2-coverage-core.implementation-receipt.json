@@ -1,0 +1,88 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-2-coverage-core",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "e04a0f878539eb8670e15155ca505497c08284d2e0b39e78c82872ab5badb8a6"
+  },
+  "task_digest": "bc6ca8e5141a11a3fa174f54cb73fef22dab11197fd8e40a3fbd4042228dfa31",
+  "approval_evidence_digest": "5916fd688b541c28a332bb0fe4eac0fa045009a62d9199ea2dcbf30c2c81499f",
+  "owned_scope": [
+    "palimnex/coverage.py",
+    "palimnex/tests/test_coverage.py",
+    "artifacts/ontology/phase-2/receipts/ontology-phase-2-coverage-core.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/coverage.py",
+    "palimnex/tests/test_coverage.py",
+    "artifacts/ontology/phase-2/receipts/ontology-phase-2-coverage-core.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [],
+  "commands": [
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_coverage -v",
+      "exit_code": 0,
+      "result": "18 tests passed. New cases reproduce a real retrieve_sources byte-budget drop, distinguish a binding retrieval limit, no omission, and unknown cause, and refuse invalid or inconsistent retrieval limits."
+    },
+    {
+      "command": "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/coverage.py",
+      "exit_code": 0,
+      "result": "Strict focused mypy completed with no issues in palimnex/coverage.py."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_coverage_frozen -v",
+      "exit_code": 0,
+      "result": "3 test methods passed: all 12 Phase 2 frozen cases, the frozen matrix digest, and runtime/schema parity. The updated read-only harness now supplies retrieval_limit for its synthetic retrieval results."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_concepts palimnex.tests.test_concepts_frozen",
+      "exit_code": 0,
+      "result": "29 Phase 1 registry and frozen-conformance regression tests passed."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-2/tasks/ontology-phase-2-coverage-core.json",
+      "exit_code": 0,
+      "result": "Contract status valid; fresh task digest bc6ca8e5141a11a3fa174f54cb73fef22dab11197fd8e40a3fbd4042228dfa31; fresh approval evidence digest 5916fd688b541c28a332bb0fe4eac0fa045009a62d9199ea2dcbf30c2c81499f; authorizes_actions false."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-2/tasks/ontology-phase-2-coverage-core.json --implementation-receipt artifacts/ontology/phase-2/receipts/ontology-phase-2-coverage-core.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Contract and refreshed implementation receipt validated successfully with status valid and implementation_receipt_validated true."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "Git status completed successfully after the receipt refresh; the worktree remains preexisting dirty, and this refresh wrote only the assigned receipt file."
+    }
+  ],
+  "compatibility_effect": "The additive public build_coverage_receipt API now accepts keyword-only retrieval_limit: int | None = None. Values outside 1-100 and search results containing more items than the supplied limit are typed CoverageError refusals. With a supplied limit, omission is attributed to the byte budget only when the result count is below the limit; a binding limit is retrieval truncation. Without the limit, omission cause remains unknown and is disclosed as retrieval truncation. The coordinator-owned explain-search call site now supplies retrieval_limit=limit. The search result, schema, validate_receipt semantics, answerability, and every existing project-memory:* identifier remain unchanged.",
+  "privacy_and_authority_checks": [
+    "The fix consumes only result counts and the caller-supplied retrieval limit; it does not inspect or persist additional query or source bytes.",
+    "Invalid and inconsistent retrieval limits fail through typed non-echoing CoverageError reasons.",
+    "The receipt still contains no raw query or source excerpt and remains evidence_only with authorizes_actions false.",
+    "No network, provider, model, install, Git write, Redis mutation, SQLite mutation, registry population, migration, retention, erasure, pack activation or policy activation occurred.",
+    "This receipt-refresh turn changed no code or tests and wrote only artifacts/ontology/phase-2/receipts/ontology-phase-2-coverage-core.implementation-receipt.json; unrelated and parallel changes were preserved."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "The full unittest suite, reindex/evaluate cycle and scripts/palimnex_check.sh remain delegated to the coordinator as required by the Phase 2 common brief and were not run in this receipt-refresh turn."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_reason": "python3 palimnex.py status and python3 palimnex.py validate --deep both returned a Redis connection/protocol failure with Errno 1 under sandbox restrictions; current repository files were inspected directly and the task forbids indexing.",
+    "ledger_consulted": false,
+    "redis_mutated": false,
+    "sqlite_mutated": false
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "preexisting_dirty_tree": true,
+    "owned_paths_only": true,
+    "unrelated_changes_preserved": true,
+    "indexed_files_changed": true,
+    "reindex_delegated_to_coordinator": true,
+    "receipt_refresh_only": true
+  },
+  "status": "tested"
+}

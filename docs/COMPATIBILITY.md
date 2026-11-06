@@ -69,3 +69,12 @@ registry unless a caller passes its path. Registry documents carry
 `authority: historical_only` and `authorizes_actions: false`. An approved entry
 is reviewed repository source, never runtime authority. Source bindings reuse
 `palimnex:source-locator:v1` unchanged. See `docs/CONCEPT_REGISTRY.md`.
+
+Phase 2 adds `palimnex:retrieval-coverage:v1`, `palimnex:explain-search:v1`,
+the `palimnex.coverage` module and the read-only `explain-search` command. They
+are additive: `search`, `context` (`project-memory:context:v1`) and every
+cache, ledger and pack format are unchanged. The coverage receipt is never
+embedded in a context envelope, and neither document is persisted. Both carry
+`authority: evidence_only` and `authorizes_actions: false`. The default
+registry `ontology/concept-registry.v1.json` is not part of the source index,
+and its absence leaves behavior unchanged. See `docs/COVERAGE_RECEIPT.md`.

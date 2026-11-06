@@ -164,23 +164,48 @@ class SourceVerificationResult:
     stale_concept_ids: tuple[str, ...]
 
 
-def normalize_alias(text: str) -> str:
-    """Return the accepted NFKC/casefold/punctuation-to-space matching key."""
-    if not isinstance(text, str):
-        raise ConceptRegistryError("invalid_type", "alias")
+MAX_QUERY_BYTES = 8 * 1024
+
+
+def _fold_text(text: str, field: str) -> str:
+    """Normalization steps 1-5: NFKC, casefold, refuse C*, map, collapse."""
     folded = unicodedata.normalize("NFKC", text).casefold()
     mapped: list[str] = []
     for character in folded:
         category = unicodedata.category(character)
         if category.startswith("C"):
-            raise ConceptRegistryError("forbidden_unicode", "alias")
+            raise ConceptRegistryError("forbidden_unicode", field)
         if character.isspace() or category.startswith(("P", "Z")):
             mapped.append(" ")
         else:
             mapped.append(character)
-    normalized = " ".join("".join(mapped).split())
+    return " ".join("".join(mapped).split())
+
+
+def normalize_alias(text: str) -> str:
+    """Return the accepted NFKC/casefold/punctuation-to-space matching key."""
+    if not isinstance(text, str):
+        raise ConceptRegistryError("invalid_type", "alias")
+    normalized = _fold_text(text, "alias")
     if not normalized or len(normalized) > MAX_ALIAS_CHARS:
         raise ConceptRegistryError("alias_bound", "alias")
+    return normalized
+
+
+def normalize_query(query: str) -> str:
+    """Normalize query text for matching (R9, R11).
+
+    Whitespace becomes U+0020 first, then steps 1-5 apply. The 128 code-point
+    bound belongs to stored keys only; queries are bounded at 8 KiB UTF-8.
+    """
+    if not isinstance(query, str):
+        raise ConceptRegistryError("invalid_type", "query")
+    if len(query.encode("utf-8", errors="strict")) > MAX_QUERY_BYTES:
+        raise ConceptRegistryError("query_bound", "query")
+    admitted = "".join(" " if character.isspace() else character for character in query)
+    normalized = _fold_text(admitted, "query")
+    if not normalized:
+        raise ConceptRegistryError("query_bound", "query")
     return normalized
 
 
@@ -675,15 +700,11 @@ def match_aliases(registry: ConceptRegistry, query: str) -> ConceptMatchResult:
     if not isinstance(query, str):
         raise ConceptRegistryError("invalid_type", "query")
     raw = query.encode("utf-8")
+    if len(raw) > MAX_QUERY_BYTES:
+        raise ConceptRegistryError("query_bound", "query")
     if scan_bytes(raw):
         raise ConceptRegistryError("query_privacy_refused", "query")
-    admitted_query = "".join(
-        " " if character.isspace() else character for character in query
-    )
-    try:
-        normalized_query = normalize_alias(admitted_query)
-    except ConceptRegistryError as exc:
-        raise ConceptRegistryError(exc.reason, "query") from exc
+    normalized_query = normalize_query(query)
     query_tokens = tuple(normalized_query.split(" "))
 
     index: dict[str, set[str]] = {}

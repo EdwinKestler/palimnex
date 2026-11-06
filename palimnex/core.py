@@ -2627,6 +2627,68 @@ def clear(client: RedisClient, root: Path = ROOT) -> dict[str, Any]:
         return _clear_locked(client, root)
 
 
+DEFAULT_CONCEPT_REGISTRY = "ontology/concept-registry.v1.json"
+
+
+def concept_registry_selection(argument: str | None) -> tuple[str, str]:
+    """Return the repository-relative registry path and its source label."""
+    if argument is None:
+        return DEFAULT_CONCEPT_REGISTRY, "default"
+    parts = Path(argument).parts
+    if (
+        not argument
+        or len(argument) > 512
+        or Path(argument).is_absolute()
+        or ".." in parts
+        or "\\" in argument
+        or "\x00" in argument
+    ):
+        raise ValueError("--registry must be a repository-relative path without '..'")
+    return Path(argument).as_posix(), "argument"
+
+
+def explain_search(
+    query: str,
+    *,
+    root: Path = ROOT,
+    registry: str | None = None,
+    limit: int = 5,
+    byte_budget: int = 8192,
+    include_graph: bool = True,
+    client: Any = None,
+) -> dict[str, Any]:
+    """Read-only bounded retrieval plus an optional concept coverage receipt.
+
+    The `search` member is the unchanged `retrieve_sources` result (R10). An
+    absent default registry disables coverage; an explicit `--registry` that
+    cannot be loaded is a typed error, as is any refusal from the registry or
+    coverage engine. Nothing is persisted.
+    """
+    from .concepts import load_registry
+    from .coverage import build_coverage_receipt, build_explain_search
+    from .retrieval import retrieve_sources
+
+    if not config_present(root):
+        raise ValueError(
+            f"no {CONFIG_FILE} in {root}; run `palimnex init` to create one (see docs/INSTALL.md)"
+        )
+    relative, source = concept_registry_selection(registry)
+    search_result = retrieve_sources(
+        query, root=root, limit=limit, byte_budget=byte_budget,
+        include_graph=include_graph, client=client,
+    )
+    path = root / relative
+    receipt = None
+    if source == "argument" or path.exists() or path.is_symlink():
+        loaded = load_registry(relative, root=root, expected_kind="approved_registry")
+        receipt = build_coverage_receipt(
+            loaded, query, search_result, root=root, retrieval_limit=limit
+        )
+    return build_explain_search(
+        search_result, receipt, registry_path=relative, registry_source=source
+    )
+
+
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(description=__doc__)
     result.add_argument("--version", action="version", version=BUNDLE_VERSION)
@@ -2686,6 +2748,19 @@ def parser() -> argparse.ArgumentParser:
     search_parser = commands.add_parser("search")
     search_parser.add_argument("query")
     search_parser.add_argument("--limit", type=int, default=5)
+    explain_parser = commands.add_parser(
+        "explain-search",
+        help="bounded source retrieval plus a read-only concept coverage receipt",
+    )
+    explain_parser.add_argument("query")
+    explain_parser.add_argument("--limit", type=int, default=5)
+    explain_parser.add_argument("--byte-budget", type=int, default=8192)
+    explain_parser.add_argument("--backend", choices=("local", "cache"), default="local")
+    explain_parser.add_argument("--no-graph", action="store_true")
+    explain_parser.add_argument(
+        "--registry",
+        help=f"approved concept registry, repository-relative (default: {DEFAULT_CONCEPT_REGISTRY})",
+    )
     symbols_parser = commands.add_parser("symbols")
     symbols_parser.add_argument("query")
     symbols_parser.add_argument("--limit", type=int, default=20)
@@ -2974,6 +3049,14 @@ def main(argv: list[str] | None = None) -> int:
             report = doctor(ROOT, redis_url=args.url)
             print(json.dumps(report, sort_keys=True))
             return 0 if report["status"] == "healthy" else 2
+        if args.command == "explain-search":
+            output = explain_search(
+                args.query, root=ROOT, registry=args.registry, limit=args.limit,
+                byte_budget=args.byte_budget, include_graph=not args.no_graph,
+                client=RedisClient(args.url) if args.backend == "cache" else None,
+            )
+            print(json.dumps(output, sort_keys=True))
+            return 0
 
         cache_commands = {
             "status", "validate", "index", "search", "symbols", "impact", "path",

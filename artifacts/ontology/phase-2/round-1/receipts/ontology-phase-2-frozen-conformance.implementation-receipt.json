@@ -1,0 +1,96 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-2-frozen-conformance",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "e04a0f878539eb8670e15155ca505497c08284d2e0b39e78c82872ab5badb8a6"
+  },
+  "task_digest": "412d9eec9efda6b6490e3ec7463486b0652a2c7b70560db6f1a1f6df5f0e92c0",
+  "approval_evidence_digest": "5916fd688b541c28a332bb0fe4eac0fa045009a62d9199ea2dcbf30c2c81499f",
+  "owned_scope": [
+    "palimnex/tests/test_coverage_frozen.py",
+    "artifacts/ontology/phase-2/receipts/ontology-phase-2-frozen-conformance.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/tests/test_coverage_frozen.py",
+    "artifacts/ontology/phase-2/receipts/ontology-phase-2-frozen-conformance.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [
+    "ontology-phase-2-coverage-core: tested implementation receipt",
+    "ontology-phase-2-coverage-schema: tested implementation receipt"
+  ],
+  "commands": [
+    {
+      "command": "python3 palimnex.py status",
+      "exit_code": 1,
+      "result": "Redis connection was rejected by the sandbox with Operation not permitted; cache_consulted was false and no cache state was mutated."
+    },
+    {
+      "command": "python3 palimnex.py validate --deep",
+      "exit_code": 1,
+      "result": "Deep cache validation could not consult Redis because the sandbox rejected the connection; cache_consulted was false and the task-card prohibition on indexing was preserved."
+    },
+    {
+      "command": "python3 palimnex.py search \"gates_phase 2 frozen conformance validate_receipt build_explain_search\" --limit 10",
+      "exit_code": 1,
+      "result": "Focused cache search could not consult Redis because the sandbox rejected the connection; exact current source files were opened directly instead."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_coverage_frozen -v",
+      "exit_code": 0,
+      "result": "3 test methods passed, including 12 Phase 2 frozen-case subtests and 19 schema-lane fixture parity subtests."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_coverage_frozen palimnex.tests.test_coverage palimnex.tests.test_concepts_frozen -v",
+      "exit_code": 0,
+      "result": "23 focused acceptance and Phase 1/core regression tests passed."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-2/tasks/ontology-phase-2-frozen-conformance.json",
+      "exit_code": 0,
+      "result": "Task contract status valid; task digest 412d9eec9efda6b6490e3ec7463486b0652a2c7b70560db6f1a1f6df5f0e92c0; approval evidence digest 5916fd688b541c28a332bb0fe4eac0fa045009a62d9199ea2dcbf30c2c81499f."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-2/tasks/ontology-phase-2-frozen-conformance.json --implementation-receipt artifacts/ontology/phase-2/receipts/ontology-phase-2-frozen-conformance.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Task and implementation receipt validated successfully against the bounded workstream contract."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "Read-only Git status completed; both lane-owned files are untracked, the worktree was already dirty, and all unrelated parallel changes remain preserved."
+    }
+  ],
+  "compatibility_effect": "Added no public runtime API or wire identifier. Added the Phase 2 frozen-conformance test contract for the existing additive palimnex.coverage API: 12 gates_phase 2 cases now assert exact status and recognized, covered, uncovered, stale and ambiguous sets; produced receipts are runtime/schema validated and wrapped as palimnex:explain-search:v1; all schema-lane fixtures receive runtime/schema-contract parity checks. Retrieval output, ranking, project-memory:* identifiers, cache, ledger, MCP, configuration and existing test expectations are unchanged.",
+  "privacy_and_authority_checks": [
+    "Every frozen case is materialized in a temporary checkout with synthetic admissible bytes; source ranges are non-empty, placeholder commitments are replaced with local SHA-256 digests, and no repository source bytes or rejected values are persisted by the test.",
+    "The test uses only standard-library and existing Palimnex runtime modules plus test-only jsonschema and referencing dependencies; it performs no network, provider, model or install call.",
+    "The search object is synthetic and consumed unchanged; coverage remains evidence_only and authorizes_actions false, with no retrieval, filtering or ranking influence.",
+    "No Redis or SQLite state was mutated, no forbidden path was read, no registry was populated, and no migration, retention, erasure, pack or policy action occurred.",
+    "No Git write was performed, and edits are restricted to the two task-card owned paths while parallel-lane work remains untouched."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "The two frozen stale-source labels remain marked expected_status_disputed in the immutable matrix even though the current implementation matches both labels; this lane preserves rather than resolves that review marker.",
+    "Parity follows the schema lane's accepted cross-field contract checks in addition to Draft 2020-12 validation because bare JSON Schema treats 0.0 as mathematically integral and cannot express classification-set disjointness.",
+    "The full unittest suite, reindex and evaluate cycle, and scripts/palimnex_check.sh remain delegated to the coordinator as required by the Phase 2 common brief."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_reason": "Status, deep validation and focused search could not consult Redis because the sandbox rejected the connection with Operation not permitted; task authority forbids indexing or starting Redis.",
+    "ledger_consulted": false,
+    "ledger_reason": "The forbidden .palimnex path was not read and no ledger command was run.",
+    "redis_mutated": false,
+    "sqlite_mutated": false
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "preexisting_dirty_tree": true,
+    "owned_paths_only": true,
+    "unrelated_changes_preserved": true,
+    "indexed_files_changed": true,
+    "reindex_delegated_to_coordinator": true
+  },
+  "status": "tested"
+}

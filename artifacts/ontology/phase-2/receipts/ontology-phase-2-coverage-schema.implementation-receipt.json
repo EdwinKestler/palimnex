@@ -1,0 +1,69 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-2-coverage-schema",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "e04a0f878539eb8670e15155ca505497c08284d2e0b39e78c82872ab5badb8a6"
+  },
+  "task_digest": "47f0afb3db098f37a7f7368d7ef24766f792a80bd28e767d7501ef280f83a666",
+  "approval_evidence_digest": "5916fd688b541c28a332bb0fe4eac0fa045009a62d9199ea2dcbf30c2c81499f",
+  "owned_scope": [
+    "palimnex/schemas/retrieval-coverage.v1.schema.json",
+    "palimnex/schemas/explain-search.v1.schema.json",
+    "palimnex/tests/test_retrieval_coverage_schema.py",
+    "palimnex/tests/fixtures/retrieval_coverage",
+    "docs/COVERAGE_RECEIPT.md",
+    "artifacts/ontology/phase-2/receipts/ontology-phase-2-coverage-schema.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/schemas/retrieval-coverage.v1.schema.json",
+    "palimnex/schemas/explain-search.v1.schema.json",
+    "palimnex/tests/test_retrieval_coverage_schema.py",
+    "palimnex/tests/fixtures/retrieval_coverage",
+    "docs/COVERAGE_RECEIPT.md",
+    "artifacts/ontology/phase-2/receipts/ontology-phase-2-coverage-schema.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [],
+  "commands": [
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_retrieval_coverage_schema palimnex.tests.test_concept_registry_schema palimnex.tests.test_sdk -v",
+      "exit_code": 0,
+      "result": "30 focused acceptance and regression tests passed."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-2/tasks/ontology-phase-2-coverage-schema.json",
+      "exit_code": 0,
+      "result": "Task contract status valid; task digest 47f0afb3db098f37a7f7368d7ef24766f792a80bd28e767d7501ef280f83a666; approval evidence digest 5916fd688b541c28a332bb0fe4eac0fa045009a62d9199ea2dcbf30c2c81499f."
+    }
+  ],
+  "compatibility_effect": "Added the public additive schema identifiers palimnex:retrieval-coverage:v1 and palimnex:explain-search:v1. The promoted retrieval coverage schema differs from the accepted Phase 0 schema only by removing Draft from its title; its identifier, definitions, references, fields and meaning are unchanged. Under R10, the documentation now correctly identifies the wrapper's unchanged search member as the bounded source-backed retrieve_sources result used by context, not the palimnex search CLI output, and records the implemented explain-search options, defaults and exit behavior. No existing project-memory:* identifier, schema, CLI output, cache, ledger, pack, configuration key or retrieval behavior was changed.",
+  "privacy_and_authority_checks": [
+    "Both schemas require authorizes_actions false and evidence_only authority.",
+    "The coverage receipt exposes only query_digest; under R10 the wrapper permits the existing raw query only inside the unchanged bounded retrieve_sources result and is documented as printed, never persisted.",
+    "Registry paths use the repository-relative traversal-free pattern with a 512-character maximum.",
+    "All four related schemas resolve from a local referencing.Registry; no network, provider, model or install call was made.",
+    "No Redis or SQLite state was read or written, and no Git write was performed.",
+    "No credential file or forbidden path was read; rejected values, source bytes and privacy findings are absent from fixtures and output."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "The full unittest suite and scripts/palimnex_check.sh were not run in this sandbox and remain delegated to the coordinator as required by the Phase 2 common brief.",
+    "End-to-end explain-search producer and CLI conformance belongs to the coverage-core and serial integration lanes; this schema lane proves the public document contracts and fixtures only."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_reason": "Read-only status and deep validation could not consult Redis because the sandbox rejected the connection with Operation not permitted. No indexing or evaluation was run, and the forbidden .palimnex path was not read.",
+    "ledger_consulted": false,
+    "redis_mutated": false,
+    "sqlite_mutated": false
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "preexisting_dirty_tree": true,
+    "owned_paths_only": true,
+    "unrelated_changes_preserved": true,
+    "indexed_files_changed": true
+  },
+  "status": "tested"
+}

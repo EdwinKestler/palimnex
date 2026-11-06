@@ -10,12 +10,14 @@ from pathlib import Path
 
 from palimnex.concepts import (
     MAX_ALIAS_CHARS,
+    MAX_QUERY_BYTES,
     MAX_REGISTRY_BYTES,
     ConceptRegistryError,
     canonical_registry_digest,
     load_registry,
     match_aliases,
     normalize_alias,
+    normalize_query,
     parse_registry,
     verify_source_bindings,
 )
@@ -365,6 +367,31 @@ class ConceptRegistryTests(unittest.TestCase):
             match_aliases(registry, "alpha\u0007concept")
         self.assertEqual(raised.exception.reason, "forbidden_unicode")
         self.assertEqual(raised.exception.field, "query")
+
+    def test_long_queries_match_and_only_the_query_byte_bound_applies(self) -> None:
+        """R11: the 128 code-point bound applies to stored keys, not queries."""
+        registry = parse_registry(self.document(), root=self.root)
+        padding = "some unrelated context words " * 40
+        long_query = f"{padding} where is the alpha concept defined {padding}"
+        self.assertGreater(len(long_query), 1000)
+        self.assertEqual(match_aliases(registry, long_query).recognized_concept_ids, ("concept.alpha",))
+        self.assertEqual(normalize_query("  Alpha\tCONCEPT!  "), "alpha concept")
+
+        at_limit = ("x " * 4096)[: MAX_QUERY_BYTES - len(" alpha concept")] + " alpha concept"
+        self.assertEqual(len(at_limit.encode("utf-8")), MAX_QUERY_BYTES)
+        self.assertEqual(match_aliases(registry, at_limit).recognized_concept_ids, ("concept.alpha",))
+        with self.assertRaises(ConceptRegistryError) as oversized:
+            match_aliases(registry, at_limit + "x")
+        self.assertEqual(oversized.exception.reason, "query_bound")
+
+        for empty in ("", "   ", "?!.,"):
+            with self.subTest(query=repr(empty)), self.assertRaises(ConceptRegistryError) as raised:
+                match_aliases(registry, empty)
+            self.assertEqual(raised.exception.reason, "query_bound")
+
+        long_alias = self.concept(alias="a" * (MAX_ALIAS_CHARS + 1))
+        with self.assertRaises(ConceptRegistryError):
+            parse_registry(self.document([long_alias]), root=self.root)
 
     def test_current_source_verifies_and_changed_or_missing_source_is_stale(self) -> None:
         registry = parse_registry(self.document(), root=self.root)

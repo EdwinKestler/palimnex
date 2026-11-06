@@ -1,0 +1,181 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-2-integration",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "e04a0f878539eb8670e15155ca505497c08284d2e0b39e78c82872ab5badb8a6"
+  },
+  "task_digest": "36dbdca0d3c067af3aae41bddabb5a98fafa2d728e8187a9df91e24eb5f8caf8",
+  "approval_evidence_digest": "5916fd688b541c28a332bb0fe4eac0fa045009a62d9199ea2dcbf30c2c81499f",
+  "owned_scope": [
+    "artifacts/ontology/phase-2/integration",
+    "artifacts/ontology/phase-2/receipts/ontology-phase-2-integration.implementation-receipt.json",
+    "docs/COMPATIBILITY.md",
+    "docs/CONCEPT_REGISTRY.md",
+    "palimnex/CHANGELOG.md",
+    "palimnex/concepts.py",
+    "palimnex/core.py",
+    "palimnex/tests/test_concepts.py",
+    "palimnex/tests/test_explain_search.py",
+    "pyproject.toml"
+  ],
+  "files_changed": [
+    "artifacts/ontology/phase-2/integration",
+    "artifacts/ontology/phase-2/receipts/ontology-phase-2-integration.implementation-receipt.json",
+    "docs/COMPATIBILITY.md",
+    "docs/CONCEPT_REGISTRY.md",
+    "palimnex/CHANGELOG.md",
+    "palimnex/concepts.py",
+    "palimnex/core.py",
+    "palimnex/tests/test_concepts.py",
+    "palimnex/tests/test_explain_search.py",
+    "pyproject.toml"
+  ],
+  "dependencies_consumed": [
+    "artifacts/ontology/phase-2/receipts/ontology-phase-2-coverage-core.implementation-receipt.json",
+    "artifacts/ontology/phase-2/receipts/ontology-phase-2-coverage-schema.implementation-receipt.json",
+    "artifacts/ontology/phase-2/receipts/ontology-phase-2-frozen-conformance.implementation-receipt.json",
+    "artifacts/ontology/phase-2/reviews/ontology-phase-2-coverage-core.review-receipt.json",
+    "artifacts/ontology/phase-2/reviews/ontology-phase-2-coverage-schema.review-receipt.json",
+    "artifacts/ontology/phase-2/reviews/ontology-phase-2-frozen-conformance.review-receipt.json",
+    "artifacts/ontology/phase-2/reviews/ontology-phase-2-integration.review-receipt.json"
+  ],
+  "commands": [
+    {
+      "command": "./.venv/bin/python -m unittest discover -s palimnex/tests -p 'test_*.py'",
+      "exit_code": 0,
+      "result": "361 tests OK, unsandboxed"
+    },
+    {
+      "command": "./.venv/bin/python -m mypy",
+      "exit_code": 0,
+      "result": "no issues in 14 source files including palimnex/coverage.py"
+    },
+    {
+      "command": "python3 palimnex.py index",
+      "exit_code": 0,
+      "result": "fresh index, 111 files"
+    },
+    {
+      "command": "python3 palimnex.py validate --deep",
+      "exit_code": 0,
+      "result": "fresh, deep validation passed"
+    },
+    {
+      "command": "python3 palimnex.py evaluate --limit 5",
+      "exit_code": 0,
+      "result": "20 cases, critical passed, recall_at_limit 1.0, MRR 0.9 (was 0.8917: case cache-reader-lease rank 3->2 from corpus statistics; ranking code unchanged)"
+    },
+    {
+      "command": "PATH=\"$PWD/.venv/bin:$PATH\" ./scripts/palimnex_check.sh",
+      "exit_code": 0,
+      "result": "standalone gate passed; isolated retrieval recall 1.0; no live ledger write or model call"
+    },
+    {
+      "command": "python3 palimnex.py ledger-status",
+      "exit_code": 0,
+      "result": "integrity ok, 0 events"
+    },
+    {
+      "command": "python3 palimnex.py explain-search QUERY --backend cache|local",
+      "exit_code": 0,
+      "result": "cache: verified_cache_rrf, cache_consulted true; local: local_snapshot_rrf; unreachable Redis: typed error exit 1, no silent downgrade"
+    },
+    {
+      "command": "./.venv/bin/python artifacts/ontology/phase-2/tools/ownership_audit.py audit",
+      "exit_code": 0,
+      "result": "no lane wrote outside its owned paths in any run; reviewer wrote nothing"
+    }
+  ],
+  "compatibility_effect": "Additive: palimnex.coverage, public schemas palimnex:retrieval-coverage:v1 and palimnex:explain-search:v1, read-only explain-search command, docs/COVERAGE_RECEIPT.md, tests and fixtures. search, context v1, cache, ledger, pack, MCP and config unchanged; no ranking influence; no approved registry created. R11 changes palimnex.concepts query matching only: queries are bounded at 8 KiB instead of being refused above 128 normalized characters; stored-key rules unchanged.",
+  "privacy_and_authority_checks": [
+    "no Git writes",
+    "no model or provider calls",
+    "no ledger writes (0 events)",
+    "Redis used for gate and cache-backend check, then stopped",
+    "coverage receipt carries only query_digest; raw query only inside the unchanged search member; nothing persisted",
+    "Codex lanes ran with approval_policy=never; no sandbox escapes",
+    "integration lane amended (R11) to own palimnex/concepts.py and its test for one defect fix; other task cards unchanged"
+  ],
+  "integration_patch_proposals": [
+    "R8 (from Phase 0): validator should accept files_changed descendants of directory-valued owned paths; still not applied"
+  ],
+  "unresolved_risks": [
+    "R10, R11 and the declined exclusivity minor are coordinator decisions for owner review",
+    "When --limit binds, additional byte-budget drops cannot be attributed from retrieve_sources fields; reported as retrieval truncation only",
+    "Mixed stale reasons on one concept aggregate to unavailable (one reason per concept in v1)",
+    "No approved registry exists yet, so explain-search currently reports registry_absent until one is reviewed and committed",
+    "Grok tool-level write block only removed Write; reviewer read-only status verified by snapshot audits"
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": true,
+    "index_fresh_at_gate": true,
+    "redis_final_state": "stopped (restored)",
+    "ledger_integrity": "ok",
+    "ledger_events": 0
+  },
+  "git_state": {
+    "head": "80d94c4",
+    "staged": [],
+    "status": [
+      " M docs/COMPATIBILITY.md",
+      " M docs/CONCEPT_REGISTRY.md",
+      " M docs/ONTOLOGY_ADOPTION.md",
+      " M palimnex/CHANGELOG.md",
+      " M palimnex/concepts.py",
+      " M palimnex/core.py",
+      " M palimnex/tests/test_concepts.py",
+      " M pyproject.toml",
+      "?? .env.example",
+      "?? artifacts/ontology/phase-0/integration/gate.log",
+      "?? artifacts/ontology/phase-0/integration/standard-gate.log",
+      "?? artifacts/ontology/phase-0/logs/grok-review-wave-2.log",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-coverage-contract.log",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-coverage-contract.pid",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-registry-contract.log",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-registry-contract.pid",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-threat-cases.log",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-threat-cases.pid",
+      "?? artifacts/ontology/phase-0/wave-1/logs/grok-review.log",
+      "?? artifacts/ontology/phase-0/wave-1/logs/grok-review.pid",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-coverage-contract.log",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-coverage-contract.pid",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-registry-contract.log",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-registry-contract.pid",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-threat-cases.log",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-threat-cases.pid",
+      "?? artifacts/ontology/phase-1/exit-gate.json",
+      "?? artifacts/ontology/phase-1/integration/gate-final.log",
+      "?? artifacts/ontology/phase-1/integration/gate.log",
+      "?? artifacts/ontology/phase-1/logs/grok-rereview.log",
+      "?? artifacts/ontology/phase-1/logs/grok-review.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-frozen-conformance.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-frozen-conformance.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.fix-1.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.fix-1.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.fix-2.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.fix-2.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.fix-1.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.fix-1.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.fix-2.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.fix-2.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.pid",
+      "?? artifacts/ontology/phase-1/round-1/grok-review.log",
+      "?? artifacts/ontology/phase-2/",
+      "?? benchmark/",
+      "?? docs/COVERAGE_RECEIPT.md",
+      "?? palimnex/coverage.py",
+      "?? palimnex/schemas/explain-search.v1.schema.json",
+      "?? palimnex/schemas/retrieval-coverage.v1.schema.json",
+      "?? palimnex/tests/fixtures/retrieval_coverage/",
+      "?? palimnex/tests/test_coverage.py",
+      "?? palimnex/tests/test_coverage_frozen.py",
+      "?? palimnex/tests/test_explain_search.py",
+      "?? palimnex/tests/test_retrieval_coverage_schema.py"
+    ]
+  },
+  "status": "tested"
+}

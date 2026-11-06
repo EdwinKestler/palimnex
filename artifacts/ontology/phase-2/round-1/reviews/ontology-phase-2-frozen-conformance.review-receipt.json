@@ -1,0 +1,50 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "palimnex/tests/test_coverage_frozen.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "e04a0f878539eb8670e15155ca505497c08284d2e0b39e78c82872ab5badb8a6"
+  },
+  "task_digest": "412d9eec9efda6b6490e3ec7463486b0652a2c7b70560db6f1a1f6df5f0e92c0",
+  "approval_evidence_digest": "5916fd688b541c28a332bb0fe4eac0fa045009a62d9199ea2dcbf30c2c81499f",
+  "workstream_id": "ontology-phase-2-frozen-conformance",
+  "evidence": [
+    "NOTE: palimnex/tests/fixtures/ontology/cases.v0.json sha256 is a64be4f15fdfb664b3142706e5cef35d10fbaa4ed340aea38f22388404f7314b. All 12 gates_phase 2 cases ran (ONT-POS-001/002, ONT-PAR-001/002, ONT-NEG-001/002, ONT-STALE-001/002, ONT-TRUNC-001/002, ONT-BUDGET-001/002) and passed without label changes.",
+    "NOTE: The two expected_status_disputed stale cases remain labeled unanswerable with nonempty expected_stale_concept_ids. The tests assert those labels; they do not skip, expectedFailure, or relabel them.",
+    "NOTE: No unittest.skip, skipTest, or expectedFailure in test_coverage_frozen.py. Focused acceptance (frozen + coverage + concepts_frozen) is 23/23. The implementation receipt validates.",
+    "NOTE: Materialization writes a matching .palimnex.json, synthetic admissible source bytes, placeholder digest replacement, registry_digest recompute, and synthetic search shaped by category. It also rewrites repo locator version (fixture current or reviewed-version) to the current file hash so RepositoryResolver can verify; that is synthetic input required by locators.py, not a label change.",
+    "NOTE: Produced receipts pass validate_receipt and JSON Schema; each is wrapped with build_explain_search. Schema-lane fixture parity is 19/19 using schema plus contract checks, because bare JSON Schema cannot express disjointness or JSON integer type.",
+    "NOTE: The task card asked for gates_phase 2 only. Supersession cases remain gates_phase 1 and are covered by the still-passing Phase 1 frozen tests, not by this file."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_coverage_frozen palimnex.tests.test_coverage palimnex.tests.test_concepts_frozen -v",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-2/tasks/ontology-phase-2-frozen-conformance.json --implementation-receipt artifacts/ontology/phase-2/receipts/ontology-phase-2-frozen-conformance.implementation-receipt.json",
+    "./.venv/bin/python /tmp/phase2_review_probes.py"
+  ],
+  "source_grounding_result": "Each case is materialized in an isolated temporary checkout whose project identity matches the fixture registry. Bindings are digest-verified against locally written bytes. The committed matrix is not rewritten.",
+  "privacy_result": "Sources are synthetic admissible fixture lines or repeated x bytes. No repository source bytes, rejected values, or reconstructed canaries are persisted by the test.",
+  "retrieval_quality_result": "Assertions cover expected_status and the exact covered, uncovered, stale, and ambiguous ID sets. Truncation and byte-budget cases keep their status and set the corresponding retrieval_state flags via synthetic search objects (byte_budget=2 used_bytes=2 for budget cases).",
+  "compatibility_result": "Test-only file. No public API, wire identifier, or retrieval change.",
+  "rollback_result": "Delete palimnex/tests/test_coverage_frozen.py. Frozen matrix bytes are unchanged.",
+  "authority_result": "Search objects are synthetic and consumed unchanged. Coverage remains evidence_only. No registry is populated in the repository.",
+  "limitations": [
+    "Full suite and palimnex_check.sh were not run, as instructed."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "ledger_consulted": false,
+    "redis_mutated": false,
+    "sqlite_mutated": false
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "branch": "main",
+    "head": "80d94c43a93a33508f2519d5cb44b358c62b35a5",
+    "dirty_tree": true,
+    "reviewer_modified_repository": false
+  },
+  "status": "accepted"
+}

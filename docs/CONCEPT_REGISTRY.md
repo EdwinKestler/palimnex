@@ -28,8 +28,16 @@ calls, deployment, migration, policy activation, erasure, pack activation, or
 any other operation. Generated, imported, persisted, or model-produced entries
 remain candidates until a separate reviewed repository change approves them.
 
-Registry location is not yet decided. Phase 1 defines no default location,
-configuration key, CLI loading path, or retrieval influence.
+The approved registry lives at `ontology/concept-registry.v1.json`. It is
+committed, reviewed source, loaded directly by `palimnex explain-search`, and
+never admitted to the ordinary source index, so the ontology's own labels never
+count as independent source evidence. `--registry PATH` (repository-relative)
+overrides the default. A missing default file means coverage is disabled; a
+missing explicit path is an error. Generated or imported candidate sets belong
+under `artifacts/ontology/candidates/`, outside both the approved read path and
+the index; only a reviewed change can copy entries into the approved registry.
+No configuration key loads a registry, and concepts have no retrieval influence.
+See `docs/COVERAGE_RECEIPT.md`.
 
 ## Stable concepts and lifecycle
 
@@ -73,11 +81,13 @@ may intentionally occur on more than one approved concept; readers retain all
 matching concept IDs in deterministic order and report ambiguity. They do not
 silently choose one concept or count an ambiguous concept as covered.
 
-For query text, every whitespace character (including TAB, LF, and CR) is
-first treated as U+0020 SPACE, and then the same six-step procedure applies.
-Any other control character in a query is therefore refused. This distinction
-is specified by Phase 1 coordinator
-[clarification R9](../artifacts/ontology/phase-1/integration/clarification-R9.md).
+Query text is bounded at 8,192 UTF-8 bytes and privacy-scanned. Every
+whitespace character (including TAB, LF, and CR) is then treated as U+0020
+SPACE, and steps 1-5 apply, so any other control character in a query is
+refused. The 128 code-point bound in step 6 applies only to stored keys; a
+query that normalizes to nothing is refused. See coordinator clarifications
+[R9](../artifacts/ontology/phase-1/integration/clarification-R9.md) and
+[R11](../artifacts/ontology/phase-2/integration/clarification-R11.md).
 
 ## Source bindings, drift, and refusals
 

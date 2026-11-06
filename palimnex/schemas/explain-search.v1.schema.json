@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://palimnex.dev/schemas/explain-search.v1.schema.json",
+  "title": "Palimnex explain-search result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "search",
+    "coverage_state",
+    "coverage",
+    "registry",
+    "authority",
+    "authorizes_actions"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "palimnex:explain-search:v1",
+      "minLength": 26,
+      "maxLength": 26
+    },
+    "search": {
+      "type": "object"
+    },
+    "coverage_state": {
+      "type": "string",
+      "enum": [
+        "enabled",
+        "registry_absent"
+      ]
+    },
+    "coverage": {
+      "anyOf": [
+        {
+          "$ref": "https://palimnex.dev/schemas/retrieval-coverage.v1.schema.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "source"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+",
+          "maxLength": 512
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "default",
+            "argument"
+          ]
+        }
+      }
+    },
+    "authority": {
+      "type": "string",
+      "const": "evidence_only",
+      "minLength": 13,
+      "maxLength": 13
+    },
+    "authorizes_actions": {
+      "const": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "coverage": {
+            "type": "null"
+          }
+        },
+        "required": [
+          "coverage"
+        ]
+      },
+      "then": {
+        "properties": {
+          "coverage_state": {
+            "const": "registry_absent"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "coverage_state": {
+            "const": "enabled"
+          }
+        }
+      }
+    }
+  ]
+}

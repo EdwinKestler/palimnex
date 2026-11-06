@@ -1,0 +1,31 @@
+{
+  "schema": "palimnex:ontology-exit-gate:v1",
+  "phase": 1,
+  "decision": "accepted",
+  "authority_source": "user_message",
+  "evidence_locator": "claude.ai conversation with the repository owner, user message sent 2026-11-06 07:45 America/Guatemala (R9 confirmed, import residual accepted, sandbox escape recorded, commit 80d94c4, 'Phase 2 approved'), plus the owner's answers to the registry-location and explain-search output questions in the same conversation",
+  "grantor_claim": "repository owner (Gus, GitHub EdwinKestler)",
+  "recorded_at": "2026-11-06T07:45:00-06:00",
+  "commit": "80d94c43a93a33508f2519d5cb44b358c62b35a5",
+  "design_identity_at_acceptance": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "0288521fd44d14333ff059a000596861e2a3babc2ffb0a6c58960ba2a6415856"
+  },
+  "handoff": "artifacts/ontology/phase-1/integration/PHASE1_HANDOFF.md",
+  "confirmed": [
+    "R9 query-whitespace clarification",
+    "import residual (cache_v3.project_id, core.project_slug)",
+    "sandbox escape recorded; no detected damage; ownership audits clean"
+  ],
+  "owner_decisions": {
+    "registry_location": "ontology/concept-registry.v1.json",
+    "registry_indexed": false,
+    "candidate_location": "artifacts/ontology/candidates/",
+    "explain_search_output": "palimnex:explain-search:v1 with sibling search and coverage objects"
+  },
+  "not_decided": [
+    "validator patch R8 (not applied)"
+  ],
+  "pushed": false,
+  "authorizes_actions": false
+}

@@ -1,24 +1,30 @@
 # Palimnex ontology adoption plan
 
-Status: **Phase 0 accepted by the repository owner at its exit gate on
-2026-11-05. Phase 1 (reviewed concept-registry foundation) approved on
-2026-11-05. Phases 2-5 remain proposals and each requires a separate named
-approval.**
+Status: **Phase 0 accepted at its exit gate on 2026-11-05. Phase 1
+(reviewed concept-registry foundation) accepted and committed on 2026-11-06.
+Phase 2 (deterministic coverage receipt) approved on 2026-11-06. Phases 3-5
+remain proposals and each requires a separate named approval.**
 
 Source proposal: `artifacts/design/Ontologyadoptionplan.md` (SHA-256 `8fe38bef5f7f25fa8a7d58dad21b89f69c70f4a367d9981c01fdedf6bd165d86`), which stays
 unchanged. Approval evidence: Phase 0 `artifacts/ontology/phase-0/approval-evidence.json`
 and exit gate `artifacts/ontology/phase-0/exit-gate.json`; Phase 1
-`artifacts/ontology/phase-1/approval-evidence.json`.
+`artifacts/ontology/phase-1/approval-evidence.json` and exit gate
+`artifacts/ontology/phase-1/exit-gate.json`; Phase 2
+`artifacts/ontology/phase-2/approval-evidence.json`.
 
-Phase 1 approval authorizes implementing the reviewed concept-registry
-foundation (see "Phase 1" below) in `palimnex/`, its tests and `docs/`, within
-exact Phase 1 task cards. It does not authorize coverage receipts, retrieval
-influence, a default registry location, configuration keys or CLI wiring that
-load a registry, model or network calls, changes to live Redis or SQLite state,
-ledger migration, retention-policy activation, erasure, pack activation, Git
-writes, publication, deployment, or any other external action. Accepted Phase 0
-drafts remain under `artifacts/design/ontology-phase-0/` as the promotion source;
-coordination records live under `artifacts/ontology/`.
+Phase 2 approval authorizes the deterministic coverage receipt (see "Phase 2"
+below): `palimnex/coverage.py`, the public `palimnex:retrieval-coverage:v1` and
+`palimnex:explain-search:v1` schemas, their tests and documentation, and the
+read-only `explain-search` command, which loads the approved registry from
+`ontology/concept-registry.v1.json` or `--registry PATH`, within exact Phase 2 task cards. It
+does not authorize retrieval or ranking influence (aliases stay shadow-only
+through Phase 3), creating or populating the approved registry, changes to the
+`search` command output or `project-memory:context:v1`, model or network calls,
+changes to live Redis or SQLite state, ledger migration, retention-policy
+activation, erasure, pack activation, Git writes, publication, deployment, or
+any other external action. Accepted Phase 0 drafts remain under
+`artifacts/design/ontology-phase-0/`; coordination records live under
+`artifacts/ontology/`.
 
 ## Decision requested
 
@@ -588,7 +594,7 @@ provider data. Those surfaces require their own documented controls.
 | --- | --- |
 | Implementation module | `palimnex/concepts.py` |
 | Registry format | Canonical JSON, `palimnex:concept-registry:v1` |
-| Registry location and indexing | **Open.** Phase 1 loads a registry only from an explicitly passed path; no default location, configuration key or CLI wiring |
+| Registry location and indexing | `ontology/concept-registry.v1.json` (owner decision 2026-11-06), loaded directly and never admitted to the ordinary source index; `--registry PATH` overrides it; a missing file means coverage is disabled. Candidate sets live under `artifacts/ontology/candidates/`, outside both the approved read path and the index |
 | Read-only CLI spelling | `explain-search` (Phase 2) |
 | Alias influence in the first release | Shadow-only through Phase 3 |
 | Remote semantic providers | Disabled by default; a remote provider needs a separate privacy design and approval |
@@ -598,8 +604,11 @@ provider data. Those surfaces require their own documented controls.
 | Bounds | Registry 1,000,000 bytes and 512 concepts; alias max 128 normalized characters; coverage collections 256 visible and 4,096 total |
 | Frozen case matrix | `artifacts/design/ontology-phase-0/frozen-cases/cases.v0.json`, SHA-256 `a64be4f15fdfb664b3142706e5cef35d10fbaa4ed340aea38f22388404f7314b`. Labels never change to make an implementation pass. Known: ONT-NORM-001 does not encode a mixed-case query; 8 cases remain `expected_status_disputed` |
 | Validator patch R8 | Not applied; receipts list owned roots |
+| `explain-search` output | One new `palimnex:explain-search:v1` document holding the unchanged `search` result and the coverage receipt as sibling objects (owner decision 2026-11-06) |
+| Query whitespace (R9) | Registry keys refuse every C* code point; in queries, whitespace becomes U+0020 before the same procedure (confirmed 2026-11-06) |
+| Import residual | `palimnex.concepts` imports the contract-named `cache_v3.project_id` and `core.project_slug` (accepted 2026-11-06) |
 
-## Original open owner decisions (settled above, except the registry location)
+## Original open owner decisions (settled above)
 
 1. Approve, reject, or revise the overall phased approach.
 2. Choose `ontology.py` or `concepts.py` as the implementation module name.

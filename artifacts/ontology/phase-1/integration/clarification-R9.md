@@ -37,3 +37,11 @@ retrieval behavior is changed by this confirmation.
 
 This is a technical confirmation of R9, not approval for Phase 2 or for any
 registry-location wiring.
+
+## Phase 2 correction (R11)
+
+R11 supersedes only the phrase "the same steps 1-6 apply unchanged" for query
+text. Query whitespace admission from R9 remains confirmed, but query text uses
+normalization steps 1-5 and the coverage contract's separate 8 KiB UTF-8 bound.
+The 128-code-point step 6 remains a stored registry-key bound only. See
+`artifacts/ontology/phase-2/integration/clarification-R11.md`.

@@ -1,0 +1,236 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-influence-integration",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "task_digest": "30c5a1f750782da4ea87b4769dd54b6b1c3c0b11f052e7a8887c58bb87ce3261",
+  "approval_evidence_digest": "9fc56199fd9a8fb06155de459d29c80e96b07c458e58ff53f4108193575f0025",
+  "owned_scope": [
+    "artifacts/ontology/phase-3-promotion/integration",
+    "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-integration.implementation-receipt.json",
+    "docs/COMPATIBILITY.md",
+    "docs/CONCEPT_REGISTRY.md",
+    "palimnex/CHANGELOG.md",
+    "palimnex/core.py",
+    "palimnex/evaluation/ontology-shadow.v1.json",
+    "palimnex/tests/test_ontology_influence_cli.py",
+    "pyproject.toml"
+  ],
+  "files_changed": [
+    "artifacts/ontology/phase-3-promotion/integration",
+    "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-integration.implementation-receipt.json",
+    "docs/COMPATIBILITY.md",
+    "docs/CONCEPT_REGISTRY.md",
+    "palimnex/CHANGELOG.md",
+    "palimnex/core.py",
+    "palimnex/evaluation/ontology-shadow.v1.json",
+    "palimnex/tests/test_ontology_influence_cli.py",
+    "pyproject.toml"
+  ],
+  "dependencies_consumed": [
+    "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-gate.implementation-receipt.json",
+    "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-schemas.implementation-receipt.json",
+    "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-retrieval.implementation-receipt.json",
+    "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-promotion.implementation-receipt.json",
+    "artifacts/ontology/phase-3-promotion/reviews/ontology-influence-gate.review-receipt.json",
+    "artifacts/ontology/phase-3-promotion/reviews/ontology-influence-schemas.review-receipt.json",
+    "artifacts/ontology/phase-3-promotion/reviews/ontology-influence-retrieval.review-receipt.json",
+    "artifacts/ontology/phase-3-promotion/reviews/ontology-influence-promotion.review-receipt.json",
+    "artifacts/ontology/phase-3-promotion/reviews/ontology-influence-integration.review-receipt.json"
+  ],
+  "commands": [
+    {
+      "command": "./.venv/bin/python -m unittest discover -s palimnex/tests -p 'test_*.py'",
+      "exit_code": 0,
+      "result": "454 tests OK, unsandboxed, after the status-shadowing fix and R13 rebinding (artifacts/ontology/phase-3-promotion/integration/gate-final.log)"
+    },
+    {
+      "command": "./.venv/bin/python -m mypy",
+      "exit_code": 0,
+      "result": "no issues in 18 source files including ontology_influence.py and ontology_promotion.py"
+    },
+    {
+      "command": "python3 palimnex.py index && python3 palimnex.py validate --deep",
+      "exit_code": 0,
+      "result": "fresh index after the final doc change, deep validation passed (integration/gate-final-reindex.log)"
+    },
+    {
+      "command": "python3 palimnex.py evaluate --limit 5",
+      "exit_code": 0,
+      "result": "production sentinel: every critical case passes, recall_at_limit 1.0, MRR 0.8917 (authorized-erasure rank 2->3 because new test file test_ontology_promotion.py ranks first; cache search code unchanged)"
+    },
+    {
+      "command": "python3 palimnex.py evaluate-ontology-shadow",
+      "exit_code": 0,
+      "result": "all eight Phase 3 gates true with rebound cohort sha256 07b5f066..."
+    },
+    {
+      "command": "python3 palimnex.py ontology-status",
+      "exit_code": 0,
+      "result": "mode off, activation not_applicable, retrieval_influence false"
+    },
+    {
+      "command": "python3 palimnex.py status",
+      "exit_code": 0,
+      "result": "fresh v3 status; regression from the shadowed local fixed"
+    },
+    {
+      "command": "PATH=\"$PWD/.venv/bin:$PATH\" ./scripts/palimnex_check.sh",
+      "exit_code": 0,
+      "result": "standalone gate passed; isolated retrieval recall 1.0; no live ledger write or model call"
+    },
+    {
+      "command": "python3 palimnex.py ledger-status",
+      "exit_code": 0,
+      "result": "integrity ok, 0 events"
+    },
+    {
+      "command": "coordinator identity check: git archive HEAD palimnex vs working tree, retrieve_sources and assemble_context over 80 inputs, influence key absent",
+      "exit_code": 0,
+      "result": "80/80 canonical-JSON digests identical"
+    },
+    {
+      "command": "./.venv/bin/python artifacts/ontology/phase-3-promotion/tools/ownership_audit.py audit",
+      "exit_code": 1,
+      "result": "final rerun against the pre-rereview snapshot flags two expected coordination-record deltas outside implementation-lane ownership: the post-fix integration review receipt and the coordinator one-shot integration-receipt helper; recorded implementation-wave audits were clean, no implementation lane wrote outside its owned paths, and no reviewer changed product/source files"
+    }
+  ],
+  "compatibility_effect": "Additive and opt-in: palimnex.ontology_influence, palimnex.ontology_promotion, retrieve_sources influence parameter, project-memory:context:v2, palimnex:explain-search:v2, palimnex:ontology-promotion-evidence:v1, palimnex:ontology-status:v1, evaluate-ontology-promotion and ontology-status commands. With ontology_influence missing, off or shadow, retrieve_sources, context v1 and explain-search v1 are byte-identical; search, symbols, impact and palimnex evaluate unchanged. Nothing activates influence; no approved registry exists.",
+  "privacy_and_authority_checks": [
+    "no Git writes",
+    "no model or provider calls",
+    "no ledger writes (0 events)",
+    "Redis used for the gate only, then stopped",
+    ".palimnex.json not edited; influence never activated on the owner's behalf; no promotion evidence written to the repository",
+    "activation refusals are typed and non-echoing; no silent fallback (reviewer-probed)",
+    "Codex lanes ran with approval_policy=never; no sandbox escapes",
+    "integration lane amended (R13) to own the frozen cohort for one line-range rebinding; other task cards unchanged"
+  ],
+  "integration_patch_proposals": [
+    "R8 (from Phase 0): validator should accept files_changed descendants of directory-valued owned paths; still not applied"
+  ],
+  "unresolved_risks": [
+    "Integration review status is accepted_with_limits. Each limit is closed by coordinator evidence: (1) socket-backed commands (full suite, palimnex_check.sh, index, validate, palimnex evaluate, evaluate-ontology-shadow) ran unsandboxed and passed, see gate-final.log and gate-final-reindex.log; (2) the missing integration receipt is this receipt, validated against the R13 task card; (3) the stale index the reviewer observed came from the final COMPATIBILITY.md fix and was re-indexed and deep-validated afterwards",
+    "R13 (cohort line-range maintenance) was confirmed by the owner on 2026-11-06; the question, expected answer, labels and other frozen semantics remain unchanged",
+    "No approved registry exists, so influence cannot be activated yet; activation needs a reviewed ontology/concept-registry.v1.json, a promotable evidence run, and the owner's config edit",
+    "Production MRR moved 0.9 -> 0.8917 from corpus drift (a new test file); every critical case passes",
+    "Grok tool-level write block only removed Write; reviewer read-only status verified by snapshot audits"
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": true,
+    "index_fresh_at_gate": true,
+    "redis_final_state": "stopped (restored)",
+    "ledger_integrity": "ok",
+    "ledger_events": 0
+  },
+  "git_state": {
+    "head": "2b9bebc",
+    "staged": [],
+    "status": [
+      " M docs/COMPATIBILITY.md",
+      " M docs/CONCEPT_REGISTRY.md",
+      " M docs/ONTOLOGY_ADOPTION.md",
+      " M palimnex/CHANGELOG.md",
+      " M palimnex/core.py",
+      " M palimnex/evaluation/ontology-shadow.v1.json",
+      " M palimnex/experience.py",
+      " M palimnex/ontology_eval.py",
+      " M palimnex/retrieval.py",
+      " M palimnex/tests/test_ontology_eval.py",
+      " M pyproject.toml",
+      "?? .env.example",
+      "?? artifacts/ontology/phase-0/integration/gate.log",
+      "?? artifacts/ontology/phase-0/integration/standard-gate.log",
+      "?? artifacts/ontology/phase-0/logs/grok-review-wave-2.log",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-coverage-contract.log",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-coverage-contract.pid",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-registry-contract.log",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-registry-contract.pid",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-threat-cases.log",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-threat-cases.pid",
+      "?? artifacts/ontology/phase-0/wave-1/logs/grok-review.log",
+      "?? artifacts/ontology/phase-0/wave-1/logs/grok-review.pid",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-coverage-contract.log",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-coverage-contract.pid",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-registry-contract.log",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-registry-contract.pid",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-threat-cases.log",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-threat-cases.pid",
+      "?? artifacts/ontology/phase-1/integration/gate-final.log",
+      "?? artifacts/ontology/phase-1/integration/gate.log",
+      "?? artifacts/ontology/phase-1/logs/grok-rereview.log",
+      "?? artifacts/ontology/phase-1/logs/grok-review.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-frozen-conformance.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-frozen-conformance.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.fix-1.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.fix-1.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.fix-2.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.fix-2.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.fix-1.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.fix-1.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.fix-2.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.fix-2.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.pid",
+      "?? artifacts/ontology/phase-1/round-1/grok-review.log",
+      "?? artifacts/ontology/phase-2/integration/gate-final.log",
+      "?? artifacts/ontology/phase-2/integration/gate.log",
+      "?? artifacts/ontology/phase-2/logs/grok-rereview.log",
+      "?? artifacts/ontology/phase-2/logs/grok-review.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-core.fix-1.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-core.fix-1.pid",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-core.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-core.pid",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-core.refresh.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-core.refresh.pid",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-schema.fix-r10.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-schema.fix-r10.pid",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-schema.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-schema.pid",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-frozen-conformance.fix-1.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-frozen-conformance.fix-1.pid",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-frozen-conformance.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-frozen-conformance.pid",
+      "?? artifacts/ontology/phase-2/round-1/grok-review.log",
+      "?? artifacts/ontology/phase-3-promotion/",
+      "?? artifacts/ontology/phase-3/integration/gate-final.log",
+      "?? artifacts/ontology/phase-3/integration/gate.log",
+      "?? artifacts/ontology/phase-3/logs/grok-rereview.log",
+      "?? artifacts/ontology/phase-3/logs/grok-review.log",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-channel.fix-1.log",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-channel.fix-1.pid",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-channel.log",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-channel.pid",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-cohort.fix-1.log",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-cohort.fix-1.pid",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-cohort.log",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-cohort.pid",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-evaluation.fix-1.log",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-evaluation.fix-1.pid",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-evaluation.log",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-evaluation.pid",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-retrieval.log",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-retrieval.pid",
+      "?? artifacts/ontology/phase-3/round-1/grok-review.log",
+      "?? artifacts/ontology/phase-4/",
+      "?? benchmark/",
+      "?? docs/ONTOLOGY_INFLUENCE.md",
+      "?? palimnex/ontology_influence.py",
+      "?? palimnex/ontology_promotion.py",
+      "?? palimnex/schemas/context.v2.schema.json",
+      "?? palimnex/schemas/explain-search.v2.schema.json",
+      "?? palimnex/schemas/ontology-promotion-evidence.v1.schema.json",
+      "?? palimnex/tests/fixtures/ontology_influence/",
+      "?? palimnex/tests/test_influence_schemas.py",
+      "?? palimnex/tests/test_ontology_influence.py",
+      "?? palimnex/tests/test_ontology_influence_cli.py",
+      "?? palimnex/tests/test_ontology_promotion.py",
+      "?? palimnex/tests/test_retrieval_influence.py"
+    ]
+  },
+  "status": "tested"
+}

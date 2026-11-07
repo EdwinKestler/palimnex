@@ -1,0 +1,20 @@
+{
+  "schema": "project-memory:context:v2",
+  "query": "retention ledger",
+  "items": [],
+  "items_bytes": 2,
+  "byte_budget": 8192,
+  "budget_unit": "serialized_utf8_bytes",
+  "ledger_status": "missing",
+  "cache_consulted": false,
+  "retrieval_mode": "local_snapshot_rrf",
+  "scan_scope": "full_admitted_corpus",
+  "corpus_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "checkout_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "candidate_scan_truncated": false,
+  "abstained": true,
+  "omitted_count": 0,
+  "authority": "evidence_and_historical_context",
+  "authorizes_actions": false,
+  "ontology_influence": {"mode": "enabled", "channel": "ontology", "retrieval_influence": false, "registry_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "promotion_evidence_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "implementation_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "contributing_concept_ids": ["concept.retention"]}
+}

@@ -1,0 +1,15 @@
+{
+  "schema": "palimnex:ontology-workstream-bundle-validation:v1",
+  "manifest_digest": "91b747671e00c5bdd2e6f41783ed62c64b6f32e14f85d19af4674acf9a7b5fae",
+  "task_digests": {
+    "ontology-influence-gate": "b58420ed88895b8ae0bbc5c16061c1c49499d32616b18b0c2a3f06d86c959bbf",
+    "ontology-influence-integration": "30c5a1f750782da4ea87b4769dd54b6b1c3c0b11f052e7a8887c58bb87ce3261",
+    "ontology-influence-promotion": "d421b828417057baa1b93c0ef8adade1965645c0131cb29cdff8b7e18698f402",
+    "ontology-influence-retrieval": "cc228165e7fcdf9e5b2c4a4322d960b67b869e3a3be2d30c47eeabd08eec081a",
+    "ontology-influence-schemas": "8ed38a154c57de32348333be10614f7726f80cadaa0256844b6b5a922738741e"
+  },
+  "status": "valid",
+  "authorizes_actions": false,
+  "approval_evidence_digest": "9fc56199fd9a8fb06155de459d29c80e96b07c458e58ff53f4108193575f0025",
+  "amendment": "R13: integration lane owns palimnex/evaluation/ontology-shadow.v1.json"
+}

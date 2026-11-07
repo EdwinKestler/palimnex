@@ -12,6 +12,7 @@ from typing import Any
 
 from . import cache_v3, core, durable
 from .retrieval import budget_items, retrieve_sources
+from .ontology_influence import context_v2
 from .security import read_bounded_file, scan_text
 
 CAPTURE_SCHEMA = "project-memory:capture:v1"
@@ -230,14 +231,16 @@ def assemble_context(query: str, *, root: Path = core.ROOT, ledger: durable.Memo
     selected, _ = budget_items(combined, byte_budget)
     selected = selected[:limit]
     _, used = budget_items(selected, byte_budget)
-    return {"schema": "project-memory:context:v1", "query": query, "items": selected,
-            "items_bytes": used, "byte_budget": byte_budget, "budget_unit": "serialized_utf8_bytes",
-            "ledger_status": state, "cache_consulted": sources["cache_consulted"],
-            "retrieval_mode": sources["retrieval_mode"], "scan_scope": sources["scan_scope"],
-            "corpus_fingerprint": sources["corpus_fingerprint"], "checkout_id": sources["checkout_id"],
-            "candidate_scan_truncated": truncated,
-            "abstained": not selected, "omitted_count": len(combined)-len(selected),
-            "authority": "evidence_and_historical_context", "authorizes_actions": False}
+    context = {"schema": "project-memory:context:v1", "query": query, "items": selected,
+               "items_bytes": used, "byte_budget": byte_budget, "budget_unit": "serialized_utf8_bytes",
+               "ledger_status": state, "cache_consulted": sources["cache_consulted"],
+               "retrieval_mode": sources["retrieval_mode"], "scan_scope": sources["scan_scope"],
+               "corpus_fingerprint": sources["corpus_fingerprint"], "checkout_id": sources["checkout_id"],
+               "candidate_scan_truncated": truncated,
+               "abstained": not selected, "omitted_count": len(combined)-len(selected),
+               "authority": "evidence_and_historical_context", "authorizes_actions": False}
+    disclosure = sources.get("ontology_influence")
+    return context_v2(context, disclosure) if isinstance(disclosure, dict) else context
 
 
 def build_capsule(query: str, *, ledger: durable.MemoryLedger, byte_budget: int = 8192,

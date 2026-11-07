@@ -36,8 +36,12 @@ overrides the default. A missing default file means coverage is disabled; a
 missing explicit path is an error. Generated or imported candidate sets belong
 under `artifacts/ontology/candidates/`, outside both the approved read path and
 the index; only a reviewed change can copy entries into the approved registry.
-No configuration key loads a registry, and concepts have no retrieval influence.
-See `docs/COVERAGE_RECEIPT.md`.
+Committing a registry never changes rankings by itself: registry presence is
+data, not authority. Concepts influence retrieval only when the owner sets
+`.palimnex.json` `ontology_influence.mode` to `enabled`, bound to this
+registry's digest and to promotion evidence produced by
+`palimnex evaluate-ontology-promotion`. See `docs/COVERAGE_RECEIPT.md` and
+`docs/ONTOLOGY_INFLUENCE.md`.
 
 ## Stable concepts and lifecycle
 

@@ -88,3 +88,19 @@ baseline and never returned in its place: `retrieve_sources`, `search`,
 registry is evaluation-only and is never loaded as the approved registry. Moving
 from shadow to retrieval influence requires a separate owner approval and a new
 versioned behavior. See `docs/ONTOLOGY_SHADOW.md`.
+
+Ontology retrieval influence adds four documents.
+`project-memory:context:v2` and `palimnex:explain-search:v2` are emitted only
+when `.palimnex.json` `ontology_influence.mode` is `enabled` and activation
+succeeds. `palimnex:ontology-promotion-evidence:v1` (printed by
+`evaluate-ontology-promotion`) and `palimnex:ontology-status:v1` (printed by
+`ontology-status`) are read-only reports emitted in any mode, and neither
+activates anything. With the key
+missing, `off` or `shadow`, `retrieve_sources`, `context` (still
+`project-memory:context:v1`) and `explain-search` (still
+`palimnex:explain-search:v1`) are byte-identical to before. A reader that
+understands only v1 sees v1 unless the repository owner enables influence;
+enabled results announce themselves by schema identifier and disclosure, never
+by a silent change inside v1. Cache-backed `search`, `symbols`, `impact` and
+`palimnex evaluate` are unaffected. Disabling is `mode: off`. See
+`docs/ONTOLOGY_INFLUENCE.md`.

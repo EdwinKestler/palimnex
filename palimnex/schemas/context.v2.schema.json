@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://palimnex.dev/schemas/context.v2.schema.json",
+  "title": "Palimnex assembled context v2",
+  "description": "The existing bounded context result with explicit, non-authorizing ontology retrieval influence disclosure.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "query", "items", "items_bytes", "byte_budget", "budget_unit",
+    "ledger_status", "cache_consulted", "retrieval_mode", "scan_scope",
+    "corpus_fingerprint", "checkout_id", "candidate_scan_truncated",
+    "abstained", "omitted_count", "authority", "authorizes_actions",
+    "ontology_influence"
+  ],
+  "properties": {
+    "schema": {"const": "project-memory:context:v2"},
+    "query": {"type": "string", "minLength": 1, "maxLength": 8192},
+    "items": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {"type": "object"}
+    },
+    "items_bytes": {"type": "integer", "minimum": 2, "maximum": 65536},
+    "byte_budget": {"type": "integer", "minimum": 128, "maximum": 65536},
+    "budget_unit": {"const": "serialized_utf8_bytes"},
+    "ledger_status": {"enum": ["missing", "consulted"]},
+    "cache_consulted": {"type": "boolean"},
+    "retrieval_mode": {"enum": ["local_snapshot_rrf", "verified_cache_rrf"]},
+    "scan_scope": {"const": "full_admitted_corpus"},
+    "corpus_fingerprint": {"$ref": "#/$defs/sha256"},
+    "checkout_id": {"$ref": "#/$defs/sha256"},
+    "candidate_scan_truncated": {"type": "boolean"},
+    "abstained": {"type": "boolean"},
+    "omitted_count": {"type": "integer", "minimum": 0, "maximum": 1000000},
+    "authority": {"const": "evidence_and_historical_context"},
+    "authorizes_actions": {"const": false},
+    "ontology_influence": {"$ref": "#/$defs/influenceDisclosure"}
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "minLength": 64,
+      "maxLength": 64
+    },
+    "influenceDisclosure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode", "channel", "retrieval_influence", "registry_digest",
+        "promotion_evidence_digest", "implementation_digest",
+        "contributing_concept_ids"
+      ],
+      "properties": {
+        "mode": {"const": "enabled"},
+        "channel": {"const": "ontology"},
+        "retrieval_influence": {"const": true},
+        "registry_digest": {"$ref": "#/$defs/sha256"},
+        "promotion_evidence_digest": {"$ref": "#/$defs/sha256"},
+        "implementation_digest": {"$ref": "#/$defs/sha256"},
+        "contributing_concept_ids": {
+          "type": "array",
+          "maxItems": 512,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://palimnex.dev/schemas/concept-registry.v1.schema.json#/$defs/conceptId"
+          }
+        }
+      }
+    }
+  }
+}

@@ -541,6 +541,7 @@ def _run_case(
         include_graph=include_graph,
         client=None,
         snapshot=snapshot,
+        influence="off",
     )
     baseline_value = response.get("baseline")
     comparison_value = response.get("comparison")

@@ -2684,9 +2684,41 @@ def explain_search(
         receipt = build_coverage_receipt(
             loaded, query, search_result, root=root, retrieval_limit=limit
         )
-    return build_explain_search(
+    document = build_explain_search(
         search_result, receipt, registry_path=relative, registry_source=source
     )
+    if "ontology_influence" in search_result:
+        # Influenced rankings are disclosed through the v2 contract; v1 never changes.
+        from .ontology_influence import explain_search_v2
+        return explain_search_v2(document, search_result["ontology_influence"])
+    return document
+
+
+def ontology_status(root: Path = ROOT) -> tuple[dict[str, Any], int]:
+    """Report the influence setting and, when enabled, whether it activates."""
+    from .ontology_influence import OntologyInfluenceError, activate_influence, read_influence_setting
+
+    setting = read_influence_setting(root)
+    report: dict[str, Any] = {
+        "schema": "palimnex:ontology-status:v1",
+        "mode": setting.mode,
+        "registry": setting.registry_path,
+        "registry_digest": setting.registry_digest,
+        "promotion_evidence": setting.promotion_evidence,
+        "promotion_evidence_digest": setting.promotion_evidence_digest,
+        "activation": "not_applicable",
+        "retrieval_influence": False,
+        "authorizes_actions": False,
+    }
+    if setting.mode != "enabled":
+        return report, 0
+    try:
+        activate_influence(setting, root=root)
+    except OntologyInfluenceError as exc:
+        report.update(activation="refused", reason=exc.reason, field=exc.field)
+        return report, 2
+    report.update(activation="ready", retrieval_influence=True)
+    return report, 0
 
 
 def parser() -> argparse.ArgumentParser:
@@ -2766,6 +2798,18 @@ def parser() -> argparse.ArgumentParser:
         help="read-only Phase 3 comparison of baseline and ontology-shadow rankings",
     )
     shadow_parser.add_argument("--limit", type=int, default=5)
+    promotion_parser = commands.add_parser(
+        "evaluate-ontology-promotion",
+        help="read-only baseline vs influenced evidence for the approved registry (never activates)",
+    )
+    promotion_parser.add_argument("--limit", type=int, default=5)
+    promotion_parser.add_argument(
+        "--registry",
+        help=f"approved concept registry, repository-relative (default: {DEFAULT_CONCEPT_REGISTRY})",
+    )
+    commands.add_parser(
+        "ontology-status", help="show the ontology_influence setting and whether it activates"
+    )
     symbols_parser = commands.add_parser("symbols")
     symbols_parser.add_argument("query")
     symbols_parser.add_argument("--limit", type=int, default=20)
@@ -3071,6 +3115,20 @@ def main(argv: list[str] | None = None) -> int:
             report = evaluate_ontology_shadow(ROOT, limit=args.limit)
             print(json.dumps(report, sort_keys=True))
             return 0 if all(report["gates"].values()) else 2
+        if args.command in {"evaluate-ontology-promotion", "ontology-status"}:
+            if not config_present(ROOT):
+                raise ValueError(
+                    f"no {CONFIG_FILE} in {ROOT}; run `palimnex init` to create one (see docs/INSTALL.md)"
+                )
+            if args.command == "ontology-status":
+                status_report, code = ontology_status(ROOT)
+                print(json.dumps(status_report, sort_keys=True))
+                return code
+            from .ontology_promotion import evaluate_ontology_promotion
+            relative, _ = concept_registry_selection(args.registry)
+            evidence = evaluate_ontology_promotion(ROOT, registry_path=relative, limit=args.limit)
+            print(json.dumps(evidence, sort_keys=True))
+            return 0 if evidence["status"] == "promotable" else 2
 
         cache_commands = {
             "status", "validate", "index", "search", "symbols", "impact", "path",

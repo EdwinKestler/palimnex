@@ -1,0 +1,69 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "artifacts/ontology/phase-3-promotion/integration/bundle-validation.r13.json",
+    "artifacts/ontology/phase-3-promotion/integration/clarification-R13.md",
+    "artifacts/ontology/phase-3-promotion/tasks/ontology-influence-integration.json",
+    "docs/COMPATIBILITY.md",
+    "docs/CONCEPT_REGISTRY.md",
+    "palimnex/CHANGELOG.md",
+    "palimnex/core.py",
+    "palimnex/evaluation/ontology-shadow.v1.json",
+    "palimnex/retrieval.py",
+    "palimnex/tests/test_ontology_influence_cli.py",
+    "pyproject.toml"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "task_digest": "30c5a1f750782da4ea87b4769dd54b6b1c3c0b11f052e7a8887c58bb87ce3261",
+  "approval_evidence_digest": "9fc56199fd9a8fb06155de459d29c80e96b07c458e58ff53f4108193575f0025",
+  "workstream_id": "ontology-influence-integration",
+  "evidence": [
+    "RESOLVED: round-1 MINOR in docs/COMPATIBILITY.md. context v2 and explain-search v2 are emitted only when ontology_influence.mode is enabled and activation succeeds. palimnex:ontology-promotion-evidence:v1 and palimnex:ontology-status:v1 are read-only reports emitted in any mode, and neither activates anything. Live python3 palimnex.py ontology-status printed schema palimnex:ontology-status:v1, mode off, activation not_applicable, retrieval_influence false.",
+    "RESOLVED: palimnex/core.py main binds status_report, code = ontology_status(ROOT). The module function status(client) remains the cache-status path. AST walk of main() found no assignment of a core.py module name that main later loads (status, validate, search, symbols, impact, evaluate, build_index, clear, dependency_path, explain_search, ontology_status). python3 palimnex.py status printed project-memory:cache:v3 JSON, exit 2, stale; no UnboundLocalError.",
+    "NOTE: R13 is faithful frozen-cohort maintenance, not a weakening. git diff HEAD -- palimnex/evaluation/ontology-shadow.v1.json changes only concept.rrf_fusion range start 167 to 174 and end 181 to 188. palimnex/retrieval.py line 174 is def _fuse_rankings( and line 188 is return _Fusion(selected, len(items), used), the function's last line (15 lines). ast.unparse of _fuse_rankings is identical to HEAD (then 167-181). Labels, aliases, concepts, cases, expected_paths, and placeholder digests are unchanged. palimnex.tests.test_ontology_shadow_cohort: 6 passed in 0.019s.",
+    "NOTE: palimnex.tests.test_feature_modes, test_ontology_influence_cli, test_evaluate_ontology_shadow_cli, test_explain_search: 33 passed in 1.271s. Includes the 10 CLI tests and test_status_shadow's three mode subtests that previously UnboundLocalError'd. Tests use FakeRedis; no socket denial.",
+    "NOTE: git diff HEAD -- palimnex/core.py still only adds explain-search v2 wrapping, ontology_status, and the two subcommands. def search, def symbols, def impact, and def evaluate are absent from the diff. palimnex/challenge.py and palimnex/cache_v3.py are unmodified.",
+    "NOTE: explain-search stays palimnex:explain-search:v1 when retrieve_sources has no ontology_influence; influenced results are palimnex:explain-search:v2 with ranking_influence and validate against the public schema.",
+    "NOTE: palimnex:ontology-status:v1 remains a named CLI document without a published JSON Schema. pyproject.toml mypy files list gained ontology_influence.py and ontology_promotion.py. CHANGELOG and CONCEPT_REGISTRY.md still state registry presence is not authority.",
+    "NOTE: docs/ONTOLOGY_ADOPTION.md intro still says evaluate-ontology-promotion writes evidence; INFLUENCE_SPEC.md, docs/ONTOLOGY_INFLUENCE.md, and the CLI print and never write. Implementation follows the spec.",
+    "NOTE: the amended integration task card objective cites Amended (R11, artifacts/ontology/phase-2/integration/clarification-R11.md) for this rebinding; clarification-R13.md and bundle-validation.r13.json are the actual amendment. Cohort file SHA-256 07b5f066f85ba36ab17785a2193c0c87d952fd3849420a3dae0303b1c5d8eef3 is not written into clarification-R13.md."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_feature_modes palimnex.tests.test_ontology_influence_cli palimnex.tests.test_evaluate_ontology_shadow_cli palimnex.tests.test_explain_search",
+    "./.venv/bin/python -m unittest palimnex.tests.test_ontology_shadow_cohort",
+    "python3 palimnex.py status",
+    "python3 palimnex.py ontology-status",
+    "git diff HEAD -- palimnex/core.py docs/COMPATIBILITY.md palimnex/evaluation/ontology-shadow.v1.json palimnex/retrieval.py",
+    "git diff --stat HEAD -- palimnex/core.py palimnex/retrieval.py palimnex/experience.py palimnex/ontology_eval.py palimnex/challenge.py palimnex/cache_v3.py palimnex/semantic.py palimnex/api.py palimnex.py"
+  ],
+  "source_grounding_result": "core.py explain_search wraps v2 only when ontology_influence is on the retrieve_sources result. ontology_status reads the setting, tries activate_influence only for enabled, and returns 0/2. evaluate-ontology-promotion prints JSON and returns 0 for promotable, 2 for held; ValueError/OSError become exit 1. main no longer shadows status(). R13 rebinds concept.rrf_fusion onto the current identical _fuse_rankings.",
+  "privacy_result": "CLI errors print status=error with str(exc). OntologyInfluenceError stringifies to reason and field only. --registry rejects traversal before evaluation. test_feature_modes admission canary did not appear on stderr.",
+  "retrieval_quality_result": "Uninfluenced explain-search remains v1. Influenced explain-search is v2 with the same disclosure as retrieve_sources. Cache-backed search/symbols/impact/evaluate code paths are untouched in the core.py diff. Frozen cohort labels and cases are unchanged; only the rrf_fusion line range moved with the identical function.",
+  "compatibility_result": "Off/shadow/missing keep context v1 and explain-search v1. New commands are additive. COMPATIBILITY.md now splits enabled-only context/explain-search v2 from ontology-status v1 and promotion-evidence v1 emitted in any mode. Live ontology-status on this checkout is v1/off/not_applicable.",
+  "rollback_result": "mode off restores explain-search v1. ontology-status then reports mode off, activation not_applicable, retrieval_influence false.",
+  "authority_result": "Neither new command mutates settings, evidence files, Redis, or the ledger. evaluate-ontology-promotion never sets activation_authorized true. No owner .palimnex.json edit. R13 did not change frozen labels, cases, or placeholders. No Git writes by this review.",
+  "limitations": [
+    "No integration implementation receipt was present to validate.",
+    "Full suite, python3 palimnex.py index/validate/evaluate, evaluate-ontology-shadow live run, and scripts/palimnex_check.sh skipped as socket or write gates.",
+    "python3 palimnex.py status consulted Redis and reported a stale v3 index; this review did not reindex."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": true,
+    "ledger_consulted": false,
+    "ledger_writes_performed": false,
+    "status_cli": "project-memory:cache:v3 stale exit 2, no crash"
+  },
+  "git_state": {
+    "branch": "main",
+    "ahead_of_origin_main": 5,
+    "owned_paths": "modified core.py, pyproject.toml, palimnex/CHANGELOG.md, docs/COMPATIBILITY.md, docs/CONCEPT_REGISTRY.md, palimnex/evaluation/ontology-shadow.v1.json; untracked test_ontology_influence_cli.py; no integration implementation receipt",
+    "also_dirty": "docs/ONTOLOGY_ADOPTION.md working-tree SHA-256 matches the task design_identity; retrieval/experience/ontology_eval dirty from other lanes",
+    "staged": false,
+    "committed": false,
+    "reviewer_git_writes": false
+  },
+  "status": "accepted_with_limits"
+}

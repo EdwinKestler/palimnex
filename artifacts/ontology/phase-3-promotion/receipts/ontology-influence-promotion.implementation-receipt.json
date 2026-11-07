@@ -1,0 +1,137 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-influence-promotion",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "task_digest": "d421b828417057baa1b93c0ef8adade1965645c0131cb29cdff8b7e18698f402",
+  "approval_evidence_digest": "9fc56199fd9a8fb06155de459d29c80e96b07c458e58ff53f4108193575f0025",
+  "owned_scope": [
+    "palimnex/ontology_promotion.py",
+    "palimnex/tests/test_ontology_promotion.py",
+    "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-promotion.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/ontology_promotion.py",
+    "palimnex/tests/test_ontology_promotion.py",
+    "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-promotion.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [
+    "ontology-influence-retrieval implementation receipt cd4761d6bd38c0348f95ddca2bc9e1221780b239706182e9c39621bf84cce333 validated at artifacts/ontology/phase-3-promotion/receipts/ontology-influence-retrieval.implementation-receipt.json",
+    "ontology-influence-schemas implementation receipt 869ad8d3aab971ff8bbba90bc112ebfa3718e9896762786c4a1802bccffa9e35 validated at artifacts/ontology/phase-3-promotion/receipts/ontology-influence-schemas.implementation-receipt.json"
+  ],
+  "commands": [
+    {
+      "command": "sha256sum docs/ONTOLOGY_ADOPTION.md artifacts/design/Ontologyadoptionplan.md",
+      "exit_code": 0,
+      "result": "Approved design digest bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3 and source proposal digest 8fe38bef5f7f25fa8a7d58dad21b89f69c70f4a367d9981c01fdedf6bd165d86 matched the task card."
+    },
+    {
+      "command": "python3 palimnex.py status",
+      "exit_code": 1,
+      "result": "Redis Unix socket was missing; the command reported cache_consulted false. Redis was not started or mutated."
+    },
+    {
+      "command": "python3 palimnex.py validate --deep",
+      "exit_code": 1,
+      "result": "Deep cache validation could not consult the missing Redis Unix socket and reported cache_consulted false. The task forbids indexing or live-state changes."
+    },
+    {
+      "command": "python3 palimnex.py search \"evaluate_ontology_promotion promotion evidence ActiveInfluence influence_implementation_digest retrieve_sources offline FakeRedis\" --limit 10",
+      "exit_code": 1,
+      "result": "Focused cache search could not consult the missing Redis Unix socket and reported cache_consulted false. Exact implementation vocabulary was then searched directly in current source with rg."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3-promotion/tasks/ontology-influence-retrieval.json --implementation-receipt artifacts/ontology/phase-3-promotion/receipts/ontology-influence-retrieval.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "The ontology-influence-retrieval dependency receipt validated successfully against its task and approval contracts."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3-promotion/tasks/ontology-influence-schemas.json --implementation-receipt artifacts/ontology/phase-3-promotion/receipts/ontology-influence-schemas.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "The ontology-influence-schemas dependency receipt validated successfully against its task and approval contracts."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3-promotion/tasks/ontology-influence-promotion.json",
+      "exit_code": 0,
+      "result": "Task and approval contracts valid; task digest d421b828417057baa1b93c0ef8adade1965645c0131cb29cdff8b7e18698f402 and approval evidence digest 9fc56199fd9a8fb06155de459d29c80e96b07c458e58ff53f4108193575f0025."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_ontology_promotion -v",
+      "exit_code": 0,
+      "result": "Ran 5 focused promotion-evidence tests in 4.320 seconds; all passed. Coverage includes deterministic and schema-valid promotable evidence, offline FakeRedis cache evaluation, activation and four-module implementation binding, a real critical rank regression, ambiguous and stale held gates, and missing-registry refusal."
+    },
+    {
+      "command": "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/ontology_promotion.py",
+      "exit_code": 0,
+      "result": "Success: no issues found in 1 source file."
+    },
+    {
+      "command": "./.venv/bin/python -m py_compile palimnex/ontology_promotion.py palimnex/tests/test_ontology_promotion.py",
+      "exit_code": 0,
+      "result": "Both owned Python modules compiled successfully."
+    },
+    {
+      "command": "python3 palimnex.py ledger-status",
+      "exit_code": 0,
+      "result": "Ledger status ready; integrity ok; zero foreign-key, semantic, pending-projection and stale-verification errors. No ledger write was performed."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3-promotion/tasks/ontology-influence-promotion.json --implementation-receipt artifacts/ontology/phase-3-promotion/receipts/ontology-influence-promotion.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Implementation receipt validated against the approved task, approval evidence, runtime contract and receipt schema; status valid and implementation_receipt_validated true."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "The shared worktree remains dirty with extensive pre-existing and concurrent foreign-lane changes. This lane's product module, test module and implementation receipt are untracked; no owned file is staged and unrelated files were preserved."
+    }
+  ],
+  "compatibility_effect": "Adds the public palimnex.ontology_promotion API: OntologyPromotionError(reason, field) and evaluate_ontology_promotion(root, *, registry_path=None, limit=5). The evaluator returns deterministic palimnex:ontology-promotion-evidence:v1 comparing uninfluenced and ontology-influenced retrieve_sources across local and offline FakeRedis cache backends for the pinned v27, v26 challenge and Phase 3 cohort suites. It writes nothing, never authorizes activation, and changes no existing identifier, retrieval default, cache, ledger, configuration or wire contract.",
+  "privacy_and_authority_checks": [
+    "The approved registry is boundedly loaded and privacy-scanned before aliases are inspected; every active source binding is reopened, privacy-admitted and digest-verified before measurement.",
+    "Measurement constructs ActiveInfluence directly without promotion evidence, uses a zero measurement sentinel only inside transient disclosure, and never activates or edits the repository setting.",
+    "Both backends compare two explicit influence-off runs and two influenced runs; cache measurement uses only palimnex._offline_redis.FakeRedis indexed over the same checkout and synthetic v26 project.",
+    "The evaluator reuses ontology_eval fixture loaders, case outcomes and metric summaries; it verifies pinned fixture digests, bounded rankings, visible channels, deterministic documents, paired regressions, forbidden paths and abstention.",
+    "Ambiguous and stale loaded registries produce held evidence through registry_unambiguous and registry_current gates; a registry that cannot load is a non-echoing typed refusal.",
+    "The returned document is canonical-digest-bound and passed validate_promotion_evidence plus the published local Draft 2020-12 schema in tests; activation_authorized and authorizes_actions are always false.",
+    "No network, install, provider, model, real Redis, SQLite write, Git write, migration, activation, erasure, retention, pack, publication or deployment authority was used."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "The full unittest suite and scripts/palimnex_check.sh are delegated to the coordinator as required by COMMON.md because their Unix-socket and MCP subprocess tests cannot pass in this sandbox.",
+    "Redis was unavailable, so source-cache status, deep validation and focused cache search could not consult the cache; cache_consulted is false. The promotion cache backend was exercised only through the required offline FakeRedis implementation.",
+    "No approved registry exists in this repository checkout, so a real-repository promotion evaluation correctly raises the typed registry_read_refused error; promotable and held behavior was proven with hermetic temporary approved registries.",
+    "Indexed product and test files changed, but this task forbids Palimnex index and evaluate writes; the coordinator must reindex and evaluate after serial integration.",
+    "The shared worktree contains extensive pre-existing and parallel-lane changes; this lane wrote only its three owned paths and did not stage or commit them."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_status": "unavailable_missing_redis_unix_socket",
+    "offline_cache_evaluated": true,
+    "offline_cache_implementation": "palimnex._offline_redis.FakeRedis",
+    "index_performed": false,
+    "evaluation_performed": false,
+    "indexed_files_changed": true,
+    "coordinator_reindex_required": true,
+    "ledger_status": "ready",
+    "ledger_integrity": "ok",
+    "ledger_foreign_key_errors": 0,
+    "ledger_semantic_errors": [],
+    "ledger_projection_pending": 0,
+    "ledger_stale_verification_count": 0,
+    "ledger_writes_performed": false
+  },
+  "git_state": {
+    "git_writes_performed": false,
+    "worktree_dirty_before_workstream": true,
+    "unrelated_and_parallel_changes_present": true,
+    "unrelated_changes_preserved": true,
+    "owned_paths_only_written": true,
+    "staged": false,
+    "committed": false,
+    "pushed": false
+  },
+  "status": "tested"
+}

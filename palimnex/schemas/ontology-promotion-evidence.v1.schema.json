@@ -1,0 +1,183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://palimnex.dev/schemas/ontology-promotion-evidence.v1.schema.json",
+  "title": "Palimnex ontology promotion evidence v1",
+  "description": "Bounded local and cache evaluation evidence that never authorizes ontology activation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "status", "registry", "implementation_digest",
+    "fixture_digests", "limit", "backends", "activation_authorized",
+    "authority", "authorizes_actions", "evidence_digest"
+  ],
+  "properties": {
+    "schema": {"const": "palimnex:ontology-promotion-evidence:v1"},
+    "status": {"enum": ["promotable", "held"]},
+    "registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "digest"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "digest": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "implementation_digest": {"$ref": "#/$defs/sha256"},
+    "fixture_digests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["v27", "v26", "cohort"],
+      "properties": {
+        "v27": {"$ref": "#/$defs/sha256"},
+        "v26": {"$ref": "#/$defs/sha256"},
+        "cohort": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "limit": {"type": "integer", "minimum": 1, "maximum": 100},
+    "backends": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["local", "cache"],
+      "properties": {
+        "local": {"$ref": "#/$defs/backend"},
+        "cache": {"$ref": "#/$defs/backend"}
+      }
+    },
+    "activation_authorized": {"const": false},
+    "authority": {"const": "evidence_only"},
+    "authorizes_actions": {"const": false},
+    "evidence_digest": {"$ref": "#/$defs/sha256"}
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "backends": {
+            "properties": {
+              "local": {"properties": {"gates": {"$ref": "#/$defs/allGatesTrue"}}},
+              "cache": {"properties": {"gates": {"$ref": "#/$defs/allGatesTrue"}}}
+            }
+          }
+        }
+      },
+      "then": {"properties": {"status": {"const": "promotable"}}},
+      "else": {"properties": {"status": {"const": "held"}}}
+    }
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "minLength": 64,
+      "maxLength": 64
+    },
+    "path": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+",
+      "maxLength": 512
+    },
+    "count": {"type": "integer", "minimum": 0, "maximum": 1000000},
+    "rate": {"type": "number", "minimum": 0, "maximum": 1},
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_count", "cases_passed", "critical_case_count",
+        "critical_pass_count", "forbidden_path_hits", "recall_at_limit",
+        "mrr", "negative_abstention", "negative_case_count"
+      ],
+      "properties": {
+        "case_count": {"$ref": "#/$defs/count"},
+        "cases_passed": {"$ref": "#/$defs/count"},
+        "critical_case_count": {"$ref": "#/$defs/count"},
+        "critical_pass_count": {"$ref": "#/$defs/count"},
+        "forbidden_path_hits": {"$ref": "#/$defs/count"},
+        "recall_at_limit": {"$ref": "#/$defs/rate"},
+        "mrr": {"$ref": "#/$defs/rate"},
+        "negative_abstention": {"$ref": "#/$defs/rate"},
+        "negative_case_count": {"$ref": "#/$defs/count"}
+      }
+    },
+    "suite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "baseline", "influenced", "changed_ranking_count",
+        "regressed_case_ids"
+      ],
+      "properties": {
+        "baseline": {"$ref": "#/$defs/metrics"},
+        "influenced": {"$ref": "#/$defs/metrics"},
+        "changed_ranking_count": {"$ref": "#/$defs/count"},
+        "regressed_case_ids": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1, "maxLength": 128}
+        }
+      }
+    },
+    "suites": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["v27", "challenges_v26", "cohort"],
+      "properties": {
+        "v27": {"$ref": "#/$defs/suite"},
+        "challenges_v26": {"$ref": "#/$defs/suite"},
+        "cohort": {"$ref": "#/$defs/suite"}
+      }
+    },
+    "gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "off_identical", "no_critical_regression", "no_case_regression",
+        "no_new_forbidden", "abstention_not_regressed",
+        "registry_unambiguous", "registry_current", "channels_visible",
+        "bounded", "deterministic"
+      ],
+      "properties": {
+        "off_identical": {"type": "boolean"},
+        "no_critical_regression": {"type": "boolean"},
+        "no_case_regression": {"type": "boolean"},
+        "no_new_forbidden": {"type": "boolean"},
+        "abstention_not_regressed": {"type": "boolean"},
+        "registry_unambiguous": {"type": "boolean"},
+        "registry_current": {"type": "boolean"},
+        "channels_visible": {"type": "boolean"},
+        "bounded": {"type": "boolean"},
+        "deterministic": {"type": "boolean"}
+      }
+    },
+    "allGatesTrue": {
+      "type": "object",
+      "required": [
+        "off_identical", "no_critical_regression", "no_case_regression",
+        "no_new_forbidden", "abstention_not_regressed",
+        "registry_unambiguous", "registry_current", "channels_visible",
+        "bounded", "deterministic"
+      ],
+      "properties": {
+        "off_identical": {"const": true},
+        "no_critical_regression": {"const": true},
+        "no_case_regression": {"const": true},
+        "no_new_forbidden": {"const": true},
+        "abstention_not_regressed": {"const": true},
+        "registry_unambiguous": {"const": true},
+        "registry_current": {"const": true},
+        "channels_visible": {"const": true},
+        "bounded": {"const": true},
+        "deterministic": {"const": true}
+      }
+    },
+    "backend": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["suites", "gates"],
+      "properties": {
+        "suites": {"$ref": "#/$defs/suites"},
+        "gates": {"$ref": "#/$defs/gates"}
+      }
+    }
+  }
+}

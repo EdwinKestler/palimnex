@@ -8,7 +8,7 @@ from collections import Counter, defaultdict
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from . import cache_v3, core
 from .concepts import ConceptRegistry
@@ -17,6 +17,13 @@ from .ontology_shadow import (
     build_shadow_comparison,
     ontology_channel,
     validate_shadow_comparison,
+)
+from .ontology_influence import (
+    ActiveInfluence,
+    OntologyInfluenceError,
+    activate_influence,
+    influence_disclosure,
+    read_influence_setting,
 )
 
 MAX_SEEDS = 16
@@ -195,10 +202,32 @@ def _retrieval_result(query: str, *, root: Path, byte_budget: int,
             "semantic_influence": False, "authorizes_actions": False}
 
 
-def retrieve_sources(query: str, *, root: Path = core.ROOT, limit: int = 5,
-                     byte_budget: int = 8192, include_graph: bool = True,
-                     client: Any = None, snapshot: Any = None) -> dict[str, Any]:
-    """Local mode is explicit (client=None); cache errors never silently downgrade."""
+def _active_influence(
+    influence: Literal["config", "off"] | ActiveInfluence,
+    *,
+    root: Path,
+) -> ActiveInfluence | None:
+    if isinstance(influence, ActiveInfluence):
+        return influence
+    if influence == "off":
+        return None
+    if influence == "config":
+        return activate_influence(read_influence_setting(root), root=root)
+    raise OntologyInfluenceError("setting_invalid", "influence")
+
+
+def _retrieve_sources_with_state(
+    query: str,
+    *,
+    root: Path,
+    limit: int,
+    byte_budget: int,
+    include_graph: bool,
+    client: Any,
+    snapshot: Any,
+    influence: Literal["config", "off"] | ActiveInfluence,
+) -> tuple[dict[str, Any], _ChannelRankings]:
+    active = _active_influence(influence, root=root)
     state = _rank_channels(
         query,
         root=root,
@@ -208,19 +237,45 @@ def retrieve_sources(query: str, *, root: Path = core.ROOT, limit: int = 5,
         client=client,
         snapshot=snapshot,
     )
+    channel = None
+    rankings = state.rankings
+    if active is not None:
+        channel = ontology_channel(active.registry, query, state.chunks, root=root)
+        rankings += (("ontology", channel.ranking),)
     fusion = _fuse_rankings(
         state.chunks,
-        state.rankings,
+        rankings,
         limit=limit,
         byte_budget=byte_budget,
     )
-    return _retrieval_result(
+    result = _retrieval_result(
         query,
         root=root,
         byte_budget=byte_budget,
         state=state,
         fusion=fusion,
     )
+    if active is not None and channel is not None:
+        result["ontology_influence"] = influence_disclosure(active, channel)
+    return result, state
+
+
+def retrieve_sources(query: str, *, root: Path = core.ROOT, limit: int = 5,
+                     byte_budget: int = 8192, include_graph: bool = True,
+                     client: Any = None, snapshot: Any = None,
+                     influence: Literal["config", "off"] | ActiveInfluence = "config") -> dict[str, Any]:
+    """Local mode is explicit (client=None); cache errors never silently downgrade."""
+    result, _state = _retrieve_sources_with_state(
+        query,
+        root=root,
+        limit=limit,
+        byte_budget=byte_budget,
+        include_graph=include_graph,
+        client=client,
+        snapshot=snapshot,
+        influence=influence,
+    )
+    return result
 
 
 def shadow_retrieve(query: str, *, registry: ConceptRegistry | None,
@@ -229,7 +284,7 @@ def shadow_retrieve(query: str, *, registry: ConceptRegistry | None,
                     client: Any = None, snapshot: Any = None,
                     resolvers: Mapping[str, SourceResolver] | None = None) -> dict[str, Any]:
     """Return the unchanged baseline beside an evidence-only shadow comparison."""
-    state = _rank_channels(
+    baseline, state = _retrieve_sources_with_state(
         query,
         root=root,
         limit=limit,
@@ -237,19 +292,7 @@ def shadow_retrieve(query: str, *, registry: ConceptRegistry | None,
         include_graph=include_graph,
         client=client,
         snapshot=snapshot,
-    )
-    baseline_fusion = _fuse_rankings(
-        state.chunks,
-        state.rankings,
-        limit=limit,
-        byte_budget=byte_budget,
-    )
-    baseline = _retrieval_result(
-        query,
-        root=root,
-        byte_budget=byte_budget,
-        state=state,
-        fusion=baseline_fusion,
+        influence="off",
     )
     channel = ontology_channel(
         registry,

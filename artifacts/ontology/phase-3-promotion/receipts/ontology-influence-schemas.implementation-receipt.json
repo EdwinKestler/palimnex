@@ -1,0 +1,114 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-influence-schemas",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "task_digest": "8ed38a154c57de32348333be10614f7726f80cadaa0256844b6b5a922738741e",
+  "approval_evidence_digest": "9fc56199fd9a8fb06155de459d29c80e96b07c458e58ff53f4108193575f0025",
+  "owned_scope": [
+    "palimnex/schemas/context.v2.schema.json",
+    "palimnex/schemas/explain-search.v2.schema.json",
+    "palimnex/schemas/ontology-promotion-evidence.v1.schema.json",
+    "palimnex/tests/test_influence_schemas.py",
+    "palimnex/tests/fixtures/ontology_influence",
+    "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-schemas.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/schemas/context.v2.schema.json",
+    "palimnex/schemas/explain-search.v2.schema.json",
+    "palimnex/schemas/ontology-promotion-evidence.v1.schema.json",
+    "palimnex/tests/test_influence_schemas.py",
+    "palimnex/tests/fixtures/ontology_influence",
+    "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-schemas.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [],
+  "commands": [
+    {
+      "command": "sha256sum docs/ONTOLOGY_ADOPTION.md artifacts/design/Ontologyadoptionplan.md",
+      "exit_code": 0,
+      "result": "Approved design digest bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3 and source proposal digest 8fe38bef5f7f25fa8a7d58dad21b89f69c70f4a367d9981c01fdedf6bd165d86 matched the task card."
+    },
+    {
+      "command": "python3 palimnex.py status",
+      "exit_code": 1,
+      "result": "Redis Unix socket was unavailable and the command reported cache_consulted false. Starting or mutating Redis was not authorized."
+    },
+    {
+      "command": "python3 palimnex.py validate --deep",
+      "exit_code": 1,
+      "result": "Deep cache validation could not run because the Redis Unix socket was unavailable; the command reported cache_consulted false."
+    },
+    {
+      "command": "python3 palimnex.py search 'project-memory:context:v2 palimnex:explain-search:v2 ontology-promotion-evidence:v1'",
+      "exit_code": 1,
+      "result": "Focused cache search could not run because the Redis Unix socket was unavailable; the command reported cache_consulted false, so exact-vocabulary repository source search used rg."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_influence_schemas -v",
+      "exit_code": 0,
+      "result": "5 owned schema tests passed. They cover local reference resolution, schema validity, three valid fixtures, nine single-failure invalid fixtures, canonical evidence digests and exact promotable versus held status."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_influence_schemas palimnex.tests.test_retrieval_coverage_schema palimnex.tests.test_sdk -v",
+      "exit_code": 0,
+      "result": "All 30 task-card focused acceptance tests passed in 1.677 seconds: 5 influence-schema tests, 5 retrieval-coverage schema regressions and 20 SDK regressions."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3-promotion/tasks/ontology-influence-schemas.json",
+      "exit_code": 0,
+      "result": "Task and approval evidence validated; task digest 8ed38a154c57de32348333be10614f7726f80cadaa0256844b6b5a922738741e and approval evidence digest 9fc56199fd9a8fb06155de459d29c80e96b07c458e58ff53f4108193575f0025."
+    },
+    {
+      "command": "sha256sum palimnex/schemas/context.v2.schema.json palimnex/schemas/explain-search.v2.schema.json palimnex/schemas/ontology-promotion-evidence.v1.schema.json palimnex/tests/test_influence_schemas.py",
+      "exit_code": 0,
+      "result": "SHA-256 values were context 97b20549bf32f076780d548311d15d50765c7f3b82a87b612941345717add863, explain-search e0b2fd69cf16cc734e21e4300d0e4b6d6db2ee5509c96c8c8a4fba396eaef79a, promotion evidence d8dea49647e7f35eca4f41d812954c3ce57cbca285e0448df756346de8276de1 and tests f84a79ee4372ef42fca7f9cf7ae173c488c7983b3570889ffa29385e93d03ecf."
+    },
+    {
+      "command": "python3 palimnex.py ledger-status",
+      "exit_code": 0,
+      "result": "Read-only ledger status was ready with integrity ok, no foreign-key or semantic errors, zero events and zero projection-pending rows."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3-promotion/tasks/ontology-influence-schemas.json --implementation-receipt artifacts/ontology/phase-3-promotion/receipts/ontology-influence-schemas.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Implementation receipt validated against the task, approval evidence, runtime contract and receipt schema."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "The six owned roots remain untracked for coordinator integration. Extensive pre-existing and concurrent foreign-lane changes remain present and untouched."
+    }
+  ],
+  "compatibility_effect": "Adds three standalone public JSON Schema contracts without changing an existing identifier or runtime path: project-memory:context:v2 is the current context-v1 shape plus required ontology_influence disclosure; palimnex:explain-search:v2 is the explain-search-v1 shape plus required ranking_influence disclosure; and palimnex:ontology-promotion-evidence:v1 is bounded, canonical-digest-bound, local-and-cache evaluation evidence with exact suites and gates and authorizes_actions false. context v1, explain-search v1, retrieval coverage v1, SDK behavior, search, symbols, impact, cache and ledger formats remain unchanged.",
+  "privacy_and_authority_checks": [
+    "Every new top-level contract rejects unknown keys, remains bounded and fixes authorizes_actions to false; promotion evidence also fixes activation_authorized to false and authority to evidence_only.",
+    "Influence disclosure is exact, requires enabled ontology retrieval influence, binds three lowercase SHA-256 digests and accepts only bounded unique registry concept IDs through the existing public conceptId definition.",
+    "Promotion evidence requires both local and cache backends, the three protected suites, bounded metrics and regression IDs, all ten exact gates, and promotable status exactly when every backend gate is true.",
+    "Tests resolve all public references through a local referencing.Registry and perform no network access; fixture evidence digests are recomputed with palimnex.durable.canonical_json.",
+    "Fixtures contain no source excerpts, credentials, provider outputs or candidate ontology content, and no existing schema, runtime module, configuration, cache or ledger data was modified.",
+    "No network, install, provider, model, Redis-write, SQLite-write, Git-write, migration, activation, erasure, retention, pack, publication or deployment authority was used."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "The coordinator must run the full suite and scripts/palimnex_check.sh unsandboxed; this lane ran only the task-card focused acceptance commands as required by COMMON.md.",
+    "Indexed schema, fixture and test files changed, but this task forbids Palimnex indexing and evaluation commands; the coordinator must reindex and evaluate after serial integration.",
+    "Redis was unavailable, so cache-backed status, deep validation and focused search were not exercised; repository source and the focused offline schema regressions were used instead."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_mutated": false,
+    "ledger_consulted": true,
+    "ledger_mutated": false,
+    "reason": "Status, deep validation and focused search reported the Redis Unix socket missing and cache_consulted false. Read-only ledger-status reported ready and integrity ok; no live state was changed."
+  },
+  "git_state": {
+    "git_writes_performed": false,
+    "staging_performed": false,
+    "commit_performed": false,
+    "preexisting_worktree_changes_preserved": true,
+    "owned_paths_state": "The three schema files, test file, ontology_influence fixture root and implementation receipt are untracked for coordinator integration; concurrent gate-lane files and all prior changes were left untouched."
+  },
+  "status": "tested"
+}

@@ -1,0 +1,9 @@
+{
+  "schema": "palimnex:explain-search:v2",
+  "search": {"query": "retention ledger", "results": []},
+  "coverage_state": "registry_absent",
+  "coverage": null,
+  "registry": {"path": "ontology/concept-registry.v1.json", "source": "default"},
+  "authority": "evidence_only",
+  "authorizes_actions": false
+}

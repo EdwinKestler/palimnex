@@ -41,6 +41,23 @@ operator-facing behavior; cache and graph schemas are versioned independently.
   and always `promotion_authorized: false`, exiting 2 when a gate fails.
   `retrieve_sources`, `search`, `context` and `explain-search` output is
   byte-identical. See `docs/ONTOLOGY_SHADOW.md`.
+- Added opt-in ontology retrieval influence. `.palimnex.json`
+  `ontology_influence.mode` is `off` (the default when the key is missing),
+  `shadow` or `enabled`. Off and shadow leave every output byte-identical.
+  `enabled` must name the approved registry digest and a promotion-evidence
+  file and digest. Activation refuses, with an explicit error and no fallback,
+  unless the registry is approved, belongs to this project, is unambiguous and
+  current, and the evidence matches it, matches the current implementation, is
+  `promotable` and covers the local and cache backends. Influence changes only
+  `retrieve_sources` and its consumers: `context` then returns
+  `project-memory:context:v2` and `explain-search` returns
+  `palimnex:explain-search:v2`, each disclosing the influence. Cache-backed
+  `search`, `symbols`, `impact` and `palimnex evaluate` are unchanged.
+  `palimnex evaluate-ontology-promotion [--registry PATH] [--limit N]` prints
+  `palimnex:ontology-promotion-evidence:v1` (exit 0 promotable, 2 held) and
+  never activates anything. `palimnex ontology-status` reports the setting and
+  whether it activates. Rollback is `mode: off`. See
+  `docs/ONTOLOGY_INFLUENCE.md`.
 
 ## 2.9.0 - 2026-10-02
 

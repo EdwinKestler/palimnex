@@ -1,0 +1,22 @@
+{
+  "schema": "palimnex:ontology-promotion-evidence:v1",
+  "status": "promotable",
+  "registry": {"path": "ontology/concept-registry.v1.json", "digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"},
+  "implementation_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "fixture_digests": {"v27": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "v26": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "cohort": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+  "limit": 5,
+  "backends": {
+    "local": {
+      "suites": {
+        "v27": {"baseline": {"case_count": 0, "cases_passed": 0, "critical_case_count": 0, "critical_pass_count": 0, "forbidden_path_hits": 0, "recall_at_limit": 0, "mrr": 0, "negative_abstention": 1, "negative_case_count": 0}, "influenced": {"case_count": 0, "cases_passed": 0, "critical_case_count": 0, "critical_pass_count": 0, "forbidden_path_hits": 0, "recall_at_limit": 0, "mrr": 0, "negative_abstention": 1, "negative_case_count": 0}, "changed_ranking_count": 0, "regressed_case_ids": []},
+        "challenges_v26": {"baseline": {"case_count": 0, "cases_passed": 0, "critical_case_count": 0, "critical_pass_count": 0, "forbidden_path_hits": 0, "recall_at_limit": 0, "mrr": 0, "negative_abstention": 1, "negative_case_count": 0}, "influenced": {"case_count": 0, "cases_passed": 0, "critical_case_count": 0, "critical_pass_count": 0, "forbidden_path_hits": 0, "recall_at_limit": 0, "mrr": 0, "negative_abstention": 1, "negative_case_count": 0}, "changed_ranking_count": 0, "regressed_case_ids": []},
+        "cohort": {"baseline": {"case_count": 0, "cases_passed": 0, "critical_case_count": 0, "critical_pass_count": 0, "forbidden_path_hits": 0, "recall_at_limit": 0, "mrr": 0, "negative_abstention": 1, "negative_case_count": 0}, "influenced": {"case_count": 0, "cases_passed": 0, "critical_case_count": 0, "critical_pass_count": 0, "forbidden_path_hits": 0, "recall_at_limit": 0, "mrr": 0, "negative_abstention": 1, "negative_case_count": 0}, "changed_ranking_count": 0, "regressed_case_ids": []}
+      },
+      "gates": {"off_identical": true, "no_critical_regression": true, "no_case_regression": true, "no_new_forbidden": true, "abstention_not_regressed": true, "registry_unambiguous": true, "registry_current": true, "channels_visible": true, "bounded": true, "deterministic": true}
+    }
+  },
+  "activation_authorized": false,
+  "authority": "evidence_only",
+  "authorizes_actions": false,
+  "evidence_digest": "94aa24ef043b575521e1c5ca5b86ca39b5af5cef5e3ab52c34ee89594c18496b"
+}

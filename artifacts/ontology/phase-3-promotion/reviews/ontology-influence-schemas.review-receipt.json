@@ -1,0 +1,54 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "artifacts/ontology/phase-3-promotion/briefs/INFLUENCE_SPEC.md",
+    "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-schemas.implementation-receipt.json",
+    "artifacts/ontology/phase-3-promotion/tasks/ontology-influence-schemas.json",
+    "palimnex/schemas/context.v2.schema.json",
+    "palimnex/schemas/explain-search.v2.schema.json",
+    "palimnex/schemas/ontology-promotion-evidence.v1.schema.json",
+    "palimnex/tests/fixtures/ontology_influence",
+    "palimnex/tests/test_influence_schemas.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "task_digest": "8ed38a154c57de32348333be10614f7726f80cadaa0256844b6b5a922738741e",
+  "approval_evidence_digest": "9fc56199fd9a8fb06155de459d29c80e96b07c458e58ff53f4108193575f0025",
+  "workstream_id": "ontology-influence-schemas",
+  "evidence": [
+    "NOTE: palimnex.tests.test_influence_schemas plus retrieval-coverage and SDK regressions: 30 passed in 1.313s; implementation receipt validated (task_digest 8ed38a15…).",
+    "NOTE: context.v2 is context v1 plus required ontology_influence disclosure; explain-search.v2 is v1 plus required ranking_influence; promotion evidence v1 requires local and cache backends, ten exact gates, activation_authorized false, and promotable exactly when every backend gate is true.",
+    "NOTE: Three valid fixtures and nine single-failure invalid fixtures (extra key, influence false, missing disclosure, activation_authorized true, digest mismatch, missing cache, invalid concept id, missing ranking_influence, mode shadow) each reject once.",
+    "NOTE: Public path pattern is weaker than the runtime repository-path checker (dot segments, Windows absolute paths, backslash). Runtime activation still fail-closes on those paths.",
+    "NOTE: Live happy-path context v2, explain-search v2, and evaluate_ontology_promotion evidence validated against these schemas through a local referencing.Registry with no network."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_influence_schemas palimnex.tests.test_retrieval_coverage_schema palimnex.tests.test_sdk -v",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3-promotion/tasks/ontology-influence-schemas.json --implementation-receipt artifacts/ontology/phase-3-promotion/receipts/ontology-influence-schemas.implementation-receipt.json"
+  ],
+  "source_grounding_result": "Schemas match INFLUENCE_SPEC.md identifiers project-memory:context:v2, palimnex:explain-search:v2, and palimnex:ontology-promotion-evidence:v1. Influence disclosure is $ref-shared. additionalProperties is false on the three top-level contracts.",
+  "privacy_result": "Fixtures contain no source excerpts or credential material. authorizes_actions is const false. Promotion evidence also const-fixes activation_authorized false and authority evidence_only. Tests resolve $ref locally.",
+  "retrieval_quality_result": "Schema tests do not rank. Status/gate coupling is enforced: all-true gates require promotable; a false gate forbids promotable.",
+  "compatibility_result": "Three new standalone contracts. Existing context v1, explain-search v1, retrieval-coverage v1, and SDK wire schemas are unchanged; test_sdk and test_retrieval_coverage_schema still pass.",
+  "rollback_result": "Disable influence and readers see v1. v2 documents announce themselves by schema identifier.",
+  "authority_result": "Schemas cannot authorize activation. Promotion evidence locks activation_authorized and authorizes_actions to false.",
+  "limitations": [
+    "Full suite and scripts/palimnex_check.sh skipped as instructed.",
+    "JSON Schema path constraints are looser than runtime path admission."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "ledger_consulted": false,
+    "ledger_writes_performed": false
+  },
+  "git_state": {
+    "branch": "main",
+    "owned_paths": "untracked schemas, test_influence_schemas.py, fixtures/ontology_influence, and the implementation receipt",
+    "staged": false,
+    "committed": false,
+    "reviewer_git_writes": false
+  },
+  "status": "accepted"
+}

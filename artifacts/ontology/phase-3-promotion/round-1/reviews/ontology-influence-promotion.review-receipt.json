@@ -1,0 +1,55 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-promotion.implementation-receipt.json",
+    "artifacts/ontology/phase-3-promotion/tasks/ontology-influence-promotion.json",
+    "palimnex/ontology_promotion.py",
+    "palimnex/schemas/ontology-promotion-evidence.v1.schema.json",
+    "palimnex/tests/test_ontology_promotion.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "task_digest": "d421b828417057baa1b93c0ef8adade1965645c0131cb29cdff8b7e18698f402",
+  "approval_evidence_digest": "9fc56199fd9a8fb06155de459d29c80e96b07c458e58ff53f4108193575f0025",
+  "workstream_id": "ontology-influence-promotion",
+  "evidence": [
+    "NOTE: palimnex.tests.test_ontology_promotion: 5 passed in 4.188s (with CLI tests); mypy on palimnex/ontology_promotion.py clean; receipt validated (task_digest d421b828…).",
+    "NOTE: Independent temp checkout: two evaluate_ontology_promotion calls were equal, status promotable, all local and cache gates true, activation_authorized false, authorizes_actions false, authority evidence_only, no files written, and RedisClient construction was patched to fail.",
+    "NOTE: Ambiguous registry produced held evidence with registry_unambiguous false on both backends. Missing registry raised OntologyPromotionError registry_read_refused. Critical-regression fixture in unit tests held both backends.",
+    "NOTE: Cache measurement uses palimnex._offline_redis.FakeRedis and cache_v3.build_index over the temp checkout and the v26 synthetic project. Real Redis was not opened.",
+    "NOTE: challenges_v26 withholds ActiveInfluence when the approved registry project identity does not match the v26 fixture project, so that suite's influenced ranking equals baseline by project isolation rather than by applying a foreign registry."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_ontology_promotion -v",
+    "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/ontology_promotion.py",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3-promotion/tasks/ontology-influence-promotion.json --implementation-receipt artifacts/ontology/phase-3-promotion/receipts/ontology-influence-promotion.implementation-receipt.json"
+  ],
+  "source_grounding_result": "evaluate_ontology_promotion loads an approved registry, constructs measurement-only ActiveInfluence, compares influence=off vs influenced retrieve_sources on local and FakeRedis cache backends for v27, v26, and cohort, derives gates from those runs, and sets status promotable only when every gate on both backends is true.",
+  "privacy_result": "Registry load reuses bounded privacy admission. Measurement never writes repository evidence or settings. RedisClient was not constructed in the independent run.",
+  "retrieval_quality_result": "Gates are computed from paired runs, not hard-coded. A real promotable document later activated and changed rankings only through the ontology channel. Held status was produced from an ambiguous registry rather than forced.",
+  "compatibility_result": "New palimnex.ontology_promotion API only. Default retrieval, cache search, and palimnex evaluate are unchanged. The function prints/returns evidence and does not write it.",
+  "rollback_result": "The evaluator never enables the repository setting. Saving evidence is a separate owner action and does not activate influence.",
+  "authority_result": "activation_authorized is always false. authorizes_actions is false. authority is evidence_only. validate_promotion_evidence is applied before return. No Git, network, or live Redis writes.",
+  "limitations": [
+    "Full suite and scripts/palimnex_check.sh skipped as instructed.",
+    "No approved registry exists in this repository checkout; promotable evidence was built in a hermetic temp project.",
+    "v26 influence is withheld when registry project_id does not match the fixture project."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "offline_fakeredis_used": true,
+    "real_redis_client_constructed": false,
+    "ledger_writes_performed": false,
+    "evidence_files_written_in_repo": false
+  },
+  "git_state": {
+    "branch": "main",
+    "owned_paths": "untracked palimnex/ontology_promotion.py, palimnex/tests/test_ontology_promotion.py, and the implementation receipt",
+    "staged": false,
+    "committed": false,
+    "reviewer_git_writes": false
+  },
+  "status": "accepted"
+}

@@ -1,0 +1,118 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-influence-gate",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "task_digest": "b58420ed88895b8ae0bbc5c16061c1c49499d32616b18b0c2a3f06d86c959bbf",
+  "approval_evidence_digest": "9fc56199fd9a8fb06155de459d29c80e96b07c458e58ff53f4108193575f0025",
+  "owned_scope": [
+    "palimnex/ontology_influence.py",
+    "palimnex/tests/test_ontology_influence.py",
+    "docs/ONTOLOGY_INFLUENCE.md",
+    "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-gate.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/ontology_influence.py",
+    "palimnex/tests/test_ontology_influence.py",
+    "docs/ONTOLOGY_INFLUENCE.md",
+    "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-gate.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [],
+  "commands": [
+    {
+      "command": "python3 palimnex.py status",
+      "exit_code": 0,
+      "result": "Returned status error because the Redis Unix socket is missing; cache_consulted was false. No cache or live-state mutation was attempted."
+    },
+    {
+      "command": "python3 palimnex.py validate --deep",
+      "exit_code": 0,
+      "result": "Returned status error because the Redis Unix socket is missing; cache_consulted was false. Task authority forbids starting Redis or indexing."
+    },
+    {
+      "command": "python3 palimnex.py search ontology influence promotion evidence implementation digest --limit 10",
+      "exit_code": 0,
+      "result": "Focused cache search returned status error because the Redis Unix socket is missing; cache_consulted was false. Source files were opened directly."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_ontology_influence -v",
+      "exit_code": 0,
+      "result": "Ran 16 focused ontology-influence tests in 0.065s; all passed."
+    },
+    {
+      "command": "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/ontology_influence.py",
+      "exit_code": 0,
+      "result": "Success: no issues found in 1 source file."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_ontology_shadow palimnex.tests.test_retrieval_shadow palimnex.tests.test_coverage palimnex.tests.test_explain_search",
+      "exit_code": 0,
+      "result": "Ran 55 Phase 2 and Phase 3 regression tests in 11.300s; all passed."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3-promotion/tasks/ontology-influence-gate.json",
+      "exit_code": 0,
+      "result": "Task and approval contracts valid; task digest b58420ed88895b8ae0bbc5c16061c1c49499d32616b18b0c2a3f06d86c959bbf and approval evidence digest 9fc56199fd9a8fb06155de459d29c80e96b07c458e58ff53f4108193575f0025."
+    },
+    {
+      "command": "python3 palimnex.py ledger-status",
+      "exit_code": 0,
+      "result": "Ledger status ready; integrity ok; zero foreign-key, semantic, pending-projection, and stale-verification errors. No ledger write was performed."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3-promotion/tasks/ontology-influence-gate.json --implementation-receipt artifacts/ontology/phase-3-promotion/receipts/ontology-influence-gate.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Implementation receipt validated against the approved task and receipt schema; status valid and implementation_receipt_validated true."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "Worktree remains dirty with pre-existing and parallel-lane changes. All four owned deliverables are untracked, no owned file is staged, and unrelated files were preserved."
+    }
+  ],
+  "compatibility_effect": "Adds the public palimnex.ontology_influence API: INFLUENCE_MODES, PROMOTION_EVIDENCE_SCHEMA, CONTEXT_V2_SCHEMA, EXPLAIN_SEARCH_V2_SCHEMA, OntologyInfluenceError, InfluenceSetting, ActiveInfluence, read_influence_setting, activate_influence, influence_implementation_digest, validate_promotion_evidence, influence_disclosure, context_v2, and explain_search_v2. Missing, off, and shadow settings remain non-influencing; enabled activation is opt-in and fail-closed. Existing search, symbols, impact, evaluate, retrieval, context v1, and explain-search v1 identifiers and behavior are unchanged by this lane.",
+  "privacy_and_authority_checks": [
+    "Approved registry loading reuses bounded privacy admission, project matching, source verification, and canonical registry digest validation from palimnex.concepts.",
+    "Activation refuses cross-concept alias or canonical-name ambiguity and any stale active concept before reading promotion evidence.",
+    "Promotion evidence is repository-relative, bounded to 1000000 bytes, privacy-scanned before JSON decoding, bound by exact-file SHA-256, structurally validated, and required to cover local and cache backends.",
+    "Refusal messages contain only stable reason and field identifiers; focused tests prove registry and evidence privacy canaries are not echoed.",
+    "Implementation evidence binds exact bounded source bytes for palimnex.concepts, palimnex.ontology_shadow, palimnex.ontology_influence, and palimnex.retrieval.",
+    "No network, provider, Git-write, Redis-write, SQLite-write, migration, activation, erasure, retention, pack, publication, or deployment authority was used."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "The full unittest suite and scripts/palimnex_check.sh are delegated to the coordinator as required by COMMON.md because their Unix-socket and MCP subprocess tests cannot pass in this sandbox.",
+    "Redis was unavailable, so source-cache status, deep validation, and focused cache search could not consult the cache; cache_consulted is false.",
+    "Indexed product and documentation files changed, but this task forbids index and evaluate writes; the coordinator must reindex and evaluate after integration.",
+    "This lane provides the gate API only; the separately owned retrieval and coordinator integration lanes must consume it before influenced CLI and SDK behavior is end-to-end available.",
+    "Activation was proven with hermetic temporary approved registries and evidence; no real repository registry exists yet and no live activation was attempted."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_status": "unavailable_missing_redis_unix_socket",
+    "index_performed": false,
+    "evaluation_performed": false,
+    "indexed_files_changed": true,
+    "coordinator_reindex_required": true,
+    "ledger_status": "ready",
+    "ledger_integrity": "ok",
+    "ledger_foreign_key_errors": 0,
+    "ledger_semantic_errors": [],
+    "ledger_projection_pending": 0,
+    "ledger_stale_verification_count": 0,
+    "ledger_writes_performed": false
+  },
+  "git_state": {
+    "git_writes_performed": false,
+    "worktree_dirty_before_workstream": true,
+    "unrelated_and_parallel_changes_present": true,
+    "unrelated_changes_preserved": true,
+    "owned_paths_only_written": true,
+    "staged": false,
+    "committed": false,
+    "pushed": false
+  },
+  "status": "tested"
+}

@@ -4,8 +4,9 @@ Status: **Phase 0 accepted at its exit gate on 2026-11-05. Phase 1
 (reviewed concept-registry foundation) accepted and committed on 2026-11-06.
 Phase 2 (deterministic coverage receipt) accepted at its exit gate on
 2026-11-06 (commit 2558092). Phase 3 (ontology-aware retrieval in shadow mode)
-approved on 2026-11-06. Phases 4-5 remain proposals and each requires a
-separate named approval.**
+accepted at its exit gate on 2026-11-06 (commits ad96d37, 2b9bebc). The move
+from shadow to ontology retrieval influence and Phase 4 (local semantic
+experiment) were approved on 2026-11-06. Phase 5 remains a proposal.**
 
 Source proposal: `artifacts/design/Ontologyadoptionplan.md` (SHA-256 `8fe38bef5f7f25fa8a7d58dad21b89f69c70f4a367d9981c01fdedf6bd165d86`), which stays
 unchanged. Approval evidence: Phase 0 `artifacts/ontology/phase-0/approval-evidence.json`
@@ -14,23 +15,33 @@ and exit gate `artifacts/ontology/phase-0/exit-gate.json`; Phase 1
 `artifacts/ontology/phase-1/exit-gate.json`; Phase 2
 `artifacts/ontology/phase-2/approval-evidence.json` and exit gate
 `artifacts/ontology/phase-2/exit-gate.json`; Phase 3
-`artifacts/ontology/phase-3/approval-evidence.json`.
+`artifacts/ontology/phase-3/approval-evidence.json` and exit gate
+`artifacts/ontology/phase-3/exit-gate.json`; influence promotion
+`artifacts/ontology/phase-3-promotion/approval-evidence.json`; Phase 4
+`artifacts/ontology/phase-4/approval-evidence.json`.
 
-Phase 3 approval authorizes ontology-aware retrieval in shadow mode (see
-"Phase 3" below): a concept/alias channel computed beside the lexical, symbol and
-graph channels of `retrieve_sources`, a shadow fusion and the
-`palimnex:ontology-shadow-comparison:v1` report, a frozen evaluation-only
-cohort and test registry (`palimnex/evaluation/ontology-shadow.v1.json`), and the read-only
-`evaluate-ontology-shadow` command, within exact Phase 3 task cards. Shadow
-output is visible only through that evaluation command (owner decision
-2026-11-06). It does not authorize any change to returned rankings, `search`,
-`context`, `explain-search` or their formats, creating or populating the
-approved registry, retrieval influence or promotion (a separate owner
-approval), model or network calls, changes to live Redis or SQLite state,
-ledger migration, retention-policy activation, erasure, pack activation, Git
-writes, publication, deployment, or any other external action. Accepted Phase 0
-drafts remain under `artifacts/design/ontology-phase-0/`; coordination records
-live under `artifacts/ontology/`.
+The influence-promotion approval authorizes an opt-in ontology retrieval
+influence for `retrieve_sources` and its direct consumers (`context`,
+`explain-search`, SDK calls), controlled by `.palimnex.json`
+`ontology_influence.mode` (`off` | `shadow` | `enabled`; missing means `off`),
+disclosed through new versioned results (`project-memory:context:v2`,
+`palimnex:explain-search:v2`), an `evaluate-ontology-promotion` command that
+writes `palimnex:ontology-promotion-evidence:v1` over the local and cache
+backends, and an `ontology-status` command. Activation is the owner's config
+edit and must bind the approved registry digest and the promotion evidence.
+Phase 4 approval authorizes a deterministic in-process semantic provider (the
+existing hashed embedding plus test doubles), a frozen semantic cohort, a
+semantic shadow channel and a new versioned evaluation contract with the
+owner's thresholds. Neither approval authorizes changes to cache-backed
+`search`, `symbols`, `impact` or `palimnex evaluate`; activating influence on
+the owner's behalf; creating or populating the approved registry; promoting a
+semantic provider (a passing report means only "promotable"); downloading
+models, installing packages, network access or a persistent vector store;
+changes to `project-memory:semantic-provider:v1` or the existing semantic gate;
+changes to live Redis or SQLite state; ledger migration; Git writes;
+publication; deployment; or any other external action. Accepted Phase 0 drafts
+remain under `artifacts/design/ontology-phase-0/`; coordination records live
+under `artifacts/ontology/`.
 
 ## Decision requested
 
@@ -616,6 +627,11 @@ provider data. Those surfaces require their own documented controls.
 | Shadow visibility (Phase 3) | Evaluation command only: `palimnex evaluate-ontology-shadow` compares baseline and shadow rankings; no user-facing retrieval output changes (owner decision 2026-11-06) |
 | Phase 3 evaluation concepts | A hand-written, frozen, evaluation-only test registry and ontology cohort in `palimnex/evaluation/ontology-shadow.v1.json`; never loaded by `explain-search` and never an approved registry (owner decision 2026-11-06) |
 | Phase 2 coordinator decisions | R10, R11, the byte-budget attribution fix and independent truncation flags confirmed at the Phase 2 exit gate |
+| Phase 3 gate meaning (R12) | "Critical cases remain green" means production retrieval stays byte-identical and the shadow causes no critical regression (confirmed 2026-11-06) |
+| Influence activation | Opt-in `.palimnex.json` `ontology_influence.mode` (`off`, `shadow`, `enabled`; missing means `off`). `enabled` binds the approved registry digest and the promotion evidence (path and digest). Missing, corrupt, stale, ambiguous or privacy-refused registry data, or mismatched evidence, is an explicit error, never a silent fallback. Rollback is `mode: off`. Registry presence is data, not operational authority (owner decision 2026-11-06) |
+| Influence surfaces | Only `retrieve_sources` and its direct consumers (`context`, `explain-search`, SDK calls); cache-backed `search`, `symbols`, `impact` and `palimnex evaluate` unchanged and kept as the compatibility sentinel. Influenced results are disclosed through new versioned contracts; `context:v1` is never silently changed. Promotion testing covers the local and cache backends (owner decision 2026-11-06) |
+| Phase 4 provider | Deterministic in-process provider over the existing hashed embedding, with test doubles for malformed dimensions, NaN/Inf, timeouts and failures; a distinct provider ID, revision, dimensions and implementation digest; no model download, package installation, network or persistent vector store. A real local model is a later, separately approved experiment (owner decision 2026-11-06) |
+| Phase 4 thresholds | Fixed before testing: no critical or per-case regression; Recall@5 not reduced on any protected suite; at least +0.02 MRR or Recall@5 on the frozen semantic cohort, with at least one more passing cohort case; p95 at most 1.5x the paired baseline under a fixed benchmark protocol; no new forbidden hits; abstention, ambiguity, source-drift and privacy-canary gates; deterministic results; bound provider identity. Requires a new versioned evaluation contract; the semantic v1 helper (+0.05, 2x) is unchanged. A passing report means promotable only (owner decision 2026-11-06) |
 
 ## Original open owner decisions (settled above)
 

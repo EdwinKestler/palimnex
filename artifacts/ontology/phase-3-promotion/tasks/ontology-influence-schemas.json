@@ -1,0 +1,102 @@
+{
+  "schema": "palimnex:ontology-workstream-task:v1",
+  "workstream_id": "ontology-influence-schemas",
+  "phase": 3,
+  "action_id": "ontology_phase_3_shadow",
+  "objective": "Define the public schemas project-memory:context:v2, palimnex:explain-search:v2 and palimnex:ontology-promotion-evidence:v1 exactly per INFLUENCE_SPEC.md, with valid and invalid fixtures and schema tests.",
+  "exclusions": [
+    "No edits outside owned_paths; foreign changes are returned as integration patch proposals.",
+    "With ontology_influence missing, off or shadow, every existing output (retrieve_sources, context v1, explain-search v1, search) stays byte-identical.",
+    "Never enable influence on the owner's behalf: do not edit .palimnex.json or write any promotion evidence into the repository.",
+    "Cache-backed search, symbols, impact and palimnex evaluate are unchanged.",
+    "Do not create or populate ontology/concept-registry.v1.json or any approved registry.",
+    "No silent fallback: an enabled setting that cannot be activated is an explicit typed error.",
+    "No change to any existing identifier, schema, frozen fixture or test expectation except where a task card owns the file.",
+    "No runtime dependency: runtime modules use only the standard library and palimnex modules.",
+    "No Git staging, commits, branches or pushes; no network, installs, model or provider calls.",
+    "No palimnex index, remember, session, capture, retention, migration, erasure or pack commands; no Redis or SQLite writes.",
+    "Never read or echo credentials; never store literal secret-pattern strings."
+  ],
+  "approved_design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "approval_evidence": {
+    "schema": "palimnex:ontology-approval-evidence:v1",
+    "authority_source": "user_message",
+    "evidence_locator": "claude.ai conversation with the repository owner, user message sent 2026-11-06 16:46 America/Guatemala ('R12 is confirmed and Phase 3 is committed ... Phase 4 and retrieval influence Approved'), commits ad96d37 and 2b9bebc, plus the owner's detailed answers on influence activation, influence surfaces, Phase 4 embeddings and Phase 4 thresholds in the same conversation",
+    "grantor_claim": "repository owner (Gus, GitHub EdwinKestler)",
+    "design_identity": {
+      "path": "docs/ONTOLOGY_ADOPTION.md",
+      "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+    },
+    "source_proposal_identity": {
+      "path": "artifacts/design/Ontologyadoptionplan.md",
+      "sha256": "8fe38bef5f7f25fa8a7d58dad21b89f69c70f4a367d9981c01fdedf6bd165d86"
+    },
+    "approved_phases": [
+      3
+    ],
+    "authorized_actions": [
+      "ontology_phase_3_shadow"
+    ],
+    "excluded_actions": [
+      "ontology_phase_0_contract",
+      "ontology_phase_1_registry",
+      "ontology_phase_2_coverage",
+      "ontology_phase_4_semantic",
+      "ontology_phase_5_extensions"
+    ],
+    "recorded_at": "2026-11-06T16:46:00-06:00",
+    "implementation_authorized": true,
+    "network_authorized": false,
+    "git_write_authorized": false,
+    "live_state_authorized": false
+  },
+  "owned_paths": [
+    "palimnex/schemas/context.v2.schema.json",
+    "palimnex/schemas/explain-search.v2.schema.json",
+    "palimnex/schemas/ontology-promotion-evidence.v1.schema.json",
+    "palimnex/tests/test_influence_schemas.py",
+    "palimnex/tests/fixtures/ontology_influence",
+    "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-schemas.implementation-receipt.json"
+  ],
+  "read_only_paths": [
+    ".agents/skills",
+    ".palimnex.json",
+    "AGENTS.md",
+    "README.md",
+    "artifacts/design/Ontologyadoptionplan.md",
+    "artifacts/design/ontology-phase-0",
+    "artifacts/ontology/phase-0",
+    "artifacts/ontology/phase-1",
+    "artifacts/ontology/phase-2",
+    "artifacts/ontology/phase-3",
+    "artifacts/ontology/phase-3-promotion/approval-evidence.json",
+    "artifacts/ontology/phase-3-promotion/briefs",
+    "artifacts/ontology/phase-3-promotion/manifest.json",
+    "artifacts/ontology/phase-3-promotion/tasks",
+    "docs",
+    "docs/ONTOLOGY_ADOPTION.md",
+    "palimnex",
+    "pyproject.toml"
+  ],
+  "forbidden_paths": [
+    ".palimnex",
+    ".env",
+    ".env.example",
+    "benchmark",
+    "secrets",
+    ".git"
+  ],
+  "dependencies": [],
+  "acceptance_commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_influence_schemas palimnex.tests.test_retrieval_coverage_schema palimnex.tests.test_sdk -v",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3-promotion/tasks/ontology-influence-schemas.json --implementation-receipt artifacts/ontology/phase-3-promotion/receipts/ontology-influence-schemas.implementation-receipt.json",
+    "git status --short --untracked-files=all"
+  ],
+  "required_output": "ImplementationReceipt",
+  "network_authority": false,
+  "git_write_authority": false,
+  "live_state_authority": false
+}

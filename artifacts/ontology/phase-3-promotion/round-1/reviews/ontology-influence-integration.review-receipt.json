@@ -1,0 +1,58 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "docs/COMPATIBILITY.md",
+    "docs/CONCEPT_REGISTRY.md",
+    "palimnex/CHANGELOG.md",
+    "palimnex/core.py",
+    "palimnex/tests/test_ontology_influence_cli.py",
+    "pyproject.toml"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "task_digest": "9af6b9c7daca76a9c510b07592f0bb2d0dd6db4e1a7462daafeaa8f3ed5a8370",
+  "approval_evidence_digest": "9fc56199fd9a8fb06155de459d29c80e96b07c458e58ff53f4108193575f0025",
+  "workstream_id": "ontology-influence-integration",
+  "evidence": [
+    "MINOR: docs/COMPATIBILITY.md says project-memory:context:v2, palimnex:explain-search:v2, palimnex:ontology-promotion-evidence:v1 and palimnex:ontology-status:v1 are emitted only when ontology_influence.mode is enabled and activation succeeds. ontology-status v1 and promotion-evidence v1 are also emitted without activation. retrieve_sources/context/explain-search v1 identity in the following sentences is correct.",
+    "NOTE: palimnex.tests.test_ontology_influence_cli: 10 passed. Independent CLI under PALIMNEX_ROOT temp checkouts: ontology-status off=0, malformed=1, enabled-refused=2; evaluate-ontology-promotion missing registry=1, promotable=0 with no files written, held=2.",
+    "NOTE: git diff HEAD -- palimnex/core.py adds explain-search v2 wrapping, ontology_status, and the two subcommands only. def search, def symbols, def impact, and def evaluate are absent from the diff. challenge.py and cache_v3.py are unmodified.",
+    "NOTE: explain-search stays v1 when retrieve_sources has no ontology_influence; influenced results are palimnex:explain-search:v2 with ranking_influence and validate against the public schema.",
+    "NOTE: palimnex:ontology-status:v1 is a named CLI document without a published JSON Schema. pyproject.toml mypy files list gained ontology_influence.py and ontology_promotion.py. CHANGELOG and CONCEPT_REGISTRY.md correctly state registry presence is not authority.",
+    "NOTE: docs/ONTOLOGY_ADOPTION.md intro says evaluate-ontology-promotion writes evidence; INFLUENCE_SPEC.md, docs/ONTOLOGY_INFLUENCE.md, and the CLI print and never write. Implementation follows the spec."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_ontology_influence_cli -v",
+    "git diff HEAD -- palimnex/core.py docs/COMPATIBILITY.md docs/CONCEPT_REGISTRY.md palimnex/CHANGELOG.md pyproject.toml",
+    "git diff --stat HEAD -- palimnex/core.py palimnex/retrieval.py palimnex/experience.py palimnex/ontology_eval.py palimnex/challenge.py palimnex/cache_v3.py palimnex/semantic.py palimnex/api.py palimnex.py"
+  ],
+  "source_grounding_result": "core.py explain_search wraps v2 only when ontology_influence is on the retrieve_sources result. ontology_status reads the setting, tries activate_influence only for enabled, and returns 0/2. evaluate-ontology-promotion prints JSON and returns 0 for promotable, 2 for held; ValueError/OSError become exit 1.",
+  "privacy_result": "CLI errors print status=error with str(exc). OntologyInfluenceError and OntologyPromotionError stringify to reason and field only. Probe canaries did not appear on stderr. --registry rejects traversal before evaluation.",
+  "retrieval_quality_result": "Uninfluenced explain-search remains v1. Influenced explain-search is v2 with the same disclosure as retrieve_sources. Cache-backed search/symbols/impact/evaluate code paths are untouched.",
+  "compatibility_result": "Off/shadow/missing keep context v1 and explain-search v1. New commands are additive. COMPATIBILITY.md over-groups ontology-status v1 and promotion-evidence v1 as enabled-only emissions; behavior of retrieve_sources consumers is still v1-preserving until enablement.",
+  "rollback_result": "mode off restores explain-search v1. ontology-status then reports mode off, activation not_applicable, retrieval_influence false.",
+  "authority_result": "Neither new command mutates settings, evidence files, Redis, or the ledger. evaluate-ontology-promotion never sets activation_authorized true. No owner .palimnex.json edit. No Git writes by this review.",
+  "limitations": [
+    "No integration implementation receipt was present to validate.",
+    "Full suite, python3 palimnex.py index/validate/evaluate, and scripts/palimnex_check.sh skipped as instructed.",
+    "CLI tests of the real repository default used cwd ROOT and reported mode off without reading .palimnex/."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "ledger_consulted": false,
+    "ledger_writes_performed": false,
+    "cli_temp_checkouts_only": true
+  },
+  "git_state": {
+    "branch": "main",
+    "ahead_of_origin_main": 5,
+    "owned_paths": "modified core.py, pyproject.toml, palimnex/CHANGELOG.md, docs/COMPATIBILITY.md, docs/CONCEPT_REGISTRY.md; untracked test_ontology_influence_cli.py; no integration implementation receipt",
+    "also_dirty": "docs/ONTOLOGY_ADOPTION.md is modified to record influence and Phase 4 owner decisions; its working-tree SHA-256 matches the task design_identity",
+    "staged": false,
+    "committed": false,
+    "reviewer_git_writes": false
+  },
+  "status": "accepted_with_limits"
+}

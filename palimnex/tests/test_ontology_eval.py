@@ -9,6 +9,7 @@ from pathlib import Path
 from unittest import mock
 
 from palimnex import cache_v3
+from palimnex._offline_fixtures import write_project
 from palimnex.ontology_eval import (
     EVALUATION_SCHEMA,
     OntologyEvaluationError,
@@ -276,7 +277,40 @@ class OntologyShadowEvaluationTests(unittest.TestCase):
             include_graph=True,
             client=None,
             snapshot=snapshot,
+            influence="off",
         )
+
+    def test_enabled_checkout_setting_cannot_influence_evaluation_baseline(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_project(root)
+            config_path = root / ".palimnex.json"
+            config = json.loads(config_path.read_text(encoding="utf-8"))
+            config["ontology_influence"] = {
+                "mode": "enabled",
+                "registry_digest": "a" * 64,
+                "promotion_evidence": "missing-evidence.json",
+                "promotion_evidence_digest": "b" * 64,
+            }
+            config_path.write_text(json.dumps(config), encoding="utf-8")
+            snapshot = cache_v3.source_snapshot(root)
+            case = _EvaluationCase(
+                "enabled-config",
+                "control",
+                "cobalt orchard recovery",
+                5,
+                ("docs/alpha.md",),
+                (),
+                False,
+            )
+            outcome = _run_case(
+                case,
+                root=root,
+                registry=None,
+                report_limit=5,
+                snapshot=snapshot,
+            )
+            self.assertTrue(outcome.baseline_identical)
 
     def test_unchanged_gates_fail_on_their_defining_conditions(self) -> None:
         case = _EvaluationCase(

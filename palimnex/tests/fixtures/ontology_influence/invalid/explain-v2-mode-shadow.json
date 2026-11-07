@@ -1,0 +1,10 @@
+{
+  "schema": "palimnex:explain-search:v2",
+  "search": {"query": "retention ledger", "results": []},
+  "coverage_state": "registry_absent",
+  "coverage": null,
+  "registry": {"path": "ontology/concept-registry.v1.json", "source": "default"},
+  "authority": "evidence_only",
+  "authorizes_actions": false,
+  "ranking_influence": {"mode": "shadow", "channel": "ontology", "retrieval_influence": true, "registry_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "promotion_evidence_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "implementation_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "contributing_concept_ids": ["concept.retention"]}
+}

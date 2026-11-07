@@ -1,0 +1,102 @@
+{
+  "schema": "palimnex:ontology-workstream-manifest:v1",
+  "approved_phase": 3,
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "workstreams": [
+    "ontology-influence-gate",
+    "ontology-influence-schemas",
+    "ontology-influence-retrieval",
+    "ontology-influence-promotion",
+    "ontology-influence-integration"
+  ],
+  "dependency_dag": [
+    {
+      "from": "ontology-influence-gate",
+      "to": "ontology-influence-retrieval"
+    },
+    {
+      "from": "ontology-influence-retrieval",
+      "to": "ontology-influence-promotion"
+    },
+    {
+      "from": "ontology-influence-schemas",
+      "to": "ontology-influence-promotion"
+    },
+    {
+      "from": "ontology-influence-gate",
+      "to": "ontology-influence-integration"
+    },
+    {
+      "from": "ontology-influence-schemas",
+      "to": "ontology-influence-integration"
+    },
+    {
+      "from": "ontology-influence-retrieval",
+      "to": "ontology-influence-integration"
+    },
+    {
+      "from": "ontology-influence-promotion",
+      "to": "ontology-influence-integration"
+    }
+  ],
+  "exclusive_file_ownership": {
+    "ontology-influence-gate": [
+      "palimnex/ontology_influence.py",
+      "palimnex/tests/test_ontology_influence.py",
+      "docs/ONTOLOGY_INFLUENCE.md",
+      "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-gate.implementation-receipt.json"
+    ],
+    "ontology-influence-schemas": [
+      "palimnex/schemas/context.v2.schema.json",
+      "palimnex/schemas/explain-search.v2.schema.json",
+      "palimnex/schemas/ontology-promotion-evidence.v1.schema.json",
+      "palimnex/tests/test_influence_schemas.py",
+      "palimnex/tests/fixtures/ontology_influence",
+      "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-schemas.implementation-receipt.json"
+    ],
+    "ontology-influence-retrieval": [
+      "palimnex/retrieval.py",
+      "palimnex/experience.py",
+      "palimnex/ontology_eval.py",
+      "palimnex/tests/test_retrieval_influence.py",
+      "palimnex/tests/test_ontology_eval.py",
+      "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-retrieval.implementation-receipt.json"
+    ],
+    "ontology-influence-promotion": [
+      "palimnex/ontology_promotion.py",
+      "palimnex/tests/test_ontology_promotion.py",
+      "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-promotion.implementation-receipt.json"
+    ],
+    "ontology-influence-integration": [
+      "artifacts/ontology/phase-3-promotion/integration",
+      "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-integration.implementation-receipt.json",
+      "docs/COMPATIBILITY.md",
+      "docs/CONCEPT_REGISTRY.md",
+      "palimnex/CHANGELOG.md",
+      "palimnex/core.py",
+      "palimnex/evaluation/ontology-shadow.v1.json",
+      "palimnex/tests/test_ontology_influence_cli.py",
+      "pyproject.toml"
+    ]
+  },
+  "shared_file_owner": "ontology-influence-integration",
+  "acceptance_gates": [
+    "missing, off or shadow setting: retrieve_sources, context v1, explain-search v1 and search byte-identical to the committed code",
+    "enabled setting activates only with an approved, project-matching, unambiguous, current registry and matching promotion evidence; every failure is a typed error, never a fallback",
+    "influenced results disclose ontology influence and use context v2 and explain-search v2",
+    "promotion evidence covers the local and cache backends; status promotable only when every gate holds on both; activation never authorized by the report",
+    "cache-backed search and palimnex evaluate unchanged (production sentinel)",
+    "focused tests and strict mypy pass; receipts validate; ownership audit clean; independent review per workstream",
+    "full suite (unsandboxed), standard gate, deep validation, evaluations and ledger status pass; no ledger writes"
+  ],
+  "authority_limits": [
+    "influence promotion under the Phase 3 action; no activation on the owner's behalf; Phase 4 runs as a separate program",
+    "no network, provider, model, Git-write or live-state authority for any lane",
+    "no approved registry created; no change to search, symbols, impact or palimnex evaluate",
+    "Codex lanes run with approval_policy=never inside workspace-write; the coordinator runs socket tests unsandboxed"
+  ],
+  "status": "in_progress"
+}

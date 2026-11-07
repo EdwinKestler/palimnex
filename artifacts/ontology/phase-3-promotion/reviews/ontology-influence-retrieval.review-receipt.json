@@ -1,0 +1,60 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-retrieval.implementation-receipt.json",
+    "artifacts/ontology/phase-3-promotion/tasks/ontology-influence-retrieval.json",
+    "palimnex/experience.py",
+    "palimnex/ontology_eval.py",
+    "palimnex/retrieval.py",
+    "palimnex/tests/test_ontology_eval.py",
+    "palimnex/tests/test_retrieval_influence.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "task_digest": "cc228165e7fcdf9e5b2c4a4322d960b67b869e3a3be2d30c47eeabd08eec081a",
+  "approval_evidence_digest": "9fc56199fd9a8fb06155de459d29c80e96b07c458e58ff53f4108193575f0025",
+  "workstream_id": "ontology-influence-retrieval",
+  "evidence": [
+    "NOTE: palimnex.tests.test_retrieval_influence and test_ontology_eval: 18 passed in 105.203s; 98 Phase 1-3/experience/challenge/gate regressions passed; ontology_eval.py mypy clean; receipt validated (task_digest cc228165…).",
+    "NOTE: OFF IDENTITY vs git archive HEAD palimnex: retrieve_sources and assemble_context matched for missing, off, and shadow, and with a registry present and no setting (22/22). Working-tree explain-search stayed palimnex:explain-search:v1 without ranking_influence.",
+    "NOTE: Enabled fusion adds only the ontology channel. Follow-up: baseline z-popular.md lexical:1; influenced a-target.md ontology:1 then z-popular.md lexical:1. Disclosure keys and constants were exact.",
+    "NOTE: Failures of enabled activation propagate from retrieve_sources and assemble_context with no fallback (registry_digest_mismatch, registry_stale, registry_ambiguous, evidence_missing, and the broader /tmp matrix including explain_search).",
+    "NOTE: shadow_retrieve and ontology_eval pass influence=off, so Phase 3 evaluation stays on the uninfluenced baseline even if the checkout setting is enabled.",
+    "NOTE: assemble_context returns context v1 when ontology_influence is present but not a dict. retrieve_sources only stores the disclosure dict, so this branch is currently unreachable."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_retrieval_influence palimnex.tests.test_ontology_eval -v",
+    "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/ontology_eval.py",
+    "./.venv/bin/python -m unittest palimnex.tests.test_ontology_shadow palimnex.tests.test_retrieval_shadow palimnex.tests.test_coverage palimnex.tests.test_explain_search palimnex.tests.test_experience palimnex.tests.test_challenge palimnex.tests.test_ontology_influence",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3-promotion/tasks/ontology-influence-retrieval.json --implementation-receipt artifacts/ontology/phase-3-promotion/receipts/ontology-influence-retrieval.implementation-receipt.json",
+    "git archive HEAD palimnex | tar -x -C /tmp/palimnex-review-head",
+    "git diff HEAD -- palimnex/retrieval.py palimnex/experience.py palimnex/ontology_eval.py palimnex/challenge.py palimnex/cache_v3.py"
+  ],
+  "source_grounding_result": "git diff of retrieval.py, experience.py, and ontology_eval.py matches INFLUENCE_SPEC.md: influence config|off|ActiveInfluence, off/shadow/missing keep today's fusion, enabled appends ontology_channel then RRF, assemble_context emits context v2 only when the source result carries ontology_influence.",
+  "privacy_result": "Enabled config delegates fail-closed privacy, project match, and bounded evidence reads to the gate. Probe canaries were not echoed. Cache-backed tests used FakeRedis only.",
+  "retrieval_quality_result": "HEAD identity holds for off-family settings. Enabled rankings change only by adding the ontology channel. Rollback to mode off restored v1 context and explain-search and matched influence=off on the same snapshot.",
+  "compatibility_result": "search, symbols, impact, challenge.py, cache_v3.py, and palimnex evaluate are outside this diff. Default retrieve_sources(influence='config') is a no-op when the key is missing. Context v1 is unchanged unless retrieval was influenced.",
+  "rollback_result": "mode off or omitting the key restores retrieve_sources without ontology_influence, project-memory:context:v1, and palimnex:explain-search:v1.",
+  "authority_result": "Passing a constructed ActiveInfluence bypasses evidence checks by spec for measurement. CLI and assemble_context use influence=config and remain fail-closed. No owner .palimnex.json edit. No Redis or ledger writes.",
+  "limitations": [
+    "Full suite and scripts/palimnex_check.sh skipped as instructed.",
+    "HEAD comparison used git archive HEAD palimnex imported via PYTHONPATH in isolated subprocesses.",
+    "Real Redis was not used; cache influence was checked with FakeRedis."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "offline_fakeredis_used": true,
+    "ledger_consulted": false,
+    "ledger_writes_performed": false
+  },
+  "git_state": {
+    "branch": "main",
+    "owned_paths": "modified retrieval.py, experience.py, ontology_eval.py, test_ontology_eval.py; untracked test_retrieval_influence.py and the implementation receipt",
+    "staged": false,
+    "committed": false,
+    "reviewer_git_writes": false
+  },
+  "status": "accepted"
+}

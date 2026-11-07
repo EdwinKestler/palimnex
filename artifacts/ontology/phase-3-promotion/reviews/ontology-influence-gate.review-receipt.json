@@ -1,0 +1,59 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "artifacts/ontology/phase-3-promotion/briefs/INFLUENCE_SPEC.md",
+    "artifacts/ontology/phase-3-promotion/receipts/ontology-influence-gate.implementation-receipt.json",
+    "artifacts/ontology/phase-3-promotion/tasks/ontology-influence-gate.json",
+    "docs/ONTOLOGY_ADOPTION.md",
+    "docs/ONTOLOGY_INFLUENCE.md",
+    "palimnex/ontology_influence.py",
+    "palimnex/tests/test_ontology_influence.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "task_digest": "b58420ed88895b8ae0bbc5c16061c1c49499d32616b18b0c2a3f06d86c959bbf",
+  "approval_evidence_digest": "9fc56199fd9a8fb06155de459d29c80e96b07c458e58ff53f4108193575f0025",
+  "workstream_id": "ontology-influence-gate",
+  "evidence": [
+    "NOTE: Focused tests palimnex.tests.test_ontology_influence: 16 passed in 0.063s; mypy on palimnex/ontology_influence.py clean; implementation receipt validated (task_digest b58420ed…).",
+    "NOTE: read_influence_setting treats a missing key as off; off and shadow activate to None; enabled requires registry_digest plus promotion evidence path and digest, defaulting registry to ontology/concept-registry.v1.json.",
+    "NOTE: Independent /tmp probes: missing registry, wrong digest, candidate registry, foreign project, alias collision, canonical-name collision, stale binding, missing evidence, tampered evidence, evidence for another registry, held evidence, missing cache backend, malformed setting, privacy canaries, and an edited copy of retrieval.py all raised OntologyInfluenceError from retrieve_sources, assemble_context, and explain_search with no canary echo.",
+    "NOTE: Refusal messages expose only reason and field. Implementation digest is SHA-256 of canonical JSON over palimnex.concepts, palimnex.ontology_influence, palimnex.ontology_shadow, and palimnex.retrieval source bytes.",
+    "NOTE: Shadow settings cannot carry registry or evidence bindings, so ontology-status reports activation=not_applicable rather than a dry-run of enabled checks."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_ontology_influence -v",
+    "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/ontology_influence.py",
+    "./.venv/bin/python -m unittest palimnex.tests.test_ontology_shadow palimnex.tests.test_retrieval_shadow palimnex.tests.test_coverage palimnex.tests.test_explain_search palimnex.tests.test_experience palimnex.tests.test_challenge palimnex.tests.test_ontology_influence",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-3-promotion/tasks/ontology-influence-gate.json --implementation-receipt artifacts/ontology/phase-3-promotion/receipts/ontology-influence-gate.implementation-receipt.json",
+    "git archive HEAD palimnex | tar -x -C /tmp/palimnex-review-head"
+  ],
+  "source_grounding_result": "Grounded in palimnex/ontology_influence.py, docs/ONTOLOGY_INFLUENCE.md, INFLUENCE_SPEC.md, and the approved influence-activation row in docs/ONTOLOGY_ADOPTION.md. Activation order is registry load and digest, ambiguity, stale bindings, then evidence digest, structure, registry match, implementation digest, promotable status, and local+cache backends.",
+  "privacy_result": "Promotion evidence is bounded to 1_000_000 bytes, privacy-scanned before JSON decode, and bound by exact-file SHA-256. Registry and evidence privacy canaries built at runtime were refused as registry_privacy_refused and evidence_privacy_refused with no value echo in str or repr.",
+  "retrieval_quality_result": "This lane does not rank. Off and shadow return None from activate_influence. Enabled disclosure keys are exactly mode, channel, retrieval_influence, registry_digest, promotion_evidence_digest, implementation_digest, contributing_concept_ids. context_v2 and explain_search_v2 keep every v1 key, replace schema, and deep-copy inputs.",
+  "compatibility_result": "Public API is additive. Missing, off, and shadow remain non-influencing. No existing identifier, search, symbols, impact, or evaluate path is changed by this lane.",
+  "rollback_result": "Rollback is mode off or omitting the key. activate_influence then returns None and no disclosure is produced.",
+  "authority_result": "Registry presence is not activation. Evidence validation forces activation_authorized false, authority evidence_only, and authorizes_actions false. No Git, network, Redis, or SQLite writes.",
+  "limitations": [
+    "Full unittest suite and scripts/palimnex_check.sh skipped as instructed (Unix-socket and MCP tests).",
+    "Redis and .palimnex/ were not consulted.",
+    "Activation was exercised on hermetic temporary registries and evidence, not a repository approved registry."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "ledger_consulted": false,
+    "ledger_writes_performed": false,
+    "redis_writes_performed": false
+  },
+  "git_state": {
+    "branch": "main",
+    "ahead_of_origin_main": 5,
+    "owned_paths": "untracked palimnex/ontology_influence.py, palimnex/tests/test_ontology_influence.py, docs/ONTOLOGY_INFLUENCE.md, and the implementation receipt",
+    "staged": false,
+    "committed": false,
+    "reviewer_git_writes": false
+  },
+  "status": "accepted"
+}

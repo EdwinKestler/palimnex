@@ -1,0 +1,62 @@
+{
+  "schema": "palimnex:ontology-exit-gate:v1",
+  "phase": 3,
+  "scope": "ontology-retrieval-influence",
+  "decision": "accepted",
+  "authority_source": "user_message",
+  "evidence_locator": "current repository-owner conversation, user message dated 2026-11-06: confirm R13 and commit the finished ontology retrieval influence work before Phase 4",
+  "grantor_claim": "repository owner (Gus, GitHub EdwinKestler)",
+  "recorded_at": "2026-11-06T19:12:57-06:00",
+  "commit": "3948140b400663a03c88f20ab603283656952c29",
+  "design_identity_at_acceptance": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "handoff": "artifacts/ontology/phase-3-promotion/integration/INFLUENCE_HANDOFF.md",
+  "confirmed": [
+    "R13: when the same bound implementation moves, only its frozen cohort source line range may be maintained",
+    "R13 never permits changing the question, expected answer, labels, concepts, aliases, expected paths or promotion thresholds",
+    "ontology influence is opt-in and defaults off when the setting is absent",
+    "registry presence alone never activates influence",
+    "cache search, symbols, impact and palimnex evaluate remain uninfluenced"
+  ],
+  "review_evidence": {
+    "implementation_lanes": "activation gate, schemas, retrieval and promotion independently accepted",
+    "integration_lane": "independently accepted_with_limits",
+    "integration_limits_closed_by": [
+      "coordinator full suite, standard gate, cache evaluation, index validation and ledger checks",
+      "validated integration implementation receipt",
+      "fresh incremental index and deep validation after the final documentation edit",
+      "Codex technical review and owner confirmation of R13 on 2026-11-06"
+    ],
+    "ownership_note": "implementation-wave ownership checks were clean; the final audit against the pre-rereview snapshot reports only the post-fix integration review receipt and a coordinator helper as coordination-record deltas, not implementation-lane product/source edits"
+  },
+  "validation": {
+    "tests": "454 passed",
+    "focused_tests": "60 passed",
+    "mypy": "18 source files clean",
+    "standard_gate": "passed",
+    "production_retrieval": "20/20, Recall@5 1.0, MRR 0.8916666666666666, every critical case passed",
+    "shadow_gates": "8/8 true with cohort digest 07b5f066f85ba36ab17785a2193c0c87d952fd3849420a3dae0303b1c5d8eef3",
+    "ontology_status": "mode off, activation not_applicable, retrieval_influence false",
+    "cache": "fresh after incremental index and deep validation",
+    "ledger": "integrity ok, zero events",
+    "staged_privacy_scan": "84 implementation files scanned, zero findings"
+  },
+  "known_limits": [
+    "no approved ontology/concept-registry.v1.json exists, so influence cannot activate",
+    "production MRR changed from 0.9 to 0.8916666666666666 because the added promotion test changed the indexed corpus; cache search code and frozen expectations are unchanged",
+    "the integration review receipt remains accepted_with_limits; its environment limits were closed by coordinator evidence rather than a second reviewer run"
+  ],
+  "not_authorized": [
+    "activating ontology influence on the owner's behalf",
+    "creating or populating an approved concept registry",
+    "writing or accepting promotion evidence without review",
+    "semantic-provider promotion",
+    "model, provider or network calls",
+    "push, publication or deployment"
+  ],
+  "activated": false,
+  "pushed": false,
+  "authorizes_actions": false
+}

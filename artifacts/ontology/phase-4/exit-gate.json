@@ -1,0 +1,67 @@
+{
+  "schema": "palimnex:ontology-exit-gate:v1",
+  "phase": 4,
+  "scope": "local-semantic-shadow-experiment",
+  "decision": "held",
+  "authority_source": "user_message",
+  "evidence_locator": "current repository-owner conversation, user message dated 2026-11-07: confirm R14, R15 and amendments A1/A2; accept Phase 4 as held; commit if keeping the experiment",
+  "grantor_claim": "repository owner (Gus, GitHub EdwinKestler)",
+  "recorded_at": "2026-11-07T07:31:15-06:00",
+  "commit": "0bee7f980587ea0bf38387ff1212bed4482d1948",
+  "design_identity_at_acceptance": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "handoff": "artifacts/ontology/phase-4/integration/PHASE4_HANDOFF.md",
+  "evaluation": "artifacts/ontology/phase-4/integration/semantic-evaluation.json",
+  "confirmed": [
+    "R14: the semantic channel admits only cosine scores greater than zero, contributes at most 64 chunks, stays silent when baseline retrieval abstains, scans the query before provider use and keeps chunk embeddings in process only",
+    "R15: the latency gate discards one warm-up pass, runs three measured repetitions with alternating variant order and compares nearest-rank 95th-percentile latency",
+    "A1: privacy-canary rule names match the canonical names in palimnex/security.py",
+    "A2: paraphrase and synonym isolation is enforceable through identifier-token and three-consecutive-lowercase-word checks",
+    "Phase 4 is accepted as held because the frozen semantic cohort showed no gain and protected cases regressed",
+    "the failed experiment is retained as evidence and as a reusable, inactive provider and evaluation contract"
+  ],
+  "review_evidence": {
+    "implementation_lanes": "provider, cohort, semantic channel and evaluation independently accepted",
+    "integration_lane": "independently accepted_with_limits",
+    "integration_limits_closed_by": [
+      "coordinator full suite, standard gate, production evaluation, deep cache validation and ledger checks",
+      "validated implementation and review receipts for all five workstreams",
+      "Codex reproduction of the held semantic evaluation and repository-owner confirmation of R14, R15, A1 and A2 on 2026-11-07"
+    ],
+    "ownership_note": "implementation-lane changes remained within assigned product scopes; saved violation reports name coordinator review, prompt and helper records, and the recovered wave-1 reviewer window lacks changed_by_lane output as disclosed"
+  },
+  "validation": {
+    "tests": "523 passed",
+    "focused_tests": "69 passed",
+    "mypy": "21 source files clean",
+    "standard_gate": "passed",
+    "semantic_result": "held; semantic-cohort MRR 0.09523809523809523 to 0.09523809523809523, Recall@5 0.08333333333333333 to 0.08333333333333333, zero additional passing cases",
+    "protected_regressions": "alias-retention-ledger and alias-rrf-fusion; ontology-cohort Recall@5 0.08333333333333333 to 0.041666666666666664",
+    "official_latency": "semantic p95 745.562057 ms, baseline p95 711.967838 ms, 78 samples per variant; 1.5x gate passed",
+    "independent_reproduction": "same five held reasons and regressions; semantic p95 738.898583 ms, baseline p95 699.590131 ms",
+    "production_retrieval": "20/20, Recall@5 1.0, MRR 0.8916666666666666, every critical case passed",
+    "ontology_shadow": "8/8 gates true",
+    "cache": "fresh, 145 files and 810 chunks; deep validation passed",
+    "ledger": "integrity ok, zero events",
+    "staged_privacy_scan": "87 implementation and evidence files scanned, zero findings"
+  },
+  "known_limits": [
+    "the deterministic hashed embedding did not improve the frozen semantic cohort and cannot be promoted",
+    "the semantic channel regressed two critical Phase 3 ontology-cohort cases",
+    "most evaluation gate-failure unit tests mock the suite runner; independent live probes and complete evaluations cover the accepted residual",
+    "the recovered wave-1 reviewer ownership printout lists paths but does not contain changed_by_lane",
+    "the integration review remains accepted_with_limits; its environment and record-availability limits were closed by coordinator evidence rather than an unrestricted reviewer run"
+  ],
+  "not_authorized": [
+    "semantic-provider promotion or production retrieval influence",
+    "enabling a semantic configuration setting",
+    "a real local model, model download, package installation, network access or provider service",
+    "changing the frozen cohort, R14, R15 or the promotion thresholds to obtain a passing result",
+    "push, publication or deployment"
+  ],
+  "activated": false,
+  "pushed": false,
+  "authorizes_actions": false
+}

@@ -2808,6 +2808,10 @@ def parser() -> argparse.ArgumentParser:
         help=f"approved concept registry, repository-relative (default: {DEFAULT_CONCEPT_REGISTRY})",
     )
     commands.add_parser(
+        "evaluate-semantic-shadow",
+        help="read-only Phase 4 semantic shadow evaluation over the frozen cohort (never promotes)",
+    )
+    commands.add_parser(
         "ontology-status", help="show the ontology_influence setting and whether it activates"
     )
     symbols_parser = commands.add_parser("symbols")
@@ -3115,6 +3119,15 @@ def main(argv: list[str] | None = None) -> int:
             report = evaluate_ontology_shadow(ROOT, limit=args.limit)
             print(json.dumps(report, sort_keys=True))
             return 0 if all(report["gates"].values()) else 2
+        if args.command == "evaluate-semantic-shadow":
+            if not config_present(ROOT):
+                raise ValueError(
+                    f"no {CONFIG_FILE} in {ROOT}; run `palimnex init` to create one (see docs/INSTALL.md)"
+                )
+            from .semantic_eval import evaluate_semantic_shadow
+            semantic_report = evaluate_semantic_shadow(ROOT)
+            print(json.dumps(semantic_report, sort_keys=True))
+            return 0 if semantic_report["status"] == "promotable" else 2
         if args.command in {"evaluate-ontology-promotion", "ontology-status"}:
             if not config_present(ROOT):
                 raise ValueError(

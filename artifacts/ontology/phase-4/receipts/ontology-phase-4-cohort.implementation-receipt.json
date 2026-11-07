@@ -1,0 +1,78 @@
+{
+  "approval_evidence_digest": "5fb42199d12177b661d4f4e9fcd0be7575e2d03259e1452656ad8e9d9a63c01b",
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_mutated": false,
+    "ledger_consulted": false,
+    "ledger_mutated": false,
+    "reason": "The frozen cohort was authored blind from repository source; the task explicitly forbids Palimnex retrieval, indexing, evaluation, cache and ledger commands."
+  },
+  "commands": [
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-4/tasks/ontology-phase-4-cohort.json",
+      "exit_code": 0,
+      "result": "Task contract valid; task digest and approval-evidence digest verified against the approved Phase 4 design."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_semantic_cohort -v",
+      "exit_code": 0,
+      "result": "11 structural cohort tests passed, including identifier-token and lowercase-trigram isolation for every paraphrase and synonym query."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_ontology_shadow_cohort",
+      "exit_code": 0,
+      "result": "6 legacy ontology shadow cohort tests passed."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-4/tasks/ontology-phase-4-cohort.json --implementation-receipt artifacts/ontology/phase-4/receipts/ontology-phase-4-cohort.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Task contract and implementation receipt valid."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "Owned fixture, schema, structural tests and receipt are untracked; unrelated pre-existing and parallel-lane untracked files remain untouched."
+    }
+  ],
+  "compatibility_effect": "Adds the public data contract palimnex:semantic-shadow-cohort:v1, its draft 2020-12 JSON Schema, and a frozen evidence-only fixture. Fix round 1 rewrites only the query text for paraphrase-active-reader, paraphrase-portable-rescan, synonym-sealed-archive, synonym-tamper-evident-record, synonym-secret-detector and synonym-database-upgrade; their ids, categories, expected and forbidden paths, critical flags, notes and intent are unchanged. It also aligns the cohort canary rule, schema enum and structural tests with security.py's openai-token name and adds the v1.1 A2 source-isolation assertion. It adds no runtime API, configuration key, retrieval influence, provider call, persistence, wire-format replacement, or change to any existing output.",
+  "dependencies_consumed": [],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "files_changed": [
+    "palimnex/evaluation/semantic-shadow.v1.json",
+    "palimnex/schemas/semantic-shadow-cohort.v1.schema.json",
+    "palimnex/tests/test_semantic_cohort.py",
+    "artifacts/ontology/phase-4/receipts/ontology-phase-4-cohort.implementation-receipt.json"
+  ],
+  "git_state": {
+    "git_writes_authorized": false,
+    "git_writes_performed": false,
+    "owned_paths_state": "untracked",
+    "preexisting_or_parallel_changes_present": true
+  },
+  "integration_patch_proposals": [],
+  "owned_scope": [
+    "palimnex/evaluation/semantic-shadow.v1.json",
+    "palimnex/schemas/semantic-shadow-cohort.v1.schema.json",
+    "palimnex/tests/test_semantic_cohort.py",
+    "artifacts/ontology/phase-4/receipts/ontology-phase-4-cohort.implementation-receipt.json"
+  ],
+  "privacy_and_authority_checks": [
+    "The raw cohort bytes pass security.scan_bytes with no findings.",
+    "Privacy cases contain only the runtime {canary} placeholder, exactly once in the specified query or corpus location.",
+    "The privacy canary rule names are aws-access-key, github-token and openai-token, matching security.py and semantic specification v1.1 amendment A1.",
+    "No retrieval, evaluation, embedding, provider, network, install, Redis, SQLite, migration, retention, erasure, pack, staging, commit or push action was performed.",
+    "Only task-card owned paths were written; foreign dirty and parallel-lane files were preserved."
+  ],
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "status": "tested",
+  "task_digest": "54f896b1ff4c0a900ddb2eff9fc6957f869026c8caf6afd297ce646bda99ee20",
+  "unresolved_risks": [
+    "The six rewritten blind labels (paraphrase-active-reader, paraphrase-portable-rescan, synonym-sealed-archive, synonym-tamper-evident-record, synonym-secret-detector and synonym-database-upgrade) still require coordinator and independent source-grounding re-review before the coordinator records the immutable cohort digest.",
+    "Retrieval quality, semantic gain and latency are deliberately unmeasured until the cohort is reviewed and frozen.",
+    "The full suite, strict mypy, standard gate, deep validation, semantic evaluation and ledger-status checks are delegated to the coordinator as required by the lane brief."
+  ],
+  "workstream_id": "ontology-phase-4-cohort"
+}

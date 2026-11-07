@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://palimnex.dev/schemas/semantic-shadow-evaluation.v1.schema.json",
+  "title": "Palimnex semantic shadow evaluation v1",
+  "description": "Evidence-only evaluation of the fixed local semantic shadow experiment.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "cohort_digest", "provider", "provider_identity_digest",
+    "policy_digest", "promotion_policy", "benchmark_protocol", "benchmark",
+    "suites", "cohort_scored", "gates", "held_reasons", "status",
+    "promotion_authorized", "retrieval_influence", "authority",
+    "authorizes_actions"
+  ],
+  "properties": {
+    "schema": {"const": "palimnex:semantic-shadow-evaluation:v1"},
+    "cohort_digest": {"$ref": "#/$defs/sha256"},
+    "provider": {"$ref": "#/$defs/provider"},
+    "provider_identity_digest": {"$ref": "#/$defs/sha256"},
+    "policy_digest": {"$ref": "#/$defs/sha256"},
+    "promotion_policy": {"$ref": "#/$defs/promotionPolicy"},
+    "benchmark_protocol": {"$ref": "#/$defs/benchmarkProtocol"},
+    "benchmark": {"$ref": "#/$defs/benchmark"},
+    "suites": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "v27", "challenges_v26", "ontology_cohort", "semantic_cohort",
+        "drift", "privacy"
+      ],
+      "properties": {
+        "v27": {"$ref": "#/$defs/suite"},
+        "challenges_v26": {"$ref": "#/$defs/suite"},
+        "ontology_cohort": {"$ref": "#/$defs/suite"},
+        "semantic_cohort": {"$ref": "#/$defs/suite"},
+        "drift": {"$ref": "#/$defs/suite"},
+        "privacy": {"$ref": "#/$defs/suite"}
+      }
+    },
+    "cohort_scored": {"$ref": "#/$defs/cohortScored"},
+    "gates": {"$ref": "#/$defs/gates"},
+    "held_reasons": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/heldReason"}
+    },
+    "status": {"enum": ["promotable", "held"]},
+    "promotion_authorized": {"const": false},
+    "retrieval_influence": {"const": false},
+    "authority": {"const": "evidence_only"},
+    "authorizes_actions": {"const": false}
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "minLength": 64,
+      "maxLength": 64
+    },
+    "number": {"type": "number"},
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema", "interface", "provider_id", "revision", "dimensions",
+        "implementation_digest", "execution", "network", "model_download",
+        "persistent_store", "retrieval_influence"
+      ],
+      "properties": {
+        "schema": {"const": "palimnex:semantic-provider-identity:v1"},
+        "interface": {"const": "project-memory:semantic-provider:v1"},
+        "provider_id": {"type": "string", "minLength": 1, "maxLength": 128},
+        "revision": {"type": "string", "minLength": 1, "maxLength": 128},
+        "dimensions": {"type": "integer", "minimum": 8, "maximum": 4096},
+        "implementation_digest": {"$ref": "#/$defs/sha256"},
+        "execution": {"const": "in_process"},
+        "network": {"const": false},
+        "model_download": {"const": false},
+        "persistent_store": {"const": false},
+        "retrieval_influence": {"const": false}
+      }
+    },
+    "nullableRank": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "integer", "minimum": 1, "maximum": 5}
+      ]
+    },
+    "metricSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_count", "cases_passed", "critical_case_count",
+        "critical_pass_count", "forbidden_path_hits", "recall_at_limit",
+        "mrr", "negative_case_count", "negative_abstention"
+      ],
+      "properties": {
+        "case_count": {"type": "integer", "minimum": 0},
+        "cases_passed": {"type": "integer", "minimum": 0},
+        "critical_case_count": {"type": "integer", "minimum": 0},
+        "critical_pass_count": {"type": "integer", "minimum": 0},
+        "forbidden_path_hits": {"type": "integer", "minimum": 0},
+        "recall_at_limit": {"type": "number", "minimum": 0, "maximum": 1},
+        "mrr": {"type": "number", "minimum": 0, "maximum": 1},
+        "negative_case_count": {"type": "integer", "minimum": 0},
+        "negative_abstention": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "caseRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "category", "critical", "baseline_pass", "shadow_pass",
+        "baseline_first_relevant_rank", "shadow_first_relevant_rank",
+        "semantic_candidate_count", "suppressed"
+      ],
+      "properties": {
+        "id": {"type": "string", "minLength": 1, "maxLength": 256},
+        "category": {"type": "string", "minLength": 1, "maxLength": 64},
+        "critical": {"type": "boolean"},
+        "baseline_pass": {"type": "boolean"},
+        "shadow_pass": {"type": "boolean"},
+        "baseline_first_relevant_rank": {"$ref": "#/$defs/nullableRank"},
+        "shadow_first_relevant_rank": {"$ref": "#/$defs/nullableRank"},
+        "semantic_candidate_count": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "suppressed": {
+          "oneOf": [
+            {"type": "null"},
+            {"enum": ["baseline_abstained", "privacy_refused"]}
+          ]
+        }
+      }
+    },
+    "suite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["baseline", "shadow", "cases"],
+      "properties": {
+        "baseline": {"$ref": "#/$defs/metricSummary"},
+        "shadow": {"$ref": "#/$defs/metricSummary"},
+        "cases": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/caseRow"}
+        }
+      }
+    },
+    "promotionPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema", "limit", "min_mrr_gain", "min_recall_gain",
+        "min_additional_passes", "max_p95_multiplier", "gain_rule"
+      ],
+      "properties": {
+        "schema": {"const": "palimnex:semantic-promotion-policy:v2"},
+        "limit": {"const": 5},
+        "min_mrr_gain": {"const": 0.02},
+        "min_recall_gain": {"const": 0.02},
+        "min_additional_passes": {"const": 1},
+        "max_p95_multiplier": {"const": 1.5},
+        "gain_rule": {"const": "mrr_or_recall"}
+      }
+    },
+    "benchmarkProtocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema", "backend", "queries", "memo", "warmup_passes",
+        "measured_repetitions", "pair_order", "percentile"
+      ],
+      "properties": {
+        "schema": {"const": "palimnex:semantic-benchmark-protocol:v1"},
+        "backend": {"const": "local"},
+        "queries": {"const": "semantic_cohort_repository_cases_in_file_order"},
+        "memo": {"const": "one_shared_in_process_memo"},
+        "warmup_passes": {"const": 1},
+        "measured_repetitions": {"const": 3},
+        "pair_order": {"const": "baseline_first_even_semantic_first_odd"},
+        "percentile": {"const": "nearest_rank_p95"}
+      }
+    },
+    "benchmark": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run", "baseline_p95_ms", "semantic_p95_ms", "multiplier_limit",
+        "samples_per_variant"
+      ],
+      "properties": {
+        "run": {"type": "boolean"},
+        "baseline_p95_ms": {"oneOf": [{"type": "null"}, {"type": "number", "minimum": 0}]},
+        "semantic_p95_ms": {"oneOf": [{"type": "null"}, {"type": "number", "minimum": 0}]},
+        "multiplier_limit": {"const": 1.5},
+        "samples_per_variant": {"type": "integer", "minimum": 0}
+      }
+    },
+    "cohortScored": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "baseline_mrr", "shadow_mrr", "mrr_gain", "baseline_recall",
+        "shadow_recall", "recall_gain", "additional_pass_ids"
+      ],
+      "properties": {
+        "baseline_mrr": {"$ref": "#/$defs/number"},
+        "shadow_mrr": {"$ref": "#/$defs/number"},
+        "mrr_gain": {"$ref": "#/$defs/number"},
+        "baseline_recall": {"$ref": "#/$defs/number"},
+        "shadow_recall": {"$ref": "#/$defs/number"},
+        "recall_gain": {"$ref": "#/$defs/number"},
+        "additional_pass_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1, "maxLength": 256}
+        }
+      }
+    },
+    "gateName": {
+      "enum": [
+        "baseline_identical", "no_critical_regression", "no_case_regression",
+        "protected_recall_not_reduced", "cohort_gain",
+        "cohort_additional_pass", "no_new_forbidden",
+        "abstention_not_regressed", "ambiguity_not_collapsed", "source_drift",
+        "privacy_canary", "deterministic", "provider_identity_bound",
+        "latency_within_bound", "channels_visible", "bounded"
+      ]
+    },
+    "heldReason": {
+      "oneOf": [
+        {"$ref": "#/$defs/gateName"},
+        {"const": "benchmark_not_run"}
+      ]
+    },
+    "gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "baseline_identical", "no_critical_regression", "no_case_regression",
+        "protected_recall_not_reduced", "cohort_gain",
+        "cohort_additional_pass", "no_new_forbidden",
+        "abstention_not_regressed", "ambiguity_not_collapsed", "source_drift",
+        "privacy_canary", "deterministic", "provider_identity_bound",
+        "latency_within_bound", "channels_visible", "bounded"
+      ],
+      "properties": {
+        "baseline_identical": {"type": "boolean"},
+        "no_critical_regression": {"type": "boolean"},
+        "no_case_regression": {"type": "boolean"},
+        "protected_recall_not_reduced": {"type": "boolean"},
+        "cohort_gain": {"type": "boolean"},
+        "cohort_additional_pass": {"type": "boolean"},
+        "no_new_forbidden": {"type": "boolean"},
+        "abstention_not_regressed": {"type": "boolean"},
+        "ambiguity_not_collapsed": {"type": "boolean"},
+        "source_drift": {"type": "boolean"},
+        "privacy_canary": {"type": "boolean"},
+        "deterministic": {"type": "boolean"},
+        "provider_identity_bound": {"type": "boolean"},
+        "latency_within_bound": {"type": "boolean"},
+        "channels_visible": {"type": "boolean"},
+        "bounded": {"type": "boolean"}
+      }
+    }
+  }
+}

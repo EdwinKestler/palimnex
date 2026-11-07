@@ -1,0 +1,38 @@
+{
+  "authorizes_actions": false,
+  "changed_by_lane": {
+    "ontology-phase-4-channel": [
+      "artifacts/ontology/phase-4/receipts/ontology-phase-4-channel.implementation-receipt.json",
+      "palimnex/schemas/semantic-shadow-comparison.v1.schema.json",
+      "palimnex/semantic_shadow.py",
+      "palimnex/tests/test_semantic_shadow.py"
+    ],
+    "ontology-phase-4-cohort": [
+      "artifacts/ontology/phase-4/receipts/ontology-phase-4-cohort.implementation-receipt.json",
+      "palimnex/evaluation/semantic-shadow.v1.json",
+      "palimnex/schemas/semantic-shadow-cohort.v1.schema.json",
+      "palimnex/tests/test_semantic_cohort.py"
+    ],
+    "ontology-phase-4-evaluation": [
+      "artifacts/ontology/phase-4/receipts/ontology-phase-4-evaluation.implementation-receipt.json",
+      "docs/SEMANTIC_SHADOW.md",
+      "palimnex/schemas/semantic-shadow-evaluation.v1.schema.json",
+      "palimnex/semantic_eval.py",
+      "palimnex/tests/test_semantic_eval.py"
+    ],
+    "ontology-phase-4-integration": [
+      "artifacts/ontology/phase-4/integration/cohort-freeze.json",
+      "artifacts/ontology/phase-4/integration/grok-rereview-cohort-prompt.md",
+      "artifacts/ontology/phase-4/integration/grok-review-wave23-prompt.md",
+      "artifacts/ontology/phase-4/integration/ownership-audit.wave23.json"
+    ]
+  },
+  "schema": "palimnex:ontology-ownership-audit:v1",
+  "status": "violation",
+  "violations": [
+    {
+      "change": "added",
+      "path": "artifacts/ontology/phase-4/reviews/ontology-phase-4-cohort.review-receipt.json"
+    }
+  ]
+}

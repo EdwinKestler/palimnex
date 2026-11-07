@@ -1,0 +1,62 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "palimnex/semantic_eval.py",
+    "palimnex/tests/test_semantic_eval.py",
+    "palimnex/schemas/semantic-shadow-evaluation.v1.schema.json",
+    "docs/SEMANTIC_SHADOW.md"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "task_digest": "dc123bba1bf38129ee52ebe67cd363b053d6ef23dc510f8e0af31c24a9acbfe5",
+  "approval_evidence_digest": "5fb42199d12177b661d4f4e9fcd0be7575e2d03259e1452656ad8e9d9a63c01b",
+  "workstream_id": "ontology-phase-4-evaluation",
+  "evidence": [
+    "NOTE: palimnex.tests.test_semantic_eval 14/14 passed; mypy --disallow-untyped-defs on palimnex/semantic_eval.py is clean; implementation-receipt validator status valid.",
+    "NOTE: PROMOTION_POLICY is exactly limit 5, min_mrr_gain 0.02, min_recall_gain 0.02, min_additional_passes 1, max_p95_multiplier 1.5, gain_rule mrr_or_recall; the evaluation schema pins those consts. COHORT_SHA256 equals cohort-freeze.json and the frozen file digest bfaa3998bc8c8ae5d05959f51e71aae08bf14f339a55fc0924d7e0b7b9ef4200. A modified cohort is refused with fixture_digest_mismatch; the evaluator did not edit the frozen file.",
+    "NOTE: R15 uses one shared memo, one discarded warmup, three measured repetitions, baseline-first on even reps and semantic-first on odd reps, nearest-rank p95, and an injected clock_ns. Real evaluation samples_per_variant was 78 (26 repository cases times 3). benchmark=False sets latency_within_bound false, adds benchmark_not_run, and forces status held.",
+    "NOTE: Read-only real evaluation on a /tmp copy returned status held with held_reasons cohort_additional_pass, cohort_gain, no_case_regression, no_critical_regression, protected_recall_not_reduced. Passing gates: baseline_identical, privacy_canary, source_drift, deterministic, provider_identity_bound, latency_within_bound (semantic p95 737.563284 ms vs baseline 704.052117 ms), abstention_not_regressed, ambiguity_not_collapsed, no_new_forbidden, channels_visible, bounded. promotion_authorized, retrieval_influence and authorizes_actions were false. The report validated against the v1 schema and contained no runtime canaries.",
+    "NOTE: Scored categories are paraphrase, synonym, ambiguity and control; negatives are excluded from gain. Protected suites are v27, challenges_v26 and ontology_cohort. no_new_forbidden is a per-case subset. Ambiguity uses found_count. Drift reuses one content-keyed memo and compares a fresh memo. Real ontology_cohort regressions were alias-retention-ledger and alias-rrf-fusion; semantic-cohort additional_pass_ids were empty and MRR/Recall gains were 0.0. Thresholds were not tuned.",
+    "MINOR: evaluate_semantic_shadow applies 1e-12 to protected_recall, per-suite negative_abstention and latency in addition to the authorized cohort_gain comparison. PROMOTION_POLICY values are unmodified; the extra epsilon cannot hide a 1-count discrete recall or abstention change.",
+    "MINOR: privacy_canary does not re-scan canonical JSON of the whole report. Query and corpus helper checks passed, and both the synthetic e2e report and the real report contained no canaries.",
+    "MINOR: most gate-failure unit tests mock _run_suite. Live retrieval, drift, privacy, digest pinning and R15 were exercised by /tmp probes and the real evaluation."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_semantic_eval -v",
+    "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/semantic_eval.py",
+    "./.venv/bin/python -m unittest palimnex.tests.test_semantic_shadow palimnex.tests.test_semantic_cohort palimnex.tests.test_semantic_local palimnex.tests.test_ontology_shadow_cohort",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-4/tasks/ontology-phase-4-evaluation.json --implementation-receipt artifacts/ontology/phase-4/receipts/ontology-phase-4-evaluation.implementation-receipt.json",
+    "./.venv/bin/python /tmp/phase4_wave23_eval_probes.py",
+    "PYTHONPATH=/tmp/palimnex-p4-review-eval /home/kestl/github/palimnex/.venv/bin/python /tmp/phase4_real_eval.py"
+  ],
+  "source_grounding_result": "evaluate_semantic_shadow reuses ontology_eval._load_v27_cases, _load_v26, _load_cohort_document, _cohort_cases, _variant_outcome and _metric_summary. The frozen semantic cohort is digest-pinned and read-only. Drift and privacy run in temporary checkouts. Shadow outcomes use comparison pointers; baseline outcomes use retrieve_sources(influence=\"off\").",
+  "privacy_result": "Canaries are built at runtime from fragments and checked with scan_text for aws-access-key, github-token and openai-token. Query canaries raise query_privacy_refused before any recorded embed; corpus canaries fail snapshot admission. Owned files are scan_bytes-clean. The real evaluation report contained none of the runtime canaries.",
+  "retrieval_quality_result": "All sixteen gates are present; status is promotable only when every gate is true. Owner thresholds are bound in PROMOTION_POLICY and the schema. A real hashed-embedding run was held for zero semantic-cohort gain, no additional scored pass, and ontology_cohort critical/recall regressions. latency_within_bound passed under R15. held is valid and is not promotion.",
+  "compatibility_result": "Adds palimnex.semantic_eval (EVALUATION_SCHEMA, PROMOTION_POLICY, BENCHMARK_PROTOCOL, COHORT_PATH, COHORT_SHA256, SemanticEvaluationError, evaluate_semantic_shadow), palimnex:semantic-shadow-evaluation:v1 and docs/SEMANTIC_SHADOW.md. palimnex/retrieval.py, palimnex/semantic.py and project-memory:semantic-provider:v1 including the +0.05/2x helper remain unchanged.",
+  "rollback_result": "Delete palimnex/semantic_eval.py, palimnex/tests/test_semantic_eval.py, palimnex/schemas/semantic-shadow-evaluation.v1.schema.json, docs/SEMANTIC_SHADOW.md and the workstream implementation receipt. No production retrieval, configuration key, or semantic v1 helper changes to revert.",
+  "authority_result": "Phase 4 evidence-only evaluation. A promotable report would still set promotion_authorized, retrieval_influence and authorizes_actions false. This review authorizes no promotion, retrieval influence, Git write, network, or live-state action.",
+  "limitations": [
+    "Full unittest suite and scripts/palimnex_check.sh were not run; Unix-socket and MCP subprocess tests are delegated to the coordinator.",
+    "The real evaluation was run on an isolated /tmp copy of the working tree with PYTHONPATH pointed at that copy so concurrent core.py edits would not affect the measurement.",
+    "Coordinator edits to palimnex/core.py, docs/COMPATIBILITY.md, palimnex/CHANGELOG.md and pyproject.toml were treated as out of scope."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_mutated": false,
+    "ledger_consulted": false,
+    "ledger_mutated": false,
+    "reason": "Reviewer did not read .palimnex or run palimnex commands."
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "branch": "main",
+    "head": "bbf4b8b58dcb62f231be562b34bc594e85ea4733",
+    "dirty_tree": true,
+    "reviewer_modified_repository": false,
+    "owned_files_status": "untracked"
+  },
+  "status": "accepted"
+}

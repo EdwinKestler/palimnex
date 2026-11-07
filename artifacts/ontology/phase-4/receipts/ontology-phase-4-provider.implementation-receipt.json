@@ -1,0 +1,90 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-4-provider",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "task_digest": "7f2c61d275eb78eb48ad41863de0554d66b553278a29f502fa85e7827049310f",
+  "approval_evidence_digest": "5fb42199d12177b661d4f4e9fcd0be7575e2d03259e1452656ad8e9d9a63c01b",
+  "owned_scope": [
+    "palimnex/semantic_local.py",
+    "palimnex/tests/test_semantic_local.py",
+    "palimnex/tests/semantic_doubles.py",
+    "palimnex/schemas/semantic-provider-identity.v1.schema.json",
+    "artifacts/ontology/phase-4/receipts/ontology-phase-4-provider.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/semantic_local.py",
+    "palimnex/tests/test_semantic_local.py",
+    "palimnex/tests/semantic_doubles.py",
+    "palimnex/schemas/semantic-provider-identity.v1.schema.json",
+    "artifacts/ontology/phase-4/receipts/ontology-phase-4-provider.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [],
+  "commands": [
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_semantic_local -v",
+      "exit_code": 0,
+      "result": "18 tests passed."
+    },
+    {
+      "command": "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/semantic_local.py",
+      "exit_code": 0,
+      "result": "Success: no issues found in 1 source file."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_semantic palimnex.tests.test_retrieval_shadow palimnex.tests.test_retrieval_influence palimnex.tests.test_ontology_shadow",
+      "exit_code": 0,
+      "result": "36 tests passed."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-4/tasks/ontology-phase-4-provider.json",
+      "exit_code": 0,
+      "result": "Task and approval evidence valid; task and approval digests recorded in this receipt."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-4/tasks/ontology-phase-4-provider.json --implementation-receipt artifacts/ontology/phase-4/receipts/ontology-phase-4-provider.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Implementation receipt validated successfully."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "Owned files are untracked; pre-existing unrelated untracked files remain present and untouched."
+    }
+  ],
+  "compatibility_effect": "Adds the public palimnex.semantic_local constants, SemanticProviderError, HashedEmbeddingProvider, implementation_digest, provider_identity, identity_digest and checked_embed API plus the palimnex:semantic-provider-identity:v1 JSON Schema. Existing project-memory:semantic-provider:v1 behavior, semantic_status, retrieval, context, explain-search, search, symbols, impact, evaluation, configuration and wire identifiers remain unchanged; the new provider has no retrieval influence.",
+  "privacy_and_authority_checks": [
+    "The approved design and source-proposal SHA-256 digests matched the task card before implementation.",
+    "All admitted identity strings are secret-scanned and refusals do not echo provider text or exception messages.",
+    "The four product and test deliverables were scanned with palimnex.security.scan_bytes and produced zero findings.",
+    "No network, subprocess provider, model download, package installation, persistent vector store, Redis write, SQLite write or live-state action was used.",
+    "No Git staging, commit, branch, push or publication action was performed.",
+    "Every written path is listed in owned_scope."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "The full unittest suite and scripts/palimnex_check.sh are delegated to the coordinator as required by the Phase 4 common brief because their Unix-socket and MCP subprocess tests cannot run in this sandbox.",
+    "The provider is evidence-only until the coordinator integrates and validates the separate channel, cohort and evaluation lanes; this receipt grants no retrieval influence or promotion authority.",
+    "Indexed files changed, but reindex and evaluation are delegated to the coordinator because this task forbids reading or writing .palimnex and running index or evaluation commands."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_mutated": false,
+    "ledger_consulted": false,
+    "ledger_mutated": false,
+    "reason": "The task card forbids reading .palimnex and forbids Palimnex index, remember, session, capture, retention, migration, erasure and pack commands.",
+    "indexed_files_changed": true,
+    "coordinator_reindex_required": true
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "staged": false,
+    "committed": false,
+    "pushed": false,
+    "owned_files_status": "untracked",
+    "unrelated_preexisting_changes_preserved": true
+  },
+  "status": "tested"
+}

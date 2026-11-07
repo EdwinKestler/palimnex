@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://palimnex.dev/schemas/semantic-shadow-comparison.v1.schema.json",
+  "title": "Palimnex semantic shadow comparison v1",
+  "description": "Pointer-only evidence comparing unchanged baseline retrieval with an isolated semantic channel.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "query_digest", "limit", "byte_budget", "channels",
+    "provider", "provider_identity_digest", "policy_digest",
+    "semantic_channel", "baseline", "shadow", "diff", "corpus_fingerprint",
+    "retrieval_influence", "promotion_authorized", "authorizes_actions"
+  ],
+  "properties": {
+    "schema": {"const": "palimnex:semantic-shadow-comparison:v1"},
+    "query_digest": {"$ref": "#/$defs/sha256"},
+    "limit": {"type": "integer", "minimum": 1, "maximum": 100},
+    "byte_budget": {"type": "integer", "minimum": 128, "maximum": 65536},
+    "channels": {
+      "type": "array",
+      "prefixItems": [
+        {"const": "lexical"}, {"const": "symbol"},
+        {"const": "graph"}, {"const": "semantic"}
+      ],
+      "items": false,
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "provider": {"$ref": "#/$defs/provider"},
+    "provider_identity_digest": {"$ref": "#/$defs/sha256"},
+    "policy_digest": {"$ref": "#/$defs/sha256"},
+    "semantic_channel": {"$ref": "#/$defs/semanticChannel"},
+    "baseline": {"$ref": "#/$defs/baseline"},
+    "shadow": {"$ref": "#/$defs/shadow"},
+    "diff": {"$ref": "#/$defs/diff"},
+    "corpus_fingerprint": {"$ref": "#/$defs/sha256"},
+    "retrieval_influence": {"const": false},
+    "promotion_authorized": {"const": false},
+    "authorizes_actions": {"const": false}
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "minLength": 64,
+      "maxLength": 64
+    },
+    "pointer": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "pattern": "^[^\\u0000-\\u001f]+$"
+    },
+    "pointers": {
+      "type": "array",
+      "maxItems": 100,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/pointer"}
+    },
+    "count": {"type": "integer", "minimum": 0, "maximum": 1000000},
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema", "interface", "provider_id", "revision", "dimensions",
+        "implementation_digest", "execution", "network", "model_download",
+        "persistent_store", "retrieval_influence"
+      ],
+      "properties": {
+        "schema": {"const": "palimnex:semantic-provider-identity:v1"},
+        "interface": {"const": "project-memory:semantic-provider:v1"},
+        "provider_id": {
+          "type": "string", "minLength": 1, "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$"
+        },
+        "revision": {
+          "type": "string", "minLength": 1, "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$"
+        },
+        "dimensions": {"type": "integer", "minimum": 8, "maximum": 4096},
+        "implementation_digest": {"$ref": "#/$defs/sha256"},
+        "execution": {"const": "in_process"},
+        "network": {"const": false},
+        "model_download": {"const": false},
+        "persistent_store": {"const": false},
+        "retrieval_influence": {"const": false}
+      }
+    },
+    "semanticChannel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_count", "ranked_count", "truncated", "suppressed",
+        "top_k", "similarity_floor"
+      ],
+      "properties": {
+        "candidate_count": {"$ref": "#/$defs/count"},
+        "ranked_count": {"type": "integer", "minimum": 0, "maximum": 64},
+        "truncated": {"type": "boolean"},
+        "suppressed": {
+          "oneOf": [{"type": "null"}, {"const": "baseline_abstained"}]
+        },
+        "top_k": {"const": 64},
+        "similarity_floor": {"const": 0.0}
+      }
+    },
+    "baseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pointers", "candidate_count", "items_bytes"],
+      "properties": {
+        "pointers": {"$ref": "#/$defs/pointers"},
+        "candidate_count": {"$ref": "#/$defs/count"},
+        "items_bytes": {"type": "integer", "minimum": 0, "maximum": 65536}
+      }
+    },
+    "channelRanks": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "lexical": {"type": "integer", "minimum": 1, "maximum": 512},
+        "symbol": {"type": "integer", "minimum": 1, "maximum": 512},
+        "graph": {"type": "integer", "minimum": 1, "maximum": 512},
+        "semantic": {"type": "integer", "minimum": 1, "maximum": 64}
+      }
+    },
+    "shadowItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pointer", "path", "start_line", "end_line", "content_digest",
+        "score", "channels"
+      ],
+      "properties": {
+        "pointer": {"$ref": "#/$defs/pointer"},
+        "path": {"type": "string", "minLength": 1, "maxLength": 4096},
+        "start_line": {"type": "integer", "minimum": 1, "maximum": 1000000},
+        "end_line": {"type": "integer", "minimum": 1, "maximum": 1000000},
+        "content_digest": {"$ref": "#/$defs/sha256"},
+        "score": {"type": "number"},
+        "channels": {"$ref": "#/$defs/channelRanks"}
+      }
+    },
+    "shadow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items", "candidate_count", "items_bytes"],
+      "properties": {
+        "items": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {"$ref": "#/$defs/shadowItem"}
+        },
+        "candidate_count": {"$ref": "#/$defs/count"},
+        "items_bytes": {"type": "integer", "minimum": 0, "maximum": 65536}
+      }
+    },
+    "diff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identical", "added", "removed"],
+      "properties": {
+        "identical": {"type": "boolean"},
+        "added": {"$ref": "#/$defs/pointers"},
+        "removed": {"$ref": "#/$defs/pointers"}
+      }
+    }
+  }
+}

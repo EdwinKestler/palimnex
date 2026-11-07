@@ -1,0 +1,355 @@
+{
+  "$defs": {
+    "caseId": {
+      "maxLength": 64,
+      "minLength": 3,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "type": "string"
+    },
+    "documentMap": {
+      "additionalProperties": {
+        "maxLength": 4095,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxProperties": 6,
+      "minProperties": 2,
+      "propertyNames": {
+        "$ref": "#/$defs/projectPath"
+      },
+      "type": "object"
+    },
+    "driftCase": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "const": "drift"
+        },
+        "expected_paths": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/pathList"
+            },
+            {
+              "minItems": 1
+            }
+          ]
+        },
+        "forbidden_paths": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/pathList"
+            },
+            {
+              "minItems": 1
+            }
+          ]
+        },
+        "id": {
+          "$ref": "#/$defs/caseId"
+        },
+        "note": {
+          "$ref": "#/$defs/note"
+        },
+        "project": {
+          "$ref": "#/$defs/projectId"
+        },
+        "query": {
+          "$ref": "#/$defs/query"
+        }
+      },
+      "required": [
+        "category",
+        "expected_paths",
+        "forbidden_paths",
+        "id",
+        "note",
+        "project",
+        "query"
+      ],
+      "type": "object"
+    },
+    "note": {
+      "maxLength": 512,
+      "minLength": 1,
+      "type": "string"
+    },
+    "pathList": {
+      "items": {
+        "$ref": "#/$defs/projectPath"
+      },
+      "maxItems": 8,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "privacyCase": {
+      "additionalProperties": false,
+      "properties": {
+        "canary_kind": {
+          "enum": [
+            "query",
+            "corpus"
+          ]
+        },
+        "canary_rule": {
+          "enum": [
+            "aws-access-key",
+            "github-token",
+            "openai-token"
+          ]
+        },
+        "category": {
+          "const": "privacy_canary"
+        },
+        "expected_paths": {
+          "$ref": "#/$defs/pathList"
+        },
+        "forbidden_paths": {
+          "$ref": "#/$defs/pathList"
+        },
+        "id": {
+          "$ref": "#/$defs/caseId"
+        },
+        "note": {
+          "$ref": "#/$defs/note"
+        },
+        "project": {
+          "$ref": "#/$defs/projectId"
+        },
+        "query": {
+          "$ref": "#/$defs/query"
+        }
+      },
+      "required": [
+        "canary_kind",
+        "canary_rule",
+        "category",
+        "expected_paths",
+        "forbidden_paths",
+        "id",
+        "note",
+        "project",
+        "query"
+      ],
+      "type": "object"
+    },
+    "project": {
+      "additionalProperties": false,
+      "properties": {
+        "after": {
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "maxLength": 4095,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "maxProperties": 6,
+          "propertyNames": {
+            "$ref": "#/$defs/projectPath"
+          },
+          "type": "object"
+        },
+        "documents": {
+          "$ref": "#/$defs/documentMap"
+        }
+      },
+      "required": [
+        "after",
+        "documents"
+      ],
+      "type": "object"
+    },
+    "projectCase": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/driftCase"
+        },
+        {
+          "$ref": "#/$defs/privacyCase"
+        }
+      ]
+    },
+    "projectId": {
+      "maxLength": 64,
+      "minLength": 3,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "type": "string"
+    },
+    "projectPath": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$",
+      "type": "string"
+    },
+    "query": {
+      "maxLength": 200,
+      "minLength": 1,
+      "type": "string"
+    },
+    "repositoryCase": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "category": {
+                "const": "ambiguity"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          },
+          "then": {
+            "properties": {
+              "expected_paths": {
+                "minItems": 2
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "category": {
+                "const": "negative"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          },
+          "then": {
+            "properties": {
+              "expected_paths": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "critical": {
+                "const": true
+              }
+            },
+            "required": [
+              "critical"
+            ]
+          },
+          "then": {
+            "properties": {
+              "category": {
+                "const": "control"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "category": {
+          "enum": [
+            "paraphrase",
+            "synonym",
+            "ambiguity",
+            "negative",
+            "control"
+          ]
+        },
+        "critical": {
+          "type": "boolean"
+        },
+        "expected_paths": {
+          "$ref": "#/$defs/pathList"
+        },
+        "forbidden_paths": {
+          "$ref": "#/$defs/pathList"
+        },
+        "id": {
+          "$ref": "#/$defs/caseId"
+        },
+        "limit": {
+          "const": 5,
+          "type": "integer"
+        },
+        "note": {
+          "$ref": "#/$defs/note"
+        },
+        "query": {
+          "$ref": "#/$defs/query"
+        }
+      },
+      "required": [
+        "category",
+        "critical",
+        "expected_paths",
+        "forbidden_paths",
+        "id",
+        "limit",
+        "note",
+        "query"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://palimnex.dev/schemas/semantic-shadow-cohort.v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "cases": {
+      "items": {
+        "$ref": "#/$defs/repositoryCase"
+      },
+      "maxItems": 64,
+      "minItems": 26,
+      "type": "array"
+    },
+    "description": {
+      "maxLength": 1024,
+      "minLength": 1,
+      "type": "string"
+    },
+    "project_cases": {
+      "items": {
+        "$ref": "#/$defs/projectCase"
+      },
+      "maxItems": 32,
+      "minItems": 5,
+      "type": "array"
+    },
+    "projects": {
+      "additionalProperties": {
+        "$ref": "#/$defs/project"
+      },
+      "maxProperties": 16,
+      "minProperties": 1,
+      "propertyNames": {
+        "$ref": "#/$defs/projectId"
+      },
+      "type": "object"
+    },
+    "schema": {
+      "const": "palimnex:semantic-shadow-cohort:v1"
+    },
+    "status": {
+      "const": "frozen"
+    }
+  },
+  "required": [
+    "cases",
+    "description",
+    "project_cases",
+    "projects",
+    "schema",
+    "status"
+  ],
+  "title": "Palimnex semantic shadow cohort v1",
+  "type": "object"
+}

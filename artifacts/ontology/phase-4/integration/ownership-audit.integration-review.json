@@ -1,0 +1,23 @@
+{
+  "authorizes_actions": false,
+  "changed_by_lane": {
+    "ontology-phase-4-integration": [
+      "artifacts/ontology/phase-4/integration/PHASE4_HANDOFF.md",
+      "artifacts/ontology/phase-4/integration/ownership-audit.integration-review.json",
+      "artifacts/ontology/phase-4/integration/reviewer-launch.md",
+      "artifacts/ontology/phase-4/receipts/ontology-phase-4-integration.implementation-receipt.json"
+    ]
+  },
+  "schema": "palimnex:ontology-ownership-audit:v1",
+  "status": "violation",
+  "violations": [
+    {
+      "change": "added",
+      "path": "artifacts/ontology/phase-4/round-3/ontology-phase-4-integration.review-receipt.json"
+    },
+    {
+      "change": "modified",
+      "path": "artifacts/ontology/phase-4/tools/write_integration_receipt.py"
+    }
+  ]
+}

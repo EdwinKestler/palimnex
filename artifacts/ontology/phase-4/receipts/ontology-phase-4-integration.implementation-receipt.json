@@ -1,0 +1,274 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-4-integration",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "task_digest": "e5b8f1bf2921b04353b04005e8be47014cf7c6a1bf265c985dd764550134fb48",
+  "approval_evidence_digest": "5fb42199d12177b661d4f4e9fcd0be7575e2d03259e1452656ad8e9d9a63c01b",
+  "owned_scope": [
+    "palimnex/core.py",
+    "palimnex/tests/test_semantic_cli.py",
+    "pyproject.toml",
+    "palimnex/CHANGELOG.md",
+    "docs/COMPATIBILITY.md",
+    "artifacts/ontology/phase-4/integration",
+    "artifacts/ontology/phase-4/receipts/ontology-phase-4-integration.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/core.py",
+    "palimnex/tests/test_semantic_cli.py",
+    "pyproject.toml",
+    "palimnex/CHANGELOG.md",
+    "docs/COMPATIBILITY.md",
+    "artifacts/ontology/phase-4/integration",
+    "artifacts/ontology/phase-4/receipts/ontology-phase-4-integration.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [
+    "artifacts/ontology/phase-4/receipts/ontology-phase-4-provider.implementation-receipt.json",
+    "artifacts/ontology/phase-4/receipts/ontology-phase-4-cohort.implementation-receipt.json",
+    "artifacts/ontology/phase-4/receipts/ontology-phase-4-channel.implementation-receipt.json",
+    "artifacts/ontology/phase-4/receipts/ontology-phase-4-evaluation.implementation-receipt.json",
+    "artifacts/ontology/phase-4/reviews/ontology-phase-4-provider.review-receipt.json",
+    "artifacts/ontology/phase-4/reviews/ontology-phase-4-cohort.review-receipt.json",
+    "artifacts/ontology/phase-4/reviews/ontology-phase-4-channel.review-receipt.json",
+    "artifacts/ontology/phase-4/reviews/ontology-phase-4-evaluation.review-receipt.json",
+    "artifacts/ontology/phase-4/integration/cohort-freeze.json",
+    "artifacts/ontology/phase-4/integration/reviewer-launch.md",
+    "artifacts/ontology/phase-4/integration/ownership-audit.wave1-review.recovered.json"
+  ],
+  "commands": [
+    {
+      "command": "./.venv/bin/python -m unittest discover -s palimnex/tests -p 'test_*.py'",
+      "exit_code": 0,
+      "result": "523 tests OK, unsandboxed (artifacts/ontology/phase-4/integration/gate.log)"
+    },
+    {
+      "command": "./.venv/bin/python -m mypy",
+      "exit_code": 0,
+      "result": "no issues in 21 source files including semantic_local.py, semantic_shadow.py and semantic_eval.py"
+    },
+    {
+      "command": "python3 palimnex.py index && python3 palimnex.py validate --deep",
+      "exit_code": 0,
+      "result": "fresh index (810 chunks), deep validation passed"
+    },
+    {
+      "command": "python3 palimnex.py evaluate --limit 5",
+      "exit_code": 0,
+      "result": "production sentinel: every critical case passes, recall_at_limit 1.0, MRR 0.8917, unchanged from the influence exit gate"
+    },
+    {
+      "command": "python3 palimnex.py evaluate-ontology-shadow",
+      "exit_code": 0,
+      "result": "all eight Phase 3 gates true"
+    },
+    {
+      "command": "python3 palimnex.py ontology-status && python3 palimnex.py semantic-status",
+      "exit_code": 0,
+      "result": "ontology influence off; semantic provider v1 disabled, retrieval_influence false"
+    },
+    {
+      "command": "PATH=\"$PWD/.venv/bin:$PATH\" ./scripts/palimnex_check.sh",
+      "exit_code": 0,
+      "result": "standalone gate passed; isolated retrieval recall 1.0; no live ledger write or model call"
+    },
+    {
+      "command": "python3 palimnex.py ledger-status",
+      "exit_code": 0,
+      "result": "integrity ok, 0 events"
+    },
+    {
+      "command": "git diff --exit-code -- palimnex/retrieval.py palimnex/semantic.py palimnex/cache_v3.py palimnex/experience.py palimnex/ontology_influence.py",
+      "exit_code": 0,
+      "result": "production retrieval, semantic v1, cache, context and influence modules byte-identical to HEAD"
+    },
+    {
+      "command": "sha256sum palimnex/evaluation/semantic-shadow.v1.json vs integration/cohort-freeze.json",
+      "exit_code": 0,
+      "result": "cohort still pinned at bfaa3998... after every lane and review"
+    },
+    {
+      "command": "python3 palimnex.py evaluate-semantic-shadow",
+      "exit_code": 2,
+      "result": "exit 2, status held; held_reasons cohort_additional_pass, cohort_gain, no_case_regression, no_critical_regression, protected_recall_not_reduced; semantic cohort MRR 0.0952->0.0952, recall 0.0833->0.0833, no additional pass; p95 745.6 ms vs 712.0 ms baseline (78 samples each, latency gate passed); privacy, drift, determinism, identity, abstention, ambiguity and forbidden-hit gates passed (artifacts/ontology/phase-4/integration/semantic-evaluation.json)"
+    },
+    {
+      "command": "./.venv/bin/python artifacts/ontology/phase-4/tools/ownership_audit.py audit > artifacts/ontology/phase-4/integration/ownership-audit.wave1.json",
+      "exit_code": 0,
+      "result": "status clean; lane changes stayed inside owned paths (ontology-phase-4-cohort, ontology-phase-4-integration, ontology-phase-4-provider); no unowned path; no reviewer write"
+    },
+    {
+      "command": "./.venv/bin/python artifacts/ontology/phase-4/tools/ownership_audit.py audit > artifacts/ontology/phase-4/integration/ownership-audit.wave23.json",
+      "exit_code": 1,
+      "result": "status violation; lane changes stayed inside owned paths (ontology-phase-4-channel, ontology-phase-4-cohort, ontology-phase-4-evaluation, ontology-phase-4-integration); 1 unowned path(s), all coordinator records written by the coordinator after the snapshot (prompts, reviews, round-*, tools): artifacts/ontology/phase-4/reviews/ontology-phase-4-cohort.review-receipt.json; no reviewer write"
+    },
+    {
+      "command": "./.venv/bin/python artifacts/ontology/phase-4/tools/ownership_audit.py audit > artifacts/ontology/phase-4/integration/ownership-audit.review23.json",
+      "exit_code": 1,
+      "result": "status violation; lane changes stayed inside owned paths (ontology-phase-4-integration); 3 unowned path(s), all coordinator records written by the coordinator after the snapshot (prompts, reviews, round-*, tools): artifacts/ontology/phase-4/prompts/ontology-phase-4-evaluation.fix-1.md, artifacts/ontology/phase-4/reviews/ontology-phase-4-channel.review-receipt.json, artifacts/ontology/phase-4/reviews/ontology-phase-4-evaluation.review-receipt.json; no reviewer write"
+    },
+    {
+      "command": "./.venv/bin/python artifacts/ontology/phase-4/tools/ownership_audit.py audit > artifacts/ontology/phase-4/integration/ownership-audit.evalfix1.json",
+      "exit_code": 0,
+      "result": "status clean; lane changes stayed inside owned paths (ontology-phase-4-evaluation, ontology-phase-4-integration); no unowned path; no reviewer write"
+    },
+    {
+      "command": "./.venv/bin/python artifacts/ontology/phase-4/tools/ownership_audit.py audit > artifacts/ontology/phase-4/integration/ownership-audit.final.json",
+      "exit_code": 1,
+      "result": "status violation; lane changes stayed inside owned paths (ontology-phase-4-integration); 4 unowned path(s), all coordinator records written by the coordinator after the snapshot (prompts, reviews, round-*, tools): artifacts/ontology/phase-4/reviews/ontology-phase-4-evaluation.review-receipt.json, artifacts/ontology/phase-4/round-2/ontology-phase-4-evaluation.review-receipt.round1.json, artifacts/ontology/phase-4/tools/gate.sh, artifacts/ontology/phase-4/tools/write_integration_receipt.py; no reviewer write"
+    },
+    {
+      "command": "./.venv/bin/python artifacts/ontology/phase-4/tools/ownership_audit.py audit > artifacts/ontology/phase-4/integration/ownership-audit.integration-review.json",
+      "exit_code": 1,
+      "result": "status violation; lane changes stayed inside owned paths (ontology-phase-4-integration); 2 unowned path(s), all coordinator records written by the coordinator after the snapshot (prompts, reviews, round-*, tools): artifacts/ontology/phase-4/round-3/ontology-phase-4-integration.review-receipt.json, artifacts/ontology/phase-4/tools/write_integration_receipt.py; no reviewer write"
+    }
+  ],
+  "compatibility_effect": "Additive, evidence only: palimnex.semantic_local, palimnex.semantic_shadow, palimnex.semantic_eval, the evaluate-semantic-shadow command, palimnex:semantic-provider-identity:v1, palimnex:semantic-shadow-comparison:v1, palimnex:semantic-shadow-evaluation:v1 and the frozen palimnex:semantic-shadow-cohort:v1 fixture. retrieve_sources, context, explain-search, search, symbols, impact, palimnex evaluate, semantic-status, semantic-gate and project-memory:semantic-provider:v1 (+0.05/2x) unchanged. No configuration key, no retrieval influence, no promotion.",
+  "privacy_and_authority_checks": [
+    "no Git writes",
+    "no network, installs or model downloads; only the in-process hashed provider and test doubles",
+    "no ledger writes (0 events)",
+    "Redis was already running when the gate started and was left running as found",
+    "cohort written blind (lane logs checked by the reviewer), reviewed, fixed and frozen by digest before any semantic measurement",
+    "R14 and R15 fixed in SEMANTIC_SPEC.md before measurement; no threshold, label or parameter changed after the freeze",
+    "canaries built at runtime only; no secret-shaped literal in any owned file; the whole report is scanned for canaries",
+    "Codex lanes ran with approval_policy=never; no sandbox escapes"
+  ],
+  "integration_patch_proposals": [
+    "R8 (from Phase 0): validator should accept files_changed descendants of directory-valued owned paths; still not applied"
+  ],
+  "unresolved_risks": [
+    "Phase 4 result is HELD under the owner's thresholds: zero gain on the frozen semantic cohort, no additional passing cohort case, and two critical Phase 3 cohort cases (alias-retention-ledger, alias-rrf-fusion) regress, reducing that protected suite's recall. Thresholds were not weakened.",
+    "The semantic channel improved the v27 suite on local retrieval (5 -> 9 passing cases, recall 0.385 -> 0.692), which is reported but cannot promote the provider.",
+    "Review limits closed: provider limit (generator, nested-vector and ragged-vector refusals are probed under /tmp by the reviewer, not asserted in test_semantic_local) accepted as a recorded limit, the behaviour having been verified by those probes; channel MINOR (tests do not assert retrieval.py unchanged) closed by the coordinator git-diff gate step; evaluation round-1 MINORs 1 and 2 RESOLVED in fix round 1 and re-review; evaluation MINOR 3 (gate-failure unit tests mock _run_suite) accepted as a limit, covered by the reviewer's live /tmp probes and two real-repository evaluation runs (reviewer copy and the official run)",
+    "Spec v1.1 amendments A1 (canary rule names) and A2 (testable paraphrase isolation) were made before the freeze; R14 and R15 are coordinator decisions for owner confirmation",
+    "Audit coverage: the window of the wave-1 Grok review was audited but its output was printed, not saved; the printout is recovered from the device's tool history in integration/ownership-audit.wave1-review.recovered.json. It printed only the violations list: five paths, all coordinator records (the provider review receipt copy, round-1 log and review copies, and tools/extract_reviews.py). changed_by_lane was not printed for that window. Every other window is saved under integration/ownership-audit.*.json",
+    "Reviewer write restriction: Grok ran with --disallowed-tools Write, which removes only the file-writing tool while shell access remains (exact launch commands in integration/reviewer-launch.md); reviewer read-only status is therefore verified by the snapshot audits, which show no reviewer write"
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": true,
+    "index_fresh_at_gate": true,
+    "redis_final_state": "running (as found)",
+    "ledger_integrity": "ok",
+    "ledger_events": 0
+  },
+  "git_state": {
+    "head": "bbf4b8b",
+    "staged": [],
+    "status": [
+      " M docs/COMPATIBILITY.md",
+      " M palimnex/CHANGELOG.md",
+      " M palimnex/core.py",
+      " M pyproject.toml",
+      "?? .env.example",
+      "?? artifacts/ontology/phase-0/integration/gate.log",
+      "?? artifacts/ontology/phase-0/integration/standard-gate.log",
+      "?? artifacts/ontology/phase-0/logs/grok-review-wave-2.log",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-coverage-contract.log",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-coverage-contract.pid",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-registry-contract.log",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-registry-contract.pid",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-threat-cases.log",
+      "?? artifacts/ontology/phase-0/logs/ontology-phase-0-threat-cases.pid",
+      "?? artifacts/ontology/phase-0/wave-1/logs/grok-review.log",
+      "?? artifacts/ontology/phase-0/wave-1/logs/grok-review.pid",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-coverage-contract.log",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-coverage-contract.pid",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-registry-contract.log",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-registry-contract.pid",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-threat-cases.log",
+      "?? artifacts/ontology/phase-0/wave-1/logs/ontology-phase-0-threat-cases.pid",
+      "?? artifacts/ontology/phase-1/integration/gate-final.log",
+      "?? artifacts/ontology/phase-1/integration/gate.log",
+      "?? artifacts/ontology/phase-1/logs/grok-rereview.log",
+      "?? artifacts/ontology/phase-1/logs/grok-review.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-frozen-conformance.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-frozen-conformance.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.fix-1.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.fix-1.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.fix-2.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.fix-2.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-core.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.fix-1.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.fix-1.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.fix-2.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.fix-2.pid",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.log",
+      "?? artifacts/ontology/phase-1/logs/ontology-phase-1-registry-schema.pid",
+      "?? artifacts/ontology/phase-1/round-1/grok-review.log",
+      "?? artifacts/ontology/phase-2/integration/gate-final.log",
+      "?? artifacts/ontology/phase-2/integration/gate.log",
+      "?? artifacts/ontology/phase-2/logs/grok-rereview.log",
+      "?? artifacts/ontology/phase-2/logs/grok-review.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-core.fix-1.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-core.fix-1.pid",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-core.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-core.pid",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-core.refresh.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-core.refresh.pid",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-schema.fix-r10.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-schema.fix-r10.pid",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-schema.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-coverage-schema.pid",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-frozen-conformance.fix-1.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-frozen-conformance.fix-1.pid",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-frozen-conformance.log",
+      "?? artifacts/ontology/phase-2/logs/ontology-phase-2-frozen-conformance.pid",
+      "?? artifacts/ontology/phase-2/round-1/grok-review.log",
+      "?? artifacts/ontology/phase-3-promotion/integration/gate-final-reindex.log",
+      "?? artifacts/ontology/phase-3-promotion/integration/gate-final.log",
+      "?? artifacts/ontology/phase-3-promotion/integration/gate.log",
+      "?? artifacts/ontology/phase-3-promotion/logs/grok-rereview.log",
+      "?? artifacts/ontology/phase-3-promotion/logs/grok-review.log",
+      "?? artifacts/ontology/phase-3-promotion/logs/ontology-influence-gate.log",
+      "?? artifacts/ontology/phase-3-promotion/logs/ontology-influence-gate.pid",
+      "?? artifacts/ontology/phase-3-promotion/logs/ontology-influence-promotion.log",
+      "?? artifacts/ontology/phase-3-promotion/logs/ontology-influence-promotion.pid",
+      "?? artifacts/ontology/phase-3-promotion/logs/ontology-influence-retrieval.log",
+      "?? artifacts/ontology/phase-3-promotion/logs/ontology-influence-retrieval.pid",
+      "?? artifacts/ontology/phase-3-promotion/logs/ontology-influence-schemas.log",
+      "?? artifacts/ontology/phase-3-promotion/logs/ontology-influence-schemas.pid",
+      "?? artifacts/ontology/phase-3-promotion/round-1/grok-review.log",
+      "?? artifacts/ontology/phase-3/integration/gate-final.log",
+      "?? artifacts/ontology/phase-3/integration/gate.log",
+      "?? artifacts/ontology/phase-3/logs/grok-rereview.log",
+      "?? artifacts/ontology/phase-3/logs/grok-review.log",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-channel.fix-1.log",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-channel.fix-1.pid",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-channel.log",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-channel.pid",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-cohort.fix-1.log",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-cohort.fix-1.pid",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-cohort.log",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-cohort.pid",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-evaluation.fix-1.log",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-evaluation.fix-1.pid",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-evaluation.log",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-evaluation.pid",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-retrieval.log",
+      "?? artifacts/ontology/phase-3/logs/ontology-phase-3-retrieval.pid",
+      "?? artifacts/ontology/phase-3/round-1/grok-review.log",
+      "?? artifacts/ontology/phase-4/",
+      "?? benchmark/",
+      "?? docs/SEMANTIC_SHADOW.md",
+      "?? palimnex/evaluation/semantic-shadow.v1.json",
+      "?? palimnex/schemas/semantic-provider-identity.v1.schema.json",
+      "?? palimnex/schemas/semantic-shadow-cohort.v1.schema.json",
+      "?? palimnex/schemas/semantic-shadow-comparison.v1.schema.json",
+      "?? palimnex/schemas/semantic-shadow-evaluation.v1.schema.json",
+      "?? palimnex/semantic_eval.py",
+      "?? palimnex/semantic_local.py",
+      "?? palimnex/semantic_shadow.py",
+      "?? palimnex/tests/semantic_doubles.py",
+      "?? palimnex/tests/test_semantic_cli.py",
+      "?? palimnex/tests/test_semantic_cohort.py",
+      "?? palimnex/tests/test_semantic_eval.py",
+      "?? palimnex/tests/test_semantic_local.py",
+      "?? palimnex/tests/test_semantic_shadow.py"
+    ]
+  },
+  "status": "tested"
+}

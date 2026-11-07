@@ -1,0 +1,10 @@
+{
+  "schema": "palimnex:ontology-ownership-audit-recovery:v1",
+  "source": "~/.claude-server-commander/tool-history.jsonl on device andorxps (Desktop Commander call history)",
+  "window": "Grok wave-1 review (provider and cohort), snapshot 2026-11-06 21:32 local to audit 21:47 local",
+  "timestamp_utc": "2026-11-07T03:47:11.435Z",
+  "command": "cd /home/kestl/github/palimnex && ./.venv/bin/python artifacts/ontology/phase-4/tools/ownership_audit.py audit | python3 -c \"import json,sys;d=json.load(sys.stdin);print(d['violations'])\"",
+  "printed_output": "Process started with PID 2226161 (shell: /bin/bash)\nInitial output:\n[{'change': 'added', 'path': 'artifacts/ontology/phase-4/reviews/ontology-phase-4-provider.review-receipt.json'}, {'change': 'added', 'path': 'artifacts/ontology/phase-4/round-1/grok-review-wave1.log'}, {'change': 'added', 'path': 'artifacts/ontology/phase-4/round-1/reviews/ontology-phase-4-cohort.review-receipt.json'}, {'change': 'added', 'path': 'artifacts/ontology/phase-4/round-1/reviews/ontology-phase-4-provider.review-receipt.json'}, {'change': 'added', 'path': 'artifacts/ontology/phase-4/tools/extract_reviews.py'}]\n\n\u2705 Process 2226161 has finished execution",
+  "note": "Only the violations list was printed; changed_by_lane was not printed for this window.",
+  "authorizes_actions": false
+}

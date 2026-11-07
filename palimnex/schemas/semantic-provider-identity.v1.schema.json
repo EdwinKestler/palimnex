@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://palimnex.dev/schemas/semantic-provider-identity.v1.schema.json",
+  "title": "Palimnex semantic provider identity v1",
+  "description": "Identity for an evidence-only in-process semantic provider with no retrieval influence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "interface",
+    "provider_id",
+    "revision",
+    "dimensions",
+    "implementation_digest",
+    "execution",
+    "network",
+    "model_download",
+    "persistent_store",
+    "retrieval_influence"
+  ],
+  "properties": {
+    "schema": {"const": "palimnex:semantic-provider-identity:v1"},
+    "interface": {"const": "project-memory:semantic-provider:v1"},
+    "provider_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$"
+    },
+    "revision": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$"
+    },
+    "dimensions": {"type": "integer", "minimum": 8, "maximum": 4096},
+    "implementation_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "minLength": 64,
+      "maxLength": 64
+    },
+    "execution": {"const": "in_process"},
+    "network": {"const": false},
+    "model_download": {"const": false},
+    "persistent_store": {"const": false},
+    "retrieval_influence": {"const": false}
+  }
+}

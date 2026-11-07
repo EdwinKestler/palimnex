@@ -1,0 +1,418 @@
+{
+  "cases": [
+    {
+      "category": "paraphrase",
+      "critical": false,
+      "expected_paths": [
+        "palimnex/cache_v3.py"
+      ],
+      "forbidden_paths": [],
+      "id": "paraphrase-active-reader",
+      "limit": 5,
+      "note": "The cache module keeps an active generation leased until a reader has finished consuming it.",
+      "query": "What preserves an obsolete search view while an ongoing lookup is still using it?"
+    },
+    {
+      "category": "paraphrase",
+      "critical": false,
+      "expected_paths": [
+        "palimnex/concepts.py"
+      ],
+      "forbidden_paths": [],
+      "id": "paraphrase-reviewed-topics",
+      "limit": 5,
+      "note": "The concepts module parses reviewed topic names, normalized alternatives, and collisions under explicit bounds.",
+      "query": "Where are reviewed topic names, alternate wordings, and collisions parsed under strict bounds?"
+    },
+    {
+      "category": "paraphrase",
+      "critical": false,
+      "expected_paths": [
+        "palimnex/audit.py"
+      ],
+      "forbidden_paths": [],
+      "id": "paraphrase-historical-residue",
+      "limit": 5,
+      "note": "The audit module projects eligible sessions and events while replacing forgotten material with non-reconstructive residue.",
+      "query": "How are past sessions and allowed events projected as limited nodes and edges while forgotten material becomes residue?"
+    },
+    {
+      "category": "paraphrase",
+      "critical": false,
+      "expected_paths": [
+        "palimnex/coverage.py"
+      ],
+      "forbidden_paths": [],
+      "id": "paraphrase-evidence-support",
+      "limit": 5,
+      "note": "The coverage module classifies how completely verified concept evidence supports a repository question.",
+      "query": "Which module decides whether verified evidence fully, partly, or ambiguously supports a repository question?"
+    },
+    {
+      "category": "paraphrase",
+      "critical": false,
+      "expected_paths": [
+        "palimnex/documents.py"
+      ],
+      "forbidden_paths": [],
+      "id": "paraphrase-document-relationships",
+      "limit": 5,
+      "note": "The documents module derives structural symbols and edges from Markdown and generic configuration text.",
+      "query": "How are headings, links, tables, and configuration entries converted into relationships for non-code files?"
+    },
+    {
+      "category": "paraphrase",
+      "critical": false,
+      "expected_paths": [
+        "palimnex/retrieval.py"
+      ],
+      "forbidden_paths": [],
+      "id": "paraphrase-ordered-list-blend",
+      "limit": 5,
+      "note": "The retrieval module combines independent channel orderings and resolves equal scores by source pointer.",
+      "query": "Where are several independently ordered search lists blended by position with deterministic tie handling?"
+    },
+    {
+      "category": "paraphrase",
+      "critical": false,
+      "expected_paths": [
+        "palimnex/portable.py"
+      ],
+      "forbidden_paths": [],
+      "id": "paraphrase-portable-rescan",
+      "limit": 5,
+      "note": "The portable module rescans variable historical content during export and validation before any activation.",
+      "query": "What screens stored user content again before a protected archive crosses between machines?"
+    },
+    {
+      "category": "paraphrase",
+      "critical": false,
+      "expected_paths": [
+        "palimnex/migrations.py"
+      ],
+      "forbidden_paths": [],
+      "id": "paraphrase-interrupted-format-change",
+      "limit": 5,
+      "note": "The migrations module records a bounded progress intent and validates whether an interrupted adjacent step can resume.",
+      "query": "How does an interrupted database format change record progress and continue safely on the next identical attempt?"
+    },
+    {
+      "category": "synonym",
+      "critical": false,
+      "expected_paths": [
+        "palimnex/retention.py"
+      ],
+      "forbidden_paths": [],
+      "id": "synonym-authorized-purge",
+      "limit": 5,
+      "note": "The retention module governs authorized erasure, using purge as a common synonym for removal.",
+      "query": "Where is an authorized purge of stored history planned and audited?"
+    },
+    {
+      "category": "synonym",
+      "critical": false,
+      "expected_paths": [
+        "palimnex/portable.py"
+      ],
+      "forbidden_paths": [],
+      "id": "synonym-sealed-archive",
+      "limit": 5,
+      "note": "The portable module authenticates encrypted packs, for which sealed archive is common user vocabulary.",
+      "query": "How is an encrypted bundle of long-lived records verified prior to exchanging local data?"
+    },
+    {
+      "category": "synonym",
+      "critical": false,
+      "expected_paths": [
+        "palimnex/integrity.py"
+      ],
+      "forbidden_paths": [],
+      "id": "synonym-tamper-evident-record",
+      "limit": 5,
+      "note": "The integrity module creates and verifies signed checkpoints that provide tamper-evident historical records.",
+      "query": "How is a signed historical milestone compared with a separately retained reference?"
+    },
+    {
+      "category": "synonym",
+      "critical": false,
+      "expected_paths": [
+        "palimnex/security.py"
+      ],
+      "forbidden_paths": [],
+      "id": "synonym-secret-detector",
+      "limit": 5,
+      "note": "The security module detects credential-shaped material while returning only rule identifiers and locations.",
+      "query": "What blocks leaked authentication material yet discloses just a category and source position?"
+    },
+    {
+      "category": "synonym",
+      "critical": false,
+      "expected_paths": [
+        "palimnex/migrations.py"
+      ],
+      "forbidden_paths": [],
+      "id": "synonym-database-upgrade",
+      "limit": 5,
+      "note": "The migrations module selects and checks adjacent ledger migration steps, commonly described as database upgrades.",
+      "query": "What validates the immediately following database upgrade before storage is exchanged?"
+    },
+    {
+      "category": "synonym",
+      "critical": false,
+      "expected_paths": [
+        "palimnex/locators.py"
+      ],
+      "forbidden_paths": [],
+      "id": "synonym-versioned-pointer",
+      "limit": 5,
+      "note": "The locators module implements versioned references to bounded source ranges, which users may call pointers.",
+      "query": "How does a versioned source pointer reopen a bounded slice and confirm its hash?"
+    },
+    {
+      "category": "ambiguity",
+      "critical": false,
+      "expected_paths": [
+        "palimnex/concepts.py",
+        "palimnex/locators.py"
+      ],
+      "forbidden_paths": [],
+      "id": "ambiguity-current-source-reference",
+      "limit": 5,
+      "note": "Locators resolve and hash bounded source while concepts independently verify registry bindings against current repository state.",
+      "query": "Where are committed source references reopened and checked for drift?"
+    },
+    {
+      "category": "ambiguity",
+      "critical": false,
+      "expected_paths": [
+        "palimnex/durable.py",
+        "palimnex/integrity.py"
+      ],
+      "forbidden_paths": [],
+      "id": "ambiguity-history-protection",
+      "limit": 5,
+      "note": "Durable storage validates payload and database integrity while the integrity module verifies externally anchored checkpoints.",
+      "query": "How is historical memory protected against corruption and later tampering?"
+    },
+    {
+      "category": "ambiguity",
+      "critical": false,
+      "expected_paths": [
+        "palimnex/core.py",
+        "palimnex/documents.py"
+      ],
+      "forbidden_paths": [],
+      "id": "ambiguity-repository-relationships",
+      "limit": 5,
+      "note": "Core extracts code relationships while documents extracts links and structure from repository prose and configuration files.",
+      "query": "How are relationships among repository files and document references represented?"
+    },
+    {
+      "category": "negative",
+      "critical": false,
+      "expected_paths": [],
+      "forbidden_paths": [],
+      "id": "negative-garden-irrigation",
+      "limit": 5,
+      "note": "Home garden irrigation is unrelated to repository-local memory software.",
+      "query": "How often should a balcony herb garden be watered during summer?"
+    },
+    {
+      "category": "negative",
+      "critical": false,
+      "expected_paths": [],
+      "forbidden_paths": [],
+      "id": "negative-guitar-strings",
+      "limit": 5,
+      "note": "Classical guitar string selection has no answer in the Palimnex runtime.",
+      "query": "Which string tension is best for a classical guitar recital?"
+    },
+    {
+      "category": "negative",
+      "critical": false,
+      "expected_paths": [],
+      "forbidden_paths": [],
+      "id": "negative-volcanic-soil",
+      "limit": 5,
+      "note": "Agricultural soil chemistry is outside the repository's implementation scope.",
+      "query": "Why does volcanic soil support coffee cultivation at high elevation?"
+    },
+    {
+      "category": "negative",
+      "critical": false,
+      "expected_paths": [],
+      "forbidden_paths": [],
+      "id": "negative-weekly-meals",
+      "limit": 5,
+      "note": "Meal preparation advice is unrelated to the runtime source corpus.",
+      "query": "Create a vegetarian meal plan for five weekday dinners."
+    },
+    {
+      "category": "negative",
+      "critical": false,
+      "expected_paths": [],
+      "forbidden_paths": [],
+      "id": "negative-ocean-tides",
+      "limit": 5,
+      "note": "Coastal tide prediction is not implemented by any Palimnex module.",
+      "query": "What causes spring tides near a coastal estuary?"
+    },
+    {
+      "category": "control",
+      "critical": true,
+      "expected_paths": [
+        "palimnex/cache_v3.py"
+      ],
+      "forbidden_paths": [],
+      "id": "control-source-snapshot",
+      "limit": 5,
+      "note": "The cache module directly defines source_snapshot and its admitted corpus identity.",
+      "query": "How does source_snapshot admit repository files?"
+    },
+    {
+      "category": "control",
+      "critical": true,
+      "expected_paths": [
+        "palimnex/durable.py"
+      ],
+      "forbidden_paths": [],
+      "id": "control-canonical-json",
+      "limit": 5,
+      "note": "The durable module directly defines canonical_json for stable byte serialization.",
+      "query": "Where is canonical_json implemented?"
+    },
+    {
+      "category": "control",
+      "critical": false,
+      "expected_paths": [
+        "palimnex/retrieval.py"
+      ],
+      "forbidden_paths": [],
+      "id": "control-retrieve-sources",
+      "limit": 5,
+      "note": "The retrieval module directly defines retrieve_sources and its bounded rank fusion path.",
+      "query": "Where does retrieve_sources combine lexical, symbol, and graph channels?"
+    },
+    {
+      "category": "control",
+      "critical": false,
+      "expected_paths": [
+        "palimnex/security.py"
+      ],
+      "forbidden_paths": [],
+      "id": "control-scan-bytes",
+      "limit": 5,
+      "note": "The security module directly defines scan_bytes for exact UTF-8 privacy admission.",
+      "query": "How does scan_bytes report content privacy findings?"
+    }
+  ],
+  "description": "Blind frozen cohort for the Phase 4 deterministic local semantic shadow experiment; labels are source-backed evidence only and authorize no retrieval influence or promotion.",
+  "project_cases": [
+    {
+      "category": "drift",
+      "expected_paths": [
+        "src/retry_policy.py"
+      ],
+      "forbidden_paths": [
+        "src/queue.py"
+      ],
+      "id": "drift-retry-policy-moved",
+      "note": "The retry behavior moves from the original queue module to a new policy module after the drift step.",
+      "project": "drift-retry",
+      "query": "How are stalled jobs attempted again after waiting?"
+    },
+    {
+      "category": "drift",
+      "expected_paths": [
+        "src/verification.py"
+      ],
+      "forbidden_paths": [
+        "src/storage.py"
+      ],
+      "id": "drift-checksum-logic-moved",
+      "note": "The block-checking explanation moves out of storage and into a dedicated verification module.",
+      "project": "drift-validation",
+      "query": "Where are stored blocks checked before they are opened?"
+    },
+    {
+      "canary_kind": "query",
+      "canary_rule": "aws-access-key",
+      "category": "privacy_canary",
+      "expected_paths": [],
+      "forbidden_paths": [],
+      "id": "privacy-query-cloud-access",
+      "note": "A query credential must be refused before the semantic provider receives any text.",
+      "project": "privacy-query-aws",
+      "query": "{canary} Where is session state stored?"
+    },
+    {
+      "canary_kind": "query",
+      "canary_rule": "github-token",
+      "category": "privacy_canary",
+      "expected_paths": [],
+      "forbidden_paths": [],
+      "id": "privacy-query-source-host",
+      "note": "A second query-shaped credential rule proves privacy refusal is not tied to one pattern.",
+      "project": "privacy-query-github",
+      "query": "Can this credential {canary} be used to inspect local project history?"
+    },
+    {
+      "canary_kind": "corpus",
+      "canary_rule": "openai-token",
+      "category": "privacy_canary",
+      "expected_paths": [],
+      "forbidden_paths": [
+        "config/provider.txt"
+      ],
+      "id": "privacy-corpus-provider-key",
+      "note": "A credential embedded in a source file must fail corpus admission before any embedding call.",
+      "project": "privacy-corpus-openai",
+      "query": "How is the local provider configured?"
+    }
+  ],
+  "projects": {
+    "drift-retry": {
+      "after": {
+        "src/queue.py": null,
+        "src/retry_policy.py": "Stalled jobs are attempted again after a short waiting period."
+      },
+      "documents": {
+        "README.md": "This sample service demonstrates delayed work handling.",
+        "src/queue.py": "Stalled jobs are attempted again after a short waiting period."
+      }
+    },
+    "drift-validation": {
+      "after": {
+        "src/storage.py": null,
+        "src/verification.py": "Each stored block is opened only after its checksum has been verified."
+      },
+      "documents": {
+        "README.md": "This sample checks stored blocks before use.",
+        "src/storage.py": "Each stored block is opened only after its checksum has been verified."
+      }
+    },
+    "privacy-corpus-openai": {
+      "after": {},
+      "documents": {
+        "README.md": "This sample configures a local text provider.",
+        "config/provider.txt": "The local provider credential placeholder is {canary}."
+      }
+    },
+    "privacy-query-aws": {
+      "after": {},
+      "documents": {
+        "README.md": "This sample stores session state locally.",
+        "src/session.py": "Session state is stored in a bounded local record."
+      }
+    },
+    "privacy-query-github": {
+      "after": {},
+      "documents": {
+        "README.md": "This sample describes local project history.",
+        "src/history.py": "Project history remains local and non-authorizing."
+      }
+    }
+  },
+  "schema": "palimnex:semantic-shadow-cohort:v1",
+  "status": "frozen"
+}

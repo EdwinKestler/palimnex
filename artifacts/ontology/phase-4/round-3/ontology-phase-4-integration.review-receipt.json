@@ -1,0 +1,98 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "artifacts/ontology/phase-4/integration/bundle-validation.json",
+    "artifacts/ontology/phase-4/integration/cohort-freeze.json",
+    "artifacts/ontology/phase-4/integration/gate.log",
+    "artifacts/ontology/phase-4/integration/ownership-audit.evalfix1.json",
+    "artifacts/ontology/phase-4/integration/ownership-audit.final.json",
+    "artifacts/ontology/phase-4/integration/ownership-audit.review23.json",
+    "artifacts/ontology/phase-4/integration/ownership-audit.wave1.json",
+    "artifacts/ontology/phase-4/integration/ownership-audit.wave23.json",
+    "artifacts/ontology/phase-4/integration/semantic-evaluation.json",
+    "artifacts/ontology/phase-4/receipts/ontology-phase-4-integration.implementation-receipt.json",
+    "artifacts/ontology/phase-4/reviews/ontology-phase-4-channel.review-receipt.json",
+    "artifacts/ontology/phase-4/reviews/ontology-phase-4-cohort.review-receipt.json",
+    "artifacts/ontology/phase-4/reviews/ontology-phase-4-evaluation.review-receipt.json",
+    "artifacts/ontology/phase-4/reviews/ontology-phase-4-provider.review-receipt.json",
+    "artifacts/ontology/phase-4/round-2/ontology-phase-4-evaluation.review-receipt.round1.json",
+    "artifacts/ontology/phase-4/tasks/ontology-phase-4-integration.json",
+    "docs/COMPATIBILITY.md",
+    "palimnex/CHANGELOG.md",
+    "palimnex/core.py",
+    "palimnex/tests/test_semantic_cli.py",
+    "pyproject.toml"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "task_digest": "e5b8f1bf2921b04353b04005e8be47014cf7c6a1bf265c985dd764550134fb48",
+  "approval_evidence_digest": "5fb42199d12177b661d4f4e9fcd0be7575e2d03259e1452656ad8e9d9a63c01b",
+  "workstream_id": "ontology-phase-4-integration",
+  "evidence": [
+    "NOTE: Focused tests palimnex.tests.test_semantic_cli, test_semantic_eval, test_semantic_shadow, test_semantic_local and test_semantic_cohort: 69/69 passed in 0.311s. mypy: Success: no issues found in 21 source files. validate_contract.py implementation receipt status valid, task_digest e5b8f1bf2921b04353b04005e8be47014cf7c6a1bf265c985dd764550134fb48, approval_evidence_digest 5fb42199d12177b661d4f4e9fcd0be7575e2d03259e1452656ad8e9d9a63c01b, authorizes_actions false.",
+    "NOTE: git diff palimnex/core.py is 13 insertions only: evaluate-semantic-shadow parser with no options; config_present refusal; lazy import of evaluate_semantic_shadow(ROOT); print json.dumps(..., sort_keys=True); return 0 if status==promotable else 2. The handler returns before RedisClient/MemoryLedger construction. SemanticEvaluationError subclasses ValueError, so refusals use the existing stderr JSON path and exit 1. python3 palimnex.py evaluate-semantic-shadow --help lists only -h; --limit 3 is unrecognized arguments, argparse exit 2.",
+    "NOTE: git diff --stat is empty for palimnex/retrieval.py, palimnex/semantic.py, palimnex/cache_v3.py, palimnex/experience.py and palimnex/ontology_influence.py. Tracked palimnex/ edits are palimnex/core.py and palimnex/CHANGELOG.md. python3 palimnex.py semantic-status is mode disabled, retrieval_influence false, interface project-memory:semantic-provider:v1. palimnex.semantic.MIN_MRR_GAIN is 0.05 and MAX_LATENCY_MULTIPLIER is 2.0.",
+    "NOTE: CHANGELOG and COMPATIBILITY describe an additive evidence-only command, say a promotable report is not promotion, keep the v1 +0.05/2x rule, and name exit 2 held and exit 1 refused. pyproject.toml adds palimnex/semantic_local.py, palimnex/semantic_shadow.py and palimnex/semantic_eval.py to tool.mypy.files (18 to 21 files).",
+    "NOTE: cohort-freeze.json cohort_sha256, spec_sha256 and review_receipt_sha256 match the current files (bfaa3998bc8c8ae5d05959f51e71aae08bf14f339a55fc0924d7e0b7b9ef4200, e8cb18191a2537162675e9b8455e4c99fa2dc17ae202d28026b528f4b533833f, b5e8b322e9102a54dd7222c7d7bdadadca6866a70dca2453df407f3756863488). Freeze mtime 2026-11-06 22:06:49-06:00 is after the accepted cohort re-review 22:06:35 and before evaluation.pid 22:06:49.496 and semantic-evaluation.json 23:22:36. palimnex/tests/test_semantic_shadow.py does not load the cohort. SEMANTIC_SPEC.md mtime 21:47:26 is before the freeze.",
+    "NOTE: artifacts/ontology/phase-4/integration/gate.log records exit=0 for every step: 523 tests OK, mypy 21 files, index 810 chunks, validate --deep passed, palimnex evaluate critical_passed true recall_at_limit 1.0 mrr 0.8916666666666666 (same mrr as artifacts/ontology/phase-3-promotion/integration/gate-final.log), evaluate-ontology-shadow all eight gates true, ontology-status mode off, semantic-status disabled, palimnex_check.sh passed with isolated retrieval recall 1.0, production files unchanged vs HEAD, cohort pinned. Redis initial and final state running. This reviewer independently observed palimnex status fresh with fingerprint e60aad9b9747077b09dbe774cb5135fc090206f4e3b197fb72946ff824dc0b7d and 810 chunks, ontology-status mode off, semantic-status disabled.",
+    "NOTE: semantic-evaluation.json validates against palimnex/schemas/semantic-shadow-evaluation.v1.schema.json. status held; held_reasons exactly [cohort_additional_pass, cohort_gain, no_case_regression, no_critical_regression, protected_recall_not_reduced]; promotion_authorized, retrieval_influence and authorizes_actions false; authority evidence_only; cohort_digest bfaa3998bc8c8ae5d05959f51e71aae08bf14f339a55fc0924d7e0b7b9ef4200; additional_pass_ids []; mrr_gain 0.0; recall_gain 0.0; baseline and shadow MRR 0.09523809523809523; recall 0.08333333333333333; p95 745.562057 vs 711.967838 ms, 78 samples; ontology_cohort critical regressions alias-retention-ledger and alias-rrf-fusion; v27 cases_passed 5 to 9, recall_at_limit 0.38461538461538464 to 0.6923076923076923. semantic-evaluation.err is the seven bytes exit=2 newline. Receipt command text rounds those metrics to four decimals and one decimal.",
+    "MAJOR: implementation receipt commands records ownership_audit.py audit exit_code 0, but artifacts/ontology/phase-4/integration/ownership-audit.final.json, ownership-audit.wave23.json and ownership-audit.review23.json have status violation, and artifacts/ontology/phase-4/tools/ownership_audit.py returns 1 when violations is nonempty. Lane changed_by_lane lists stay inside owned paths; the unowned paths are coordinator records, as the result text says. The recorded exit_code remains false.",
+    "MAJOR: unresolved_risks claims Grok tool-level write block only removed Write. No repository file records Grok launch flags or a Write-tool block. Review receipts were extracted from logs by artifacts/ontology/phase-4/tools/extract_reviews.py. Snapshot audits support that reviewers did not change product files; the Write-block mechanism itself has no supporting file.",
+    "MINOR: the Review limits closed paragraph omits the accepted provider MINOR that palimnex.tests.test_semantic_local omits generator, nested-vector and ragged-vector cases, covered only by /tmp probes in the provider review. Channel MINOR is closed by gate.log production-files git-diff. Evaluation round-1 MINORs 1 and 2 are RESOLVED in the accepted re-review. Evaluation MINOR 3 remains, with covering evidence in artifacts/ontology/phase-4/round-2/ontology-phase-4-evaluation.review-receipt.round1.json (PYTHONPATH /tmp copy), the re-review /tmp probes, and the official semantic-evaluation.json.",
+    "NOTE: palimnex.security.scan_bytes on 22 owned CLI, docs, receipt and integration files returned zero findings. Codex lane logs show approval: never and sandbox: workspace-write, matching artifacts/ontology/phase-4/tools/launch.sh."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_semantic_cli palimnex.tests.test_semantic_eval palimnex.tests.test_semantic_shadow palimnex.tests.test_semantic_local palimnex.tests.test_semantic_cohort -v",
+    "./.venv/bin/python -m mypy",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-4/tasks/ontology-phase-4-integration.json --implementation-receipt artifacts/ontology/phase-4/receipts/ontology-phase-4-integration.implementation-receipt.json",
+    "python3 palimnex.py status",
+    "python3 palimnex.py ontology-status",
+    "python3 palimnex.py semantic-status",
+    "python3 palimnex.py evaluate-semantic-shadow --help",
+    "python3 palimnex.py evaluate-semantic-shadow --limit 3",
+    "git diff --stat -- palimnex/core.py palimnex/retrieval.py palimnex/semantic.py palimnex/cache_v3.py palimnex/experience.py palimnex/ontology_influence.py palimnex/CHANGELOG.md docs/COMPATIBILITY.md pyproject.toml",
+    "sha256sum docs/ONTOLOGY_ADOPTION.md palimnex/evaluation/semantic-shadow.v1.json artifacts/ontology/phase-4/integration/cohort-freeze.json artifacts/ontology/phase-4/reviews/ontology-phase-4-cohort.review-receipt.json artifacts/ontology/phase-4/briefs/SEMANTIC_SPEC.md"
+  ],
+  "source_grounding_result": "evaluate-semantic-shadow is an additive core.py handler that requires .palimnex.json, calls palimnex.semantic_eval.evaluate_semantic_shadow(ROOT) with no options, prints the palimnex:semantic-shadow-evaluation:v1 document, and returns 0 for promotable, 2 for held, and 1 for SemanticEvaluationError/missing config. Drift and privacy writes stay inside TemporaryDirectory. The frozen cohort digest in semantic_eval.COHORT_SHA256 matches cohort-freeze.json and the fixture file.",
+  "privacy_result": "Owned CLI, docs, receipt and integration files have zero scan_bytes findings. The CLI prints the evaluation document or a typed stderr error JSON; it does not echo provider or canary values. Query and corpus canaries are evaluator-side and the official report has privacy_canary true.",
+  "retrieval_quality_result": "Official local evaluation is held: zero semantic-cohort gain, no additional scored pass, and ontology_cohort critical regressions alias-retention-ledger and alias-rrf-fusion, which also reduce protected recall. Latency, privacy, drift, determinism, identity, abstention, ambiguity, forbidden-hit, baseline-identity and bound gates passed. Production palimnex evaluate remains recall_at_limit 1.0, mrr 0.8916666666666666. semantic-status stays disabled with retrieval_influence false. A held or promotable report still has promotion_authorized false.",
+  "compatibility_result": "Additive evaluate-semantic-shadow command, palimnex.tests.test_semantic_cli, mypy file list, CHANGELOG and COMPATIBILITY notes. palimnex/retrieval.py, palimnex/semantic.py, palimnex/cache_v3.py, palimnex/experience.py, palimnex/ontology_influence.py and project-memory:semantic-provider:v1 including the +0.05/2x helper are unchanged. No configuration key was added.",
+  "rollback_result": "Revert palimnex/core.py, palimnex/CHANGELOG.md, docs/COMPATIBILITY.md and pyproject.toml; delete palimnex/tests/test_semantic_cli.py and the coordinator integration/receipt artifacts. Lane modules, schemas, docs/SEMANTIC_SHADOW.md and the frozen cohort remain until those workstreams are rolled back. Production retrieval identity is already byte-identical to HEAD.",
+  "authority_result": "Phase 4 approval evidence authorizes ontology_phase_4_semantic with network, git-write and live-state false. The CLI cannot set promotion_authorized true. This review authorizes no promotion, retrieval influence, Git write, network, or live-state action.",
+  "limitations": [
+    "Full unittest suite and scripts/palimnex_check.sh were skipped as instructed; gate.log covers them.",
+    "This review did not re-run python3 palimnex.py evaluate-semantic-shadow; the official report was schema-validated and compared to the receipt.",
+    "This review did not read .palimnex, .env, secrets or benchmark paths and did not run ledger-status; gate.log records ledger integrity ok with 0 events.",
+    "Grok launch flags are absent from the repository, so the Write-block mechanism could not be confirmed from a file."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": true,
+    "cache_mutated": false,
+    "ledger_consulted": false,
+    "ledger_mutated": false,
+    "palimnex_status": "fresh",
+    "chunk_count": 810,
+    "fingerprint": "e60aad9b9747077b09dbe774cb5135fc090206f4e3b197fb72946ff824dc0b7d",
+    "ontology_mode": "off",
+    "semantic_mode": "disabled",
+    "retrieval_influence": false,
+    "reason": "Read-only palimnex status, ontology-status and semantic-status. Index, evaluate and ledger-status were not run. gate.log records ledger integrity ok, 0 events."
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "branch": "main",
+    "head": "bbf4b8b58dcb62f231be562b34bc594e85ea4733",
+    "dirty_tree": true,
+    "reviewer_modified_repository": false,
+    "tracked_diff": [
+      "docs/COMPATIBILITY.md",
+      "palimnex/CHANGELOG.md",
+      "palimnex/core.py",
+      "pyproject.toml"
+    ]
+  },
+  "status": "rejected"
+}

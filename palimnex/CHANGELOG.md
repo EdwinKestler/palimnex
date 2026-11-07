@@ -58,6 +58,22 @@ operator-facing behavior; cache and graph schemas are versioned independently.
   never activates anything. `palimnex ontology-status` reports the setting and
   whether it activates. Rollback is `mode: off`. See
   `docs/ONTOLOGY_INFLUENCE.md`.
+- Added a local semantic shadow experiment (ontology adoption Phase 4), evidence
+  only. `palimnex.semantic_local` provides a deterministic in-process provider
+  over the existing hashed embedding (`palimnex-hashed-embedding`, revision 1,
+  384 dimensions, behavioural implementation digest), described by
+  `palimnex:semantic-provider-identity:v1`, with typed refusals for provider
+  failures, timeouts, wrong counts or dimensions and NaN/Inf.
+  `palimnex.semantic_shadow` computes a semantic channel beside the unchanged
+  baseline and reports `palimnex:semantic-shadow-comparison:v1`; its memo is
+  in-process only. `palimnex evaluate-semantic-shadow` prints
+  `palimnex:semantic-shadow-evaluation:v1` over the protected suites, the frozen
+  `palimnex:semantic-shadow-cohort:v1` fixture, drift and privacy-canary cases,
+  with the owner's gates (exit 0 promotable, 2 held, 1 refused). A promotable
+  report is not promotion. `retrieve_sources`, `context`, `explain-search`,
+  `search`, `symbols`, `impact`, `palimnex evaluate`, `semantic-status`,
+  `semantic-gate` and `project-memory:semantic-provider:v1` are unchanged. No
+  model download, network or vector store. See `docs/SEMANTIC_SHADOW.md`.
 
 ## 2.9.0 - 2026-10-02
 

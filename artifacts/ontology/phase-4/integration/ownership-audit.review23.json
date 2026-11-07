@@ -1,0 +1,29 @@
+{
+  "authorizes_actions": false,
+  "changed_by_lane": {
+    "ontology-phase-4-integration": [
+      "artifacts/ontology/phase-4/integration/ownership-audit.review23.json",
+      "docs/COMPATIBILITY.md",
+      "palimnex/CHANGELOG.md",
+      "palimnex/core.py",
+      "palimnex/tests/test_semantic_cli.py",
+      "pyproject.toml"
+    ]
+  },
+  "schema": "palimnex:ontology-ownership-audit:v1",
+  "status": "violation",
+  "violations": [
+    {
+      "change": "added",
+      "path": "artifacts/ontology/phase-4/prompts/ontology-phase-4-evaluation.fix-1.md"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/ontology/phase-4/reviews/ontology-phase-4-channel.review-receipt.json"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/ontology/phase-4/reviews/ontology-phase-4-evaluation.review-receipt.json"
+    }
+  ]
+}

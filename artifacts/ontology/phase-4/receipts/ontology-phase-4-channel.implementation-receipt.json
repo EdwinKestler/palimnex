@@ -1,0 +1,92 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-4-channel",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "task_digest": "504bb6943979041f6d2023415ca30c1aebea9415e1d9504fa52ce0c4a89534ad",
+  "approval_evidence_digest": "5fb42199d12177b661d4f4e9fcd0be7575e2d03259e1452656ad8e9d9a63c01b",
+  "owned_scope": [
+    "palimnex/semantic_shadow.py",
+    "palimnex/tests/test_semantic_shadow.py",
+    "palimnex/schemas/semantic-shadow-comparison.v1.schema.json",
+    "artifacts/ontology/phase-4/receipts/ontology-phase-4-channel.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/semantic_shadow.py",
+    "palimnex/tests/test_semantic_shadow.py",
+    "palimnex/schemas/semantic-shadow-comparison.v1.schema.json",
+    "artifacts/ontology/phase-4/receipts/ontology-phase-4-channel.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [
+    "ontology-phase-4-provider: artifacts/ontology/phase-4/receipts/ontology-phase-4-provider.implementation-receipt.json (tested)"
+  ],
+  "commands": [
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_semantic_shadow -v",
+      "exit_code": 0,
+      "result": "17 tests passed."
+    },
+    {
+      "command": "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/semantic_shadow.py",
+      "exit_code": 0,
+      "result": "Success: no issues found in 1 source file."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_semantic palimnex.tests.test_retrieval_shadow palimnex.tests.test_retrieval_influence palimnex.tests.test_ontology_shadow palimnex.tests.test_semantic_local",
+      "exit_code": 0,
+      "result": "54 tests passed."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-4/tasks/ontology-phase-4-channel.json",
+      "exit_code": 0,
+      "result": "Task and approval evidence valid; task and approval digests recorded in this receipt."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-4/tasks/ontology-phase-4-channel.json --implementation-receipt artifacts/ontology/phase-4/receipts/ontology-phase-4-channel.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Implementation receipt validated successfully."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "All four owned files are untracked; pre-existing unrelated and parallel-lane untracked files remain present and untouched."
+    }
+  ],
+  "compatibility_effect": "Adds the public palimnex.semantic_shadow R14 constants, SemanticShadowError, SemanticChannel, EmbeddingMemo, semantic_channel, semantic_shadow_retrieve, validate_semantic_comparison and policy_digest API plus the palimnex:semantic-shadow-comparison:v1 JSON Schema. Existing retrieve_sources output and ranking, palimnex/retrieval.py, project-memory:semantic-provider:v1, context v1/v2, explain-search v1/v2, search, symbols, impact, palimnex evaluate, semantic-status, semantic-gate, configuration and every existing wire identifier remain unchanged; the new comparison is evidence-only and has no retrieval influence or promotion authority.",
+  "privacy_and_authority_checks": [
+    "The approved design and source-proposal SHA-256 digests matched the task card before implementation, and the dependency receipt was present with tested status.",
+    "Query privacy scanning occurs before every embedding call; refusals and provider errors expose only stable reason and field values.",
+    "Chunk vectors are keyed by provider identity digest and chunk-content SHA-256, remain in process, and the bounded memo clears entirely on capacity overflow.",
+    "The four owned deliverables were scanned with palimnex.security.scan_bytes and produced zero findings.",
+    "No network, subprocess provider, model download, package installation, persistent vector store, Redis write, SQLite write or live-state action was used.",
+    "No Git staging, commit, branch, push or publication action was performed; palimnex/retrieval.py has no diff.",
+    "Every written path is listed in owned_scope."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "The full unittest suite and scripts/palimnex_check.sh are delegated to the coordinator as required by the Phase 4 common brief because their Unix-socket and MCP subprocess tests cannot run in this sandbox.",
+    "Semantic quality and the fixed promotion thresholds remain unevaluated until the coordinator integrates the frozen cohort and evaluation lanes; this receipt grants no retrieval influence or promotion authority.",
+    "Indexed files changed, but reindex and evaluation are delegated to the coordinator because this task forbids Palimnex index and evaluation writes.",
+    "Redis was unavailable in the sandbox, so status and deep validation reported cache_consulted false and repository source was used directly."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_mutated": false,
+    "ledger_consulted": false,
+    "ledger_mutated": false,
+    "reason": "Palimnex status and deep validation could not consult Redis because the sandbox denied the connection; the task forbids index and all durable-state mutation commands.",
+    "indexed_files_changed": true,
+    "coordinator_reindex_required": true
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "staged": false,
+    "committed": false,
+    "pushed": false,
+    "owned_files_status": "untracked",
+    "unrelated_preexisting_changes_preserved": true
+  },
+  "status": "tested"
+}

@@ -1,0 +1,24 @@
+{
+  "schema": "palimnex:semantic-cohort-freeze:v1",
+  "cohort_path": "palimnex/evaluation/semantic-shadow.v1.json",
+  "cohort_sha256": "bfaa3998bc8c8ae5d05959f51e71aae08bf14f339a55fc0924d7e0b7b9ef4200",
+  "cohort_schema": "palimnex:semantic-shadow-cohort:v1",
+  "spec": "artifacts/ontology/phase-4/briefs/SEMANTIC_SPEC.md v1.1",
+  "spec_sha256": "e8cb18191a2537162675e9b8455e4c99fa2dc17ae202d28026b528f4b533833f",
+  "review_receipt": "artifacts/ontology/phase-4/reviews/ontology-phase-4-cohort.review-receipt.json",
+  "review_status": "accepted",
+  "review_receipt_sha256": "b5e8b322e9102a54dd7222c7d7bdadadca6866a70dca2453df407f3756863488",
+  "frozen_at": "2026-11-06T22:06:49-06:00",
+  "semantic_measurements_before_freeze": "none: no semantic channel or evaluation run against the cohort by any lane, reviewer or the coordinator",
+  "immutable": [
+    "queries",
+    "ids",
+    "categories",
+    "expected_paths",
+    "forbidden_paths",
+    "critical",
+    "projects",
+    "project_cases"
+  ],
+  "authorizes_actions": false
+}

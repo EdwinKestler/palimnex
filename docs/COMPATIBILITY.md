@@ -104,3 +104,14 @@ enabled results announce themselves by schema identifier and disclosure, never
 by a silent change inside v1. Cache-backed `search`, `symbols`, `impact` and
 `palimnex evaluate` are unaffected. Disabling is `mode: off`. See
 `docs/ONTOLOGY_INFLUENCE.md`.
+
+Phase 4 adds `palimnex:semantic-provider-identity:v1`,
+`palimnex:semantic-shadow-comparison:v1`,
+`palimnex:semantic-shadow-evaluation:v1` (printed by the read-only
+`evaluate-semantic-shadow` command) and the frozen
+`palimnex:semantic-shadow-cohort:v1` fixture. All are evidence only: no
+configuration key reads them and no output changes. The existing
+`project-memory:semantic-provider:v1` interface, `semantic-status`,
+`semantic-gate` and their +0.05 gain and 2x latency rule are unchanged; the
+Phase 4 thresholds (+0.02, 1.5x) live only in the new evaluation contract. See
+`docs/SEMANTIC_SHADOW.md`.

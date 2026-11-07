@@ -1,0 +1,61 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "palimnex/evaluation/semantic-shadow.v1.json",
+    "palimnex/schemas/semantic-shadow-cohort.v1.schema.json",
+    "palimnex/tests/test_semantic_cohort.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "bee8ea6dff05ad2dc3371868ec66e9be9aa8218d25c5d758aa0aefdcaf4ec8a3"
+  },
+  "task_digest": "54f896b1ff4c0a900ddb2eff9fc6957f869026c8caf6afd297ce646bda99ee20",
+  "approval_evidence_digest": "5fb42199d12177b661d4f4e9fcd0be7575e2d03259e1452656ad8e9d9a63c01b",
+  "workstream_id": "ontology-phase-4-cohort",
+  "evidence": [
+    "RESOLVED: round-1 MAJOR paraphrase-active-reader. Query is now 'What preserves an obsolete search view while an ongoing lookup is still using it?'. cache_v3.generation_reader leases the active generation and _collect_garbage retains a generation whose reader-lease count is > 0, so palimnex/cache_v3.py still answers the same lease-protection behaviour. No identifier, lowercase trigram, or distinctive two-word phrase from that file remains in the query.",
+    "RESOLVED: round-1 MAJOR paraphrase-portable-rescan. Query is now 'What screens stored user content again before a protected archive crosses between machines?'. portable._rescan_portable_content still runs from export_pack and validate_pack, so palimnex/portable.py still answers the same rescan-at-pack-boundary behaviour. The copied docstring phrase 'variable payload' is gone.",
+    "RESOLVED: round-1 MAJOR synonym-tamper-evident-record. Query is now 'How is a signed historical milestone compared with a separately retained reference?'. integrity.create_checkpoint/verify_checkpoint sign a checkpoint and verify_history compares the tip to expected_tip, so palimnex/integrity.py still answers the same behaviour. The copied error phrase 'external trust anchor' is gone.",
+    "RESOLVED: round-1 MAJOR synonym-secret-detector. Query is now 'What blocks leaked authentication material yet discloses just a category and source position?'. security.ContentFinding exposes only rule and line, and scan_text never returns the matched value, so palimnex/security.py still answers the same behaviour. The copied docstring phrase 'the matched value' is gone.",
+    "RESOLVED: round-1 NOTE openai-key. Amendment A1 renamed canary_rule, the schema enum and CANARY_RULES to openai-token, matching security.py rule name openai-token.",
+    "RESOLVED: round-1 MINOR missing isolation test. test_paraphrase_and_synonym_queries_are_source_isolated now asserts that every paraphrase and synonym query shares no identifier-shaped token and no lowercase trigram with its expected file; the test passed.",
+    "NOTE: palimnex.tests.test_semantic_cohort 11/11 passed including the A2 isolation test; palimnex.tests.test_ontology_shadow_cohort 6/6 passed; implementation-receipt validator status valid. Raw cohort bytes have zero security.scan_bytes findings.",
+    "NOTE: Fix round 1 also rewrote synonym-sealed-archive (dropped portable.py 'durable history') and synonym-database-upgrade (dropped migrations.py 'one step'). Both still ask the same behaviour: validate_pack authenticates an encrypted pack before import/export, and migrations.resolve_step/plan/apply validate the immediate successor before the replacement guard. Expected paths unchanged and source-defensible.",
+    "NOTE: Independent A2 re-check of all 14 paraphrase/synonym queries found no shared identifier-shaped tokens and no shared lowercase trigrams. The only remaining two-word overlaps are generic English in paraphrase-interrupted-format-change ('an interrupted', 'on the') against migrations.py recovery text, not distinctive docstring, error or name collocations.",
+    "NOTE: Compared with the round-1 fixture dump in ontology-phase-4-cohort.fix-1.log, ids, categories, expected and forbidden paths, critical flags, notes, drift projects and privacy placement are unchanged except the six query rewrites and the A1 openai-token rename. Category counts remain paraphrase 8, synonym 6, ambiguity 3, negative 5, control 4; two control cases are critical; 14 palimnex/*.py expected modules; every repository case has limit 5.",
+    "NOTE: artifacts/ontology/phase-4/logs/ontology-phase-4-cohort.fix-1.log shows source reads, rg, A2 token probes, structural tests, git status and receipt validation only. No palimnex.py, retrieve_sources, core.embedding, evaluate or provider embed command was executed."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_semantic_cohort -v",
+    "./.venv/bin/python -m unittest palimnex.tests.test_ontology_shadow_cohort",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-4/tasks/ontology-phase-4-cohort.json --implementation-receipt artifacts/ontology/phase-4/receipts/ontology-phase-4-cohort.implementation-receipt.json",
+    "./.venv/bin/python /tmp/phase4_cohort_rereview_probes.py"
+  ],
+  "source_grounding_result": "All six rewritten queries still name the same source behaviour, and their unchanged expected_paths remain defensible: cache reader-lease retention of an obsolete generation, portable rescan at pack export/validate, pack AEAD authentication, signed checkpoint vs retained tip, privacy findings as rule+line only, and adjacent ledger-migration validation before replacement. Remaining repository expected_paths still match concepts alias/collision parse, audit tombstones, coverage answerable/partial/ambiguous, document heading/link/table/config edges, RRF position fusion, interrupted migration intents, retention authorize_erasure, locators versioned range+digest, durable PRAGMA integrity_check, and core/document graphs.",
+  "privacy_result": "scan_bytes on the raw fixture is empty. Privacy cases still use only the {canary} placeholder, once per case, in the query for query kinds and in config/provider.txt for the corpus case. Query cases have empty expected and forbidden paths; the corpus case forbids the canary file. Canary rules are aws-access-key, github-token and openai-token, matching security.py.",
+  "retrieval_quality_result": "Paraphrase and synonym queries now satisfy A2 isolation against their expected files (identifiers, lowercase trigrams, and distinctive two-word docstring/error/name phrases). Labels, negatives, controls, drift moves and privacy placement remain freeze-ready. Retrieval, embedding and evaluation were not run.",
+  "compatibility_result": "Adds palimnex:semantic-shadow-cohort:v1, its JSON Schema (canary enum openai-token) and structural tests including A2 isolation. ontology-shadow.v1.json and its tests are unchanged and still pass. No runtime retrieval API, configuration key or wire identifier changed.",
+  "rollback_result": "Delete palimnex/evaluation/semantic-shadow.v1.json, palimnex/schemas/semantic-shadow-cohort.v1.schema.json, palimnex/tests/test_semantic_cohort.py and the workstream implementation receipt. Recording artifacts/ontology/phase-4/integration/cohort-freeze.json remains a coordinator action after this accepted review.",
+  "authority_result": "The fixture schema const status frozen is not coordinator freeze authority. This review authorizes no evaluation, retrieval influence, promotion, Git write, network or live-state action. Cohort-freeze.json remains a coordinator recording after an accepted review.",
+  "limitations": [
+    "Labels were judged from repository source only; retrieval, embedding and evaluation were not run, as required for this freeze review.",
+    "Full unittest suite and scripts/palimnex_check.sh were not run."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_mutated": false,
+    "ledger_consulted": false,
+    "ledger_mutated": false,
+    "reason": "Reviewer did not read .palimnex or run palimnex commands; cohort labels were judged from source files only."
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "branch": "main",
+    "head": "bbf4b8b58dcb62f231be562b34bc594e85ea4733",
+    "dirty_tree": true,
+    "reviewer_modified_repository": false,
+    "owned_files_status": "untracked"
+  },
+  "status": "accepted"
+}

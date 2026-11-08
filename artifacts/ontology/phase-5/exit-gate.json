@@ -1,0 +1,66 @@
+{
+  "schema": "palimnex:ontology-exit-gate:v1",
+  "phase": 5,
+  "scope": "reviewed-retrieval-feedback-records",
+  "decision": "accepted",
+  "authority_source": "user_message",
+  "evidence_locator": "current repository-owner conversation, user message dated 2026-11-07: confirm R16; accept and commit Phase 5 feedback records; leave feedback shadow evaluation and graph exploration for separately approved later rounds",
+  "grantor_claim": "repository owner (Gus, GitHub EdwinKestler)",
+  "recorded_at": "2026-11-07T19:14:42-06:00",
+  "commit": "6865d40f392ac38c5a62c605c271c99515d50083",
+  "design_identity_at_acceptance": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "2bc034cbb2049d2e4a50c296456041fcd779dbde6107ba98d9875d14716707d8"
+  },
+  "handoff": "artifacts/ontology/phase-5/integration/PHASE5_HANDOFF.md",
+  "confirmed": [
+    "R16: context and capsule exclude palimnex:retrieval-feedback:v1 and palimnex:retrieval-feedback-withdrawal:v1 payloads",
+    "R16 preserves palimnex recall and the hot-event projection as explicit historical audit surfaces for feedback",
+    "feedback records use existing fact, correction and revocation event kinds with versioned payloads and no ledger migration",
+    "feedback is source-bound, manually reviewed, historical_only, non-authorizing and has no retrieval influence",
+    "feedback-record, feedback-correct and feedback-withdraw are owner-run real-ledger actions; implementation and tests use temporary ledgers only"
+  ],
+  "review_evidence": {
+    "schemas_lane": "independently accepted",
+    "feedback_core_lane": "independently accepted_with_limits after its round-1 context and capsule blocker was resolved by R16",
+    "integration_lane": "independently accepted_with_limits with no blocker, major or minor findings",
+    "limits_closed_by": [
+      "coordinator full suite, standard gate, production evaluation, ontology-shadow evaluation, deep cache validation and ledger checks",
+      "validated implementation and review receipts for all three workstreams",
+      "R16 negative-control evidence and focused temporary-ledger tests",
+      "Codex source review and repository-owner confirmation of R16 on 2026-11-07"
+    ],
+    "ownership_note": "implementation-lane ownership was clean; later violation reports list coordinator specifications, reviews, prompts and helper records rather than product changes outside assigned integration scope"
+  },
+  "validation": {
+    "tests": "550 passed",
+    "focused_tests": "52 passed",
+    "mypy": "22 source files clean",
+    "standard_gate": "passed; isolated retrieval 20 cases at Recall@5 1.0; no live ledger write or model call",
+    "production_retrieval": "20/20, Recall@5 1.0, MRR 0.8916666666666666, every critical case passed",
+    "ontology_shadow": "8/8 gates true",
+    "ontology_status": "mode off, activation not_applicable, retrieval_influence false",
+    "semantic_status": "disabled, provider not registered, retrieval_influence false",
+    "cache": "fresh, 153 files and 844 chunks; deep validation passed",
+    "ledger": "integrity ok, zero events; repository ledger never written",
+    "staged_privacy_scan": "64 implementation and evidence files scanned, zero findings"
+  },
+  "known_limits": [
+    "ledger recall scans at most 10000 matching candidates before the R16 result filter; an unusually saturated query could let feedback consume scan slots, and context reports candidate_scan_truncated when this occurs",
+    "the feedback-core test reads the public feedback schema files without a declared dependency edge; the schema lane was independently accepted first and runtime feedback code does not load them",
+    "two concurrent correction or withdrawal commands targeting the same current event could each append a successor; sequential repeats are refused",
+    "JSON Schema cannot enforce end_line greater than or equal to start_line and permits some path characters rejected by runtime validation; the runtime remains the closed gate"
+  ],
+  "not_authorized": [
+    "agents writing feedback to the repository's real ledger",
+    "feedback ranking influence, promotion or automatic query-history learning",
+    "the deferred feedback shadow channel or frozen evaluation",
+    "the deferred offline graph explorer or semantic cache",
+    "new ledger event kinds, ledger schema changes or migration",
+    "push, publication or deployment"
+  ],
+  "repository_ledger_written": false,
+  "retrieval_influence": false,
+  "pushed": false,
+  "authorizes_actions": false
+}

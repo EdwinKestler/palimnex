@@ -7,7 +7,7 @@
     {
       "step": "version",
       "exit": 0,
-      "seconds": 0.1
+      "seconds": 0.08
     },
     {
       "step": "doctor",
@@ -17,7 +17,7 @@
     {
       "step": "redis_start",
       "exit": 0,
-      "seconds": 0.4
+      "seconds": 0.36
     },
     {
       "step": "index",
@@ -32,17 +32,17 @@
     {
       "step": "status",
       "exit": 0,
-      "seconds": 0.15
+      "seconds": 0.13
     },
     {
       "step": "search",
       "exit": 0,
-      "seconds": 0.23
+      "seconds": 0.22
     },
     {
       "step": "context",
       "exit": 0,
-      "seconds": 0.19
+      "seconds": 0.17
     },
     {
       "step": "explain_search",
@@ -72,7 +72,7 @@
     {
       "step": "ledger_status",
       "exit": 0,
-      "seconds": 0.1
+      "seconds": 0.08
     },
     {
       "step": "feedback_report",
@@ -82,7 +82,7 @@
     {
       "step": "redis_stop",
       "exit": 0,
-      "seconds": 0.34
+      "seconds": 0.32
     }
   ],
   "files": 53,

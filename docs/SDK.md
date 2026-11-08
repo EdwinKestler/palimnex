@@ -81,10 +81,11 @@ safer. All are additive to API v1.
 - `backup_ledger(target=None)` writes a verified owner-only snapshot, by
   default under `backups/` beside the ledger.
 - `migrate_retention(expected_digest=..., snapshot=True)` writes a verified
-  snapshot of the unmigrated ledger before migrating. In 2.9.0 and later
-  it runs through the generic migration engine (`docs/MIGRATIONS.md`), and
-  calling it without `snapshot=True` emits `DeprecationWarning`; the API v1
-  default stays `snapshot=False`.
+  snapshot of the unmigrated ledger before migrating. It runs through the
+  generic migration engine (`docs/MIGRATIONS.md`). The CLI's legacy
+  `retention-migrate --no-snapshot` option is removed in 2.10.0 and every real
+  CLI migration snapshots. API v1 still keeps `snapshot=False`; using it emits
+  `DeprecationWarning`, while `snapshot=True` does not.
 
 Later authorized erasure does not remove snapshots.
 

@@ -1,0 +1,77 @@
+[
+  {
+    "fixture": "minimal-approved.json",
+    "concept": "palimnex-memory",
+    "source": "README.md",
+    "range": {
+      "unit": "lines",
+      "start": 3,
+      "end": 6
+    },
+    "old_version": "0b8ce96b6a21a042feb840ae41b10678ae01eba50e61377cd87f5590e0ade96d",
+    "new_version": "df0753bd995c7d964899ee8f7bc475c98ac823d360fcfc273ff27575a57ddc69"
+  },
+  {
+    "fixture": "minimal-approved.json",
+    "old_registry_digest": "0a0ef4d7c8c7a92c5e05e0383b78b4ac26323d681d3d9efcb4780b19d47a5316",
+    "new_registry_digest": "20ba5514792e844f4042e4289442f4faf2a994d9aa547ac283582a17a940ea54"
+  },
+  {
+    "fixture": "multi-concept-relations.json",
+    "concept": "discovery-cache",
+    "source": "docs/DESIGN.md",
+    "range": {
+      "unit": "lines",
+      "start": 43,
+      "end": 47
+    },
+    "old_version": "4d9f26d4cc618ea3efcae3a6061faaeed0dba9c1cd0ad7932078931075e00b7b",
+    "new_version": "770516efca759a4e655aa36cedeb2a233a4853d12de706110ff39daed4d07702"
+  },
+  {
+    "fixture": "multi-concept-relations.json",
+    "concept": "durable-ledger",
+    "source": "docs/DESIGN.md",
+    "range": {
+      "unit": "lines",
+      "start": 37,
+      "end": 41
+    },
+    "old_version": "4d9f26d4cc618ea3efcae3a6061faaeed0dba9c1cd0ad7932078931075e00b7b",
+    "new_version": "770516efca759a4e655aa36cedeb2a233a4853d12de706110ff39daed4d07702"
+  },
+  {
+    "fixture": "multi-concept-relations.json",
+    "old_registry_digest": "94cfb9da2c6d48d2b3662b78fb8aacd9f0fac803710fa688dae27005027e0e6f",
+    "new_registry_digest": "589b42308d4ea79ba7d60efd0e24ed68a3a150d98846927ee2b0701cc99831d6"
+  },
+  {
+    "fixture": "supersession-chain.json",
+    "concept": "project-memory-bundle",
+    "source": "README.md",
+    "range": {
+      "unit": "lines",
+      "start": 8,
+      "end": 12
+    },
+    "old_version": "0b8ce96b6a21a042feb840ae41b10678ae01eba50e61377cd87f5590e0ade96d",
+    "new_version": "df0753bd995c7d964899ee8f7bc475c98ac823d360fcfc273ff27575a57ddc69"
+  },
+  {
+    "fixture": "supersession-chain.json",
+    "concept": "palimnex-repository",
+    "source": "README.md",
+    "range": {
+      "unit": "lines",
+      "start": 3,
+      "end": 6
+    },
+    "old_version": "0b8ce96b6a21a042feb840ae41b10678ae01eba50e61377cd87f5590e0ade96d",
+    "new_version": "df0753bd995c7d964899ee8f7bc475c98ac823d360fcfc273ff27575a57ddc69"
+  },
+  {
+    "fixture": "supersession-chain.json",
+    "old_registry_digest": "3616f771253a01189d3dc215f77aac90b277460d8b7f7d77c70e2f1a119f56a4",
+    "new_registry_digest": "12dfef6ca6529793ead5f9a33760fafc786e1ed73634020684468ae732985978"
+  }
+]

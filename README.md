@@ -11,7 +11,10 @@ development now belongs here. No live Redis data, SQLite ledger, credentials,
 wallet material, atomic-swap implementation, or repository-specific rollback
 snapshot was copied.
 
-The Python distribution version is `2.9.0`, with public SDK and extension API v1.
+The Python distribution version is `2.10.0`, with public SDK and extension API v1.
+Version 2.10.0 adds additive ontology-adoption evidence, evaluation, explicit
+feedback and opt-in retrieval-influence surfaces; production retrieval remains
+unchanged unless an owner enables ontology influence.
 Version 2.9.0 adds the explicit, digest-bound `ledger-migrate` framework
 (`docs/MIGRATIONS.md`) and deprecates the copied bundle (`docs/BUNDLE_MODE.md`).
 Version 2.8.0 adds a replicable `palimnex:audit-graph:v1` export
@@ -26,13 +29,13 @@ Semantica projection, pack identity and MCP.
 Install the exact published release from PyPI:
 
 ```bash
-pipx install "palimnex[crypto]==2.9.0"
+pipx install "palimnex[crypto]==2.10.0"
 ```
 
 Or install the same release directly from its Git tag:
 
 ```bash
-pipx install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.9.0"
+pipx install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.10.0"
 ```
 
 Before the first run, add `.palimnex/`, `*.pmem` and `*.key` to the

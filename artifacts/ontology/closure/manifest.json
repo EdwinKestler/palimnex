@@ -1,0 +1,45 @@
+{
+  "schema": "palimnex:ontology-workstream-manifest:v1",
+  "approved_phase": 1,
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f3dfab328018b3d55b7fe7b01b13b93f796176dc12c5117337d14379e740970f"
+  },
+  "workstreams": [
+    "ontology-closure-registry",
+    "ontology-closure-integration"
+  ],
+  "dependency_dag": [
+    {
+      "from": "ontology-closure-registry",
+      "to": "ontology-closure-integration"
+    }
+  ],
+  "exclusive_file_ownership": {
+    "ontology-closure-registry": [
+      "artifacts/ontology/closure/candidate",
+      "artifacts/ontology/closure/receipts/ontology-closure-registry.implementation-receipt.json"
+    ],
+    "ontology-closure-integration": [
+      "ontology",
+      "artifacts/ontology/closure/integration",
+      "artifacts/ontology/closure/receipts/ontology-closure-integration.implementation-receipt.json"
+    ]
+  },
+  "shared_file_owner": "ontology-closure-integration",
+  "acceptance_gates": [
+    "16 candidate concepts derived from source only, blind to the evaluation sets",
+    "conservative multi-word aliases; no collisions or ambiguity; no standalone generic words",
+    "every source binding current and digest-verified against the working tree",
+    "independent review of every concept, binding and alias before the candidate is frozen",
+    "approved registry loads as approved_registry for this project, unambiguous and current",
+    "promotion evidence recorded as evidence only; activation off; production retrieval unchanged",
+    "full suite (unsandboxed), standard gate and evaluations pass"
+  ],
+  "authority_limits": [
+    "registry drafting and approval path only; activation stays off for the release",
+    "no network, provider, Git-write or live-state authority for lanes",
+    "the owner's merge of the reviewed registry change is the approval"
+  ],
+  "status": "ready"
+}

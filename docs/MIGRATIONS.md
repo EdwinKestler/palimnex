@@ -279,9 +279,10 @@ and snapshot filenames are not stable today.
   plan/step envelope additively.
 
 `ledger-migrate --apply` always creates a verified snapshot and has no
-`--no-snapshot` option. The legacy `retention-migrate --no-snapshot` escape
-remains through the 2.9.x line, emits a stderr deprecation warning, and adds a
-machine-readable `deprecations` field to JSON output. It is removed in 2.10.0.
+`--no-snapshot` option. In 2.10.0, `retention-migrate` also always creates the
+snapshot: its legacy `--no-snapshot` escape is removed and argparse rejects it
+with exit status 2. The 2.9.x line emitted a stderr deprecation warning and
+added a machine-readable `deprecations` field to JSON output.
 
 The public API v1 method `migrate_retention(..., snapshot=False)` keeps that
 default because changing it would be a breaking SDK change under
@@ -467,10 +468,10 @@ implementation. Renaming or reusing an existing identifier is forbidden.
   control entry, status, and exact marker bytes.
 - Preserve the current default verified snapshot name, mode `0600`, source
   schema, integrity, and logical digest.
-- Prove `ledger-migrate --apply` always snapshots; prove the legacy alias emits
-  stderr plus JSON deprecation output for `--no-snapshot` through 2.9.x and
-  removes it in 2.10.0. Prove SDK API v1 keeps `snapshot=False` while emitting
-  `DeprecationWarning` unless `snapshot=True`.
+- Prove both CLI migration commands always snapshot; prove 2.10.0 rejects the
+  removed `retention-migrate --no-snapshot` option with exit status 2. Prove
+  SDK API v1 keeps `snapshot=False` while emitting `DeprecationWarning` unless
+  `snapshot=True`.
 - Prove ordinary old readers refuse retention v2 and a 2.7.0 reader refuses a
   retention ledger containing `adapter_receipt`; prove 2.8.0+ reads it.
 - Keep the installed-wheel upgrade rehearsal passing through the alias, then
@@ -586,10 +587,10 @@ own design and approval.
 ### D1. Snapshot policy and deprecation
 
 `ledger-migrate --apply` always writes a verified snapshot.
-`retention-migrate --no-snapshot` stays through 2.9.x with a stderr
-deprecation warning and a `deprecations` field in JSON output, and is removed
-in 2.10.0. SDK API v1 keeps `migrate_retention(snapshot=False)` as its default;
-changing that default would be breaking. It emits `DeprecationWarning` whenever
+`retention-migrate --no-snapshot` is removed in 2.10.0; the CLI always writes a
+verified snapshot, and argparse rejects the removed option with exit status 2.
+SDK API v1 keeps `migrate_retention(snapshot=False)` as its default because
+changing it would be breaking. It emits `DeprecationWarning` whenever
 `snapshot is not True`.
 
 ### D2. One adjacent step per invocation

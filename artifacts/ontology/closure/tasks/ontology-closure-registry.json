@@ -1,0 +1,98 @@
+{
+  "schema": "palimnex:ontology-workstream-task:v1",
+  "workstream_id": "ontology-closure-registry",
+  "phase": 1,
+  "action_id": "ontology_phase_1_registry",
+  "objective": "Draft the 16-concept candidate concept registry for the Palimnex checkout from source code only (blind to the evaluation sets), with conservative multi-word aliases, current source bindings, NOTES.md rationale and a check_candidate.py validator. Follow briefs/REGISTRY_BRIEF.md.",
+  "exclusions": [
+    "No edits outside owned_paths.",
+    "The candidate is drafted from source code only; the evaluation sets stay unread until the candidate is frozen.",
+    "Candidates are never approval: only the reviewed, committed ontology/concept-registry.v1.json merged by the owner is the approved registry.",
+    "Ontology activation stays off: .palimnex.json is not edited.",
+    "No change to any product module, schema, test expectation or retrieval behaviour.",
+    "No Git staging, commits or pushes by lanes; no network, installs, model or provider calls; no Redis or ledger writes.",
+    "Never read or echo credentials; never store literal secret-pattern strings."
+  ],
+  "approved_design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f3dfab328018b3d55b7fe7b01b13b93f796176dc12c5117337d14379e740970f"
+  },
+  "approval_evidence": {
+    "schema": "palimnex:ontology-approval-evidence:v1",
+    "authority_source": "user_message",
+    "evidence_locator": "claude.ai owner message 2026-11-08 12:34 America/Guatemala with attachment: 'Approved to draft and review the candidate registry. you are approved to take any action needed to finish and close the nvidia ontology adoption for palimnex ... and produce the new release candidate'; attachment: 14-16 source-derived concepts, blind evaluation set, Palimnex 2.10.0, activation off, tag and publication separately approved",
+    "grantor_claim": "repository owner (Gus, GitHub EdwinKestler)",
+    "design_identity": {
+      "path": "docs/ONTOLOGY_ADOPTION.md",
+      "sha256": "f3dfab328018b3d55b7fe7b01b13b93f796176dc12c5117337d14379e740970f"
+    },
+    "source_proposal_identity": {
+      "path": "artifacts/design/Ontologyadoptionplan.md",
+      "sha256": "8fe38bef5f7f25fa8a7d58dad21b89f69c70f4a367d9981c01fdedf6bd165d86"
+    },
+    "approved_phases": [
+      1
+    ],
+    "authorized_actions": [
+      "ontology_phase_1_registry"
+    ],
+    "excluded_actions": [
+      "ontology_phase_0_contract",
+      "ontology_phase_2_coverage",
+      "ontology_phase_3_shadow",
+      "ontology_phase_4_semantic",
+      "ontology_phase_5_extensions"
+    ],
+    "recorded_at": "2026-11-08T12:34:00-06:00",
+    "implementation_authorized": true,
+    "network_authorized": false,
+    "git_write_authorized": false,
+    "live_state_authorized": false
+  },
+  "owned_paths": [
+    "artifacts/ontology/closure/candidate",
+    "artifacts/ontology/closure/receipts/ontology-closure-registry.implementation-receipt.json"
+  ],
+  "read_only_paths": [
+    ".agents/skills",
+    ".palimnex.json",
+    "AGENTS.md",
+    "README.md",
+    "artifacts/design/Ontologyadoptionplan.md",
+    "artifacts/design/ontology-phase-0",
+    "artifacts/ontology/closure/approval-evidence.json",
+    "artifacts/ontology/closure/briefs",
+    "artifacts/ontology/closure/integration",
+    "artifacts/ontology/closure/manifest.json",
+    "artifacts/ontology/closure/tasks",
+    "docs",
+    "docs/ONTOLOGY_ADOPTION.md",
+    "palimnex",
+    "pyproject.toml"
+  ],
+  "forbidden_paths": [
+    ".palimnex",
+    ".env",
+    ".env.example",
+    "benchmark",
+    "secrets",
+    ".git",
+    "palimnex/evaluation",
+    "palimnex/tests/test_ontology_shadow_cohort.py",
+    "palimnex/tests/test_semantic_cohort.py",
+    "artifacts/ontology/phase-3",
+    "artifacts/ontology/phase-3-promotion",
+    "artifacts/ontology/phase-4"
+  ],
+  "dependencies": [],
+  "acceptance_commands": [
+    "./.venv/bin/python artifacts/ontology/closure/candidate/check_candidate.py",
+    "./.venv/bin/python -m unittest palimnex.tests.test_concepts",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/closure/tasks/ontology-closure-registry.json --implementation-receipt artifacts/ontology/closure/receipts/ontology-closure-registry.implementation-receipt.json",
+    "git status --short --untracked-files=all"
+  ],
+  "required_output": "ImplementationReceipt",
+  "network_authority": false,
+  "git_write_authority": false,
+  "live_state_authority": false
+}

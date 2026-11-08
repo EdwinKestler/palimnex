@@ -1,0 +1,28 @@
+{
+  "schema": "palimnex:concept-registry-freeze:v1",
+  "frozen_at": "2026-11-08T13:40:25-06:00",
+  "candidate": {
+    "path": "artifacts/ontology/closure/candidate/concept-registry.candidate.json",
+    "sha256": "6bc197a2812e49392035798e78579cf288e907926d3ddb579584cecd9f3822ed",
+    "registry_digest": "475877f3c486959cf11fc778ff18ce83584a2a477758808a8287d3978ce435fd"
+  },
+  "review_receipt": {
+    "path": "artifacts/ontology/closure/reviews/ontology-closure-registry.review-receipt.json",
+    "sha256": "7d3fdb431de65bce1365fe61744769dbd6f7c0a8bf55de9f7973866d38ac537c",
+    "status": "accepted_with_limits"
+  },
+  "approved": {
+    "path": "ontology/concept-registry.v1.json",
+    "sha256": "6911f42213c97f7d31c4a067bde3398936568e9afcb42cb9e5b6e74578667366",
+    "registry_digest": "c19cc2de60b4c5a4d6b2e27f391df6bdf5f7d2351ca7d31c2c9dd0a00ca9df92",
+    "concept_count": 16
+  },
+  "changes_from_candidate": [
+    "registry_kind candidate_set -> approved_registry",
+    "concept status candidate -> approved",
+    "registry_digest recomputed"
+  ],
+  "approval": "pending the owner's merge of the reviewed release branch (design row 'Registry approval path')",
+  "activation": "off; .palimnex.json not edited",
+  "authorizes_actions": false
+}

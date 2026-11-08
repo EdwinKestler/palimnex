@@ -1,0 +1,2 @@
+1417910e7142cab2c3700eb61b132a32297798a31b1c04562db20808ac52e4d9  artifacts/release/2.10.0/dist/palimnex-2.10.0-py3-none-any.whl
+cabca29ea688cdb602b1823442b8dac6837f589ad2abbe8de93292b1cb9a5bc6  artifacts/release/2.10.0/dist/palimnex-2.10.0.tar.gz

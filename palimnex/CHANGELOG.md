@@ -3,8 +3,19 @@
 All notable portable-bundle changes are recorded here. Bundle versions describe executable and
 operator-facing behavior; cache and graph schemas are versioned independently.
 
-## Unreleased
+## 2.10.0 - 2026-11-08
 
+Palimnex 2.10.0 adds the reviewed ontology-adoption surfaces: the concept
+registry, coverage receipts and `explain-search`, ontology shadow evaluation,
+opt-in ontology influence that remains off by default, the held local semantic
+shadow experiment, and reviewed retrieval feedback records. These changes are
+additive and off by default; API v1, ledger schema v1, existing event kinds and
+production retrieval defaults are unchanged. Reindex the disposable cache
+after upgrading.
+
+- Removed `retention-migrate --no-snapshot`, as announced in 2.9.0. The CLI
+  always takes the verified pre-migration snapshot; SDK API v1 retains the
+  deprecated `migrate_retention(snapshot=False)` path.
 - Added `palimnex.concepts`, the reviewed concept-registry foundation
   (ontology adoption Phase 1, `docs/ONTOLOGY_ADOPTION.md`). It is a
   standard-library loader and validator for `palimnex:concept-registry:v1`
@@ -90,6 +101,19 @@ operator-facing behavior; cache and graph schemas are versioned independently.
   `context`, `explain-search`, `search` and `palimnex evaluate` never read it.
   The ledger schema and event kinds are unchanged. See
   `docs/RETRIEVAL_FEEDBACK.md`.
+- Added the first reviewed concept registry for this repository,
+  `ontology/concept-registry.v1.json`: 16 source-bound concepts with
+  conservative multi-word aliases, from source admission and locators through
+  retrieval fusion, the durable ledger, retention, migrations, packs, the audit
+  graph and the ontology, semantic and feedback surfaces. It was drafted from
+  source code without access to the evaluation questions, independently
+  reviewed concept by concept, and frozen before any evaluation used it. It
+  powers `explain-search` coverage receipts by default. Promotion evidence
+  over the local and cache backends is `promotable` (no case or critical
+  regression on any suite), but
+  ontology influence stays off: enabling it remains the owner's
+  `.palimnex.json` decision. The registry binds this checkout only; other
+  projects need their own.
 
 ## 2.9.0 - 2026-10-02
 

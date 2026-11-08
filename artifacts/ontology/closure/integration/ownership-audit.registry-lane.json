@@ -1,0 +1,91 @@
+{
+  "authorizes_actions": false,
+  "changed_by_lane": {
+    "ontology-closure-integration": [
+      "artifacts/ontology/closure/integration/grok-review-registry-prompt.md",
+      "artifacts/ontology/closure/integration/ownership-audit.registry-lane.json"
+    ],
+    "ontology-closure-registry": [
+      "artifacts/ontology/closure/candidate/NOTES.md",
+      "artifacts/ontology/closure/candidate/check_candidate.py",
+      "artifacts/ontology/closure/candidate/concept-registry.candidate.json",
+      "artifacts/ontology/closure/receipts/ontology-closure-registry.implementation-receipt.json"
+    ]
+  },
+  "schema": "palimnex:ontology-ownership-audit:v1",
+  "status": "violation",
+  "violations": [
+    {
+      "change": "modified",
+      "path": "README.md"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/briefs/NO_SNAPSHOT_REMOVAL_BRIEF.md"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/briefs/RELEASE_PREP_BRIEF.md"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/evidence/release-prep-summary.md"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/logs/release-2.10.0-prep.last-message.md"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/logs/release-2.10.0-prep.log"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/prompts/release-2.10.0-prep.md"
+    },
+    {
+      "change": "modified",
+      "path": "docs/AGENT_INIT_PROMPT.md"
+    },
+    {
+      "change": "modified",
+      "path": "docs/COMPATIBILITY.md"
+    },
+    {
+      "change": "modified",
+      "path": "docs/DESIGN.md"
+    },
+    {
+      "change": "modified",
+      "path": "docs/INSTALL.md"
+    },
+    {
+      "change": "modified",
+      "path": "docs/RUNBOOK.md"
+    },
+    {
+      "change": "modified",
+      "path": "docs/UPGRADING.md"
+    },
+    {
+      "change": "modified",
+      "path": "docs/V26.md"
+    },
+    {
+      "change": "modified",
+      "path": "docs/index.html"
+    },
+    {
+      "change": "modified",
+      "path": "palimnex/CHANGELOG.md"
+    },
+    {
+      "change": "modified",
+      "path": "palimnex/README.md"
+    },
+    {
+      "change": "modified",
+      "path": "palimnex/core.py"
+    }
+  ]
+}

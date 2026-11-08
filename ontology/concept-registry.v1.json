@@ -1,0 +1,778 @@
+{
+  "authority": "historical_only",
+  "authorizes_actions": false,
+  "concepts": [
+    {
+      "aliases": [
+        "repository privacy scan",
+        "credential shaped content scan",
+        "admitted source snapshot",
+        "bounded repository file read"
+      ],
+      "canonical_name": "Source admission and privacy scanning",
+      "concept_id": "concept.source_admission",
+      "definition": "Palimnex opens repository files through a bounded, symlink-refusing reader and scans the exact admitted bytes for credential-shaped content. Source snapshots reject unsafe content before indexing or other derivation.",
+      "provenance": {
+        "origin": "model_candidate"
+      },
+      "source_bindings": [
+        {
+          "digest": "d2bd081eba9686b92aa26ea312d2702793cfb125bdd8477bc21a2f3d537166a3",
+          "range": {
+            "end": 256,
+            "start": 242,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/security.py",
+          "version": "66c0bef875d145d7230f0376d971047d4ff2ef20a1b5ce566f9546b515fd0f8d"
+        },
+        {
+          "digest": "3d54b06b5381d403666b06194df615025466296cedb65dde337f2ef9af0c118e",
+          "range": {
+            "end": 333,
+            "start": 282,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/security.py",
+          "version": "66c0bef875d145d7230f0376d971047d4ff2ef20a1b5ce566f9546b515fd0f8d"
+        },
+        {
+          "digest": "ac6e7ad4ea5ac029ef75a6231982d7cb8a4e5ec3377911d145acf9abff908ab6",
+          "range": {
+            "end": 218,
+            "start": 190,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/cache_v3.py",
+          "version": "b2cb22d30dc0af078b71d8972d1b57ebdc832fc322800a2980a4c6c88dafefcf"
+        }
+      ],
+      "status": "approved"
+    },
+    {
+      "aliases": [
+        "versioned source locator",
+        "repository range locator",
+        "locator version digest check",
+        "digest bound source range"
+      ],
+      "canonical_name": "Structured source locators",
+      "concept_id": "concept.source_locator",
+      "definition": "A structured locator identifies a versioned source object, a bounded line or byte range, and the digest of the selected bytes. Repository resolution reopens the source and refuses version or digest drift.",
+      "provenance": {
+        "origin": "model_candidate"
+      },
+      "source_bindings": [
+        {
+          "digest": "4d7e6903e0373716541192be4a0590176a3bf113bab510c88870196398447c44",
+          "range": {
+            "end": 78,
+            "start": 36,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/locators.py",
+          "version": "60b06eef5eb2bd58247ba6d8e7df5c1bc7399101ccf6ca425af0ba04a7277547"
+        },
+        {
+          "digest": "3ec146658e2788cf30e6476f2258c93ea0ca845201d6943f1d46c98812fb413e",
+          "range": {
+            "end": 121,
+            "start": 109,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/locators.py",
+          "version": "60b06eef5eb2bd58247ba6d8e7df5c1bc7399101ccf6ca425af0ba04a7277547"
+        },
+        {
+          "digest": "6de887d8b84d064f3dbfd8d91911f03ffd3866690972236c04e5533e2f5e16a7",
+          "range": {
+            "end": 139,
+            "start": 124,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/locators.py",
+          "version": "60b06eef5eb2bd58247ba6d8e7df5c1bc7399101ccf6ca425af0ba04a7277547"
+        }
+      ],
+      "status": "approved"
+    },
+    {
+      "aliases": [
+        "reciprocal rank fusion",
+        "lexical symbol graph fusion",
+        "baseline channel score fusion"
+      ],
+      "canonical_name": "Retrieval-channel fusion",
+      "concept_id": "concept.retrieval_fusion",
+      "definition": "Palimnex independently ranks lexical, symbol, and structural-graph candidates, then combines their positions with deterministic reciprocal-rank fusion. The fused result remains byte-budgeted and source-backed.",
+      "provenance": {
+        "origin": "model_candidate"
+      },
+      "source_bindings": [
+        {
+          "digest": "f323f9db02ca34e419e4d5cfd92a67f02850dea7668f801ea98e8a035d4b0ec7",
+          "range": {
+            "end": 171,
+            "start": 64,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/retrieval.py",
+          "version": "04bd1a54bbc4bec6bc7511cb4afe65ae4dea83e257f71b0dc2116f3a72a912b5"
+        },
+        {
+          "digest": "3b036afa96981b6a1c1840d6691cf3e0da7b54085383830b32462ff27d810a85",
+          "range": {
+            "end": 188,
+            "start": 174,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/retrieval.py",
+          "version": "04bd1a54bbc4bec6bc7511cb4afe65ae4dea83e257f71b0dc2116f3a72a912b5"
+        },
+        {
+          "digest": "d7a9804244a6bdd717b8b8741950911b3a0a311554898d30709b9f204ce73c26",
+          "range": {
+            "end": 278,
+            "start": 263,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/retrieval.py",
+          "version": "04bd1a54bbc4bec6bc7511cb4afe65ae4dea83e257f71b0dc2116f3a72a912b5"
+        }
+      ],
+      "status": "approved"
+    },
+    {
+      "aliases": [
+        "context byte budget",
+        "source history context assembly",
+        "interleaved context items"
+      ],
+      "canonical_name": "Context assembly and byte budgets",
+      "concept_id": "concept.context_assembly",
+      "definition": "Context assembly interleaves current source results with eligible historical events and applies a conservative serialized UTF-8 byte budget. It reports omissions and truncation without granting operational authority.",
+      "provenance": {
+        "origin": "model_candidate"
+      },
+      "source_bindings": [
+        {
+          "digest": "48ffefde9e935ccbafe5922dfd8c1b39f39cf5d7fde7076d9cd0d7b8ab0bf739",
+          "range": {
+            "end": 61,
+            "start": 50,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/retrieval.py",
+          "version": "04bd1a54bbc4bec6bc7511cb4afe65ae4dea83e257f71b0dc2116f3a72a912b5"
+        },
+        {
+          "digest": "1026528902f81086419f6211e85d8ad6da2fedad9e5462719bd17e40161db9bd",
+          "range": {
+            "end": 247,
+            "start": 202,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/experience.py",
+          "version": "cf390eb24ee84c9c2e398de378b86a3c0ca2571b4a0a52e5aacd31d44bb4bc43"
+        }
+      ],
+      "status": "approved"
+    },
+    {
+      "aliases": [
+        "immutable cache generation",
+        "reader generation lease",
+        "active generation swap",
+        "leased generation garbage collection"
+      ],
+      "canonical_name": "Cache generations and reader leases",
+      "concept_id": "concept.cache_generation",
+      "definition": "Cache readers lease one immutable active generation while indexers atomically activate a completed replacement. Garbage collection retains recent, grace-period, and actively leased generations before removing unreferenced data.",
+      "provenance": {
+        "origin": "model_candidate"
+      },
+      "source_bindings": [
+        {
+          "digest": "3b8444ca1c0789f4aa835e80e844a2330d165f9f67e78512dbc30721f67ab058",
+          "range": {
+            "end": 686,
+            "start": 638,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/cache_v3.py",
+          "version": "b2cb22d30dc0af078b71d8972d1b57ebdc832fc322800a2980a4c6c88dafefcf"
+        },
+        {
+          "digest": "e831186dbbebe52ad487177bb733bd814f18f63e2c318ad11c31dcb44e497808",
+          "range": {
+            "end": 741,
+            "start": 731,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/cache_v3.py",
+          "version": "b2cb22d30dc0af078b71d8972d1b57ebdc832fc322800a2980a4c6c88dafefcf"
+        },
+        {
+          "digest": "e3b23fb5776933e7730c7af6fb10d0c3cbfed7af5e89751ebcbc81b6e481c6f1",
+          "range": {
+            "end": 1388,
+            "start": 1311,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/cache_v3.py",
+          "version": "b2cb22d30dc0af078b71d8972d1b57ebdc832fc322800a2980a4c6c88dafefcf"
+        }
+      ],
+      "status": "approved"
+    },
+    {
+      "aliases": [
+        "durable memory history",
+        "sqlite historical event ledger",
+        "source verified event recall",
+        "hash bound ledger events"
+      ],
+      "canonical_name": "Durable historical ledger",
+      "concept_id": "concept.durable_ledger",
+      "definition": "The durable SQLite ledger records hash-bound sessions, events, evidence, and temporal relationships as historical-only memory. Its guarded transactions validate structure and semantics, while recall filters and source verification keep returned history bounded.",
+      "provenance": {
+        "origin": "model_candidate"
+      },
+      "source_bindings": [
+        {
+          "digest": "26403fb591300aaef7b7e4052192ae9538ab471002df01d919a787a97a8e00d1",
+          "range": {
+            "end": 846,
+            "start": 816,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/durable.py",
+          "version": "529409afd81a87eeda774b3d9372418d256917d4d95b591e9c28822a12d64818"
+        },
+        {
+          "digest": "3444dc1f8e1ef54e5b6088f5791551a25ffadd14bb5d292203ed807dc23baae2",
+          "range": {
+            "end": 1505,
+            "start": 1465,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/durable.py",
+          "version": "529409afd81a87eeda774b3d9372418d256917d4d95b591e9c28822a12d64818"
+        },
+        {
+          "digest": "7613b109835dff4e12afae375cc8c105972f7bf577578041c3e26cf0a5f81e4c",
+          "range": {
+            "end": 2245,
+            "start": 2112,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/durable.py",
+          "version": "529409afd81a87eeda774b3d9372418d256917d4d95b591e9c28822a12d64818"
+        }
+      ],
+      "status": "approved"
+    },
+    {
+      "aliases": [
+        "retention cleanup eligibility",
+        "preservation hold exclusion",
+        "durable erasure authorization",
+        "temporal dependency closure"
+      ],
+      "canonical_name": "Retention eligibility and exclusions",
+      "concept_id": "concept.retention_eligibility",
+      "definition": "Retention planning evaluates policy expiry, active sessions, holds, pins, sealed packs, explicit authorizations, and dependency closure before proposing cleanup. Ineligible or blocked records are reported as exclusions rather than silently erased.",
+      "provenance": {
+        "origin": "model_candidate"
+      },
+      "source_bindings": [
+        {
+          "digest": "5fa2afb54f1f31b86bfe5fe4f09ad8e044f0f0ebd08a8ce29b0ac23ba1626616",
+          "range": {
+            "end": 86,
+            "start": 63,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/retention.py",
+          "version": "a79c1c3381e5954a0559d5fc199a7c5e563846e3af79c1ab8677e011001c40e9"
+        },
+        {
+          "digest": "5b36bffab1cfd4f21ed8ab4abd12decc79419ba4a58702f9dba217c334ed4681",
+          "range": {
+            "end": 313,
+            "start": 284,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/retention.py",
+          "version": "a79c1c3381e5954a0559d5fc199a7c5e563846e3af79c1ab8677e011001c40e9"
+        },
+        {
+          "digest": "1c84db450724dfe7b7cb54c1eacc6e0a2580566a1ab81bb496962f9deef61208",
+          "range": {
+            "end": 455,
+            "start": 349,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/retention.py",
+          "version": "a79c1c3381e5954a0559d5fc199a7c5e563846e3af79c1ab8677e011001c40e9"
+        }
+      ],
+      "status": "approved"
+    },
+    {
+      "aliases": [
+        "ledger schema migration registry",
+        "adjacent schema migration",
+        "migration step resolution"
+      ],
+      "canonical_name": "Ledger migration registry",
+      "concept_id": "concept.ledger_migration",
+      "definition": "The migration registry defines validated adjacent ledger-schema transitions with exact readers, effects, apply callbacks, and audit callbacks. Step resolution rejects gaps, cycles, unknown schemas, backward moves, and skipped transitions.",
+      "provenance": {
+        "origin": "model_candidate"
+      },
+      "source_bindings": [
+        {
+          "digest": "ce0a8ebb44f4dff15a28dd53f37a42ec1502e5ff73978c67293f3ce274385ae6",
+          "range": {
+            "end": 85,
+            "start": 66,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/migrations.py",
+          "version": "9440b830347365664b730d206bfc3b91fc7f1ff4f215b1160c64f348a91dbc9d"
+        },
+        {
+          "digest": "c6e52c16f6de32d14ff66cee275731db0340ae1e4c3591dd08f4d3e8e754aed6",
+          "range": {
+            "end": 136,
+            "start": 98,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/migrations.py",
+          "version": "9440b830347365664b730d206bfc3b91fc7f1ff4f215b1160c64f348a91dbc9d"
+        },
+        {
+          "digest": "a3f000bd6fd81c7ce9677d6d3fb6587fe82f2bae749f254bfdb0aa9dc1cada8d",
+          "range": {
+            "end": 198,
+            "start": 172,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/migrations.py",
+          "version": "9440b830347365664b730d206bfc3b91fc7f1ff4f215b1160c64f348a91dbc9d"
+        }
+      ],
+      "status": "approved"
+    },
+    {
+      "aliases": [
+        "encrypted memory export",
+        "authenticated portable history",
+        "quarantined pack import",
+        "portable ledger archive"
+      ],
+      "canonical_name": "Portable memory packs",
+      "concept_id": "concept.memory_pack",
+      "definition": "Portable packs export bounded durable history as an authenticated encrypted artifact after privacy and selection checks. Imports validate and reconstruct untrusted history in quarantine before any explicitly requested replacement.",
+      "provenance": {
+        "origin": "model_candidate"
+      },
+      "source_bindings": [
+        {
+          "digest": "7b3f600ebb3b04b7fe360bf8a808fcf5b593fa86171d65bffe85a3475042156f",
+          "range": {
+            "end": 580,
+            "start": 518,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/portable.py",
+          "version": "13ad5433836a0437a3e7c2254c5b87ad37a3dd984942f873bdf96d926af12da6"
+        },
+        {
+          "digest": "153c886bf36c84fc2d9c500770a92d106144f5df9f35f03ba8c8577a96c58f1a",
+          "range": {
+            "end": 675,
+            "start": 583,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/portable.py",
+          "version": "13ad5433836a0437a3e7c2254c5b87ad37a3dd984942f873bdf96d926af12da6"
+        },
+        {
+          "digest": "bb1e200120cd683572e905700bec1f5acbd3ee690459dbd9923974a1246e0216",
+          "range": {
+            "end": 993,
+            "start": 900,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/portable.py",
+          "version": "13ad5433836a0437a3e7c2254c5b87ad37a3dd984942f873bdf96d926af12da6"
+        }
+      ],
+      "status": "approved"
+    },
+    {
+      "aliases": [
+        "historical audit projection",
+        "audit node edge projection",
+        "forgotten event tombstones",
+        "private audit graph export"
+      ],
+      "canonical_name": "Audit graph and projections",
+      "concept_id": "concept.audit_graph",
+      "definition": "The audit graph projects eligible ledger sessions, events, evidence, relations, and retention actions into bounded deterministic nodes and edges. It omits secret material and represents forgotten records only through non-reconstructive tombstones and commitments.",
+      "provenance": {
+        "origin": "model_candidate"
+      },
+      "source_bindings": [
+        {
+          "digest": "833e55775626c0a9f0105ab587140b116e4fd17a7a37066f9fe110022bd50a13",
+          "range": {
+            "end": 340,
+            "start": 66,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/audit.py",
+          "version": "79cc42af522bd01011b0c1f8c412cccb4cadee05d93e7b1470af1c754ab41a3c"
+        },
+        {
+          "digest": "53a790cbb2c5347c469a2b7201c145cc495a74434cd782584781c5936ae1b2b8",
+          "range": {
+            "end": 374,
+            "start": 343,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/audit.py",
+          "version": "79cc42af522bd01011b0c1f8c412cccb4cadee05d93e7b1470af1c754ab41a3c"
+        }
+      ],
+      "status": "approved"
+    },
+    {
+      "aliases": [
+        "source bound concept validation",
+        "normalized alias matching",
+        "candidate approved registry parser",
+        "concept source drift check"
+      ],
+      "canonical_name": "Concept-registry validation",
+      "concept_id": "concept.concept_registry",
+      "definition": "Concept registries are parsed with exact fields, normalized matching keys, lifecycle checks, project binding, privacy admission, and a canonical digest. Approved bindings can then be reopened and classified as verified or stale.",
+      "provenance": {
+        "origin": "model_candidate"
+      },
+      "source_bindings": [
+        {
+          "digest": "8ec4d332dc1332bb052c41567aa7a0b7bf1507287557e6103eb5c8efbaf674b5",
+          "range": {
+            "end": 657,
+            "start": 570,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/concepts.py",
+          "version": "5b831dcfe5912d2b7600c071cb5af155f7963325bb7ca419d9babeaaa4af8c89"
+        },
+        {
+          "digest": "40ca94bdb70d5cfb54efee3273e4788138484ef9d9138251792ade7304e6d088",
+          "range": {
+            "end": 731,
+            "start": 696,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/concepts.py",
+          "version": "5b831dcfe5912d2b7600c071cb5af155f7963325bb7ca419d9babeaaa4af8c89"
+        },
+        {
+          "digest": "762e015eddcb260edd5e942969da8e1e123acdf5d23024349031e7ef6cc06561",
+          "range": {
+            "end": 841,
+            "start": 802,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/concepts.py",
+          "version": "5b831dcfe5912d2b7600c071cb5af155f7963325bb7ca419d9babeaaa4af8c89"
+        }
+      ],
+      "status": "approved"
+    },
+    {
+      "aliases": [
+        "retrieval coverage receipt",
+        "concept answerability status",
+        "coverage receipt classification sets",
+        "stale binding diagnosis"
+      ],
+      "canonical_name": "Coverage and answerability receipts",
+      "concept_id": "concept.coverage_receipt",
+      "definition": "Coverage receipts compare exact concept matches with current source bindings and separately report covered, uncovered, ambiguous, and stale concepts. Answerability, retrieval truncation, and byte-budget omission remain distinct, deterministic states.",
+      "provenance": {
+        "origin": "model_candidate"
+      },
+      "source_bindings": [
+        {
+          "digest": "0e91dbdf186474ce1f4bf62782dbbe8d88651dfb591da62a10f47d816dcb5f19",
+          "range": {
+            "end": 567,
+            "start": 352,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/coverage.py",
+          "version": "dadae19ccc7dbdaaa5142b02a60d91b7ca18088728a4c54568aff9a558a32eb8"
+        },
+        {
+          "digest": "2815a2ff21e17b13a71e5548e7503d9caab959b72ce437fd242705b5a57f2a58",
+          "range": {
+            "end": 946,
+            "start": 884,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/coverage.py",
+          "version": "dadae19ccc7dbdaaa5142b02a60d91b7ca18088728a4c54568aff9a558a32eb8"
+        }
+      ],
+      "status": "approved"
+    },
+    {
+      "aliases": [
+        "ontology channel comparison",
+        "non influencing ontology rank",
+        "source binding chunk overlap",
+        "ontology pointer rank changes"
+      ],
+      "canonical_name": "Ontology shadow ranking",
+      "concept_id": "concept.ontology_shadow",
+      "definition": "The ontology shadow channel matches approved concepts, verifies bindings, and ranks chunks that overlap current repository ranges. Its bounded comparison exposes rank differences while explicitly leaving the returned baseline ranking unchanged.",
+      "provenance": {
+        "origin": "model_candidate"
+      },
+      "source_bindings": [
+        {
+          "digest": "fafef3e949de50d3320baacfd9a0ce3ea20a9c6742cbedd10d6027b85036e44e",
+          "range": {
+            "end": 233,
+            "start": 141,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/ontology_shadow.py",
+          "version": "d7f372a71e3752d7760ec035a9f534e8c33515bab3eb7ab1bc1387490fa786c7"
+        },
+        {
+          "digest": "ecf58a448d1dbe2ddb524524779d451268048cf5e6abb8068e58beadd182f7e9",
+          "range": {
+            "end": 458,
+            "start": 311,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/ontology_shadow.py",
+          "version": "d7f372a71e3752d7760ec035a9f534e8c33515bab3eb7ab1bc1387490fa786c7"
+        },
+        {
+          "digest": "701a5ce846381bcb135de1d9eaadc9b13d0a95bc9905be891f3100a500b83c6e",
+          "range": {
+            "end": 610,
+            "start": 472,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/ontology_shadow.py",
+          "version": "d7f372a71e3752d7760ec035a9f534e8c33515bab3eb7ab1bc1387490fa786c7"
+        }
+      ],
+      "status": "approved"
+    },
+    {
+      "aliases": [
+        "ontology influence activation",
+        "promotion evidence gate",
+        "registry digest activation",
+        "ordered influence activation checks"
+      ],
+      "canonical_name": "Ontology activation gate",
+      "concept_id": "concept.ontology_activation",
+      "definition": "Ontology influence activates only when enabled configuration, an unambiguous current approved registry, matching promotion evidence, and the bound implementation digest all validate. Promotion evaluation produces evidence only and never authorizes activation by itself.",
+      "provenance": {
+        "origin": "model_candidate"
+      },
+      "source_bindings": [
+        {
+          "digest": "d5d084424c81560c5e0bd43b38e7149e2b1ec34496a0f750286eaa7c72db511c",
+          "range": {
+            "end": 233,
+            "start": 225,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/ontology_influence.py",
+          "version": "5fcf3bc1a8d4b9d225a3a54728896718c16b6bbf6918b3acec41690463836f58"
+        },
+        {
+          "digest": "94a02098c7a577dfcd1b65904ba6079189f9669604cb64f1beff1b6e5a4196d7",
+          "range": {
+            "end": 578,
+            "start": 489,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/ontology_influence.py",
+          "version": "5fcf3bc1a8d4b9d225a3a54728896718c16b6bbf6918b3acec41690463836f58"
+        },
+        {
+          "digest": "6fa678f2c383879e9d137ab15097d17e3c742fa26e3b3bfeec211e4ff97ed0cd",
+          "range": {
+            "end": 602,
+            "start": 500,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/ontology_promotion.py",
+          "version": "d62b805476517c82ca62919b0e924364165e0f6b08618dcaa6f8bb9abdea7f9d"
+        }
+      ],
+      "status": "approved"
+    },
+    {
+      "aliases": [
+        "semantic channel comparison",
+        "in process embedding shadow",
+        "provider identity bound evaluation",
+        "semantic promotion gates"
+      ],
+      "canonical_name": "Semantic shadow evaluation",
+      "concept_id": "concept.semantic_shadow",
+      "definition": "The semantic shadow uses a bounded in-process embedding provider to rank already admitted chunks and compare them with the unchanged baseline. Evaluation binds provider identity and checks regression, privacy, drift, determinism, gain, and latency gates without granting promotion authority.",
+      "provenance": {
+        "origin": "model_candidate"
+      },
+      "source_bindings": [
+        {
+          "digest": "4107ad671d1b7f43e771909b7d4ffc8fde6b364cd095b8c0dc5a7fdd214b9144",
+          "range": {
+            "end": 249,
+            "start": 188,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/semantic_local.py",
+          "version": "7975e88a71668ac7213f73f7a4282de4aec4ded69f637f1bbb4e3c28f2624853"
+        },
+        {
+          "digest": "be1c66c04b946fc5546360fd3ec682a7a86b3a3a2cf983df1f0001695ce043e9",
+          "range": {
+            "end": 392,
+            "start": 309,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/semantic_shadow.py",
+          "version": "de2bcc6ffc80e317c912b2eed25025848bf0a8ea3c974cc37578a6dc1e16f3af"
+        },
+        {
+          "digest": "cec085858694765a8e168c108e3bd7836a79507d99fbf0bca07e01d7d8cd211b",
+          "range": {
+            "end": 935,
+            "start": 727,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/semantic_eval.py",
+          "version": "95fe438d73376dff829947f8617054794c1a55d26f6364eb019cddbce2218296"
+        }
+      ],
+      "status": "approved"
+    },
+    {
+      "aliases": [
+        "reviewed retrieval judgement",
+        "source bound retrieval feedback",
+        "feedback correction withdrawal",
+        "retrieval feedback report"
+      ],
+      "canonical_name": "Reviewed retrieval feedback",
+      "concept_id": "concept.retrieval_feedback",
+      "definition": "Reviewed retrieval feedback records a manual judgement bound to a current source range and stores it as non-influencing historical ledger evidence. Corrections and withdrawals preserve history, while reports distinguish current, stale, superseded, withdrawn, and invalid records.",
+      "provenance": {
+        "origin": "model_candidate"
+      },
+      "source_bindings": [
+        {
+          "digest": "ca5f7da1983d4f3b262a18ddf6152f2135ae558798e73394e05c8d4b7fc0c72f",
+          "range": {
+            "end": 270,
+            "start": 203,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/feedback.py",
+          "version": "ef47aecf6ce18c0de035b49b67fd0e03c310f38c1c568d797e16a968e9389a70"
+        },
+        {
+          "digest": "efb259c322b2dc472b3de0446ca726cba9ad2f07f9acbb71165c42586c3bcbf9",
+          "range": {
+            "end": 457,
+            "start": 435,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/feedback.py",
+          "version": "ef47aecf6ce18c0de035b49b67fd0e03c310f38c1c568d797e16a968e9389a70"
+        },
+        {
+          "digest": "4cb5d5730500bcce381b17ad6d7c299b9da595d2230f4997897f96b392e20d4c",
+          "range": {
+            "end": 734,
+            "start": 629,
+            "unit": "lines"
+          },
+          "scheme": "repo",
+          "source_id": "palimnex/feedback.py",
+          "version": "ef47aecf6ce18c0de035b49b67fd0e03c310f38c1c568d797e16a968e9389a70"
+        }
+      ],
+      "status": "approved"
+    }
+  ],
+  "project": {
+    "project_id": "7d96bcda-e4bc-4aa4-be3e-24f761bacbd8",
+    "project_slug": "palimnex"
+  },
+  "registry_digest": "c19cc2de60b4c5a4d6b2e27f391df6bdf5f7d2351ca7d31c2c9dd0a00ca9df92",
+  "registry_kind": "approved_registry",
+  "registry_version": 1,
+  "schema": "palimnex:concept-registry:v1"
+}

@@ -43,6 +43,18 @@ registry's digest and to promotion evidence produced by
 `palimnex evaluate-ontology-promotion`. See `docs/COVERAGE_RECEIPT.md` and
 `docs/ONTOLOGY_INFLUENCE.md`.
 
+Palimnex 2.10.0 ships its own approved registry: 16 concepts drafted from the
+source as a `candidate_set` (provenance `model_candidate`), independently
+reviewed and frozen. The reviewed candidate, its rationale and checker are in
+`artifacts/ontology/closure/candidate/`, and the freeze record is
+`artifacts/ontology/closure/integration/registry-freeze.json`. Each source
+binding records the whole file's version, so any edit to a bound file makes
+that concept stale until the binding is re-pinned: `explain-search` then
+reports it as stale, and influence activation refuses. Re-pinning changes only
+`version`, `digest` and, if a symbol moved, its line range, never concepts or
+aliases, and is a reviewed change like any other. A registry binds one
+checkout; other repositories need their own.
+
 ## Stable concepts and lifecycle
 
 `concept_id` is a stable lowercase identifier of 3-128 code points. It begins

@@ -561,12 +561,12 @@ class LegacyAliasTests(EngineFixture):
             self.assertEqual(receipt["logical_digest"], self.digest)
             self.assertEqual(os.stat(receipt["path"]).st_mode & 0o777, 0o600)
 
-    def test_sdk_keeps_its_default_and_warns(self) -> None:
+    def test_sdk_keeps_snapshot_false_and_warns(self) -> None:
         from palimnex.api import Palimnex
         twin = self.twin()
         client = Palimnex(self.root, writable=True)
-        with self.assertWarns(DeprecationWarning):
-            result = client.migrate_retention(expected_digest=self.digest)
+        with self.assertWarnsRegex(DeprecationWarning, "without snapshot=True is deprecated"):
+            result = client.migrate_retention(expected_digest=self.digest, snapshot=False)
         self.assertNotIn("pre_migration_snapshot", result)
         self.assertEqual(snapshots(self.ledger), [])
         import warnings
@@ -598,15 +598,14 @@ class ApplyCommandTests(EngineFixture):
         self.assertEqual(code, 1)
         self.assertIn("backward migration", json.loads(errors)["error"])
 
-    def test_no_snapshot_alias_is_deprecated(self) -> None:
+    def test_no_snapshot_option_is_rejected(self) -> None:
         code, output, errors = self.run_cli("retention-migrate", "--expected-digest", self.digest,
                                             "--no-snapshot")
-        self.assertEqual(code, 0, errors)
-        self.assertIn("deprecated", errors)
-        result = json.loads(output)
-        self.assertEqual(result["deprecations"], [r.NO_SNAPSHOT_DEPRECATION])
-        self.assertNotIn("pre_migration_snapshot", result)
-        self.assert_migrated()
+        self.assertEqual(code, 2)
+        self.assertEqual(output, "")
+        self.assertIn("unrecognized arguments: --no-snapshot", errors)
+        self.assertEqual(self.ledger.status()["schema"], d.LEDGER_SCHEMA)
+        self.assertEqual(snapshots(self.ledger), [])
 
 
 CHILD = """

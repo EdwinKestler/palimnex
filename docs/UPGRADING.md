@@ -141,6 +141,39 @@ when the versions differ or cannot be read, and a warning when they match.
 | 2.7 → 2.8 | Audit graph, optional Semantica extra; version change invalidates the cache, so reindex | Unchanged schema v1; new retention-control kind `adapter_receipt` | Downgrade hazard below |
 | 2.8.0 → 2.8.1 | Documentation and release-workflow corrections; version change invalidates the cache, so reindex | Unchanged schema v1; pack v2 unchanged | No other migration required |
 | 2.8.1 → 2.9.0 | `ledger-migrate` framework; `retention-migrate` routed through it | Ledger schemas unchanged; new transient `<ledger>.migration-intent` during an unfinished migration | `--no-snapshot` and SDK `snapshot=False` deprecated; copied bundle deprecated; see below |
+| 2.9.0 → 2.10.0 | Additive ontology-adoption surfaces; version change invalidates the cache, so reindex | Ledger schema v1 and event kinds unchanged; no migration | `retention-migrate --no-snapshot` removed; new influence is opt-in and off by default; feedback has a downgrade hazard below |
+
+### 2.9.0 → 2.10.0
+
+Rebuild the disposable cache after installing 2.10.0. Cache v3 validates the
+active manifest's `bundle_version` against the running `BUNDLE_VERSION`, so a
+manifest written by 2.9.x is rejected until `palimnex index --incremental`
+rebuilds it.
+
+`retention-migrate --no-snapshot` is removed in 2.10.0, as announced in 2.9.0.
+The CLI now always writes the verified pre-migration snapshot, and argparse
+rejects the removed option with exit status 2. SDK API v1 still accepts
+`migrate_retention(snapshot=False)` and emits `DeprecationWarning`; pass
+`snapshot=True` to retain the verified snapshot.
+
+The SQLite ledger remains schema v1 and the event-kind table is unchanged, so
+this release needs no ledger migration. The new surfaces are additive and do
+not activate themselves:
+
+- If `.palimnex.json` has no `ontology_influence` key, its mode is `off`.
+  `off` and `shadow` do not activate ontology retrieval influence.
+- The local semantic shadow runs only through its explicit evaluation command,
+  produces evidence with `retrieval_influence: false`, and cannot authorize
+  promotion.
+- Retrieval feedback is written only when the owner explicitly runs
+  `feedback-record`, `feedback-correct` or `feedback-withdraw`. Those records
+  reuse the existing `fact`, `correction` and `revocation` event kinds.
+
+Downgrading after feedback has been recorded needs care. A 2.9.x `context` or
+`capsule` may surface a current feedback fact because 2.9.x lacks the 2.10.0
+R16 filter in `palimnex.experience.current_eligible`. Version 2.9.x has no
+feedback commands with which to manage those records. Withdrawn feedback stays
+in ledger history under either version; downgrading does not delete it.
 
 ### 2.5 → 2.6: Palimnex naming
 
@@ -244,7 +277,7 @@ In 2.8.0 and later:
 - A real migration first writes a verified snapshot of the unmigrated
   ledger, named `*-pre-retention-v2.sqlite3` under `backups/` beside the
   ledger. It is taken under the exclusive lock and reported in the output.
-  `--no-snapshot` skips it.
+  In 2.8.x and 2.9.x, `--no-snapshot` skipped it; 2.10.0 removed that option.
 - The SDK takes the snapshot only with `migrate_retention(..., snapshot=True)`.
 - Later authorized erasure does not remove these snapshots.
 
@@ -272,10 +305,11 @@ palimnex ledger-migrate --apply --to project-memory:retention-ledger:v2 --expect
   itself. `--allow-unignored-ledger` is the explicit override.
 - `retention-migrate` and `Palimnex.migrate_retention` now run through the
   same engine and keep their output fields, with an added `migration` summary.
-- `retention-migrate --no-snapshot` is deprecated. It prints a warning, adds
-  a `deprecations` field, and is removed in 2.10.0. SDK `migrate_retention`
-  still defaults to `snapshot=False` under API v1, but warns with
-  `DeprecationWarning` unless you pass `snapshot=True`.
+- In 2.9.x, `retention-migrate --no-snapshot` was deprecated: it printed a
+  warning and added a `deprecations` field. 2.10.0 removed it, and the command
+  now exits `2` if it is passed. SDK `migrate_retention` still defaults to
+  `snapshot=False` under API v1, but warns with `DeprecationWarning` unless you
+  pass `snapshot=True`.
 
 The migration's effects are permanent:
 

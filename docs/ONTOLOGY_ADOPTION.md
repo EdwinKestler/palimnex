@@ -9,7 +9,20 @@ from shadow to ontology retrieval influence and Phase 4 (local semantic
 experiment) were approved on 2026-11-06; the influence exit gate was recorded
 (commit bbf4b8b) and Phase 4 was accepted as held at its exit gate on
 2026-11-07 (commits 0bee7f9, 56db9e5). Phase 5, limited to reviewed retrieval
-feedback records, was approved on 2026-11-07.**
+feedback records, was accepted at its exit gate on 2026-11-07 (commits 6865d40,
+79f5a54). On 2026-11-08 the owner approved drafting and review of the first
+approved concept registry and the actions needed to close the adoption and
+produce the 2.10.0 release candidate; ontology activation stays off. The first
+approved registry, `ontology/concept-registry.v1.json` (16 concepts), was
+drafted blind to the evaluation sets, independently reviewed and frozen on
+2026-11-08 (`artifacts/ontology/closure/integration/registry-freeze.json`); its
+promotion evidence is `promotable` on the local and cache backends
+(`artifacts/ontology/closure/integration/promotion-evidence.json`). With the
+owner's merge of the 2.10.0 release change, the adoption plan is complete:
+every phase has an exit gate or recorded result, influence is ready to enable
+and stays off, the semantic provider is held, and the feedback shadow
+evaluation, the offline graph explorer and a real local-model experiment remain
+future work that needs separate approval.**
 
 Source proposal: `artifacts/design/Ontologyadoptionplan.md` (SHA-256 `8fe38bef5f7f25fa8a7d58dad21b89f69c70f4a367d9981c01fdedf6bd165d86`), which stays
 unchanged. Approval evidence: Phase 0 `artifacts/ontology/phase-0/approval-evidence.json`
@@ -23,7 +36,9 @@ and exit gate `artifacts/ontology/phase-0/exit-gate.json`; Phase 1
 `artifacts/ontology/phase-3-promotion/approval-evidence.json`; Phase 4
 `artifacts/ontology/phase-4/approval-evidence.json` and exit gate
 `artifacts/ontology/phase-4/exit-gate.json`; Phase 5
-`artifacts/ontology/phase-5/approval-evidence.json`.
+`artifacts/ontology/phase-5/approval-evidence.json` and exit gate
+`artifacts/ontology/phase-5/exit-gate.json`; registry and closure
+`artifacts/ontology/closure/approval-evidence.json`.
 
 The influence-promotion approval authorizes an opt-in ontology retrieval
 influence for `retrieve_sources` and its direct consumers (`context`,
@@ -655,6 +670,9 @@ provider data. Those surfaces require their own documented controls.
 | Feedback storage | Existing ledger event kinds with a new versioned payload that is source-bound, review-attributed and non-authorizing. The owner records feedback in the real ledger; agents implement and test against temporary ledgers only (owner decision 2026-11-07) |
 | Feedback influence | None in Phase 5. A later round may add a feedback shadow channel with a frozen cohort, privacy, source-drift and regression gates and measured benefit; any opt-in influence then needs a separate approval and a new versioned behaviour contract (owner decision 2026-11-07) |
 | Graph exploration format | When built: one self-contained, read-only, network-free offline HTML file plus a deterministic JSON graph, generated explicitly into an output directory the owner chooses, excluded from indexing and commits by default (owner decision 2026-11-07) |
+| Approved registry v1 scope | 16 source-derived core concepts (source admission and privacy scanning; structured source locators; retrieval-channel fusion; context assembly and byte budgets; cache generations and reader leases; durable historical ledger; retention eligibility and exclusions; ledger migration registry; portable memory packs; audit graph and projections; concept-registry validation; coverage and answerability receipts; ontology shadow ranking; ontology activation gate; semantic shadow evaluation; reviewed retrieval feedback). Conservative multi-word aliases, no standalone generic words. Drafted blind to the Phase 3 evaluation set, which is used only after the candidate is frozen. Bound to the Palimnex checkout only (owner decision 2026-11-08) |
+| Registry approval path | A model-drafted candidate (`model_candidate` provenance) is independently reviewed, then committed as `ontology/concept-registry.v1.json` on a release branch; the owner's merge of that reviewed change is the approval. Promotion evidence may be produced and recorded; activation stays off for the release (owner decision 2026-11-08) |
+| Release candidate | Palimnex 2.10.0: additive and off by default (API v1, ledger schema v1, existing event kinds and production retrieval unchanged). A candidate is a wheel and sdist built from a pinned commit and tested (CI matrix, installed-wheel smoke, 2.9.0 to 2.10.0 rehearsal, isolated adoption snapshots of other repositories). Tag, GitHub release and PyPI publication need a separate approval (owner decision 2026-11-08) |
 
 ## Original open owner decisions (settled above)
 

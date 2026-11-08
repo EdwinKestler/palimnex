@@ -1,0 +1,91 @@
+{
+  "review": "palimnex-2.10.0-release-prep",
+  "round": 2,
+  "status": "accepted_with_limits",
+  "dispositions": [
+    {
+      "finding": "docs/INSTALL.md Line 9 states as fact that Palimnex 2.10.0 is published on PyPI, and the install examples pin pipx/uv/pip to palimnex[crypto]==2.10.0 and git+...@v2.10.0.",
+      "disposition": "ACCEPTED-BY-DECISION"
+    },
+    {
+      "finding": "README.md The install section tells operators to install the exact published release from PyPI as palimnex[crypto]==2.10.0, or the Git tag v2.10.0.",
+      "disposition": "ACCEPTED-BY-DECISION"
+    },
+    {
+      "finding": "docs/COMPATIBILITY.md The 2.10.0 paragraph never discloses the retention-migrate --no-snapshot removal.",
+      "disposition": "RESOLVED"
+    },
+    {
+      "finding": "docs/UPGRADING.md Later operator text still treats --no-snapshot as live (lines 280 and 308-311).",
+      "disposition": "RESOLVED"
+    },
+    {
+      "finding": "palimnex/retention.py unused NO_SNAPSHOT_DEPRECATION; live SDK warning in palimnex/api.py does not mention the CLI removal.",
+      "disposition": "RESOLVED"
+    },
+    {
+      "finding": "docs/COMPATIBILITY.md Version 2.10.0/Phase 1 sentence claims nothing loads a registry unless a caller passes its path.",
+      "disposition": "RESOLVED"
+    },
+    {
+      "finding": "palimnex/CHANGELOG.md Section 2.10.0 preserves Unreleased bullets, adds --no-snapshot removal, and keeps the coordinator placeholder.",
+      "disposition": "RESOLVED"
+    },
+    {
+      "finding": "docs/BUNDLE_MODE.md Unchanged; remaining 2.9.0 mentions are the implementation/deprecation timeline.",
+      "disposition": "RESOLVED"
+    },
+    {
+      "finding": "artifacts/release/2.10.0/evidence/release-prep-summary.md still says the CLI exposes --no-snapshot.",
+      "disposition": "NOT RESOLVED"
+    }
+  ],
+  "findings": [
+    {
+      "severity": "NOTE",
+      "file": "artifacts/release/2.10.0/evidence/R17-release-docs-sequencing.md",
+      "finding": "R17 is sound: git show v2.9.0:docs/INSTALL.md and git show v2.9.0:README.md already used present-tense PyPI publication plus ==2.9.0 and @v2.9.0 pins, so the tagged commit must carry the final install text. After tag v2.10.0 and PyPI publication, current INSTALL.md/README.md pins (palimnex[crypto]==2.10.0, git+https://github.com/EdwinKestler/palimnex@v2.10.0; origin matches) are true; no remaining false-after-publication install claim. The decision still asks for owner confirmation. This workspace is branch main with uncommitted files, not release/2.10.0. Landing these docs on the default branch without simultaneous tag and PyPI publication would revive the round-1 BLOCKERs."
+    },
+    {
+      "severity": "NOTE",
+      "file": "palimnex/CHANGELOG.md",
+      "finding": "The 2.10.0 section still ends with the coordinator placeholder `- (coordinator) approved concept registry entry`. Product commits since v2.9.0 and the uncommitted --no-snapshot removal are otherwise covered."
+    },
+    {
+      "severity": "NOTE",
+      "file": "artifacts/release/2.10.0/evidence/release-prep-summary.md",
+      "finding": "Out-of-scope follow-up still says the CLI exposes retention-migrate --no-snapshot in palimnex/core.py. The working tree removes that option (argparse exit 2). Kept-occurrence line numbers for SDK.md and UPGRADING.md are also stale after the round-2 doc edits."
+    },
+    {
+      "severity": "NOTE",
+      "file": "docs/BUNDLE_MODE.md",
+      "finding": "Unchanged, as required: remaining 2.9.0 mentions are the implementation/deprecation timeline, not current-version or install pins."
+    }
+  ],
+  "commands": [
+    "git rev-parse HEAD  # 79f5a5490485122fc25e04220273b7d79b6092b4",
+    "git status --short; git tag -l 'v2.9*' 'v2.10*' '2.9*' '2.10*'  # only v2.9.0; branch main",
+    "git log v2.9.0..HEAD --oneline",
+    "git show v2.9.0:docs/INSTALL.md; git show v2.9.0:README.md  # present-tense PyPI + ==2.9.0 / @v2.9.0",
+    "git diff --stat HEAD -- <release files>; git diff --check HEAD -- <release files>  # 17 files, 126/80; check clean",
+    "git diff HEAD -- docs/COMPATIBILITY.md docs/UPGRADING.md palimnex/retention.py palimnex/core.py palimnex/tests/test_migrations.py README.md docs/INSTALL.md palimnex/CHANGELOG.md docs/SDK.md docs/MIGRATIONS.md docs/RETENTION.md docs/AGENT_INIT_PROMPT.md docs/DESIGN.md docs/RUNBOOK.md docs/V26.md docs/index.html palimnex/README.md",
+    "git diff --stat HEAD -- docs/BUNDLE_MODE.md palimnex/durable.py palimnex/experience.py  # empty",
+    "git show v2.9.0:palimnex/durable.py; git show v2.9.0:palimnex/experience.py  # EVENT_KINDS/LEDGER_SCHEMA match; v2.9.0 current_eligible has no R16 filter",
+    "git remote -v  # origin https://github.com/EdwinKestler/palimnex",
+    "./.venv/bin/python -m unittest palimnex.tests.test_migrations palimnex.tests.test_retention palimnex.tests.test_sdk  # 72 tests, OK, 13.139s",
+    "./.venv/bin/python -m mypy  # Success: no issues found in 22 source files",
+    "python3 palimnex.py --version  # 2.10.0",
+    "python3 palimnex.py retention-migrate --help  # no --no-snapshot",
+    "python3 -c parser.parse_args(['retention-migrate','--expected-digest','x','--no-snapshot'])  # SystemExit 2, unrecognized arguments: --no-snapshot"
+  ],
+  "limitations": [
+    "Read-only review: no repository writes, no Git writes, no network, no palimnex commands that write, no scripts/palimnex_check.sh or full suite.",
+    "Did not run palimnex status/index/validate or read .palimnex/; cache_consulted is false.",
+    "Did not read .env*, secrets/, or benchmark/. artifacts/ontology/closure/ was out of scope; grep for NO_SNAPSHOT_DEPRECATION hit paths there and those contents were not used as review evidence.",
+    "Working tree also has out-of-scope dirty docs/ONTOLOGY_ADOPTION.md (still names baseline 2.9.0) and untracked artifacts/ontology/** and artifacts/release/; those were not reviewed as product changes.",
+    "PyPI and GitHub release absence inferred from owner decision plus local tags (only v2.9.0); no network check.",
+    "python3 palimnex.py --help does not print 2.10.0; version was confirmed with --version.",
+    "R17's merge-with-tag-and-publish condition is a process control, not enforced in-repo in this workspace (uncommitted files on main)."
+  ],
+  "reviewer_modified_repository": false
+}

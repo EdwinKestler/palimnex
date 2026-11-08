@@ -1,0 +1,97 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "artifacts/ontology/closure/briefs/REGISTRY_BRIEF.md",
+    "artifacts/ontology/closure/candidate/NOTES.md",
+    "artifacts/ontology/closure/candidate/check_candidate.py",
+    "artifacts/ontology/closure/candidate/concept-registry.candidate.json",
+    "artifacts/ontology/closure/integration/bundle-validation.json",
+    "artifacts/ontology/closure/logs/ontology-closure-registry.fix-1.log",
+    "artifacts/ontology/closure/logs/ontology-closure-registry.fix-2.log",
+    "artifacts/ontology/closure/receipts/ontology-closure-registry.implementation-receipt.json",
+    "artifacts/ontology/closure/round-1/ontology-closure-registry.review-receipt.json",
+    "artifacts/ontology/closure/tasks/ontology-closure-registry.json",
+    "docs/ONTOLOGY_ADOPTION.md",
+    "palimnex/audit.py",
+    "palimnex/concepts.py",
+    "palimnex/coverage.py",
+    "palimnex/locators.py",
+    "palimnex/ontology_influence.py",
+    "palimnex/ontology_shadow.py",
+    "palimnex/retrieval.py",
+    "palimnex/retention.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f3dfab328018b3d55b7fe7b01b13b93f796176dc12c5117337d14379e740970f"
+  },
+  "task_digest": "17f37fc5dc70ef75e400df7effd73a79262893f4082451c18b6115f32a768dde",
+  "approval_evidence_digest": "c744e85563b738a11827357f98312e5c76d5b23fd1a0d49cc0b4a266c34a7f32",
+  "workstream_id": "ontology-closure-registry",
+  "evidence": [
+    "RESOLVED concept.retention_eligibility: all three palimnex/retention.py bindings are current on the working tree. Stored version a79c1c3381e5954a0559d5fc199a7c5e563846e3af79c1ab8677e011001c40e9 equals sha256sum and palimnex.locators.repository_locator. Ranges still exactly cover validate_policy 63-86, RetentionLedger.authorize_erasure 284-313, and RetentionLedger._propose 349-455 (AST end_lineno match). Selected-range digests remain 5fa2afb54f1f31b86bfe5fe4f09ad8e044f0f0ebd08a8ce29b0ac23ba1626616, 5b36bffab1cfd4f21ed8ab4abd12decc79419ba4a58702f9dba217c334ed4681, and 1c84db450724dfe7b7cb54c1eacc6e0a2580566a1ab81bb496962f9deef61208. check_candidate.py exits 0 with verified_binding_count 45.",
+    "RESOLVED concept.source_locator: alias 'source binding verification' is gone. Replacement 'locator version digest check' names resolve_locator's version and selected-range digest checks (palimnex/locators.py:124-139) and does not name concepts.verify_source_bindings.",
+    "RESOLVED concept.ontology_activation: alias 'enabled ontology channel' is gone. Replacement 'ordered influence activation checks' names activate_influence's fail-closed ordered gate (palimnex/ontology_influence.py:489-578, docstring 'every ordered check succeeds') rather than ontology_channel.",
+    "RESOLVED concept.ontology_shadow: alias 'shadow rank diff' is gone. Replacement 'ontology pointer rank changes' names build_shadow_comparison's pointer-only diff.rank_changes (palimnex/ontology_shadow.py:444-449, _changed_ranks).",
+    "RESOLVED concept.retrieval_fusion: alias 'retrieval channel ranking' is gone. Replacement 'baseline channel score fusion' names _fuse_rankings combining lexical/symbol/graph reciprocal-rank scores (palimnex/retrieval.py:174-188) rather than ontology_channel ranking.",
+    "RESOLVED concept.audit_graph: alias 'signed audit graph export' is gone. Replacement 'private audit graph export' names export_audit_graph's mandatory _write_new_private_file path; signer remains optional (palimnex/audit.py:343-374).",
+    "RESOLVED concept.concept_registry: original MINOR 'candidate registry parser' is gone. Replacement 'candidate approved registry parser' correctly names parse_registry accepting both candidate_set and approved_registry (palimnex/concepts.py:570-657, REGISTRY_KINDS).",
+    "RESOLVED concept.coverage_receipt: alias 'covered uncovered concepts' is gone. Replacement 'coverage receipt classification sets' names the receipt's disjoint covered_concepts, uncovered_concepts, ambiguous_concepts, and stale_concepts collections (palimnex/coverage.py:72-75, 352-567).",
+    "RESOLVED check_candidate.py: scan_text now runs over the full sort_keys serialized document; aliases that contain another concept's canonical matching key or alias as a substring are rejected. Independent /tmp copy showed zero scan findings, zero matching-key collisions, and zero substring hits.",
+    "MINOR concept.concept_registry: alias 'candidate approved registry parser' is accurate for both registry kinds but awkward (no 'and'/hyphen). A developer might read it as one compound kind rather than candidate_set and approved_registry. It does not describe another concept.",
+    "NOTE registry: schema palimnex:concept-registry:v1, registry_kind candidate_set, registry_version 1, authority historical_only, authorizes_actions false, 16 required concept ids in brief order, every provenance.origin model_candidate, project_slug/project_id equal .palimnex.json (palimnex / 7d96bcda-e4bc-4aa4-be3e-24f761bacbd8), canonical digest 475877f3c486959cf11fc778ff18ce83584a2a477758808a8287d3978ce435fd matches palimnex.concepts.canonical_registry_digest.",
+    "NOTE bindings: 45 repo locators, all current. Every bound range is the exact function or class named in NOTES.md (AST lineno/end_lineno), none are tests or docs, none are whole files. The 42 non-retention bindings are unchanged from round-1. Replacing only the three retention versions with ff7df852a49646f7648d02c98d5b71c55925a931ee32314da79e1ef35d491846 reproduces fix-1 digest 0bb4a6add1a4418373f99c69e8df4fb88b407a7e7e18f100204fd8f85b98c8ce. Reverting the seven aliases and the original retention version 9ff7c7af7df05014c8f3a773d594c593e28cb96861f99afc2ce8ee4a9f10b5cf reproduces round-1 digest 5f85b2a99d92708125c5457488a539835425dbeb88e03081894323c945f34520.",
+    "NOTE aliases: all seven new aliases are concept-specific; match_aliases on each alias as a query recognizes only its owner. Removed round-1 phrases are absent. The other 54 aliases are unchanged from round-1.",
+    "NOTE privacy: palimnex.security.scan_text returned zero findings on the full candidate JSON and on every concept_id, canonical_name, definition, and alias. No secret-shaped text observed.",
+    "NOTE blind: fix-1 log opens only owned candidate files, docs, and bound palimnex implementation modules; forbidden evaluation paths appear as task/brief/design strings and git-status filenames. fix-2 log's initially broad discovery was rg over artifacts/docs/.agents plus rg --files artifacts/ontology | sed -n 1,240p and git status. rg --files listing stopped in phase-2. git status listed phase-3/phase-4/benchmark/.env.example names only. No evaluation question or label text was displayed. No evaluate-*, retrieve, or explain-search command ran. fix-2 patches changed only the three retention.py versions, registry_digest, NOTES.md re-pin text, and the implementation receipt.",
+    "NOTE receipt: validate_contract.py status valid, authorizes_actions false. Implementation receipt task_digest and approval_evidence_digest match bundle-validation.json. check_candidate.py prints valid_candidate; palimnex.tests.test_concepts 25 tests OK."
+  ],
+  "commands": [
+    "./.venv/bin/python artifacts/ontology/closure/candidate/check_candidate.py (exit 0: valid_candidate, 16 concepts, 61 aliases, 45/45 bindings, digest 475877f3c486959cf11fc778ff18ce83584a2a477758808a8287d3978ce435fd)",
+    "./.venv/bin/python /tmp/ontology-closure-rereview/review_registry_verify.py (parse_registry on /tmp copy, canonical digest, independent locator recompute, verify_source_bindings, scan_text, AST exact-symbol cover, alias collision/subsumption/match_aliases)",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/closure/tasks/ontology-closure-registry.json --implementation-receipt artifacts/ontology/closure/receipts/ontology-closure-registry.implementation-receipt.json (exit 0, status valid)",
+    "./.venv/bin/python -m unittest palimnex.tests.test_concepts (25 tests OK)",
+    "sha256sum docs/ONTOLOGY_ADOPTION.md -> f3dfab328018b3d55b7fe7b01b13b93f796176dc12c5117337d14379e740970f",
+    "git status --short --untracked-files=all; sha256sum palimnex/retention.py; git diff -- palimnex/retention.py"
+  ],
+  "source_grounding_result": "Accepted. All 16 concepts bind the claimed current implementation symbols with matching full-file version and selected-range digest. The three palimnex/retention.py bindings were re-pinned to working-tree version a79c1c3381e5954a0559d5fc199a7c5e563846e3af79c1ab8677e011001c40e9; ranges and range digests are unchanged and still name validate_policy, RetentionLedger.authorize_erasure, and RetentionLedger._propose. The other 42 bindings keep the round-1 versions, ranges, and digests and remain current.",
+  "privacy_result": "Accepted. Candidate JSON, names, definitions, and aliases have no palimnex.security.scan_text findings. Fix-1 scanned admitted implementation files before alias edits. Refusals in bound source do not echo secret values.",
+  "retrieval_quality_result": "Accepted with limits. Exact matching keys do not collide; no alias contains another concept's canonical key or alias; match_aliases on each stored alias recognizes only its owner. The seven replacement aliases are accurate and concept-specific. Remaining MINOR: 'candidate approved registry parser' is awkward phrasing for parse_registry's two kinds.",
+  "compatibility_result": "Accepted. Candidate-only artifacts; registry_kind candidate_set; no product module, schema, wire identifier, test expectation, or .palimnex.json ontology_influence change. project-memory identifiers untouched. palimnex/core.py and palimnex/retention.py are dirty from the parallel 2.10.0 release lane and are outside this workstream's owned_paths.",
+  "rollback_result": "Accepted. Rollback is omitting artifacts/ontology/closure/candidate/ and the implementation receipt. Nothing was copied to ontology/concept-registry.v1.json. This review does not authorize freeze, commit, or promotion.",
+  "authority_result": "Accepted for this candidate lane. Task design_identity, task_digest, and approval_evidence_digest match the working-tree design file and bundle-validation.json. Every record is candidate with model_candidate provenance, historical_only, authorizes_actions false. Activation stays off. Reviewer did not repair, commit, or approve.",
+  "limitations": [
+    "Palimnex CLI status/index/validate/evaluate/explain-search/retrieve were not run by this reviewer, as forbidden for this review.",
+    "Blind evaluation paths were not opened. Frozen-cohort retrieval quality against those sets is untested, by contract.",
+    "A workspace grep for _fuse_rankings listed one line from palimnex/tests/test_ontology_shadow_cohort.py; that file was not opened and its contents were not used.",
+    "Bindings were judged against the current working tree, which is dirty with unrelated palimnex/retention.py and palimnex/core.py edits. retention.py's current hash matches the re-pinned bindings; core.py is not bound.",
+    "cache_consulted is false; .palimnex/ is forbidden.",
+    "fix-2 ran python3 palimnex.py status and validate --deep; both failed immediately with Redis connection/protocol failure and displayed no evaluation content."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_reason": "Reviewer forbidden from palimnex commands and .palimnex/",
+    "cache_mutated": false,
+    "redis_mutated": false,
+    "ledger_consulted": false,
+    "ledger_mutated": false
+  },
+  "git_state": {
+    "worktree_dirty": true,
+    "unrelated_preexisting_changes_present": true,
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "staged": false,
+    "committed": false,
+    "pushed": false,
+    "bound_source_dirty": [
+      "palimnex/retention.py"
+    ],
+    "unbound_source_dirty": [
+      "palimnex/core.py"
+    ],
+    "lane_files_untracked": true,
+    "branch": "main...origin/main [ahead 2]"
+  },
+  "status": "accepted_with_limits"
+}

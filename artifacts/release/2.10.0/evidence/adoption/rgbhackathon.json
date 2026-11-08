@@ -1,0 +1,96 @@
+{
+  "repo": "rgbhackathon",
+  "commit": "HEAD\nnone",
+  "branch": "HEAD\nnone",
+  "config": "copied_untracked",
+  "steps": [
+    {
+      "step": "version",
+      "exit": 0,
+      "seconds": 0.09
+    },
+    {
+      "step": "doctor",
+      "exit": 2,
+      "seconds": 0.11
+    },
+    {
+      "step": "redis_start",
+      "exit": 0,
+      "seconds": 0.4
+    },
+    {
+      "step": "index",
+      "exit": 0,
+      "seconds": 0.11
+    },
+    {
+      "step": "validate_deep",
+      "exit": 0,
+      "seconds": 0.1
+    },
+    {
+      "step": "status",
+      "exit": 0,
+      "seconds": 0.09
+    },
+    {
+      "step": "search",
+      "exit": 0,
+      "seconds": 0.09
+    },
+    {
+      "step": "context",
+      "exit": 0,
+      "seconds": 0.11
+    },
+    {
+      "step": "explain_search",
+      "exit": 0,
+      "seconds": 0.1
+    },
+    {
+      "step": "ontology_status",
+      "exit": 0,
+      "seconds": 0.09
+    },
+    {
+      "step": "semantic_status",
+      "exit": 0,
+      "seconds": 0.08
+    },
+    {
+      "step": "evaluate",
+      "exit": 1,
+      "seconds": 0.09
+    },
+    {
+      "step": "ledger_init",
+      "exit": 0,
+      "seconds": 0.13
+    },
+    {
+      "step": "ledger_status",
+      "exit": 0,
+      "seconds": 0.1
+    },
+    {
+      "step": "feedback_report",
+      "exit": 0,
+      "seconds": 0.1
+    },
+    {
+      "step": "redis_stop",
+      "exit": 0,
+      "seconds": 0.32
+    }
+  ],
+  "files": 1,
+  "chunks": 2,
+  "version": "2.10.0",
+  "coverage_status": null,
+  "errors": {
+    "doctor": "",
+    "evaluate": "{\"status\": \"error\", \"error\": \".palimnex.json evaluation_fixture must name a frozen JSON file\", \"cache_consulted\": false}\n"
+  }
+}

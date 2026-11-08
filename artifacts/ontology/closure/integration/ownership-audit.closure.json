@@ -1,0 +1,280 @@
+{
+  "authorizes_actions": false,
+  "changed_by_lane": {
+    "ontology-closure-integration": [
+      "artifacts/ontology/closure/integration/gate.log",
+      "artifacts/ontology/closure/integration/grok-review-integration-prompt.md",
+      "artifacts/ontology/closure/integration/ontology-status.json",
+      "artifacts/ontology/closure/integration/ownership-audit.closure.json",
+      "artifacts/ontology/closure/integration/promotion-evidence.err",
+      "artifacts/ontology/closure/integration/promotion-evidence.json",
+      "artifacts/ontology/closure/integration/registry-freeze.json",
+      "artifacts/ontology/closure/receipts/ontology-closure-integration.implementation-receipt.json",
+      "ontology/concept-registry.v1.json"
+    ]
+  },
+  "schema": "palimnex:ontology-ownership-audit:v1",
+  "status": "violation",
+  "violations": [
+    {
+      "change": "added",
+      "path": "artifacts/ontology/closure/reviews/ontology-closure-registry.review-receipt.json"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/ontology/closure/round-2/ontology-closure-registry.review-receipt.json"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/ontology/closure/tools/approve_registry.py"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/ontology/closure/tools/gate.sh"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/ontology/closure/tools/write_integration_receipt.py"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/dist/palimnex-2.10.0-py3-none-any.whl"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/dist/palimnex-2.10.0.tar.gz"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/evidence/R18-fixture-repin.json"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/evidence/R18-fixture-repin.md"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/evidence/adoption/edgelinkd.json"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/evidence/adoption/ereditas.json"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/evidence/adoption/rgbhackathon.json"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/evidence/adoption/waveshares3.json"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/evidence/dist-sha256.txt"
+    },
+    {
+      "change": "modified",
+      "path": "artifacts/release/2.10.0/evidence/release-prep-summary.md"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/evidence/upgrade-rehearsal.json"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/logs/build.log"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/logs/rc-checks.log"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/logs/suite-verbose.log"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/logs/upgrade-rehearsal.err"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/reviews/release-prep.round-2.json"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/tools/adoption_smoke.sh"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/tools/rc_checks.sh"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/tools/repin_registry_fixtures.py"
+    },
+    {
+      "change": "modified",
+      "path": "build/lib/palimnex/CHANGELOG.md"
+    },
+    {
+      "change": "modified",
+      "path": "build/lib/palimnex/README.md"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/concepts.py"
+    },
+    {
+      "change": "modified",
+      "path": "build/lib/palimnex/core.py"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/coverage.py"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/evaluation/ontology-shadow.v1.json"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/evaluation/semantic-shadow.v1.json"
+    },
+    {
+      "change": "modified",
+      "path": "build/lib/palimnex/experience.py"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/feedback.py"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/ontology_eval.py"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/ontology_influence.py"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/ontology_promotion.py"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/ontology_shadow.py"
+    },
+    {
+      "change": "modified",
+      "path": "build/lib/palimnex/retention.py"
+    },
+    {
+      "change": "modified",
+      "path": "build/lib/palimnex/retrieval.py"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/schemas/concept-registry.v1.schema.json"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/schemas/context.v2.schema.json"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/schemas/explain-search.v1.schema.json"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/schemas/explain-search.v2.schema.json"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/schemas/ontology-promotion-evidence.v1.schema.json"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/schemas/ontology-shadow-comparison.v1.schema.json"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/schemas/retrieval-coverage.v1.schema.json"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/schemas/retrieval-feedback-report.v1.schema.json"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/schemas/retrieval-feedback-withdrawal.v1.schema.json"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/schemas/retrieval-feedback.v1.schema.json"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/schemas/semantic-provider-identity.v1.schema.json"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/schemas/semantic-shadow-cohort.v1.schema.json"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/schemas/semantic-shadow-comparison.v1.schema.json"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/schemas/semantic-shadow-evaluation.v1.schema.json"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/semantic_eval.py"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/semantic_local.py"
+    },
+    {
+      "change": "added",
+      "path": "build/lib/palimnex/semantic_shadow.py"
+    },
+    {
+      "change": "modified",
+      "path": "docs/CONCEPT_REGISTRY.md"
+    },
+    {
+      "change": "modified",
+      "path": "docs/ONTOLOGY_ADOPTION.md"
+    },
+    {
+      "change": "modified",
+      "path": "palimnex.egg-info/PKG-INFO"
+    },
+    {
+      "change": "modified",
+      "path": "palimnex.egg-info/SOURCES.txt"
+    },
+    {
+      "change": "modified",
+      "path": "palimnex/CHANGELOG.md"
+    },
+    {
+      "change": "modified",
+      "path": "palimnex/tests/fixtures/concept_registry/valid/minimal-approved.json"
+    },
+    {
+      "change": "modified",
+      "path": "palimnex/tests/fixtures/concept_registry/valid/multi-concept-relations.json"
+    },
+    {
+      "change": "modified",
+      "path": "palimnex/tests/fixtures/concept_registry/valid/supersession-chain.json"
+    },
+    {
+      "change": "modified",
+      "path": "palimnex/tests/test_ontology_promotion.py"
+    }
+  ]
+}

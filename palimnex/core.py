@@ -31,7 +31,7 @@ from typing import Any
 from urllib.parse import parse_qs, quote, unquote, urlparse
 
 SCHEMA = "project-memory:v2"
-BUNDLE_VERSION = "2.9.0"
+BUNDLE_VERSION = "2.10.0"
 GRAPH_SCHEMA = "project-memory:code-graph:v3"
 GRAPH_RECORD_SCHEMA = "project-memory:graph-record:v1"
 CONTENT_ADDRESSED_GRAPH_BUNDLE_SERIES = ("2.3", "2.4")
@@ -2982,11 +2982,6 @@ def parser() -> argparse.ArgumentParser:
     rp.add_argument("--expected-digest", required=True)
     rp.add_argument("--dry-run", action="store_true", help="describe the migration without writing")
     rp.add_argument(
-        "--no-snapshot",
-        action="store_true",
-        help="deprecated (removed in 2.10.0): skip the verified pre-migration snapshot",
-    )
-    rp.add_argument(
         "--allow-unignored-ledger",
         action="store_true",
         help="accept migration intent and snapshot paths that Git does not ignore",
@@ -3254,22 +3249,19 @@ def main(argv: list[str] | None = None) -> int:
 
         if args.command.startswith("retention-") or args.command.startswith("cleanup-"):
             from .retention import (
-                NO_SNAPSHOT_DEPRECATION, RetentionLedger, migrate, migration_preview,
-                unconfigured_plan,
+                RetentionLedger, migrate, migration_preview, unconfigured_plan,
             )
-            if args.command == "retention-migrate" and args.no_snapshot:
-                print(f"warning: {NO_SNAPSHOT_DEPRECATION}", file=sys.stderr)
             if args.command == "retention-migrate" and args.dry_run:
                 output = migration_preview(
                     ledger,
                     expected_digest=args.expected_digest,
-                    snapshot_path=None if args.no_snapshot else f"{ledger.path.parent / 'backups'}/",
+                    snapshot_path=f"{ledger.path.parent / 'backups'}/",
                     allow_unignored=args.allow_unignored_ledger,
                 )
             elif args.command == "retention-migrate":
                 output = migrate(
                     ledger, expected_digest=args.expected_digest,
-                    snapshot=not args.no_snapshot,
+                    snapshot=True,
                     allow_unignored=args.allow_unignored_ledger,
                 )
             elif not isinstance(ledger, RetentionLedger):
@@ -3308,8 +3300,6 @@ def main(argv: list[str] | None = None) -> int:
                 _guard_private_file(key_path,"forget key")
                 key = read_bounded_file(ROOT,dkey,max_bytes=32)
                 output = ledger.apply(repository_json(args.plan,"cleanup plan",1048576),confirm_digest=args.confirm_digest,key=key,actor=args.actor,reason=args.reason)
-            if args.command == "retention-migrate" and args.no_snapshot:
-                output = {**output, "deprecations": [NO_SNAPSHOT_DEPRECATION]}
             print(json.dumps(output,sort_keys=True))
             return 0
         if args.command == "longitudinal-prepare":

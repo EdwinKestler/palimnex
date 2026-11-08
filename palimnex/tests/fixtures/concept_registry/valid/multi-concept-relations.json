@@ -24,7 +24,7 @@
         {
           "scheme": "repo",
           "source_id": "docs/DESIGN.md",
-          "version": "4d9f26d4cc618ea3efcae3a6061faaeed0dba9c1cd0ad7932078931075e00b7b",
+          "version": "770516efca759a4e655aa36cedeb2a233a4853d12de706110ff39daed4d07702",
           "range": {
             "unit": "lines",
             "start": 43,
@@ -55,7 +55,7 @@
         {
           "scheme": "repo",
           "source_id": "docs/DESIGN.md",
-          "version": "4d9f26d4cc618ea3efcae3a6061faaeed0dba9c1cd0ad7932078931075e00b7b",
+          "version": "770516efca759a4e655aa36cedeb2a233a4853d12de706110ff39daed4d07702",
           "range": {
             "unit": "lines",
             "start": 37,
@@ -70,7 +70,7 @@
       }
     }
   ],
-  "registry_digest": "94cfb9da2c6d48d2b3662b78fb8aacd9f0fac803710fa688dae27005027e0e6f",
+  "registry_digest": "589b42308d4ea79ba7d60efd0e24ed68a3a150d98846927ee2b0701cc99831d6",
   "authority": "historical_only",
   "authorizes_actions": false
 }

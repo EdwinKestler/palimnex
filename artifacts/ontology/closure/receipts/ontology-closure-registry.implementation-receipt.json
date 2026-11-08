@@ -1,0 +1,90 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-closure-registry",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f3dfab328018b3d55b7fe7b01b13b93f796176dc12c5117337d14379e740970f"
+  },
+  "task_digest": "17f37fc5dc70ef75e400df7effd73a79262893f4082451c18b6115f32a768dde",
+  "approval_evidence_digest": "c744e85563b738a11827357f98312e5c76d5b23fd1a0d49cc0b4a266c34a7f32",
+  "owned_scope": [
+    "artifacts/ontology/closure/candidate",
+    "artifacts/ontology/closure/receipts/ontology-closure-registry.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "artifacts/ontology/closure/candidate",
+    "artifacts/ontology/closure/receipts/ontology-closure-registry.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [],
+  "commands": [
+    {
+      "command": "./.venv/bin/python artifacts/ontology/closure/candidate/check_candidate.py",
+      "exit_code": 0,
+      "result": "Valid candidate_set: 16 required concepts, 61 conservative aliases, 45 repo bindings, all 45 bindings verified current, the full serialized document passed security.scan_text, and no alias contains another concept's canonical name or alias; registry digest 475877f3c486959cf11fc778ff18ce83584a2a477758808a8287d3978ce435fd."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_concepts",
+      "exit_code": 0,
+      "result": "Ran 25 tests in 0.109s; OK."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/closure/tasks/ontology-closure-registry.json",
+      "exit_code": 0,
+      "result": "Task and embedded approval evidence validated with status valid and authorizes_actions false; task digest 17f37fc5dc70ef75e400df7effd73a79262893f4082451c18b6115f32a768dde and approval-evidence digest c744e85563b738a11827357f98312e5c76d5b23fd1a0d49cc0b4a266c34a7f32 match this receipt."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/closure/tasks/ontology-closure-registry.json --implementation-receipt artifacts/ontology/closure/receipts/ontology-closure-registry.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Implementation receipt validated against the task, approval evidence, runtime contract, and receipt schema; status valid and authorizes_actions false."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "Worktree is dirty with substantial pre-existing modified and untracked coordinator and release files. Fix round 2 changed only NOTES.md, concept-registry.candidate.json, and this implementation receipt inside owned_paths; no staging, commit, or push was performed."
+    }
+  ],
+  "compatibility_effect": "Candidate artifacts only. No product module, public schema, project-memory wire identifier, test expectation, configuration, retrieval behavior, cache layout, ledger schema, migration, or activation setting changed. The candidate has registry_kind candidate_set, authority historical_only, authorizes_actions false, and no runtime read-path or ranking influence.",
+  "privacy_and_authority_checks": [
+    "The approved design and source-proposal SHA-256 identities matched the task card before implementation.",
+    "All admitted implementation files used for concept derivation returned zero palimnex.security.scan_text findings before their contents were inspected.",
+    "The candidate validator runs palimnex.security.scan_text over the full canonical JSON serialization as well as canonical names, definitions, and aliases, rejects cross-concept substring aliases, and verifies every source binding through palimnex.concepts.",
+    "All 45 bindings were re-verified against the current working tree. Only the three palimnex/retention.py bindings were stale; their ranges still cover validate_policy, RetentionLedger.authorize_erasure, and RetentionLedger._propose, their selected-range digests recomputed unchanged, and their full-file version was re-pinned to a79c1c3381e5954a0559d5fc199a7c5e563846e3af79c1ab8677e011001c40e9.",
+    "Fix round 2 changed no concept, alias, definition, symbol, selected range, selected-range digest, or non-retention binding; only the three retention.py full-file versions and the resulting registry digest changed.",
+    "All 61 remaining aliases were re-checked against their bound implementation code for cross-concept ambiguity; seven review-identified aliases were replaced with source-specific phrases and recorded in NOTES.md.",
+    "No blind evaluation question content was displayed or used, and no retrieval, explain-search, embedding, model, provider, evaluation, network, install, Redis-write, or ledger command was run.",
+    "No Git write, policy activation, erasure, migration, pack activation, publication, or live-state mutation was performed.",
+    "All writes stayed inside the task card owned_paths."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "The repaired candidate still requires independent round-1 re-review, followed by the owner's reviewed merge before any entry is approved.",
+    "Any later edit to a bound source file will change its full-file version and make the affected candidate bindings stale until deliberately refreshed and reviewed.",
+    "Blind evaluation remains intentionally unrun until the candidate is frozen; retrieval coverage against those sets is not established by this receipt. A broad initial repository discovery search was not scoped to exclude every forbidden directory, although its narrow closure-registry pattern displayed no evaluation question content; the coordinator should account for that procedural blind-rule risk during review.",
+    "Ontology activation remains off and was not authorized or attempted."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_reason": ".palimnex is a forbidden path for this task card, and the lane brief separately forbids retrieval and evaluation commands.",
+    "cache_mutated": false,
+    "redis_mutated": false,
+    "ledger_consulted": false,
+    "ledger_mutated": false,
+    "indexed_files_changed": false,
+    "reindex_required_for_lane_changes": false
+  },
+  "git_state": {
+    "worktree_dirty": true,
+    "unrelated_preexisting_changes_present": true,
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "staged": false,
+    "committed": false,
+    "pushed": false,
+    "lane_files": [
+      "artifacts/ontology/closure/candidate/NOTES.md",
+      "artifacts/ontology/closure/candidate/concept-registry.candidate.json",
+      "artifacts/ontology/closure/receipts/ontology-closure-registry.implementation-receipt.json"
+    ]
+  },
+  "status": "tested"
+}

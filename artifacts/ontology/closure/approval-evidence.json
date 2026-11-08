@@ -1,0 +1,32 @@
+{
+  "schema": "palimnex:ontology-approval-evidence:v1",
+  "authority_source": "user_message",
+  "evidence_locator": "claude.ai owner message 2026-11-08 12:34 America/Guatemala with attachment: 'Approved to draft and review the candidate registry. you are approved to take any action needed to finish and close the nvidia ontology adoption for palimnex ... and produce the new release candidate'; attachment: 14-16 source-derived concepts, blind evaluation set, Palimnex 2.10.0, activation off, tag and publication separately approved",
+  "grantor_claim": "repository owner (Gus, GitHub EdwinKestler)",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "f3dfab328018b3d55b7fe7b01b13b93f796176dc12c5117337d14379e740970f"
+  },
+  "source_proposal_identity": {
+    "path": "artifacts/design/Ontologyadoptionplan.md",
+    "sha256": "8fe38bef5f7f25fa8a7d58dad21b89f69c70f4a367d9981c01fdedf6bd165d86"
+  },
+  "approved_phases": [
+    1
+  ],
+  "authorized_actions": [
+    "ontology_phase_1_registry"
+  ],
+  "excluded_actions": [
+    "ontology_phase_0_contract",
+    "ontology_phase_2_coverage",
+    "ontology_phase_3_shadow",
+    "ontology_phase_4_semantic",
+    "ontology_phase_5_extensions"
+  ],
+  "recorded_at": "2026-11-08T12:34:00-06:00",
+  "implementation_authorized": true,
+  "network_authorized": false,
+  "git_write_authorized": false,
+  "live_state_authorized": false
+}

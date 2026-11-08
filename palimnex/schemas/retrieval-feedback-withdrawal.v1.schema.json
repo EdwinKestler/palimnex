@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://palimnex.dev/schemas/retrieval-feedback-withdrawal.v1.schema.json",
+  "title": "Palimnex reviewed retrieval feedback withdrawal v1",
+  "description": "A reviewed revocation of retrieval feedback that preserves history and grants no authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "withdraws_event_id", "review", "reason", "authority",
+    "authorizes_actions", "retrieval_influence"
+  ],
+  "properties": {
+    "schema": {"const": "palimnex:retrieval-feedback-withdrawal:v1"},
+    "withdraws_event_id": {"$ref": "#/$defs/eventId"},
+    "review": {"$ref": "#/$defs/review"},
+    "reason": {"$ref": "#/$defs/reason"},
+    "authority": {"const": "historical_only"},
+    "authorizes_actions": {"const": false},
+    "retrieval_influence": {"const": false}
+  },
+  "$defs": {
+    "eventId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$",
+      "minLength": 32,
+      "maxLength": 32
+    },
+    "reviewer": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reviewer", "method"],
+      "properties": {
+        "reviewer": {"$ref": "#/$defs/reviewer"},
+        "method": {"enum": ["manual"]}
+      }
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^[^\\u0000-\\u0009\\u000b-\\u001f\\u007f]*$"
+    }
+  }
+}

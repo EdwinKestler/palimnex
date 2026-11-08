@@ -1,0 +1,34 @@
+{
+  "authorizes_actions": false,
+  "changed_by_lane": {
+    "ontology-phase-5-integration": [
+      "artifacts/ontology/phase-5/integration/ownership-audit.final-review.json",
+      "artifacts/ontology/phase-5/integration/r16-negative-control.log",
+      "artifacts/ontology/phase-5/receipts/ontology-phase-5-integration.implementation-receipt.json"
+    ]
+  },
+  "schema": "palimnex:ontology-ownership-audit:v1",
+  "status": "violation",
+  "violations": [
+    {
+      "change": "added",
+      "path": "artifacts/ontology/phase-5/reviews/ontology-phase-5-feedback-core.review-receipt.json"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/ontology/phase-5/reviews/ontology-phase-5-integration.review-receipt.json"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/ontology/phase-5/round-2/ontology-phase-5-feedback-core.review-receipt.json"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/ontology/phase-5/round-2/ontology-phase-5-integration.review-receipt.json"
+    },
+    {
+      "change": "modified",
+      "path": "artifacts/ontology/phase-5/tools/write_integration_receipt.py"
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "repo": "ereditas",
+  "commit": "b8dcec72e60c3bd45456cc5ed2ed5848b89e80fa",
+  "branch": "main",
+  "config": "committed",
+  "steps": [
+    {
+      "step": "version",
+      "exit": 0,
+      "seconds": 0.08
+    },
+    {
+      "step": "doctor",
+      "exit": 2,
+      "seconds": 0.14
+    },
+    {
+      "step": "redis_start",
+      "exit": 0,
+      "seconds": 0.29
+    },
+    {
+      "step": "index",
+      "exit": 0,
+      "seconds": 0.44
+    },
+    {
+      "step": "validate_deep",
+      "exit": 0,
+      "seconds": 0.39
+    },
+    {
+      "step": "status",
+      "exit": 0,
+      "seconds": 0.14
+    },
+    {
+      "step": "search",
+      "exit": 0,
+      "seconds": 0.31
+    },
+    {
+      "step": "context",
+      "exit": 0,
+      "seconds": 0.22
+    },
+    {
+      "step": "explain_search",
+      "exit": 0,
+      "seconds": 0.2
+    },
+    {
+      "step": "ontology_status",
+      "exit": 0,
+      "seconds": 0.09
+    },
+    {
+      "step": "semantic_status",
+      "exit": 0,
+      "seconds": 0.08
+    },
+    {
+      "step": "evaluate",
+      "exit": 1,
+      "seconds": 0.46
+    },
+    {
+      "step": "ledger_init",
+      "exit": 0,
+      "seconds": 0.13
+    },
+    {
+      "step": "ledger_status",
+      "exit": 0,
+      "seconds": 0.09
+    },
+    {
+      "step": "feedback_report",
+      "exit": 0,
+      "seconds": 0.13
+    },
+    {
+      "step": "redis_stop",
+      "exit": 0,
+      "seconds": 0.32
+    }
+  ],
+  "files": 52,
+  "chunks": 114,
+  "version": "2.10.0",
+  "coverage_status": null,
+  "errors": {
+    "doctor": "",
+    "evaluate": "{\"status\": \"error\", \"error\": \".palimnex.json evaluation_fixture must name a frozen JSON file\", \"cache_consulted\": false}\n"
+  }
+}

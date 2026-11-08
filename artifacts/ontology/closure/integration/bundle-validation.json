@@ -1,0 +1,11 @@
+{
+  "schema": "palimnex:ontology-workstream-bundle-validation:v1",
+  "manifest_digest": "3825fca08b0f2359ee299c2b1da1f12f34a2c32408eed379a1682fc2b509d7db",
+  "task_digests": {
+    "ontology-closure-integration": "222d2c2e262f7ecd3dcdedf3961e05642d58b8e98e5f0dd42c3aef6b14ad9511",
+    "ontology-closure-registry": "17f37fc5dc70ef75e400df7effd73a79262893f4082451c18b6115f32a768dde"
+  },
+  "status": "valid",
+  "authorizes_actions": false,
+  "approval_evidence_digest": "c744e85563b738a11827357f98312e5c76d5b23fd1a0d49cc0b4a266c34a7f32"
+}

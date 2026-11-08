@@ -1,0 +1,12 @@
+{
+  "schema": "palimnex:retrieval-feedback-withdrawal:v1",
+  "withdraws_event_id": "11111111111111111111111111111111",
+  "review": {
+    "reviewer": "Fixture Reviewer",
+    "method": "manual"
+  },
+  "reason": "The earlier judgement was superseded by a source review.",
+  "authority": "historical_only",
+  "authorizes_actions": false,
+  "retrieval_influence": false
+}

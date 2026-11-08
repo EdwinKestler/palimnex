@@ -1,0 +1,67 @@
+{
+  "schema": "palimnex:ontology-workstream-manifest:v1",
+  "approved_phase": 5,
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "2bc034cbb2049d2e4a50c296456041fcd779dbde6107ba98d9875d14716707d8"
+  },
+  "workstreams": [
+    "ontology-phase-5-feedback-core",
+    "ontology-phase-5-feedback-schemas",
+    "ontology-phase-5-integration"
+  ],
+  "dependency_dag": [
+    {
+      "from": "ontology-phase-5-feedback-core",
+      "to": "ontology-phase-5-integration"
+    },
+    {
+      "from": "ontology-phase-5-feedback-schemas",
+      "to": "ontology-phase-5-integration"
+    }
+  ],
+  "exclusive_file_ownership": {
+    "ontology-phase-5-feedback-core": [
+      "palimnex/feedback.py",
+      "palimnex/tests/test_feedback.py",
+      "docs/RETRIEVAL_FEEDBACK.md",
+      "artifacts/ontology/phase-5/receipts/ontology-phase-5-feedback-core.implementation-receipt.json"
+    ],
+    "ontology-phase-5-feedback-schemas": [
+      "palimnex/schemas/retrieval-feedback.v1.schema.json",
+      "palimnex/schemas/retrieval-feedback-withdrawal.v1.schema.json",
+      "palimnex/schemas/retrieval-feedback-report.v1.schema.json",
+      "palimnex/tests/fixtures/retrieval_feedback",
+      "palimnex/tests/test_feedback_schemas.py",
+      "artifacts/ontology/phase-5/receipts/ontology-phase-5-feedback-schemas.implementation-receipt.json"
+    ],
+    "ontology-phase-5-integration": [
+      "artifacts/ontology/phase-5/integration",
+      "artifacts/ontology/phase-5/receipts/ontology-phase-5-integration.implementation-receipt.json",
+      "docs/COMPATIBILITY.md",
+      "palimnex/CHANGELOG.md",
+      "palimnex/core.py",
+      "palimnex/experience.py",
+      "palimnex/tests/test_feedback_cli.py",
+      "pyproject.toml"
+    ]
+  },
+  "shared_file_owner": "ontology-phase-5-integration",
+  "acceptance_gates": [
+    "feedback payloads are versioned, source-verified against current admitted bytes, review-attributed and non-authorizing",
+    "records use existing event kinds through MemoryLedger.append_event; correction and withdrawal supersede, never delete",
+    "the report states current, stale (source drift), superseded, withdrawn and invalid records deterministically",
+    "privacy: query, note, reason and reviewer are scanned and never echoed in refusals",
+    "no retrieval influence: retrieve_sources and every production output byte-identical with feedback present",
+    "logical export and restore preserve feedback events",
+    "focused tests and strict mypy pass; receipts validate; ownership audit clean; independent review per workstream",
+    "full suite (unsandboxed), standard gate, deep validation, evaluations and ledger status pass; the real ledger is not written"
+  ],
+  "authority_limits": [
+    "Phase 5 action, feedback records only; no influence, shadow, evaluation, graph explorer or semantic cache",
+    "no network, provider, Git-write or live-state authority for any lane; the real ledger is written only by the owner",
+    "no change to search, symbols, impact, palimnex evaluate, retrieve_sources, context, explain-search or the ledger schema",
+    "Codex lanes run with approval_policy=never inside workspace-write; the coordinator runs socket tests unsandboxed"
+  ],
+  "status": "in_progress"
+}

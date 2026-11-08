@@ -1,0 +1,96 @@
+{
+  "repo": "edgelinkd",
+  "commit": "34c626fa50ca394f2135289cfa931827c3092ac7",
+  "branch": "rebrand-n2link",
+  "config": "committed",
+  "steps": [
+    {
+      "step": "version",
+      "exit": 0,
+      "seconds": 0.09
+    },
+    {
+      "step": "doctor",
+      "exit": 2,
+      "seconds": 0.17
+    },
+    {
+      "step": "redis_start",
+      "exit": 0,
+      "seconds": 0.39
+    },
+    {
+      "step": "index",
+      "exit": 0,
+      "seconds": 5.07
+    },
+    {
+      "step": "validate_deep",
+      "exit": 0,
+      "seconds": 4.52
+    },
+    {
+      "step": "status",
+      "exit": 0,
+      "seconds": 0.84
+    },
+    {
+      "step": "search",
+      "exit": 0,
+      "seconds": 2.46
+    },
+    {
+      "step": "context",
+      "exit": 0,
+      "seconds": 1.55
+    },
+    {
+      "step": "explain_search",
+      "exit": 0,
+      "seconds": 1.54
+    },
+    {
+      "step": "ontology_status",
+      "exit": 0,
+      "seconds": 0.09
+    },
+    {
+      "step": "semantic_status",
+      "exit": 0,
+      "seconds": 0.08
+    },
+    {
+      "step": "evaluate",
+      "exit": 1,
+      "seconds": 5.3
+    },
+    {
+      "step": "ledger_init",
+      "exit": 0,
+      "seconds": 0.13
+    },
+    {
+      "step": "ledger_status",
+      "exit": 0,
+      "seconds": 0.1
+    },
+    {
+      "step": "feedback_report",
+      "exit": 0,
+      "seconds": 0.77
+    },
+    {
+      "step": "redis_stop",
+      "exit": 0,
+      "seconds": 0.37
+    }
+  ],
+  "files": 326,
+  "chunks": 1624,
+  "version": "2.10.0",
+  "coverage_status": null,
+  "errors": {
+    "doctor": "",
+    "evaluate": "{\"status\": \"error\", \"error\": \".palimnex.json evaluation_fixture must name a frozen JSON file\", \"cache_consulted\": false}\n"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "review": "palimnex-2.10.0-release-prep",
+  "status": "rejected",
+  "findings": [
+    {
+      "severity": "BLOCKER",
+      "file": "docs/INSTALL.md",
+      "finding": "Line 9 states as fact that Palimnex 2.10.0 is published on PyPI, and the install examples pin pipx/uv/pip to palimnex[crypto]==2.10.0 and git+...@v2.10.0. Local tags contain only v2.9.0. Owner decision 2026-11-08 reserves tag, GitHub release and PyPI publication for a separate approval. The release-prep brief required replacing install pins, which produced this false publication claim."
+    },
+    {
+      "severity": "BLOCKER",
+      "file": "README.md",
+      "finding": "The install section tells operators to install the exact published release from PyPI as palimnex[crypto]==2.10.0, or the Git tag v2.10.0. Neither the tag nor a PyPI publication exists. Distribution identity on line 14 (version is 2.10.0) is acceptable for a candidate; the published-release/tag pins are not."
+    },
+    {
+      "severity": "MAJOR",
+      "file": "docs/COMPATIBILITY.md",
+      "finding": "The 2.10.0 paragraph says the release is additive with no existing identifier, reader, CLI command, configuration key, cache, ledger or pack format changes, and it never discloses the retention-migrate --no-snapshot removal. That CLI removal was announced in 2.9.0 and is implemented in this candidate. The owner's parenthetical invariants hold (API v1 migrate_retention(snapshot=False) remains; ledger schema v1 and EVENT_KINDS match v2.9.0; production retrieval stays off by default). The conflict is this compatibility sentence versus the announced CLI removal in the same version."
+    },
+    {
+      "severity": "MAJOR",
+      "file": "docs/UPGRADING.md",
+      "finding": "The 2.9.0 \u2192 2.10.0 section correctly says --no-snapshot is removed and argparse exits 2. Later operator text still treats the flag as live: under In 2.8.0 and later, `--no-snapshot` skips it (line 280); under In 2.9.0 and later, the option is deprecated, prints a warning, adds deprecations, and is removed in 2.10.0 (lines 308-311). A 2.10.0 operator following those sections would invoke a flag argparse now rejects."
+    },
+    {
+      "severity": "MINOR",
+      "file": "palimnex/retention.py",
+      "finding": "NO_SNAPSHOT_DEPRECATION was rewritten to mention the 2.10.0 CLI removal and kept SDK snapshot=False, but nothing in palimnex/ imports it after core.py dropped the CLI path. The live SDK warning remains palimnex/api.py (outside the lane's owned files): migrate_retention() without snapshot=True is deprecated. That text is accurate and still matches the tests; it does not mention the CLI removal the brief asked the SDK warning to state."
+    },
+    {
+      "severity": "MINOR",
+      "file": "docs/COMPATIBILITY.md",
+      "finding": "The Version 2.10.0 sentence names only the Phase 1 registry foundation. The same paragraph says nothing loads a registry unless a caller passes its path. 2.10.0 explain-search loads ontology/concept-registry.v1.json by default, which the later Phase 2 paragraph already describes. Promoting the old unreleased Phase 1 blurb to Version 2.10.0 makes that path sentence read as a release-wide promise."
+    },
+    {
+      "severity": "NOTE",
+      "file": "palimnex/CHANGELOG.md",
+      "finding": "Section 2.10.0 - 2026-11-08 preserves every prior Unreleased bullet, adds the announced --no-snapshot removal, and keeps the coordinator placeholder. It covers git log v2.9.0..HEAD product commits (registry, explain-search/coverage, shadow eval, opt-in influence, held semantic shadow, feedback) plus the uncommitted CLI removal. The dated final-release heading is the usual publication-commit form."
+    },
+    {
+      "severity": "NOTE",
+      "file": "docs/BUNDLE_MODE.md",
+      "finding": "Unchanged, as required: remaining 2.9.0 mentions are the implementation/deprecation timeline, not current-version or install pins."
+    },
+    {
+      "severity": "NOTE",
+      "file": "artifacts/release/2.10.0/evidence/release-prep-summary.md",
+      "finding": "Prep-lane evidence still says the CLI exposes --no-snapshot. That was true before the second lane; the working tree now removes the option. Out-of-scope dirty file docs/ONTOLOGY_ADOPTION.md (closure lane) was used only as the owner-decision source."
+    }
+  ],
+  "commands": [
+    "git rev-parse HEAD  # 79f5a5490485122fc25e04220273b7d79b6092b4",
+    "git status --short; git tag -l v2.9* v2.10* 2.9* 2.10*  # only v2.9.0",
+    "git log v2.9.0..HEAD --oneline",
+    "git diff --stat HEAD; git diff HEAD -- <owned files>; git diff --check HEAD",
+    "git show HEAD:palimnex/CHANGELOG.md; git show v2.9.0:palimnex/durable.py; git show v2.9.0:palimnex/experience.py",
+    "./.venv/bin/python -m unittest palimnex.tests.test_migrations palimnex.tests.test_sdk palimnex.tests.test_retention  # 72 tests, OK, 13.331s; no socket failures",
+    "./.venv/bin/python -m mypy  # Success: no issues found in 22 source files",
+    "python3 palimnex.py --help  # no version string in help text",
+    "python3 palimnex.py --version  # 2.10.0",
+    "python3 palimnex.py retention-migrate --help  # no --no-snapshot",
+    "python3 -c parser.parse_args(['retention-migrate','--expected-digest','x','--no-snapshot'])  # SystemExit 2, unrecognized arguments: --no-snapshot"
+  ],
+  "limitations": [
+    "Read-only review: no repository writes, no Git writes, no network, no palimnex commands that write, no scripts/palimnex_check.sh or full suite.",
+    "Did not run palimnex status/index/validate or read .palimnex/; cache_consulted is false.",
+    "Did not read .env*, secrets/, benchmark/, or artifacts/ontology/closure/ contents except incidental grep paths.",
+    "Working tree also has out-of-scope dirty docs/ONTOLOGY_ADOPTION.md and untracked artifacts/ontology/closure/; those were not reviewed as product changes.",
+    "PyPI and GitHub release absence inferred from owner decision plus local tags (only v2.9.0); no network check.",
+    "python3 palimnex.py --help does not print 2.10.0; version was confirmed with --version."
+  ],
+  "reviewer_modified_repository": false
+}

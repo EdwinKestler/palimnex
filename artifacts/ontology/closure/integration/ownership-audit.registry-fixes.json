@@ -1,0 +1,59 @@
+{
+  "authorizes_actions": false,
+  "changed_by_lane": {
+    "ontology-closure-integration": [
+      "artifacts/ontology/closure/integration/grok-rereview-registry-prompt.md",
+      "artifacts/ontology/closure/integration/ownership-audit.registry-fixes.json"
+    ],
+    "ontology-closure-registry": [
+      "artifacts/ontology/closure/candidate/NOTES.md",
+      "artifacts/ontology/closure/candidate/check_candidate.py",
+      "artifacts/ontology/closure/candidate/concept-registry.candidate.json",
+      "artifacts/ontology/closure/receipts/ontology-closure-registry.implementation-receipt.json"
+    ]
+  },
+  "schema": "palimnex:ontology-ownership-audit:v1",
+  "status": "violation",
+  "violations": [
+    {
+      "change": "added",
+      "path": "artifacts/ontology/closure/prompts/ontology-closure-registry.fix-2.md"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/briefs/grok-rereview-release-prompt.md"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/briefs/grok-review-release-prompt.md"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/evidence/R17-release-docs-sequencing.md"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/logs/grok-rereview-release.log"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/logs/grok-review-release.log"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/reviews/release-prep.round-1.json"
+    },
+    {
+      "change": "modified",
+      "path": "docs/COMPATIBILITY.md"
+    },
+    {
+      "change": "modified",
+      "path": "docs/UPGRADING.md"
+    },
+    {
+      "change": "modified",
+      "path": "palimnex/retention.py"
+    }
+  ]
+}

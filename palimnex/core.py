@@ -31,7 +31,7 @@ from typing import Any
 from urllib.parse import parse_qs, quote, unquote, urlparse
 
 SCHEMA = "project-memory:v2"
-BUNDLE_VERSION = "2.9.0"
+BUNDLE_VERSION = "2.10.0"
 GRAPH_SCHEMA = "project-memory:code-graph:v3"
 GRAPH_RECORD_SCHEMA = "project-memory:graph-record:v1"
 CONTENT_ADDRESSED_GRAPH_BUNDLE_SERIES = ("2.3", "2.4")
@@ -2909,6 +2909,38 @@ def parser() -> argparse.ArgumentParser:
         "--retention", choices=("volatile", "session", "durable"), default="session"
     )
     remember.add_argument("--valid-from", type=int)
+    feedback_record = commands.add_parser(
+        "feedback-record", help="record a reviewed query-to-source judgement in the ledger (no ranking effect)"
+    )
+    feedback_record.add_argument("--session", required=True)
+    feedback_record.add_argument("--query", required=True)
+    feedback_record.add_argument("--locator", required=True, help="source path:start-end")
+    feedback_record.add_argument("--judgement", choices=("answers", "does_not_answer"), required=True)
+    feedback_record.add_argument("--reviewer", required=True)
+    feedback_record.add_argument("--note")
+    feedback_record.add_argument("--origin", choices=("manual", "explain_search", "context"), default="manual")
+    feedback_record.add_argument(
+        "--sensitivity", choices=("public", "internal", "restricted", "secret"), default="internal"
+    )
+    feedback_correct = commands.add_parser(
+        "feedback-correct", help="supersede a feedback record with a new judgement for the same query and source"
+    )
+    feedback_correct.add_argument("--session", required=True)
+    feedback_correct.add_argument("--event", required=True)
+    feedback_correct.add_argument("--judgement", choices=("answers", "does_not_answer"), required=True)
+    feedback_correct.add_argument("--reviewer", required=True)
+    feedback_correct.add_argument("--note")
+    feedback_withdraw = commands.add_parser(
+        "feedback-withdraw", help="withdraw a feedback record (kept as history, never deleted)"
+    )
+    feedback_withdraw.add_argument("--session", required=True)
+    feedback_withdraw.add_argument("--event", required=True)
+    feedback_withdraw.add_argument("--reviewer", required=True)
+    feedback_withdraw.add_argument("--reason", required=True)
+    feedback_report_parser = commands.add_parser(
+        "feedback-report", help="read-only report of feedback records and their states"
+    )
+    feedback_report_parser.add_argument("--include-history", action="store_true")
     session_close = commands.add_parser("session-close")
     session_close.add_argument("session")
     session_close.add_argument("--outcome", required=True)
@@ -2949,11 +2981,6 @@ def parser() -> argparse.ArgumentParser:
     rp = commands.add_parser("retention-migrate")
     rp.add_argument("--expected-digest", required=True)
     rp.add_argument("--dry-run", action="store_true", help="describe the migration without writing")
-    rp.add_argument(
-        "--no-snapshot",
-        action="store_true",
-        help="deprecated (removed in 2.10.0): skip the verified pre-migration snapshot",
-    )
     rp.add_argument(
         "--allow-unignored-ledger",
         action="store_true",
@@ -3160,6 +3187,7 @@ def main(argv: list[str] | None = None) -> int:
             "retention-status", "retention-migrate", "retention-activate", "retention-hold",
             "retention-release", "retention-pin", "retention-authorize",
             "retention-support", "cleanup-plan", "cleanup-apply", "cleanup-finalize",
+            "feedback-record", "feedback-correct", "feedback-withdraw", "feedback-report",
         }
         if (args.command in cache_commands or args.command in ledger_commands) and not config_present(ROOT):
             raise ValueError(
@@ -3221,22 +3249,19 @@ def main(argv: list[str] | None = None) -> int:
 
         if args.command.startswith("retention-") or args.command.startswith("cleanup-"):
             from .retention import (
-                NO_SNAPSHOT_DEPRECATION, RetentionLedger, migrate, migration_preview,
-                unconfigured_plan,
+                RetentionLedger, migrate, migration_preview, unconfigured_plan,
             )
-            if args.command == "retention-migrate" and args.no_snapshot:
-                print(f"warning: {NO_SNAPSHOT_DEPRECATION}", file=sys.stderr)
             if args.command == "retention-migrate" and args.dry_run:
                 output = migration_preview(
                     ledger,
                     expected_digest=args.expected_digest,
-                    snapshot_path=None if args.no_snapshot else f"{ledger.path.parent / 'backups'}/",
+                    snapshot_path=f"{ledger.path.parent / 'backups'}/",
                     allow_unignored=args.allow_unignored_ledger,
                 )
             elif args.command == "retention-migrate":
                 output = migrate(
                     ledger, expected_digest=args.expected_digest,
-                    snapshot=not args.no_snapshot,
+                    snapshot=True,
                     allow_unignored=args.allow_unignored_ledger,
                 )
             elif not isinstance(ledger, RetentionLedger):
@@ -3275,8 +3300,6 @@ def main(argv: list[str] | None = None) -> int:
                 _guard_private_file(key_path,"forget key")
                 key = read_bounded_file(ROOT,dkey,max_bytes=32)
                 output = ledger.apply(repository_json(args.plan,"cleanup plan",1048576),confirm_digest=args.confirm_digest,key=key,actor=args.actor,reason=args.reason)
-            if args.command == "retention-migrate" and args.no_snapshot:
-                output = {**output, "deprecations": [NO_SNAPSHOT_DEPRECATION]}
             print(json.dumps(output,sort_keys=True))
             return 0
         if args.command == "longitudinal-prepare":
@@ -3523,6 +3546,29 @@ def main(argv: list[str] | None = None) -> int:
                 retention=args.retention,
                 valid_from=args.valid_from,
             )
+            print(json.dumps(project_result(output), sort_keys=True))
+            return 0
+        if args.command in {"feedback-record", "feedback-correct", "feedback-withdraw", "feedback-report"}:
+            from . import feedback
+            if args.command == "feedback-report":
+                print(json.dumps(feedback.feedback_report(ledger, include_history=args.include_history),
+                                 sort_keys=True))
+                return 0
+            if args.command == "feedback-record":
+                output = feedback.record_feedback(
+                    ledger, args.session, query=args.query, locator=args.locator,
+                    judgement=args.judgement, reviewer=args.reviewer, note=args.note,
+                    origin=args.origin, sensitivity=args.sensitivity,
+                )
+            elif args.command == "feedback-correct":
+                output = feedback.correct_feedback(
+                    ledger, args.session, args.event, judgement=args.judgement,
+                    reviewer=args.reviewer, note=args.note,
+                )
+            else:
+                output = feedback.withdraw_feedback(
+                    ledger, args.session, args.event, reviewer=args.reviewer, reason=args.reason,
+                )
             print(json.dumps(project_result(output), sort_keys=True))
             return 0
         if args.command == "session-close":

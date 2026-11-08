@@ -1,0 +1,35 @@
+{
+  "authorizes_actions": false,
+  "changed_by_lane": {
+    "ontology-phase-5-feedback-core": [
+      "artifacts/ontology/phase-5/receipts/ontology-phase-5-feedback-core.implementation-receipt.json",
+      "docs/RETRIEVAL_FEEDBACK.md",
+      "palimnex/feedback.py",
+      "palimnex/tests/test_feedback.py"
+    ],
+    "ontology-phase-5-feedback-schemas": [
+      "artifacts/ontology/phase-5/receipts/ontology-phase-5-feedback-schemas.implementation-receipt.json",
+      "palimnex/schemas/retrieval-feedback-report.v1.schema.json",
+      "palimnex/schemas/retrieval-feedback-withdrawal.v1.schema.json",
+      "palimnex/schemas/retrieval-feedback.v1.schema.json",
+      "palimnex/tests/fixtures/retrieval_feedback/invalid/bad-digest.json",
+      "palimnex/tests/fixtures/retrieval_feedback/invalid/end-before-start.json",
+      "palimnex/tests/fixtures/retrieval_feedback/invalid/extra-key.json",
+      "palimnex/tests/fixtures/retrieval_feedback/invalid/missing-field.json",
+      "palimnex/tests/fixtures/retrieval_feedback/invalid/oversized-note.json",
+      "palimnex/tests/fixtures/retrieval_feedback/invalid/unknown-judgement.json",
+      "palimnex/tests/fixtures/retrieval_feedback/invalid/wrong-constant.json",
+      "palimnex/tests/fixtures/retrieval_feedback/valid/retrieval-feedback-report-v1.json",
+      "palimnex/tests/fixtures/retrieval_feedback/valid/retrieval-feedback-v1.json",
+      "palimnex/tests/fixtures/retrieval_feedback/valid/retrieval-feedback-withdrawal-v1.json",
+      "palimnex/tests/test_feedback_schemas.py"
+    ],
+    "ontology-phase-5-integration": [
+      "artifacts/ontology/phase-5/integration/grok-review-lanes-prompt.md",
+      "artifacts/ontology/phase-5/integration/ownership-audit.lanes.json"
+    ]
+  },
+  "schema": "palimnex:ontology-ownership-audit:v1",
+  "status": "clean",
+  "violations": []
+}

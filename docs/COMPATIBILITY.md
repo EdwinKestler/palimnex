@@ -61,11 +61,16 @@ it is removed after a verified target. The `<ledger>.retention-v2` guard keeps
 its exact bytes; it is published atomically before the schema change and is
 never removed. No ledger, pack or cache identifier changes.
 
-The unreleased ontology registry foundation (`docs/ONTOLOGY_ADOPTION.md`,
-Phase 1) adds `palimnex:concept-registry:v1` and the `palimnex.concepts`
-module. It is additive: no existing identifier, reader, CLI command,
-configuration key, cache, ledger or pack format changes, and nothing loads a
-registry unless a caller passes its path. Registry documents carry
+Version 2.10.0 delivers the ontology adoption (`docs/ONTOLOGY_ADOPTION.md`).
+It is additive and off by default, with one change announced in 2.9.0: the CLI
+option `retention-migrate --no-snapshot` is removed, so the command always
+writes its verified snapshot (SDK API v1 `migrate_retention(snapshot=False)` is
+unchanged and still warns). No API v1, ledger, pack or cache-v3 identifier
+changes; the cache is rebuilt because the bundle version changed. The phases
+below describe each addition.
+
+Phase 1 adds `palimnex:concept-registry:v1` and the `palimnex.concepts`
+module. Registry documents carry
 `authority: historical_only` and `authorizes_actions: false`. An approved entry
 is reviewed repository source, never runtime authority. Source bindings reuse
 `palimnex:source-locator:v1` unchanged. See `docs/CONCEPT_REGISTRY.md`.
@@ -115,3 +120,12 @@ configuration key reads them and no output changes. The existing
 `semantic-gate` and their +0.05 gain and 2x latency rule are unchanged; the
 Phase 4 thresholds (+0.02, 1.5x) live only in the new evaluation contract. See
 `docs/SEMANTIC_SHADOW.md`.
+
+Phase 5 adds three payload and report contracts,
+`palimnex:retrieval-feedback:v1`, `palimnex:retrieval-feedback-withdrawal:v1`
+and `palimnex:retrieval-feedback-report:v1`. Feedback payloads ride on the
+existing `fact`, `correction` and `revocation` event kinds, so
+`memory-event.v1`, the ledger schema, logical exports and packs are unchanged
+and older readers see ordinary events with a JSON payload. Feedback has no
+retrieval influence; every existing retrieval output is unchanged. See
+`docs/RETRIEVAL_FEEDBACK.md`.

@@ -18,7 +18,7 @@
         {
           "scheme": "repo",
           "source_id": "README.md",
-          "version": "0b8ce96b6a21a042feb840ae41b10678ae01eba50e61377cd87f5590e0ade96d",
+          "version": "df0753bd995c7d964899ee8f7bc475c98ac823d360fcfc273ff27575a57ddc69",
           "range": {
             "unit": "lines",
             "start": 8,
@@ -43,7 +43,7 @@
         {
           "scheme": "repo",
           "source_id": "README.md",
-          "version": "0b8ce96b6a21a042feb840ae41b10678ae01eba50e61377cd87f5590e0ade96d",
+          "version": "df0753bd995c7d964899ee8f7bc475c98ac823d360fcfc273ff27575a57ddc69",
           "range": {
             "unit": "lines",
             "start": 3,
@@ -59,7 +59,7 @@
       }
     }
   ],
-  "registry_digest": "3616f771253a01189d3dc215f77aac90b277460d8b7f7d77c70e2f1a119f56a4",
+  "registry_digest": "12dfef6ca6529793ead5f9a33760fafc786e1ed73634020684468ae732985978",
   "authority": "historical_only",
   "authorizes_actions": false
 }

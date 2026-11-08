@@ -1,0 +1,96 @@
+{
+  "repo": "waveshares3",
+  "commit": "dd5bd7138297c2e25ba9e2d4b539e13aa34dacfc",
+  "branch": "main",
+  "config": "committed",
+  "steps": [
+    {
+      "step": "version",
+      "exit": 0,
+      "seconds": 0.08
+    },
+    {
+      "step": "doctor",
+      "exit": 2,
+      "seconds": 0.12
+    },
+    {
+      "step": "redis_start",
+      "exit": 0,
+      "seconds": 0.36
+    },
+    {
+      "step": "index",
+      "exit": 0,
+      "seconds": 0.35
+    },
+    {
+      "step": "validate_deep",
+      "exit": 0,
+      "seconds": 0.32
+    },
+    {
+      "step": "status",
+      "exit": 0,
+      "seconds": 0.13
+    },
+    {
+      "step": "search",
+      "exit": 0,
+      "seconds": 0.22
+    },
+    {
+      "step": "context",
+      "exit": 0,
+      "seconds": 0.2
+    },
+    {
+      "step": "explain_search",
+      "exit": 0,
+      "seconds": 0.17
+    },
+    {
+      "step": "ontology_status",
+      "exit": 0,
+      "seconds": 0.09
+    },
+    {
+      "step": "semantic_status",
+      "exit": 0,
+      "seconds": 0.09
+    },
+    {
+      "step": "evaluate",
+      "exit": 1,
+      "seconds": 0.37
+    },
+    {
+      "step": "ledger_init",
+      "exit": 0,
+      "seconds": 0.12
+    },
+    {
+      "step": "ledger_status",
+      "exit": 0,
+      "seconds": 0.1
+    },
+    {
+      "step": "feedback_report",
+      "exit": 0,
+      "seconds": 0.13
+    },
+    {
+      "step": "redis_stop",
+      "exit": 0,
+      "seconds": 0.34
+    }
+  ],
+  "files": 53,
+  "chunks": 91,
+  "version": "2.10.0",
+  "coverage_status": null,
+  "errors": {
+    "doctor": "",
+    "evaluate": "{\"status\": \"error\", \"error\": \".palimnex.json evaluation_fixture must name a frozen JSON file\", \"cache_consulted\": false}\n"
+  }
+}

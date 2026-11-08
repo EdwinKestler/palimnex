@@ -645,10 +645,6 @@ def migration_audit(reader,c):
     return first['from_schema'],first['before_digest']
 
 
-NO_SNAPSHOT_DEPRECATION=('--no-snapshot is deprecated and is removed in 2.10.0; '
-                         '`palimnex ledger-migrate --apply` always writes a verified snapshot')
-
-
 def migration_preview(ledger,*,expected_digest,snapshot_path=None,allow_unignored=False):
     """Read-only description of what retention-migrate would do (the generic plan inside)."""
     from .migrations import plan as migration_plan
@@ -659,7 +655,7 @@ def migration_preview(ledger,*,expected_digest,snapshot_path=None,allow_unignore
             'current_schema':d.LEDGER_SCHEMA,'target_schema':SCHEMA,'logical_digest':plan['logical_digest'],
             'expected_digest_matches':plan['expected_digest_matches'],'would_refuse':plan['refusals'],
             'snapshot':(f'a verified snapshot is written to {snapshot_path} first; {d.SNAPSHOT_ERASURE_NOTE}'
-                        if snapshot_path else 'no snapshot (--no-snapshot)'),
+                        if snapshot_path else 'no verified snapshot requested'),
             'effects':list(MIGRATION_EFFECTS),'plan':plan}
 
 

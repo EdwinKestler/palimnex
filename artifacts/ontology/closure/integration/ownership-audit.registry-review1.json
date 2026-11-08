@@ -1,0 +1,64 @@
+{
+  "authorizes_actions": false,
+  "changed_by_lane": {
+    "ontology-closure-integration": [
+      "artifacts/ontology/closure/integration/ownership-audit.registry-review1.json"
+    ]
+  },
+  "schema": "palimnex:ontology-ownership-audit:v1",
+  "status": "violation",
+  "violations": [
+    {
+      "change": "added",
+      "path": "artifacts/ontology/closure/prompts/ontology-closure-registry.fix-1.md"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/ontology/closure/round-1/ontology-closure-registry.review-receipt.json"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/logs/release-2.10.0-no-snapshot.last-message.md"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/logs/release-2.10.0-no-snapshot.log"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/release/2.10.0/prompts/release-2.10.0-no-snapshot.md"
+    },
+    {
+      "change": "modified",
+      "path": "docs/MIGRATIONS.md"
+    },
+    {
+      "change": "modified",
+      "path": "docs/RETENTION.md"
+    },
+    {
+      "change": "modified",
+      "path": "docs/SDK.md"
+    },
+    {
+      "change": "modified",
+      "path": "docs/UPGRADING.md"
+    },
+    {
+      "change": "modified",
+      "path": "palimnex/CHANGELOG.md"
+    },
+    {
+      "change": "modified",
+      "path": "palimnex/core.py"
+    },
+    {
+      "change": "modified",
+      "path": "palimnex/retention.py"
+    },
+    {
+      "change": "modified",
+      "path": "palimnex/tests/test_migrations.py"
+    }
+  ]
+}

@@ -287,10 +287,12 @@ class OntologyPromotionTests(unittest.TestCase):
     def test_missing_registry_and_real_checkout_are_typed_refusals(self) -> None:
         temporary, root = self._fresh_root()
         self.addCleanup(temporary.cleanup)
-        for checkout in (root, REPOSITORY_ROOT):
+        # Since 2.10.0 the real checkout ships ontology/concept-registry.v1.json, so its missing-registry
+        # refusal is exercised through an explicit absent path instead of the default one.
+        for checkout, registry_path in ((root, None), (REPOSITORY_ROOT, "ontology/absent-registry.v1.json")):
             with self.subTest(checkout=checkout):
                 with self.assertRaises(OntologyPromotionError) as raised:
-                    evaluate_ontology_promotion(checkout)
+                    evaluate_ontology_promotion(checkout, registry_path=registry_path)
                 self.assertEqual(raised.exception.reason, "registry_read_refused")
                 self.assertEqual(raised.exception.field, "path")
 

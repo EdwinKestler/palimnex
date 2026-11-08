@@ -1,0 +1,86 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-5-feedback-core",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "2bc034cbb2049d2e4a50c296456041fcd779dbde6107ba98d9875d14716707d8"
+  },
+  "task_digest": "b96856099492a2308c44085bcd69fcdf305fc3222dfeb503246e05cb8bf9b0d5",
+  "approval_evidence_digest": "633eb150b12c968f5323d1fbed7d6d3ebfe28aa8c0ac7e91f4ba8f77ddfb65b1",
+  "owned_scope": [
+    "palimnex/feedback.py",
+    "palimnex/tests/test_feedback.py",
+    "docs/RETRIEVAL_FEEDBACK.md",
+    "artifacts/ontology/phase-5/receipts/ontology-phase-5-feedback-core.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/feedback.py",
+    "palimnex/tests/test_feedback.py",
+    "docs/RETRIEVAL_FEEDBACK.md",
+    "artifacts/ontology/phase-5/receipts/ontology-phase-5-feedback-core.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [],
+  "commands": [
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_feedback -v",
+      "exit_code": 0,
+      "result": "13 tests passed; temporary repositories and temporary ledgers only."
+    },
+    {
+      "command": "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/feedback.py",
+      "exit_code": 0,
+      "result": "Success: no issues found in 1 source file."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_durable palimnex.tests.test_experience palimnex.tests.test_retrieval_influence",
+      "exit_code": 0,
+      "result": "67 regression tests passed."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-5/tasks/ontology-phase-5-feedback-core.json",
+      "exit_code": 0,
+      "result": "Task contract valid; task digest b96856099492a2308c44085bcd69fcdf305fc3222dfeb503246e05cb8bf9b0d5 and approval evidence digest 633eb150b12c968f5323d1fbed7d6d3ebfe28aa8c0ac7e91f4ba8f77ddfb65b1."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-5/tasks/ontology-phase-5-feedback-core.json --implementation-receipt artifacts/ontology/phase-5/receipts/ontology-phase-5-feedback-core.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Task and implementation receipt validated with status valid."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "Owned implementation, test, documentation and receipt files are untracked as expected; extensive unrelated pre-existing and parallel-lane changes remain present and untouched."
+    }
+  ],
+  "compatibility_effect": "Additive palimnex.feedback API and documentation only. Existing event kinds and project-memory identifiers are unchanged; no ledger schema or migration changed. The regression sentinel proves retrieve_sources output is byte-identical before and after a feedback write. CLI wiring, changelog and compatibility-document integration remain coordinator-owned.",
+  "privacy_and_authority_checks": [
+    "Query, reviewer, note and withdrawal-reason privacy canaries are refused with stable non-echoing FeedbackError reasons.",
+    "Source locators must resolve to the current privacy-admitted corpus and exact existing line ranges before payload construction.",
+    "Feedback, withdrawal and report contracts always state authority historical_only, authorizes_actions false and retrieval_influence false.",
+    "All ledger writes use MemoryLedger.append_event with existing fact, correction and revocation kinds; report reads use ledger.connection(create=False).",
+    "Owned source, test and documentation bytes have no security.scan_bytes findings.",
+    "No network, Git write, provider call, Redis write, migration, policy activation, erasure, pack activation or real repository-ledger write was performed."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "Coordinator integration must wire and test the owner-run feedback CLI commands, update shared compatibility surfaces, reindex, and run the full standard gate.",
+    "The current-event check and MemoryLedger.append_event are separate locked operations; concurrent owner commands targeting the same current event could race into multiple successors, although sequential repeat correction or withdrawal is refused."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_status": "Redis unavailable in the sandbox with operation not permitted; source files were used as authority.",
+    "indexed_files_changed": true,
+    "coordinator_reindex_required": true,
+    "repository_ledger_written": false,
+    "temporary_ledgers_only": true,
+    "repository_ledger_status_run": false,
+    "repository_ledger_status_reason": "Task authority and COMMON.md forbid ledger commands against this checkout."
+  },
+  "git_state": {
+    "git_writes_performed": false,
+    "initial_worktree_dirty": true,
+    "unrelated_changes_preserved": true,
+    "owned_files_untracked": true
+  },
+  "status": "tested"
+}

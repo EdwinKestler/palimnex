@@ -1,0 +1,58 @@
+{
+  "authorizes_actions": false,
+  "changed_by_lane": {
+    "ontology-phase-5-integration": [
+      "artifacts/ontology/phase-5/integration/bundle-validation.r16.json",
+      "artifacts/ontology/phase-5/integration/clarification-R16.md",
+      "artifacts/ontology/phase-5/integration/gate.log",
+      "artifacts/ontology/phase-5/integration/grok-review-integration-prompt.md",
+      "artifacts/ontology/phase-5/integration/ownership-audit.integration.json",
+      "docs/COMPATIBILITY.md",
+      "palimnex/CHANGELOG.md",
+      "palimnex/core.py",
+      "palimnex/experience.py",
+      "palimnex/tests/test_feedback_cli.py",
+      "pyproject.toml"
+    ]
+  },
+  "schema": "palimnex:ontology-ownership-audit:v1",
+  "status": "violation",
+  "violations": [
+    {
+      "change": "modified",
+      "path": "artifacts/ontology/phase-5/briefs/FEEDBACK_SPEC.md"
+    },
+    {
+      "change": "modified",
+      "path": "artifacts/ontology/phase-5/manifest.json"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/ontology/phase-5/reviews/ontology-phase-5-feedback-schemas.review-receipt.json"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/ontology/phase-5/round-1/ontology-phase-5-feedback-core.review-receipt.json"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/ontology/phase-5/round-1/ontology-phase-5-feedback-schemas.review-receipt.json"
+    },
+    {
+      "change": "modified",
+      "path": "artifacts/ontology/phase-5/tasks/ontology-phase-5-integration.json"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/ontology/phase-5/tools/amend_integration_r16.py"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/ontology/phase-5/tools/gate.sh"
+    },
+    {
+      "change": "added",
+      "path": "artifacts/ontology/phase-5/tools/write_integration_receipt.py"
+    }
+  ]
+}

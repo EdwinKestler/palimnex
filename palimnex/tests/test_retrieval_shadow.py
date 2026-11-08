@@ -180,7 +180,16 @@ class RetrievalShadowTests(unittest.TestCase):
                                 include_graph=include_graph,
                                 snapshot=snapshot,
                             )
-                            digest = hashlib.sha256(canonical_json(baseline)).hexdigest()
+                            # checkout_id hashes root.resolve(); macOS resolves /tmp to /private/tmp.
+                            self.assertEqual(
+                                baseline["checkout_id"],
+                                hashlib.sha256(str(STABLE_GOLDEN_ROOT.resolve()).encode()).hexdigest(),
+                            )
+                            portable = {
+                                **baseline,
+                                "checkout_id": hashlib.sha256(str(STABLE_GOLDEN_ROOT).encode()).hexdigest(),
+                            }
+                            digest = hashlib.sha256(canonical_json(portable)).hexdigest()
                             self.assertEqual(digest, GOLDEN_DIGESTS[(query, byte_budget)])
                             shadow = shadow_retrieve(
                                 query,

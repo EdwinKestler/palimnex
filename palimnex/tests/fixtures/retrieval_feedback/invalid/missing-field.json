@@ -1,0 +1,18 @@
+{
+  "schema": "palimnex:retrieval-feedback:v1",
+  "query": "where is retrieval ranking",
+  "query_digest": "c44d958f2a8f4758f8383ab1f116d1f50804f7aff9bc53b8dc0713417cd9ac3f",
+  "judgement": "answers",
+  "source": {
+    "path": "palimnex/retrieval.py",
+    "start_line": 174,
+    "end_line": 188,
+    "content_digest": "3b036afa96981b6a1c1840d6691cf3e0da7b54085383830b32462ff27d810a85",
+    "file_digest": "04bd1a54bbc4bec6bc7511cb4afe65ae4dea83e257f71b0dc2116f3a72a912b5"
+  },
+  "review": {"reviewer": "Fixture Reviewer", "method": "manual"},
+  "provenance": {"origin": "manual"},
+  "authority": "historical_only",
+  "authorizes_actions": false,
+  "retrieval_influence": false
+}

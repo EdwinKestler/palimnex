@@ -293,12 +293,20 @@ class RetrievalInfluenceTests(unittest.TestCase):
                     snapshot, InfluenceSetting(mode, None, None, None, None)
                 )
                 self.assertEqual(len(retrieval), 96)
+                # checkout_id hashes root.resolve(); macOS resolves /tmp to /private/tmp.
+                resolved = hashlib.sha256(str(STABLE_GOLDEN_ROOT.resolve()).encode()).hexdigest()
+                portable = hashlib.sha256(str(STABLE_GOLDEN_ROOT).encode()).hexdigest()
+                self.assertTrue(all(item["checkout_id"] == resolved for item in retrieval + contexts))
                 self.assertEqual(
-                    hashlib.sha256(canonical_json(retrieval)).hexdigest(),
+                    hashlib.sha256(canonical_json(
+                        [{**item, "checkout_id": portable} for item in retrieval]
+                    )).hexdigest(),
                     RETRIEVAL_GOLDEN_SHA256,
                 )
                 self.assertEqual(
-                    hashlib.sha256(canonical_json(contexts)).hexdigest(),
+                    hashlib.sha256(canonical_json(
+                        [{**item, "checkout_id": portable} for item in contexts]
+                    )).hexdigest(),
                     CONTEXT_GOLDEN_SHA256,
                 )
                 self.assertTrue(

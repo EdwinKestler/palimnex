@@ -103,15 +103,18 @@ class RedisLauncherSafetyTests(unittest.TestCase):
         responder.bind(str(socket_path))
         self.addCleanup(responder.close)
 
+        # The wrapped binary is a copy of /bin/sh running a loop. A copy of /bin/sleep no longer
+        # works: multicall coreutils (Ubuntu 25.10 and later) refuse to run under another name.
         actual_server = self.sandbox / "redis-server.bin"
-        actual_server.write_bytes(Path("/bin/sleep").read_bytes())
+        actual_server.write_bytes(Path("/bin/sh").read_bytes())
         actual_server.chmod(0o700)
         wrapper = self.sandbox / "redis-server"
         wrapper.write_text(
-            f"#!/bin/sh\nexec {actual_server!s} \"$@\"\n", encoding="utf-8"
+            f"#!/bin/sh\nexec {actual_server!s} -c 'while :; do sleep 1; done'\n",
+            encoding="utf-8",
         )
         wrapper.chmod(0o700)
-        process = subprocess.Popen([str(wrapper), "30"])
+        process = subprocess.Popen([str(wrapper)])
         self.addCleanup(self._terminate_process, process)
         (state / "redis.pid").write_text(f"{process.pid}\n", encoding="utf-8")
 

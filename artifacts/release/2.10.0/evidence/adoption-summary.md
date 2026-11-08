@@ -1,6 +1,9 @@
 # 2.10.0 candidate — adoption smoke tests on other repositories (2026-11-08)
 
-Wheel: the working-tree build `palimnex-2.10.0-py3-none-any.whl`, installed with
+Wheel: the clean candidate build `palimnex-2.10.0-py3-none-any.whl` (built by
+`artifacts/release/2.10.0/tools/build_clean.sh` from a `git archive` of the
+candidate commit; checksum in `dist-sha256.txt`; re-run by
+`tools/rc_checks_clean.sh`, log `logs/rc-checks-clean.log`), installed with
 `--no-index` into a throwaway virtual environment `/tmp/palimnex-adoption/venv`.
 Each snapshot is `git archive HEAD` of the repository extracted under
 `/tmp/palimnex-adoption/<repo>` with its own Redis socket and ledger. The live
@@ -32,7 +35,7 @@ Notes:
 - `evaluate` exits 1 because none of these repositories configures an
   `evaluation_fixture` ("evaluation_fixture must name a frozen JSON file"),
   which is the documented behaviour.
-- The installed-wheel smoke from this working-tree build failed one assertion
-  (`palimnex/tests` present in the wheel) because the build reused a stale
-  `build/lib` directory; the candidate wheel is therefore rebuilt from a clean
-  `git archive` of the release commit and re-checked (see the candidate report).
+- An earlier working-tree build failed the installed-wheel smoke (stale
+  `build/lib` put `palimnex/tests` in the wheel). It was discarded; the results
+  above come from the clean build, whose wheel contains no `palimnex/tests`
+  members and passes the smoke (see `RC_REPORT.md`).

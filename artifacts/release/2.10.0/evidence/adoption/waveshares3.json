@@ -12,7 +12,7 @@
     {
       "step": "doctor",
       "exit": 2,
-      "seconds": 0.11
+      "seconds": 0.12
     },
     {
       "step": "redis_start",
@@ -42,7 +42,7 @@
     {
       "step": "context",
       "exit": 0,
-      "seconds": 0.17
+      "seconds": 0.2
     },
     {
       "step": "explain_search",
@@ -52,17 +52,17 @@
     {
       "step": "ontology_status",
       "exit": 0,
-      "seconds": 0.1
+      "seconds": 0.09
     },
     {
       "step": "semantic_status",
       "exit": 0,
-      "seconds": 0.08
+      "seconds": 0.09
     },
     {
       "step": "evaluate",
       "exit": 1,
-      "seconds": 0.35
+      "seconds": 0.37
     },
     {
       "step": "ledger_init",
@@ -72,17 +72,17 @@
     {
       "step": "ledger_status",
       "exit": 0,
-      "seconds": 0.08
+      "seconds": 0.1
     },
     {
       "step": "feedback_report",
       "exit": 0,
-      "seconds": 0.12
+      "seconds": 0.13
     },
     {
       "step": "redis_stop",
       "exit": 0,
-      "seconds": 0.32
+      "seconds": 0.34
     }
   ],
   "files": 53,

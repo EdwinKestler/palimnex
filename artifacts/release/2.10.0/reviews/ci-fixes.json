@@ -1,0 +1,40 @@
+{
+  "reviewer": "grok-4.6 xhigh, read-only",
+  "scope": [
+    "5edc164",
+    "ce4fde2"
+  ],
+  "status": "accepted_with_limits",
+  "findings": [
+    {
+      "severity": "NOTE",
+      "file": "palimnex/tests/test_redis_launcher.py",
+      "finding": "The wrapper test still proves managed_pid accepts a redis-server wrapper that execs a live copy named redis-server.bin: the wrapper is restored to exec actual_server \"$@\", status is still asserted against scripts/palimnex_redis.sh, and the identity check in managed_pid is unchanged. The new SkipTest when neither /bin/sleep nor /bin/sh runs under the copied name is weaker than the original hard failure on /bin/sleep."
+    },
+    {
+      "severity": "NOTE",
+      "file": "palimnex/tests/test_redis_launcher.py",
+      "finding": "_copy_long_running_binary treats probe exit 0 as proof the copy keeps its name. That rejects multicall coreutils sleep and prefers /bin/sleep on macOS, which matches the intended runners. The sh probe would also return 0 on a re-execing /bin/sh if sleep were unusable; managed_pid would then fail rather than skip. Path(\"/bin/sleep\").read_bytes() is uncaught, so a missing first candidate errors instead of falling through to /bin/sh. The sh fallback loop can leave an orphan sleep grandchild for up to one second after SIGTERM of the copied shell."
+    },
+    {
+      "severity": "NOTE",
+      "file": "palimnex/tests/test_retrieval_shadow.py",
+      "finding": "checkout_id is still checked: the test asserts it equals sha256(utf-8 of STABLE_GOLDEN_ROOT.resolve()), which is the formula in palimnex/retrieval.py _retrieval_result, then hashes a copy whose checkout_id is replaced by sha256(utf-8 of the unresolved path). GOLDEN_DIGESTS still pin every other output field; the live checkout_id bytes are no longer inside those digests."
+    },
+    {
+      "severity": "NOTE",
+      "file": "palimnex/tests/test_retrieval_influence.py",
+      "finding": "The influence golden uses the same split: assertTrue(all(...)) that every retrieval and context checkout_id equals the resolve() digest, then RETRIEVAL_GOLDEN_SHA256 and CONTEXT_GOLDEN_SHA256 hash portable substitutions. That bulk assertTrue is a weaker diagnostic than the shadow test's assertEqual; a missing checkout_id still KeyErrors. assemble_context copies sources[\"checkout_id\"], so the context check still covers propagation. Golden hash constants are unchanged."
+    },
+    {
+      "severity": "NOTE",
+      "file": "palimnex/tests/",
+      "finding": "Commits 5edc164 and ce4fde2 touch only palimnex/tests/test_redis_launcher.py, palimnex/tests/test_retrieval_influence.py, and palimnex/tests/test_retrieval_shadow.py. They do not modify scripts/palimnex_redis.sh, palimnex/redis_launcher.sh, any source_id bound by ontology/concept-registry.v1.json, or the influence_implementation_digest modules palimnex/concepts.py, palimnex/ontology_influence.py, palimnex/ontology_shadow.py, and palimnex/retrieval.py."
+    }
+  ],
+  "limitations": [
+    "Read-only review; Palimnex, Redis, the network, and the test suite were not run.",
+    "Portability of copied /bin/sleep then /bin/sh is reasoned from managed_pid in scripts/palimnex_redis.sh and the commit messages, not executed on Ubuntu or macOS runners.",
+    "git diff 3364735 ce4fde2 -- palimnex shows only the launcher test; golden-digest changes were inspected via git show 5edc164."
+  ]
+}

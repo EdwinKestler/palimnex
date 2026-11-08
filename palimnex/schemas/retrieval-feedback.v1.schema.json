@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://palimnex.dev/schemas/retrieval-feedback.v1.schema.json",
+  "title": "Palimnex reviewed retrieval feedback v1",
+  "description": "A source-verified, review-attributed retrieval judgement with no retrieval or operational authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "query", "query_digest", "judgement", "source", "review",
+    "provenance", "note", "authority", "authorizes_actions",
+    "retrieval_influence"
+  ],
+  "properties": {
+    "schema": {"const": "palimnex:retrieval-feedback:v1"},
+    "query": {"$ref": "#/$defs/query"},
+    "query_digest": {"$ref": "#/$defs/sha256"},
+    "judgement": {"enum": ["answers", "does_not_answer"]},
+    "source": {"$ref": "#/$defs/source"},
+    "review": {"$ref": "#/$defs/review"},
+    "provenance": {"$ref": "#/$defs/provenance"},
+    "note": {"$ref": "#/$defs/nullableNote"},
+    "authority": {"const": "historical_only"},
+    "authorizes_actions": {"const": false},
+    "retrieval_influence": {"const": false}
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "minLength": 64,
+      "maxLength": 64
+    },
+    "query": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 8192,
+      "pattern": "^[^\\s\\u0000-\\u001f\\u007f]+(?: [^\\s\\u0000-\\u001f\\u007f]+)*$"
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path", "start_line", "end_line", "content_digest", "file_digest"
+      ],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "start_line": {"type": "integer", "minimum": 1},
+        "end_line": {"type": "integer", "minimum": 1},
+        "content_digest": {"$ref": "#/$defs/sha256"},
+        "file_digest": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "reviewer": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reviewer", "method"],
+      "properties": {
+        "reviewer": {"$ref": "#/$defs/reviewer"},
+        "method": {"enum": ["manual"]}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["origin"],
+      "properties": {
+        "origin": {"enum": ["manual", "explain_search", "context"]}
+      }
+    },
+    "note": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^[^\\u0000-\\u0009\\u000b-\\u001f\\u007f]*$"
+    },
+    "nullableNote": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "#/$defs/note"}
+      ]
+    }
+  }
+}

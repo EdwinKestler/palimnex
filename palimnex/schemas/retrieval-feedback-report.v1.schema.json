@@ -1,0 +1,236 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://palimnex.dev/schemas/retrieval-feedback-report.v1.schema.json",
+  "title": "Palimnex reviewed retrieval feedback report v1",
+  "description": "A deterministic read-only report of reviewed retrieval feedback with no retrieval or operational authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "project_id", "records", "counts", "include_history",
+    "authority", "authorizes_actions", "retrieval_influence"
+  ],
+  "properties": {
+    "schema": {"const": "palimnex:retrieval-feedback-report:v1"},
+    "project_id": {"$ref": "#/$defs/projectId"},
+    "records": {
+      "type": "array",
+      "maxItems": 1000000,
+      "items": {"$ref": "#/$defs/record"}
+    },
+    "counts": {"$ref": "#/$defs/counts"},
+    "include_history": {"type": "boolean"},
+    "authority": {"const": "historical_only"},
+    "authorizes_actions": {"const": false},
+    "retrieval_influence": {"const": false}
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "minLength": 64,
+      "maxLength": 64
+    },
+    "eventId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$",
+      "minLength": 32,
+      "maxLength": 32
+    },
+    "nullableEventId": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "#/$defs/eventId"}
+      ]
+    },
+    "projectId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "minLength": 36,
+      "maxLength": 36
+    },
+    "query": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 8192,
+      "pattern": "^[^\\s\\u0000-\\u001f\\u007f]+(?: [^\\s\\u0000-\\u001f\\u007f]+)*$"
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path", "start_line", "end_line", "content_digest", "file_digest"
+      ],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "start_line": {"type": "integer", "minimum": 1},
+        "end_line": {"type": "integer", "minimum": 1},
+        "content_digest": {"$ref": "#/$defs/sha256"},
+        "file_digest": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "reviewer": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "nullableJudgement": {
+      "oneOf": [
+        {"type": "null"},
+        {"enum": ["answers", "does_not_answer"]}
+      ]
+    },
+    "nullableSha256": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "#/$defs/sha256"}
+      ]
+    },
+    "nullableQuery": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "#/$defs/query"}
+      ]
+    },
+    "nullableSource": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "#/$defs/source"}
+      ]
+    },
+    "nullableReviewer": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "#/$defs/reviewer"}
+      ]
+    },
+    "nullableOrigin": {
+      "oneOf": [
+        {"type": "null"},
+        {"enum": ["manual", "explain_search", "context"]}
+      ]
+    },
+    "nullableInvalidReason": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      ]
+    },
+    "record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id", "kind", "state", "invalid_reason", "judgement",
+        "query_digest", "query", "source", "reviewer", "origin",
+        "observed_at", "superseded_by", "withdrawn_by", "source_current"
+      ],
+      "properties": {
+        "event_id": {"$ref": "#/$defs/eventId"},
+        "kind": {
+          "enum": [
+            "session_started", "task", "decision", "failure", "outcome",
+            "workflow", "fact", "evidence", "correction", "revocation",
+            "session_closed"
+          ]
+        },
+        "state": {
+          "enum": ["current", "stale", "superseded", "withdrawn", "invalid"]
+        },
+        "invalid_reason": {"$ref": "#/$defs/nullableInvalidReason"},
+        "judgement": {"$ref": "#/$defs/nullableJudgement"},
+        "query_digest": {"$ref": "#/$defs/nullableSha256"},
+        "query": {"$ref": "#/$defs/nullableQuery"},
+        "source": {"$ref": "#/$defs/nullableSource"},
+        "reviewer": {"$ref": "#/$defs/nullableReviewer"},
+        "origin": {"$ref": "#/$defs/nullableOrigin"},
+        "observed_at": {"type": "integer", "minimum": 0},
+        "superseded_by": {"$ref": "#/$defs/nullableEventId"},
+        "withdrawn_by": {"$ref": "#/$defs/nullableEventId"},
+        "source_current": {"type": ["boolean", "null"]}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"state": {"const": "current"}}, "required": ["state"]},
+          "then": {
+            "properties": {
+              "source_current": {"const": true},
+              "invalid_reason": {"type": "null"},
+              "superseded_by": {"type": "null"},
+              "withdrawn_by": {"type": "null"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"state": {"const": "stale"}}, "required": ["state"]},
+          "then": {
+            "properties": {
+              "source_current": {"const": false},
+              "invalid_reason": {"type": "null"},
+              "superseded_by": {"type": "null"},
+              "withdrawn_by": {"type": "null"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"state": {"const": "superseded"}}, "required": ["state"]},
+          "then": {
+            "properties": {
+              "invalid_reason": {"type": "null"},
+              "superseded_by": {"$ref": "#/$defs/eventId"},
+              "withdrawn_by": {"type": "null"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"state": {"const": "withdrawn"}}, "required": ["state"]},
+          "then": {
+            "properties": {
+              "invalid_reason": {"type": "null"},
+              "withdrawn_by": {"$ref": "#/$defs/eventId"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"state": {"const": "invalid"}}, "required": ["state"]},
+          "then": {
+            "properties": {
+              "invalid_reason": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "superseded_by": {"type": "null"},
+              "withdrawn_by": {"type": "null"},
+              "source_current": {"type": "null"}
+            }
+          }
+        }
+      ]
+    },
+    "count": {"type": "integer", "minimum": 0, "maximum": 1000000},
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["current", "stale", "superseded", "withdrawn", "invalid"],
+      "properties": {
+        "current": {"$ref": "#/$defs/count"},
+        "stale": {"$ref": "#/$defs/count"},
+        "superseded": {"$ref": "#/$defs/count"},
+        "withdrawn": {"$ref": "#/$defs/count"},
+        "invalid": {"$ref": "#/$defs/count"}
+      }
+    }
+  }
+}

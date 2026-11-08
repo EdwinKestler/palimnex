@@ -1,0 +1,121 @@
+{
+  "schema": "palimnex:retrieval-feedback-report:v1",
+  "project_id": "11111111-1111-4111-8111-111111111111",
+  "records": [
+    {
+      "event_id": "11111111111111111111111111111111",
+      "kind": "fact",
+      "state": "current",
+      "invalid_reason": null,
+      "judgement": "answers",
+      "query_digest": "c44d958f2a8f4758f8383ab1f116d1f50804f7aff9bc53b8dc0713417cd9ac3f",
+      "query": "where is retrieval ranking",
+      "source": {
+        "path": "palimnex/retrieval.py",
+        "start_line": 174,
+        "end_line": 188,
+        "content_digest": "3b036afa96981b6a1c1840d6691cf3e0da7b54085383830b32462ff27d810a85",
+        "file_digest": "04bd1a54bbc4bec6bc7511cb4afe65ae4dea83e257f71b0dc2116f3a72a912b5"
+      },
+      "reviewer": "Fixture Reviewer",
+      "origin": "manual",
+      "observed_at": 100,
+      "superseded_by": null,
+      "withdrawn_by": null,
+      "source_current": true
+    },
+    {
+      "event_id": "22222222222222222222222222222222",
+      "kind": "fact",
+      "state": "stale",
+      "invalid_reason": null,
+      "judgement": "does_not_answer",
+      "query_digest": "c44d958f2a8f4758f8383ab1f116d1f50804f7aff9bc53b8dc0713417cd9ac3f",
+      "query": "where is retrieval ranking",
+      "source": {
+        "path": "palimnex/retrieval.py",
+        "start_line": 174,
+        "end_line": 188,
+        "content_digest": "3b036afa96981b6a1c1840d6691cf3e0da7b54085383830b32462ff27d810a85",
+        "file_digest": "04bd1a54bbc4bec6bc7511cb4afe65ae4dea83e257f71b0dc2116f3a72a912b5"
+      },
+      "reviewer": "Fixture Reviewer",
+      "origin": "context",
+      "observed_at": 200,
+      "superseded_by": null,
+      "withdrawn_by": null,
+      "source_current": false
+    },
+    {
+      "event_id": "33333333333333333333333333333333",
+      "kind": "fact",
+      "state": "superseded",
+      "invalid_reason": null,
+      "judgement": "answers",
+      "query_digest": "c44d958f2a8f4758f8383ab1f116d1f50804f7aff9bc53b8dc0713417cd9ac3f",
+      "query": "where is retrieval ranking",
+      "source": {
+        "path": "palimnex/retrieval.py",
+        "start_line": 174,
+        "end_line": 188,
+        "content_digest": "3b036afa96981b6a1c1840d6691cf3e0da7b54085383830b32462ff27d810a85",
+        "file_digest": "04bd1a54bbc4bec6bc7511cb4afe65ae4dea83e257f71b0dc2116f3a72a912b5"
+      },
+      "reviewer": "Fixture Reviewer",
+      "origin": "explain_search",
+      "observed_at": 300,
+      "superseded_by": "44444444444444444444444444444444",
+      "withdrawn_by": null,
+      "source_current": true
+    },
+    {
+      "event_id": "44444444444444444444444444444444",
+      "kind": "correction",
+      "state": "withdrawn",
+      "invalid_reason": null,
+      "judgement": "does_not_answer",
+      "query_digest": "c44d958f2a8f4758f8383ab1f116d1f50804f7aff9bc53b8dc0713417cd9ac3f",
+      "query": "where is retrieval ranking",
+      "source": {
+        "path": "palimnex/retrieval.py",
+        "start_line": 174,
+        "end_line": 188,
+        "content_digest": "3b036afa96981b6a1c1840d6691cf3e0da7b54085383830b32462ff27d810a85",
+        "file_digest": "04bd1a54bbc4bec6bc7511cb4afe65ae4dea83e257f71b0dc2116f3a72a912b5"
+      },
+      "reviewer": "Fixture Reviewer",
+      "origin": "manual",
+      "observed_at": 400,
+      "superseded_by": null,
+      "withdrawn_by": "55555555555555555555555555555555",
+      "source_current": true
+    },
+    {
+      "event_id": "66666666666666666666666666666666",
+      "kind": "revocation",
+      "state": "invalid",
+      "invalid_reason": "payload_invalid",
+      "judgement": null,
+      "query_digest": null,
+      "query": null,
+      "source": null,
+      "reviewer": null,
+      "origin": null,
+      "observed_at": 500,
+      "superseded_by": null,
+      "withdrawn_by": null,
+      "source_current": null
+    }
+  ],
+  "counts": {
+    "current": 1,
+    "stale": 1,
+    "superseded": 1,
+    "withdrawn": 1,
+    "invalid": 1
+  },
+  "include_history": true,
+  "authority": "historical_only",
+  "authorizes_actions": false,
+  "retrieval_influence": false
+}

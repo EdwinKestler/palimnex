@@ -1,0 +1,105 @@
+{
+  "schema": "palimnex:ontology-workstream-task:v1",
+  "workstream_id": "ontology-phase-5-feedback-core",
+  "phase": 5,
+  "action_id": "ontology_phase_5_extensions",
+  "objective": "Implement palimnex/feedback.py: the palimnex:retrieval-feedback:v1 and withdrawal payload builders and validators, record, correct and withdraw through MemoryLedger.append_event with existing event kinds (fact, correction, revocation), and the read-only palimnex:retrieval-feedback-report:v1 with current, stale, superseded, withdrawn and invalid states; tests against temporary ledgers only; docs/RETRIEVAL_FEEDBACK.md. Follow FEEDBACK_SPEC.md sections 1 and 2.",
+  "exclusions": [
+    "No edits outside owned_paths; foreign changes are returned as integration patch proposals.",
+    "Feedback has no retrieval influence: retrieve_sources, context, explain-search, search, symbols, impact and palimnex evaluate stay byte-identical and never read feedback.",
+    "Existing ledger event kinds only (fact, correction, revocation); no new event kind, ledger schema change, migration or change to palimnex/durable.py.",
+    "Never write the repository's real ledger; tests use temporary repositories and temporary ledgers only.",
+    "Feedback is non-authorizing: authority historical_only, authorizes_actions false, retrieval_influence false.",
+    "No automatic query-history learning; every record is an explicit reviewed judgement.",
+    "No feedback shadow channel, evaluation, graph exploration or semantic cache in this phase.",
+    "No change to any existing identifier, schema, frozen fixture or test expectation except where a task card owns the file.",
+    "No runtime dependency: runtime modules use only the standard library and palimnex modules.",
+    "No Git staging, commits, branches or pushes; no network, installs, model or provider calls.",
+    "Never read or echo credentials; never store literal secret-pattern strings; refusals never echo query, note or reason text."
+  ],
+  "approved_design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "2bc034cbb2049d2e4a50c296456041fcd779dbde6107ba98d9875d14716707d8"
+  },
+  "approval_evidence": {
+    "schema": "palimnex:ontology-approval-evidence:v1",
+    "authority_source": "user_message",
+    "evidence_locator": "claude.ai conversation with the repository owner, user message sent 2026-11-07 15:02 America/Guatemala ('if phase 4 is closed then phase 5 is approved'), after the Phase 4 exit gate commit 56db9e5 was pushed, plus the owner's scope answers in the same conversation: feedback records only; ledger storage written by the owner; shadow and evaluation only in a later round; offline HTML + JSON for the deferred graph explorer; semantic cache skipped",
+    "grantor_claim": "repository owner (Gus, GitHub EdwinKestler)",
+    "design_identity": {
+      "path": "docs/ONTOLOGY_ADOPTION.md",
+      "sha256": "2bc034cbb2049d2e4a50c296456041fcd779dbde6107ba98d9875d14716707d8"
+    },
+    "source_proposal_identity": {
+      "path": "artifacts/design/Ontologyadoptionplan.md",
+      "sha256": "8fe38bef5f7f25fa8a7d58dad21b89f69c70f4a367d9981c01fdedf6bd165d86"
+    },
+    "approved_phases": [
+      5
+    ],
+    "authorized_actions": [
+      "ontology_phase_5_extensions"
+    ],
+    "excluded_actions": [
+      "ontology_phase_0_contract",
+      "ontology_phase_1_registry",
+      "ontology_phase_2_coverage",
+      "ontology_phase_3_shadow",
+      "ontology_phase_4_semantic"
+    ],
+    "recorded_at": "2026-11-07T15:02:00-06:00",
+    "implementation_authorized": true,
+    "network_authorized": false,
+    "git_write_authorized": false,
+    "live_state_authorized": false
+  },
+  "owned_paths": [
+    "palimnex/feedback.py",
+    "palimnex/tests/test_feedback.py",
+    "docs/RETRIEVAL_FEEDBACK.md",
+    "artifacts/ontology/phase-5/receipts/ontology-phase-5-feedback-core.implementation-receipt.json"
+  ],
+  "read_only_paths": [
+    ".agents/skills",
+    ".palimnex.json",
+    "AGENTS.md",
+    "README.md",
+    "artifacts/design/Ontologyadoptionplan.md",
+    "artifacts/design/ontology-phase-0",
+    "artifacts/ontology/phase-0",
+    "artifacts/ontology/phase-1",
+    "artifacts/ontology/phase-2",
+    "artifacts/ontology/phase-3",
+    "artifacts/ontology/phase-3-promotion",
+    "artifacts/ontology/phase-4",
+    "artifacts/ontology/phase-5/approval-evidence.json",
+    "artifacts/ontology/phase-5/briefs",
+    "artifacts/ontology/phase-5/integration",
+    "artifacts/ontology/phase-5/manifest.json",
+    "artifacts/ontology/phase-5/tasks",
+    "docs",
+    "docs/ONTOLOGY_ADOPTION.md",
+    "palimnex",
+    "pyproject.toml"
+  ],
+  "forbidden_paths": [
+    ".palimnex",
+    ".env",
+    ".env.example",
+    "benchmark",
+    "secrets",
+    ".git"
+  ],
+  "dependencies": [],
+  "acceptance_commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_feedback -v",
+    "./.venv/bin/python -m mypy --python-version 3.11 --follow-imports=silent --check-untyped-defs --disallow-untyped-defs palimnex/feedback.py",
+    "./.venv/bin/python -m unittest palimnex.tests.test_durable palimnex.tests.test_experience palimnex.tests.test_retrieval_influence",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-5/tasks/ontology-phase-5-feedback-core.json --implementation-receipt artifacts/ontology/phase-5/receipts/ontology-phase-5-feedback-core.implementation-receipt.json",
+    "git status --short --untracked-files=all"
+  ],
+  "required_output": "ImplementationReceipt",
+  "network_authority": false,
+  "git_write_authority": false,
+  "live_state_authority": false
+}

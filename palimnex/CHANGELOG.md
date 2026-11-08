@@ -74,6 +74,22 @@ operator-facing behavior; cache and graph schemas are versioned independently.
   `search`, `symbols`, `impact`, `palimnex evaluate`, `semantic-status`,
   `semantic-gate` and `project-memory:semantic-provider:v1` are unchanged. No
   model download, network or vector store. See `docs/SEMANTIC_SHADOW.md`.
+- Added reviewed retrieval feedback records (ontology adoption Phase 5).
+  `palimnex.feedback` stores an explicit, reviewer-attributed judgement that a
+  query is or is not answered by a source range, as
+  `palimnex:retrieval-feedback:v1` payloads on existing ledger event kinds
+  (`fact`; `correction` to change the judgement; `revocation` with
+  `palimnex:retrieval-feedback-withdrawal:v1` to withdraw it, never deleting
+  history). The source range is digest-verified against current admitted
+  bytes; query, note, reason and reviewer are privacy-scanned and never echoed.
+  New owner-run commands `feedback-record`, `feedback-correct` and
+  `feedback-withdraw` write the ledger; `feedback-report [--include-history]`
+  prints `palimnex:retrieval-feedback-report:v1` with `current`, `stale`
+  (source drift), `superseded`, `withdrawn` and `invalid` states. Feedback is
+  `historical_only` and has no retrieval influence: `retrieve_sources`,
+  `context`, `explain-search`, `search` and `palimnex evaluate` never read it.
+  The ledger schema and event kinds are unchanged. See
+  `docs/RETRIEVAL_FEEDBACK.md`.
 
 ## 2.9.0 - 2026-10-02
 

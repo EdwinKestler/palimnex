@@ -115,3 +115,12 @@ configuration key reads them and no output changes. The existing
 `semantic-gate` and their +0.05 gain and 2x latency rule are unchanged; the
 Phase 4 thresholds (+0.02, 1.5x) live only in the new evaluation contract. See
 `docs/SEMANTIC_SHADOW.md`.
+
+Phase 5 adds three payload and report contracts,
+`palimnex:retrieval-feedback:v1`, `palimnex:retrieval-feedback-withdrawal:v1`
+and `palimnex:retrieval-feedback-report:v1`. Feedback payloads ride on the
+existing `fact`, `correction` and `revocation` event kinds, so
+`memory-event.v1`, the ledger schema, logical exports and packs are unchanged
+and older readers see ordinary events with a JSON payload. Feedback has no
+retrieval influence; every existing retrieval output is unchanged. See
+`docs/RETRIEVAL_FEEDBACK.md`.

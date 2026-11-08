@@ -1,0 +1,13 @@
+{
+  "schema": "palimnex:ontology-workstream-bundle-validation:v1",
+  "manifest_digest": "a60ae1d15bdf2c2abcf487fdf46bebb8228e5d16a43e926351308362e73c0db6",
+  "task_digests": {
+    "ontology-phase-5-feedback-core": "b96856099492a2308c44085bcd69fcdf305fc3222dfeb503246e05cb8bf9b0d5",
+    "ontology-phase-5-feedback-schemas": "4b8efac8f98961213a8869190b3561057bd937e15e5e5ad621ae4bcfe16ed940",
+    "ontology-phase-5-integration": "c90919c03eb72eb7d1d2e2b46de76ff2de9e41c3f6c44690196584914711e46f"
+  },
+  "status": "valid",
+  "authorizes_actions": false,
+  "approval_evidence_digest": "633eb150b12c968f5323d1fbed7d6d3ebfe28aa8c0ac7e91f4ba8f77ddfb65b1",
+  "amendment": "R16: integration lane owns palimnex/experience.py"
+}

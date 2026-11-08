@@ -1,0 +1,59 @@
+{
+  "schema": "palimnex:ontology-review-receipt:v1",
+  "reviewed_scope": [
+    "artifacts/ontology/phase-5/receipts/ontology-phase-5-feedback-core.implementation-receipt.json",
+    "docs/RETRIEVAL_FEEDBACK.md",
+    "palimnex/feedback.py",
+    "palimnex/tests/test_feedback.py"
+  ],
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "2bc034cbb2049d2e4a50c296456041fcd779dbde6107ba98d9875d14716707d8"
+  },
+  "task_digest": "b96856099492a2308c44085bcd69fcdf305fc3222dfeb503246e05cb8bf9b0d5",
+  "approval_evidence_digest": "633eb150b12c968f5323d1fbed7d6d3ebfe28aa8c0ac7e91f4ba8f77ddfb65b1",
+  "workstream_id": "ontology-phase-5-feedback-core",
+  "evidence": [
+    "RESOLVED: Round-1 BLOCKER (assemble_context and build_capsule changed after record_feedback because durable term recall surfaced palimnex:retrieval-feedback:v1 facts). Core owned files are unchanged (mtimes 15:31-15:34, before the 15:51 round-1 receipt; still untracked). R16 in palimnex/experience.py current_eligible returns False for palimnex:retrieval-feedback:v1 and palimnex:retrieval-feedback-withdrawal:v1 using schema strings only. Independent temp-ledger probe: context, capsule and retrieve_sources bytes unchanged after record, correction, withdrawal and a second record; ordinary fact text remains; no palimnex:retrieval-feedback bytes in context or capsule. CLI isolation test passed; r16-negative-control.log shows that test fails when R16 is disabled and passes when enabled.",
+    "ACCEPTED-RESIDUAL: Round-1 MINOR remains. palimnex.tests.test_feedback.test_real_payloads_and_report_match_public_schemas still reads palimnex/schemas/retrieval-feedback*.v1.schema.json owned by ontology-phase-5-feedback-schemas. artifacts/ontology/phase-5/manifest.json dependency_dag still has only core->integration and schemas->integration. The schemas workstream was independently accepted first (artifacts/ontology/phase-5/reviews/ontology-phase-5-feedback-schemas.review-receipt.json). Runtime palimnex.feedback does not import those schema files.",
+    "NOTE: Implementation receipt validates against the unchanged task card. validate_contract status valid, task_digest b96856099492a2308c44085bcd69fcdf305fc3222dfeb503246e05cb8bf9b0d5 and approval_evidence_digest 633eb150b12c968f5323d1fbed7d6d3ebfe28aa8c0ac7e91f4ba8f77ddfb65b1 match artifacts/ontology/phase-5/integration/bundle-validation.r16.json. docs/ONTOLOGY_ADOPTION.md sha256 2bc034cbb2049d2e4a50c296456041fcd779dbde6107ba98d9875d14716707d8 matches the task card. files_changed equals owned_paths.",
+    "NOTE: palimnex.tests.test_feedback 13/13, test_feedback_schemas 8/8, test_feedback_cli 6/6 and test_experience 25/25 passed in one focused run (52 tests, 3.212s). mypy: Success: no issues found in 22 source files. palimnex.feedback still has no import of experience or retrieval consumers; scan_bytes findings on owned core files: 0."
+  ],
+  "commands": [
+    "./.venv/bin/python -m unittest palimnex.tests.test_feedback_cli palimnex.tests.test_feedback palimnex.tests.test_feedback_schemas palimnex.tests.test_experience -v",
+    "./.venv/bin/python -m mypy",
+    "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-5/tasks/ontology-phase-5-feedback-core.json --implementation-receipt artifacts/ontology/phase-5/receipts/ontology-phase-5-feedback-core.implementation-receipt.json",
+    "./.venv/bin/python /tmp/phase5_r16_review_probes.py"
+  ],
+  "source_grounding_result": "Unchanged from round-1: build_feedback binds locators through cache_v3.source_snapshot to currently admitted files and existing inclusive line ranges; content_digest matches MemoryLedger._source_evidence_digest so append_event marks source evidence verified. R16 does not alter payload construction, locators, or report source_current/stale. Core files were not edited after the round-1 review.",
+  "privacy_result": "Unchanged from round-1: query, note, reviewer and reason are scan_text gated with stable non-echoing FeedbackError reasons. Owned core files have zero scan_bytes findings. This re-review did not repeat the round-1 canary matrix on the API; CLI query canary coverage is in the integration tests that were re-run.",
+  "retrieval_quality_result": "retrieve_sources remains byte-identical with feedback present (owned test plus probe). The round-1 context/capsule leak is closed by R16 in the integration lane: current_eligible excludes both feedback payload schemas, so assemble_context and build_capsule stay byte-identical through record, correction and withdrawal while non-feedback history is still recalled. palimnex.feedback is still not imported by retrieval.py, experience.py, durable.py or cache_v3.py.",
+  "compatibility_result": "Additive palimnex.feedback API on existing fact, correction and revocation kinds. palimnex/durable.py is unchanged. Task digest is unchanged from round-1 and from bundle-validation.r16.json. CLI wiring and the experience.py filter are integration-owned.",
+  "rollback_result": "Delete palimnex/feedback.py, palimnex/tests/test_feedback.py, docs/RETRIEVAL_FEEDBACK.md and the core implementation receipt. No ledger schema, event kind, or retrieval module in this lane remains to revert. Temporary-ledger test data is discarded with the temp directory. R16 rollback lives in the integration lane (revert the four experience.py lines).",
+  "authority_result": "Payloads, receipts and reports fix authority historical_only, authorizes_actions false and retrieval_influence false. Writes go through append_event only; this review used temporary repositories and temporary ledgers. Approval evidence authorizes ontology_phase_5_extensions with network, git-write and live-state false. This review authorizes no real-ledger write, influence activation, Git write, network, or phase-5 close.",
+  "limitations": [
+    "Full unittest suite and scripts/palimnex_check.sh were not re-run; gate.log from the integration lane records them exit 0.",
+    "Reviewer did not read .palimnex/, .env*, secrets/ or benchmark/, and did not run palimnex remember/session/capture/ledger/feedback/context/capsule commands against this checkout.",
+    "ACCEPTED-RESIDUAL: the owned schema-file read in test_feedback has no declared DAG edge from core to schemas."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_mutated": false,
+    "ledger_consulted": false,
+    "ledger_mutated": false,
+    "repository_ledger_written": false,
+    "temporary_ledgers_only": true,
+    "reason": "Reviewer did not read .palimnex or run palimnex commands against this checkout. Probes used TemporaryDirectory ledgers under /tmp."
+  },
+  "git_state": {
+    "git_write_authorized": false,
+    "git_writes_performed": false,
+    "reviewer_modified_repository": false,
+    "branch": "main",
+    "head": "56db9e57b960375d627aec287e2585476f6e63ed",
+    "dirty_tree": true,
+    "owned_files_status": "untracked",
+    "core_files_mtime_before_round1_review": true
+  },
+  "status": "accepted_with_limits"
+}

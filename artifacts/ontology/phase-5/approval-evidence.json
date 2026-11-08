@@ -1,0 +1,32 @@
+{
+  "schema": "palimnex:ontology-approval-evidence:v1",
+  "authority_source": "user_message",
+  "evidence_locator": "claude.ai conversation with the repository owner, user message sent 2026-11-07 15:02 America/Guatemala ('if phase 4 is closed then phase 5 is approved'), after the Phase 4 exit gate commit 56db9e5 was pushed, plus the owner's scope answers in the same conversation: feedback records only; ledger storage written by the owner; shadow and evaluation only in a later round; offline HTML + JSON for the deferred graph explorer; semantic cache skipped",
+  "grantor_claim": "repository owner (Gus, GitHub EdwinKestler)",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "2bc034cbb2049d2e4a50c296456041fcd779dbde6107ba98d9875d14716707d8"
+  },
+  "source_proposal_identity": {
+    "path": "artifacts/design/Ontologyadoptionplan.md",
+    "sha256": "8fe38bef5f7f25fa8a7d58dad21b89f69c70f4a367d9981c01fdedf6bd165d86"
+  },
+  "approved_phases": [
+    5
+  ],
+  "authorized_actions": [
+    "ontology_phase_5_extensions"
+  ],
+  "excluded_actions": [
+    "ontology_phase_0_contract",
+    "ontology_phase_1_registry",
+    "ontology_phase_2_coverage",
+    "ontology_phase_3_shadow",
+    "ontology_phase_4_semantic"
+  ],
+  "recorded_at": "2026-11-07T15:02:00-06:00",
+  "implementation_authorized": true,
+  "network_authorized": false,
+  "git_write_authorized": false,
+  "live_state_authorized": false
+}

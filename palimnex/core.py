@@ -2909,6 +2909,38 @@ def parser() -> argparse.ArgumentParser:
         "--retention", choices=("volatile", "session", "durable"), default="session"
     )
     remember.add_argument("--valid-from", type=int)
+    feedback_record = commands.add_parser(
+        "feedback-record", help="record a reviewed query-to-source judgement in the ledger (no ranking effect)"
+    )
+    feedback_record.add_argument("--session", required=True)
+    feedback_record.add_argument("--query", required=True)
+    feedback_record.add_argument("--locator", required=True, help="source path:start-end")
+    feedback_record.add_argument("--judgement", choices=("answers", "does_not_answer"), required=True)
+    feedback_record.add_argument("--reviewer", required=True)
+    feedback_record.add_argument("--note")
+    feedback_record.add_argument("--origin", choices=("manual", "explain_search", "context"), default="manual")
+    feedback_record.add_argument(
+        "--sensitivity", choices=("public", "internal", "restricted", "secret"), default="internal"
+    )
+    feedback_correct = commands.add_parser(
+        "feedback-correct", help="supersede a feedback record with a new judgement for the same query and source"
+    )
+    feedback_correct.add_argument("--session", required=True)
+    feedback_correct.add_argument("--event", required=True)
+    feedback_correct.add_argument("--judgement", choices=("answers", "does_not_answer"), required=True)
+    feedback_correct.add_argument("--reviewer", required=True)
+    feedback_correct.add_argument("--note")
+    feedback_withdraw = commands.add_parser(
+        "feedback-withdraw", help="withdraw a feedback record (kept as history, never deleted)"
+    )
+    feedback_withdraw.add_argument("--session", required=True)
+    feedback_withdraw.add_argument("--event", required=True)
+    feedback_withdraw.add_argument("--reviewer", required=True)
+    feedback_withdraw.add_argument("--reason", required=True)
+    feedback_report_parser = commands.add_parser(
+        "feedback-report", help="read-only report of feedback records and their states"
+    )
+    feedback_report_parser.add_argument("--include-history", action="store_true")
     session_close = commands.add_parser("session-close")
     session_close.add_argument("session")
     session_close.add_argument("--outcome", required=True)
@@ -3160,6 +3192,7 @@ def main(argv: list[str] | None = None) -> int:
             "retention-status", "retention-migrate", "retention-activate", "retention-hold",
             "retention-release", "retention-pin", "retention-authorize",
             "retention-support", "cleanup-plan", "cleanup-apply", "cleanup-finalize",
+            "feedback-record", "feedback-correct", "feedback-withdraw", "feedback-report",
         }
         if (args.command in cache_commands or args.command in ledger_commands) and not config_present(ROOT):
             raise ValueError(
@@ -3523,6 +3556,29 @@ def main(argv: list[str] | None = None) -> int:
                 retention=args.retention,
                 valid_from=args.valid_from,
             )
+            print(json.dumps(project_result(output), sort_keys=True))
+            return 0
+        if args.command in {"feedback-record", "feedback-correct", "feedback-withdraw", "feedback-report"}:
+            from . import feedback
+            if args.command == "feedback-report":
+                print(json.dumps(feedback.feedback_report(ledger, include_history=args.include_history),
+                                 sort_keys=True))
+                return 0
+            if args.command == "feedback-record":
+                output = feedback.record_feedback(
+                    ledger, args.session, query=args.query, locator=args.locator,
+                    judgement=args.judgement, reviewer=args.reviewer, note=args.note,
+                    origin=args.origin, sensitivity=args.sensitivity,
+                )
+            elif args.command == "feedback-correct":
+                output = feedback.correct_feedback(
+                    ledger, args.session, args.event, judgement=args.judgement,
+                    reviewer=args.reviewer, note=args.note,
+                )
+            else:
+                output = feedback.withdraw_feedback(
+                    ledger, args.session, args.event, reviewer=args.reviewer, reason=args.reason,
+                )
             print(json.dumps(project_result(output), sort_keys=True))
             return 0
         if args.command == "session-close":

@@ -16,6 +16,7 @@ from .ontology_influence import context_v2
 from .security import read_bounded_file, scan_text
 
 CAPTURE_SCHEMA = "project-memory:capture:v1"
+FEEDBACK_PAYLOAD_SCHEMAS = frozenset({"palimnex:retrieval-feedback:v1", "palimnex:retrieval-feedback-withdrawal:v1"})
 CLAIM_SCHEMA = "project-memory:claim:v1"
 
 
@@ -187,6 +188,9 @@ def current_eligible(event: dict[str, Any], fingerprint: str, checkout: str) -> 
     if event["imported"] or event["claimed_trust"] != "observed":
         return False
     payload = event["payload"]
+    # Reviewed retrieval feedback is ledger history only; it never shapes context or capsules (R16).
+    if isinstance(payload, dict) and payload.get("schema") in FEEDBACK_PAYLOAD_SCHEMAS:
+        return False
     if isinstance(payload, dict) and payload.get("schema") == CAPTURE_SCHEMA:
         if not is_capture(payload):
             return False

@@ -1,0 +1,93 @@
+{
+  "schema": "palimnex:ontology-implementation-receipt:v1",
+  "workstream_id": "ontology-phase-5-feedback-schemas",
+  "design_identity": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "2bc034cbb2049d2e4a50c296456041fcd779dbde6107ba98d9875d14716707d8"
+  },
+  "task_digest": "4b8efac8f98961213a8869190b3561057bd937e15e5e5ad621ae4bcfe16ed940",
+  "approval_evidence_digest": "633eb150b12c968f5323d1fbed7d6d3ebfe28aa8c0ac7e91f4ba8f77ddfb65b1",
+  "owned_scope": [
+    "palimnex/schemas/retrieval-feedback.v1.schema.json",
+    "palimnex/schemas/retrieval-feedback-withdrawal.v1.schema.json",
+    "palimnex/schemas/retrieval-feedback-report.v1.schema.json",
+    "palimnex/tests/fixtures/retrieval_feedback",
+    "palimnex/tests/test_feedback_schemas.py",
+    "artifacts/ontology/phase-5/receipts/ontology-phase-5-feedback-schemas.implementation-receipt.json"
+  ],
+  "files_changed": [
+    "palimnex/schemas/retrieval-feedback.v1.schema.json",
+    "palimnex/schemas/retrieval-feedback-withdrawal.v1.schema.json",
+    "palimnex/schemas/retrieval-feedback-report.v1.schema.json",
+    "palimnex/tests/fixtures/retrieval_feedback",
+    "palimnex/tests/test_feedback_schemas.py",
+    "artifacts/ontology/phase-5/receipts/ontology-phase-5-feedback-schemas.implementation-receipt.json"
+  ],
+  "dependencies_consumed": [],
+  "commands": [
+    {
+      "command": "python3 palimnex.py status",
+      "exit_code": 0,
+      "result": "Command returned a structured Redis connection/protocol error in the restricted sandbox and cache_consulted false; no cache mutation was attempted."
+    },
+    {
+      "command": "python3 palimnex.py validate --deep",
+      "exit_code": 0,
+      "result": "Command returned the same structured Redis connection/protocol error and cache_consulted false; source inspection continued offline as permitted by the Palimnex skill."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-5/tasks/ontology-phase-5-feedback-schemas.json",
+      "exit_code": 0,
+      "result": "Task contract valid; task digest 4b8efac8f98961213a8869190b3561057bd937e15e5e5ad621ae4bcfe16ed940 and approval-evidence digest 633eb150b12c968f5323d1fbed7d6d3ebfe28aa8c0ac7e91f4ba8f77ddfb65b1 verified."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_feedback_schemas -v",
+      "exit_code": 0,
+      "result": "8 tests passed: schema validity and local resolution, unique public schema IDs, closed object shapes, three valid fixtures, all five report states, seven single-rule invalid fixtures, privacy scanning and unchanged existing schema digests."
+    },
+    {
+      "command": "./.venv/bin/python -m unittest palimnex.tests.test_sdk palimnex.tests.test_influence_schemas",
+      "exit_code": 0,
+      "result": "25 compatibility tests passed."
+    },
+    {
+      "command": "./.venv/bin/python .agents/skills/palimnex-ontology-coordinator/scripts/validate_contract.py artifacts/ontology/phase-5/tasks/ontology-phase-5-feedback-schemas.json --implementation-receipt artifacts/ontology/phase-5/receipts/ontology-phase-5-feedback-schemas.implementation-receipt.json",
+      "exit_code": 0,
+      "result": "Task contract and implementation receipt valid."
+    },
+    {
+      "command": "git status --short --untracked-files=all",
+      "exit_code": 0,
+      "result": "All owned product, fixture, test and receipt paths are untracked; unrelated pre-existing and parallel-lane changes remain present and untouched."
+    }
+  ],
+  "compatibility_effect": "Adds three draft 2020-12 public JSON contracts: palimnex:retrieval-feedback:v1, palimnex:retrieval-feedback-withdrawal:v1 and palimnex:retrieval-feedback-report:v1. They are closed, bounded, review-attributed, historical-only and explicitly non-authorizing with retrieval_influence false. The report contract includes all five states and an invalid_reason code required to make the shared specification's invalid-record diagnostic observable. Existing public schemas are byte-checked against frozen digests. This lane changes no runtime module, retrieval path, ledger schema, event kind, existing identifier, configuration, command, cache, database or external state.",
+  "privacy_and_authority_checks": [
+    "All 14 owned product, test and fixture files present before the receipt were scanned with security.scan_bytes and produced zero findings.",
+    "Fixtures contain no credential-shaped text and use only bounded reviewer-authored example content.",
+    "Every payload and report fixes authority to historical_only, authorizes_actions to false and retrieval_influence to false.",
+    "Tests use only local schemas and a local referencing.Registry; no network resolution or provider call is possible.",
+    "No Redis write, ledger read or write, migration, policy activation, erasure, pack activation, install, network call, Git write or external action was performed.",
+    "Only task-card owned paths were written; foreign dirty files and the parallel feedback-core lane were read-only and preserved."
+  ],
+  "integration_patch_proposals": [],
+  "unresolved_risks": [
+    "Draft 2020-12 JSON Schema cannot compare sibling numeric properties, so the schemas enforce start_line and end_line minimums while the deterministic test contract checker enforces start_line less than or equal to end_line; runtime payload validation must retain the same cross-field check.",
+    "FEEDBACK_SPEC.md requires invalid records to carry a reason code but omits that field from its inline report-record key list; this contract exposes invalid_reason as nullable for valid records and required non-null for invalid records, matching the parallel core implementation and the stated diagnostic requirement.",
+    "The full suite, strict mypy, standard gate, fresh reindex, evaluation and ledger-status checks are delegated to the coordinator as required by the lane brief; indexed files changed and must be reindexed and evaluated after integration."
+  ],
+  "cache_and_ledger_state": {
+    "cache_consulted": false,
+    "cache_mutated": false,
+    "ledger_consulted": false,
+    "ledger_mutated": false,
+    "status": "Redis access was unavailable in the restricted sandbox; repository source remained authoritative and no cache or ledger fallback was written."
+  },
+  "git_state": {
+    "git_writes_authorized": false,
+    "git_writes_performed": false,
+    "owned_paths_state": "untracked",
+    "preexisting_or_parallel_changes_present": true
+  },
+  "status": "tested"
+}

@@ -95,6 +95,29 @@ class RedisLauncherSafetyTests(unittest.TestCase):
         self.assertEqual(marker.read_text(encoding="utf-8"), "invoked")
         self.assertFalse((state / "redis.pid").exists())
 
+    @staticmethod
+    def _copy_long_running_binary(target: Path) -> list[str]:
+        """Copy a system binary that still runs under another name; return its arguments.
+
+        A copy of /bin/sleep fails on multicall coreutils (Ubuntu 25.10 and later
+        refuse a foreign program name); a copy of /bin/sh fails on macOS, whose
+        /bin/sh re-executes another shell, so the process image is no longer the
+        copy. The first candidate whose copy runs under the new name is used.
+        """
+        candidates = (
+            ("/bin/sleep", ["0"], ["30"]),
+            ("/bin/sh", ["-c", "exit 0"], ["-c", "while :; do sleep 1; done"]),
+        )
+        for source, probe, arguments in candidates:
+            target.write_bytes(Path(source).read_bytes())
+            target.chmod(0o700)
+            completed = subprocess.run(
+                [str(target), *probe], capture_output=True, timeout=5, check=False
+            )
+            if completed.returncode == 0:
+                return arguments
+        raise unittest.SkipTest("no system binary runs under a copied name")
+
     def test_status_accepts_wrapper_execed_redis_server_binary(self) -> None:
         state = self.sandbox / "wrapped-server"
         state.mkdir()
@@ -103,18 +126,14 @@ class RedisLauncherSafetyTests(unittest.TestCase):
         responder.bind(str(socket_path))
         self.addCleanup(responder.close)
 
-        # The wrapped binary is a copy of /bin/sh running a loop. A copy of /bin/sleep no longer
-        # works: multicall coreutils (Ubuntu 25.10 and later) refuse to run under another name.
         actual_server = self.sandbox / "redis-server.bin"
-        actual_server.write_bytes(Path("/bin/sh").read_bytes())
-        actual_server.chmod(0o700)
+        arguments = self._copy_long_running_binary(actual_server)
         wrapper = self.sandbox / "redis-server"
         wrapper.write_text(
-            f"#!/bin/sh\nexec {actual_server!s} -c 'while :; do sleep 1; done'\n",
-            encoding="utf-8",
+            f"#!/bin/sh\nexec {actual_server!s} \"$@\"\n", encoding="utf-8"
         )
         wrapper.chmod(0o700)
-        process = subprocess.Popen([str(wrapper)])
+        process = subprocess.Popen([str(wrapper), *arguments])
         self.addCleanup(self._terminate_process, process)
         (state / "redis.pid").write_text(f"{process.pid}\n", encoding="utf-8")
 

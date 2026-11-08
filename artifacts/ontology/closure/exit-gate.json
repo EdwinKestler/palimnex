@@ -1,0 +1,58 @@
+{
+  "schema": "palimnex:ontology-exit-gate:v1",
+  "phase": "closure",
+  "scope": "approved-concept-registry-and-palimnex-2.10.0-release",
+  "decision": "accepted",
+  "authority_source": "user_message",
+  "evidence_locator": "current repository-owner conversation, user message dated 2026-11-08 16:44 America/Guatemala: approved; R17 and R18 confirmed; registry approved upon merging PR #24; release candidate approved for publication as 2.10.0; ontology influence remains off; execute merge, tag, publish.yml, PyPI verification and GitHub release as one controlled transaction",
+  "grantor_claim": "repository owner (Gus, GitHub EdwinKestler)",
+  "recorded_at": "2026-11-08T17:01:06-06:00",
+  "commit": "56b5fe416f26dcf3c04f21498552e2c6d7e6970c",
+  "design_identity_at_acceptance": {
+    "path": "docs/ONTOLOGY_ADOPTION.md",
+    "sha256": "e3fce343c951799f1b25de5f31f5f3f3d7e90b883ea2b69acb0f976bab36a433"
+  },
+  "handoff": "artifacts/ontology/closure/HANDOFF.md",
+  "release_record": "artifacts/release/2.10.0/evidence/PUBLICATION.md",
+  "confirmed": [
+    "R17: release documentation names 2.10.0 before publication; merge, tag, PyPI publication, verification and GitHub release form one controlled release transaction",
+    "R18: re-pinning only fixture versions and registry digests is acceptable because the bound ranges and their digests did not change",
+    "ontology/concept-registry.v1.json (16 concepts, registry_digest c19cc2de60b4c5a4d6b2e27f391df6bdf5f7d2351ca7d31c2c9dd0a00ca9df92) is approved by the owner's merge of PR #24",
+    "promotion evidence e45e98b3070901bf5f34261a39def005099e4a313ee29d3cf5ff4b5fce674e97 is promotable and evidence_only; it does not activate influence",
+    "Palimnex 2.10.0 is approved for publication; ontology influence remains off and activation is a separate decision"
+  ],
+  "review_evidence": {
+    "registry_lane": "independently accepted_with_limits",
+    "integration_lane": "independently accepted_with_limits",
+    "release_preparation": "round 1 rejected (unpublished install text), round 2 accepted_with_limits after R17 and the documentation fixes",
+    "ci_test_fixes": "independently accepted_with_limits, notes only",
+    "limits_closed_by": "artifacts/release/2.10.0/evidence/RC_REPORT.md, section on independent reviews"
+  },
+  "validation": {
+    "ci_pr_24": "green on 626f3d2: Python 3.11-3.14 Ubuntu, Python 3.11 macOS, upgrade-rehearsal; 550 tests per platform",
+    "publish_workflow": "run 42531901639 on main at 56b5fe4: build (standard gate, mypy, build, twine check, installed-wheel smoke) and publish succeeded",
+    "pypi": "palimnex 2.10.0 wheel a3d32a26f141fb6d945bb469f99ca3d2c57bd962df33c7fc534d36a62746b0da, sdist 7ee68e8ead28d0128e3a6c7ab743fd5334bb8f4f0f91ef4eb1991c842a0e8bb3; isolated install, core and crypto smoke tests passed",
+    "published_vs_candidate": "79 of 79 wheel members identical to the tested candidate built from ce4fde2, except the setuptools Generator line in WHEEL",
+    "registry_bindings": "16 verified, 0 stale on the released tree",
+    "ontology_status": "mode off; .palimnex.json has no ontology_influence key and was not changed",
+    "ledger": "repository ledger never written; adoption tests used isolated ledgers",
+    "cache_consulted": false
+  },
+  "known_limits": [
+    "any edit to a file bound by the registry or by the R18 fixtures makes them stale; re-pinning needs review (R13, R18)",
+    "the sdist is content-reproducible but not byte-reproducible across rebuilds (archive metadata)",
+    "the Redis wrapper test skips when no system binary runs under a copied name"
+  ],
+  "not_authorized": [
+    "enabling ontology_influence.mode or editing .palimnex.json",
+    "agents writing feedback to the repository's real ledger",
+    "the deferred feedback shadow evaluation, offline graph explorer or semantic cache",
+    "the metahackathon local-model experiment"
+  ],
+  "tag": "v2.10.0",
+  "published": true,
+  "repository_ledger_written": false,
+  "retrieval_influence": false,
+  "pushed": true,
+  "authorizes_actions": false
+}

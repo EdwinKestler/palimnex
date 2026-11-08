@@ -17,10 +17,14 @@ approved registry, `ontology/concept-registry.v1.json` (16 concepts), was
 drafted blind to the evaluation sets, independently reviewed and frozen on
 2026-11-08 (`artifacts/ontology/closure/integration/registry-freeze.json`); its
 promotion evidence is `promotable` on the local and cache backends
-(`artifacts/ontology/closure/integration/promotion-evidence.json`). With the
-owner's merge of the 2.10.0 release change, the adoption plan is complete:
-every phase has an exit gate or recorded result, influence is ready to enable
-and stays off, the semantic provider is held, and the feedback shadow
+(`artifacts/ontology/closure/integration/promotion-evidence.json`). The owner
+approved the registry by merging pull request #24 (commit 56b5fe4) on
+2026-11-08, confirmed R17 and R18, and approved the release: Palimnex 2.10.0
+was tagged `v2.10.0` and published to PyPI and GitHub the same day
+(`artifacts/ontology/closure/exit-gate.json`,
+`artifacts/release/2.10.0/evidence/PUBLICATION.md`). The adoption plan is
+complete: every phase has an exit gate or recorded result, influence is ready
+to enable and stays off, the semantic provider is held, and the feedback shadow
 evaluation, the offline graph explorer and a real local-model experiment remain
 future work that needs separate approval.**
 
@@ -38,7 +42,8 @@ and exit gate `artifacts/ontology/phase-0/exit-gate.json`; Phase 1
 `artifacts/ontology/phase-4/exit-gate.json`; Phase 5
 `artifacts/ontology/phase-5/approval-evidence.json` and exit gate
 `artifacts/ontology/phase-5/exit-gate.json`; registry and closure
-`artifacts/ontology/closure/approval-evidence.json`.
+`artifacts/ontology/closure/approval-evidence.json` and exit gate
+`artifacts/ontology/closure/exit-gate.json`.
 
 The influence-promotion approval authorizes an opt-in ontology retrieval
 influence for `retrieve_sources` and its direct consumers (`context`,
@@ -673,6 +678,9 @@ provider data. Those surfaces require their own documented controls.
 | Approved registry v1 scope | 16 source-derived core concepts (source admission and privacy scanning; structured source locators; retrieval-channel fusion; context assembly and byte budgets; cache generations and reader leases; durable historical ledger; retention eligibility and exclusions; ledger migration registry; portable memory packs; audit graph and projections; concept-registry validation; coverage and answerability receipts; ontology shadow ranking; ontology activation gate; semantic shadow evaluation; reviewed retrieval feedback). Conservative multi-word aliases, no standalone generic words. Drafted blind to the Phase 3 evaluation set, which is used only after the candidate is frozen. Bound to the Palimnex checkout only (owner decision 2026-11-08) |
 | Registry approval path | A model-drafted candidate (`model_candidate` provenance) is independently reviewed, then committed as `ontology/concept-registry.v1.json` on a release branch; the owner's merge of that reviewed change is the approval. Promotion evidence may be produced and recorded; activation stays off for the release (owner decision 2026-11-08) |
 | Release candidate | Palimnex 2.10.0: additive and off by default (API v1, ledger schema v1, existing event kinds and production retrieval unchanged). A candidate is a wheel and sdist built from a pinned commit and tested (CI matrix, installed-wheel smoke, 2.9.0 to 2.10.0 rehearsal, isolated adoption snapshots of other repositories). Tag, GitHub release and PyPI publication need a separate approval (owner decision 2026-11-08) |
+| Release documentation sequencing (R17) | Release documentation names 2.10.0 before publication, as 2.9.0 did; merge, tag, PyPI publication, verification and GitHub release form one controlled release transaction, and a failure after merging is repaired without rewriting history (confirmed 2026-11-08) |
+| Registry fixture re-pin (R18) | After edits to bound documentation, frozen registry test fixtures may be re-pinned in binding versions and `registry_digest` only, when every bound range digest is unchanged (confirmed 2026-11-08) |
+| Release | Palimnex 2.10.0 approved for publication; merged as 56b5fe4, tagged `v2.10.0`, published to PyPI through `publish.yml` and released on GitHub on 2026-11-08. Ontology influence stays off; activation is a separate decision (owner decision 2026-11-08) |
 
 ## Original open owner decisions (settled above)
 
@@ -710,8 +718,21 @@ Ontology adoption is complete only when:
 
 ## Recommended next action
 
-Review and decide the Phase 0 open questions. If approved, record bounded
-approval evidence, perform the serial approved-design bootstrap into `docs/`,
-issue schema-validated disjoint task cards through
-`palimnex-ontology-coordinator`, and begin the registry/schema, coverage-fixture,
-interface-proposal, and independent-review lanes in parallel.
+The adoption is complete and released in 2.10.0. Each follow-up below needs its
+own approval and starts from recorded evidence, not from this plan:
+
+- **Enable ontology influence** (owner configuration decision): set
+  `.palimnex.json` `ontology_influence.mode` to `enabled` with the approved
+  registry digest and the promotion evidence path and digest, regenerating the
+  evidence first if any bound file or influence module has changed since
+  `artifacts/ontology/closure/integration/promotion-evidence.json`; verify
+  with `palimnex ontology-status` and `explain-search`; roll back with
+  `mode: off` (`docs/ONTOLOGY_INFLUENCE.md`).
+- **Feedback shadow evaluation**: once enough reviewed feedback records exist
+  in the owner's ledger, design the frozen cohort and gates described under
+  "Feedback influence" above.
+- **Offline graph explorer**: build to the recorded "Graph exploration format".
+- **Real local-model experiment** (metahackathon candidate): a new, separately
+  approved Phase 4-style experiment with the recorded thresholds.
+- **Registry maintenance**: when a release edits a bound file, re-pin under
+  R13 and R18 with independent review before the release.

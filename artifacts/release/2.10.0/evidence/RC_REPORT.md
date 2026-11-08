@@ -4,9 +4,10 @@ Fecha: 2026-11-08. Rama `release/2.10.0`, pull request #24 (borrador).
 Coordinador: Claude; carriles de implementación: Codex (gpt-5.6-sol, high);
 revisiones independientes de solo lectura: Grok 4.6 (xhigh).
 
-**Estado: candidato listo para la aprobación del propietario. No publicado.**
-No hay etiqueta `v2.10.0`, ni release de GitHub, ni publicación en PyPI; las
-tres requieren una aprobación aparte. La influencia ontológica sigue apagada.
+**Estado: publicado el 2026-11-08.** El propietario aprobó el candidato y
+confirmó R17 y R18; la transacción (fusión `56b5fe4`, etiqueta `v2.10.0`,
+PyPI, verificación y release de GitHub) está en `PUBLICATION.md`. La
+influencia ontológica sigue apagada.
 
 ## Commits del candidato
 
@@ -16,7 +17,8 @@ tres requieren una aprobación aparte. La influencia ontológica sigue apagada.
 | `5edc164` | Pruebas independientes de la plataforma (digests dorados en macOS; binario envuelto en Ubuntu) |
 | `3364735` | Evidencia de una compilación limpia anterior (sustituida por la de este commit) |
 | `ce4fde2` | El binario de la prueba del envoltorio de Redis se elige por sondeo (`sleep`, luego `sh`) |
-| (este commit) | Evidencia final del candidato y este informe; solo `artifacts/` |
+| `626f3d2` | Evidencia final del candidato y este informe; solo `artifacts/` |
+| `56b5fe4` | Fusión del PR #24 en `main`; etiquetado `v2.10.0` |
 
 Los commits posteriores a `0b12e36` solo cambian `palimnex/tests/` y
 `artifacts/`. Ningún módulo del paquete ni archivo vinculado por el registro
@@ -32,7 +34,7 @@ cambió.
 | Conjunto de evaluación | Ciego hasta congelar el candidato; usado solo después (`artifacts/ontology/closure/integration/registry-freeze.json`) |
 | Evidencia de promoción | `promotable`, `evidence_digest` `e45e98b3070901bf5f34261a39def005099e4a313ee29d3cf5ff4b5fce674e97`; `implementation_digest` y `registry_digest` coinciden con el árbol final; `activation_authorized: false`, `authority: evidence_only` |
 | Activación | Apagada: `.palimnex.json` no tiene clave `ontology_influence` y no se modificó |
-| Aprobación del registro | Fusionar el PR #24 es la aprobación del propietario |
+| Aprobación del registro | Aprobado por el propietario al fusionar el PR #24 (`56b5fe4`, 2026-11-08) |
 
 ## Revisiones independientes y cómo se cerró cada límite
 
@@ -44,11 +46,12 @@ cambió.
 | Preparación de la versión, ronda 2 (`artifacts/release/2.10.0/reviews/release-prep.round-2.json`) | accepted_with_limits | NOTE marcador del CHANGELOG → sustituido por la entrada del registro. NOTE resumen desactualizado sobre `--no-snapshot` → adenda en `release-prep-summary.md`. NOTE números de línea en la lista de ocurrencias conservadas → aceptado; las ocurrencias siguen siendo históricas |
 | Arreglos de CI (`artifacts/release/2.10.0/reviews/ci-fixes.json`) | accepted_with_limits | Solo NOTEs: cada prueba conserva su garantía (`checkout_id` se sigue afirmando antes de normalizarlo; el envoltorio sigue haciendo `exec` del binario real) y los commits no tocan código del paquete, archivos vinculados ni módulos de `influence_implementation_digest`. Límites aceptados: un `SkipTest` si ningún binario corre bajo el nombre copiado (antes, fallo duro); el sondeo de `sh` daría fallo, no omisión, en un `/bin/sh` que se re-ejecuta; la aserción global de `checkout_id` en la prueba de influencia da peor diagnóstico. El revisor no ejecutó pruebas; la CI sí |
 
-## Decisiones del coordinador que el propietario debe confirmar
+## Decisiones del coordinador (confirmadas por el propietario el 2026-11-08)
 
 - **R17** (`evidence/R17-release-docs-sequencing.md`): la documentación ya
-  nombra 2.10.0 como publicada, igual que en 2.9.0. **Fusionar el PR solo
-  junto con la etiqueta `v2.10.0` y la publicación en PyPI.**
+  nombra 2.10.0 como publicada, igual que en 2.9.0; fusión, etiqueta,
+  publicación, verificación y release se ejecutaron como una sola
+  transacción controlada.
 - **R18** (`evidence/R18-fixture-repin.md`): tres fixtures congelados del
   registro re-fijados solo en `version` y `registry_digest`; los digests de
   rango no cambiaron. Toda edición futura de `README.md` o `docs/DESIGN.md`
@@ -88,11 +91,11 @@ experimento de modelo local de metahackathon no se tocó.
 - Una publicación formal `2.10.0rc1` requeriría cambiar el flujo de
   publicación (solo acepta X.Y.Z); no se hizo.
 
-## Pasos que quedan, todos del propietario
+## Resultado de los pasos del propietario
 
-1. Revisar y aprobar el PR #24 (aprueba el registro).
-2. Con aprobación aparte, en este orden: fusionar, etiquetar `v2.10.0`
-   sobre el commit fusionado, ejecutar `publish.yml` con la versión `2.10.0`
-   (PyPI) y crear la release de GitHub.
+1. PR #24 aprobado y fusionado el 2026-11-08 (`56b5fe4`): el registro queda
+   aprobado.
+2. Etiqueta `v2.10.0` sobre `56b5fe4`, `publish.yml` exitoso, paquete
+   verificado en PyPI y release de GitHub creada (`PUBLICATION.md`).
 3. Activar la influencia ontológica sigue siendo una decisión de
    configuración independiente (`ontology_influence.mode`), no incluida.

@@ -8,6 +8,9 @@ dist/
 *.egg-info/
 .mypy_cache/
 htmlcov/
+*.log
+*.pid
+*.err
 .palimnex/
 *.pmem
 *.key

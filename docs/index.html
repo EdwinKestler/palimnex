@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Palimnex is a local-first source discovery and durable historical-memory system for coding agents.">
+  <meta name="description" content="Palimnex is a local-first source discovery and durable historical-memory system for coding agents, with reviewed ontology evidence and opt-in, evidence-bound retrieval influence.">
   <meta name="theme-color" content="#07111f">
   <title>Palimnex — local-first memory for coding agents</title>
   <link rel="icon" href="assets/palimnex-mark.svg" type="image/svg+xml">
@@ -24,6 +24,7 @@
     <nav class="site-nav" aria-label="Primary navigation">
       <a href="#architecture">Architecture</a>
       <a href="#pipelines">Pipelines</a>
+      <a href="#ontology">Ontology</a>
       <a href="#dependencies">Dependencies</a>
       <a href="#quickstart">Quick start</a>
     </nav>
@@ -248,7 +249,77 @@
       </div>
     </section>
 
-    <section class="section section-tinted" id="dependencies">
+    <section class="section section-tinted" id="ontology">
+      <div class="section-heading">
+        <p class="eyebrow"><span></span> New in 2.10 · Ontology and feedback</p>
+        <h2>Reviewed concepts explain retrieval—and stay off until you enable them.</h2>
+        <p>Version 2.10 adds versioned evidence surfaces around the unchanged retrieval path. Each is read-only or owner-run and non-authorizing; ranking changes only when the owner enables ontology influence with matching promotion evidence.</p>
+      </div>
+
+      <article class="pipeline-card">
+        <header>
+          <span class="pipeline-number">E</span>
+          <div><h3>Ontology evidence path</h3><p>From reviewed concepts to an opt-in ranking channel.</p></div>
+        </header>
+        <ol class="pipeline-flow">
+          <li><span>1</span><strong>Approved registry</strong><small>Source-bound concepts with conservative aliases; drift is reported as stale.</small></li>
+          <li><span>2</span><strong>Coverage receipt</strong><small><code>explain-search</code> reports answerable, partial, ambiguous or unanswerable. Coverage is not correctness.</small></li>
+          <li><span>3</span><strong>Shadow comparison</strong><small><code>evaluate-ontology-shadow</code> ranks a fourth channel beside the unchanged baseline.</small></li>
+          <li><span>4</span><strong>Promotion evidence</strong><small><code>evaluate-ontology-promotion</code> covers the local and cache backends and never activates.</small></li>
+          <li><span>5</span><strong>Opt-in influence</strong><small><code>mode: enabled</code> binds the registry and evidence digests; rollback is <code>off</code>.</small></li>
+        </ol>
+      </article>
+
+      <div class="store-grid">
+        <article class="store-card pack-card">
+          <div class="store-title"><span class="store-glyph">C</span><div><h3>Concept registry</h3><p>Reviewed, source-bound concepts</p></div></div>
+          <dl>
+            <div><dt>Format</dt><dd>palimnex:concept-registry:v1</dd></div>
+            <div><dt>Shipped</dt><dd>16 reviewed concepts for the Palimnex checkout (<code>ontology/concept-registry.v1.json</code>)</dd></div>
+            <div><dt>Scope</dt><dd>Binds one checkout; each project reviews its own registry</dd></div>
+            <div><dt>Drift</dt><dd>Any edit to a bound source reports the concept stale</dd></div>
+          </dl>
+        </article>
+        <article class="store-card redis-card">
+          <div class="store-title"><span class="store-glyph">I</span><div><h3>Ontology influence</h3><p>Evidence-bound, opt-in ranking</p></div></div>
+          <dl>
+            <div><dt>Default</dt><dd>Off; a missing <code>ontology_influence</code> key means off</dd></div>
+            <div><dt>Modes</dt><dd>off · shadow · enabled (<code>ontology-status</code> shows which applies)</dd></div>
+            <div><dt>Activation</dt><dd>Approved, current registry plus promotable evidence for the current implementation; otherwise an explicit error</dd></div>
+            <div><dt>Disclosure</dt><dd>project-memory:context:v2 and palimnex:explain-search:v2</dd></div>
+          </dl>
+        </article>
+        <article class="store-card sqlite-card">
+          <div class="store-title"><span class="store-glyph">F</span><div><h3>Retrieval feedback</h3><p>Reviewed, historical judgements</p></div></div>
+          <dl>
+            <div><dt>Format</dt><dd>palimnex:retrieval-feedback:v1</dd></div>
+            <div><dt>Commands</dt><dd>feedback-record · feedback-correct · feedback-withdraw · feedback-report</dd></div>
+            <div><dt>Storage</dt><dd>Existing fact, correction and revocation events; no ledger migration</dd></div>
+            <div><dt>Influence</dt><dd>None: historical only; <code>context</code> and <code>capsule</code> exclude it</dd></div>
+          </dl>
+        </article>
+        <article class="store-card pack-card">
+          <div class="store-title"><span class="store-glyph">S</span><div><h3>Semantic shadow</h3><p>Held local experiment</p></div></div>
+          <dl>
+            <div><dt>Provider</dt><dd>Deterministic in-process hashed embedding</dd></div>
+            <div><dt>Command</dt><dd><code>evaluate-semantic-shadow</code></dd></div>
+            <div><dt>Status</dt><dd>Held: evidence only; a promotable report is not promotion</dd></div>
+            <div><dt>Boundary</dt><dd>No model download, network or vector store</dd></div>
+          </dl>
+        </article>
+      </div>
+
+      <div class="doc-links doc-grid">
+        <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/CONCEPT_REGISTRY.md"><strong>Concept registry</strong><small>Schema, kinds, aliases, source bindings and drift →</small></a>
+        <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/COVERAGE_RECEIPT.md"><strong>Coverage receipts</strong><small>explain-search output and answerability states →</small></a>
+        <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/ONTOLOGY_SHADOW.md"><strong>Ontology shadow</strong><small>Fourth-channel comparison and Phase 3 gates →</small></a>
+        <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/ONTOLOGY_INFLUENCE.md"><strong>Ontology influence</strong><small>Activation checks, promotion evidence and rollback →</small></a>
+        <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/RETRIEVAL_FEEDBACK.md"><strong>Retrieval feedback</strong><small>Owner-run records, states and history →</small></a>
+        <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/SEMANTIC_SHADOW.md"><strong>Semantic shadow</strong><small>Local provider identity and evaluation gates →</small></a>
+      </div>
+    </section>
+
+    <section class="section" id="dependencies">
       <div class="section-heading">
         <p class="eyebrow"><span></span> Prerequisites &amp; third parties</p>
         <h2>Small dependency surface. No mandatory cloud service.</h2>
@@ -299,13 +370,14 @@
     <section class="section quickstart" id="quickstart">
       <div class="quickstart-copy">
         <p class="eyebrow"><span></span> Quick start</p>
-        <h2>From checkout to verified retrieval.</h2>
-        <p>Run from the repository root. The guarded launcher creates a private Redis instance under ignored local state. <code>ledger-init</code> is a one-time local write that creates the durable ledger.</p>
+        <h2>From install to verified retrieval.</h2>
+        <p>Install the published release, then run from your repository root. <code>init --write</code> creates the configuration and ignore rules, the guarded launcher keeps Redis private, and <code>ledger-init</code> is a one-time local write that creates the durable ledger. Contributing to Palimnex? Use the <a href="https://github.com/EdwinKestler/palimnex#quick-start-this-repository">source-checkout gate</a>.</p>
         <div class="doc-links">
+          <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/INSTALL.md"><strong>Install guide</strong><small>Package, configuration, Redis, first run and teardown →</small></a>
+          <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/UPGRADING.md"><strong>Upgrading</strong><small>2.9.0 → 2.10.0: reindex, removed option, downgrade care →</small></a>
           <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/SDK.md"><strong>SDK and extensions</strong><small>Python API, audit graph, optional Semantica →</small></a>
           <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/RUNBOOK.md"><strong>Operator runbook</strong><small>Day-to-day commands and failure recovery →</small></a>
           <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/CONFIGURATION.md"><strong>Configuration</strong><small>Fields, defaults, security, and activation →</small></a>
-          <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/ONTOLOGY_INFLUENCE.md"><strong>Ontology influence</strong><small>Evidence-bound opt-in ranking and rollback →</small></a>
           <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/RETENTION.md"><strong>Retention contract</strong><small>Authorization, holds, cleanup, and limits →</small></a>
           <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/COMPATIBILITY.md"><strong>Compatibility policy</strong><small>Stable storage identifiers and migrations →</small></a>
           <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/RELEASING.md"><strong>Release runbook</strong><small>Candidate, publication, verification, and closure →</small></a>
@@ -313,16 +385,17 @@
       </div>
       <div class="terminal" aria-label="Quick start terminal commands">
         <div class="terminal-bar"><span></span><span></span><span></span><b>palimnex — bash</b></div>
-        <pre><code><span class="prompt">$</span> ./scripts/palimnex_redis.sh start
-<span class="prompt">$</span> python3 palimnex.py status
-<span class="prompt">$</span> python3 palimnex.py index --incremental
-<span class="prompt">$</span> python3 palimnex.py validate --deep
-<span class="prompt">$</span> python3 palimnex.py evaluate --limit 5
-<span class="prompt">$</span> python3 palimnex.py ledger-init
-<span class="prompt">$</span> python3 palimnex.py ledger-status
-<span class="prompt">$</span> python3 palimnex.py audit-graph
+        <pre><code><span class="prompt">$</span> pipx install "palimnex[crypto]==2.10.0"
+<span class="prompt">$</span> palimnex init --write
+<span class="prompt">$</span> palimnex redis start
+<span class="prompt">$</span> palimnex index --incremental
+<span class="prompt">$</span> palimnex validate --deep
+<span class="prompt">$</span> palimnex ledger-init
+<span class="prompt">$</span> palimnex doctor
+<span class="prompt">$</span> palimnex explain-search "how is the ledger migrated"
+<span class="prompt">$</span> palimnex ontology-status
 
-<span class="success">✓ fresh cache · deep validation passed</span></code></pre>
+<span class="success">✓ fresh cache · coverage receipt · ontology influence off</span></code></pre>
       </div>
     </section>
 

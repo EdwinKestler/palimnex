@@ -4,9 +4,18 @@ The Palimnex project site is a dependency-free static page at `docs/index.html`.
 It uses repository-local CSS and the existing documentation; it makes no model,
 analytics, font, CDN, or database request. The page describes source discovery,
 durable memory, authorized erasure, the replicable audit graph, and the optional
-Semantica projection extra. It also identifies the 2.10 ontology and reviewed
-feedback surfaces as optional, non-authorizing capabilities and links to their
-operational contracts.
+Semantica projection extra. Its "New in 2.10" section (`#ontology`) describes
+the ontology evidence path (approved registry, `explain-search` coverage
+receipts, shadow comparison, promotion evidence and opt-in influence, off by
+default), reviewed retrieval feedback and the held semantic shadow as
+non-authorizing capabilities, and links to their operational contracts. The
+quick start installs the published release and runs the installed `palimnex`
+command; the source-checkout gate stays in `README.md`.
+
+When a release changes the version, commands or user-facing surfaces, update
+the hero version, the "New in" section, the quick-start commands and the
+documentation links in the same change, and check the rendered page at desktop
+and phone widths.
 
 ## Local preview
 

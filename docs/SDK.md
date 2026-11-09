@@ -277,7 +277,7 @@ tool listing and invocation, plus read-only and session restrictions.
 ## Publication and release boundary
 
 Published releases have used PyPI Trusted Publishing with provenance
-attestations since 2.8.0; 2.10.0 is the current published line. The manual `publish.yml`
+attestations since 2.8.0; 2.10.1 is the current published line. The manual `publish.yml`
 workflow accepts an existing reviewed release tag,
 checks that the package and runtime versions match, reruns the gate, checks
 types, builds wheel/sdist and tests the installed wheel outside the checkout.

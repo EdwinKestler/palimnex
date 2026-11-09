@@ -61,6 +61,14 @@ it is removed after a verified target. The `<ledger>.retention-v2` guard keeps
 its exact bytes; it is published atomically before the schema change and is
 never removed. No ledger, pack or cache identifier changes.
 
+Version 2.10.1 is a cache-v3 reliability patch. It makes staged record and
+posting writes byte-aware, gives indivisible atomic Redis commands a separate
+bounded request ceiling, compacts complete registry ownership through the
+already validated generation manifest, and removes abandoned staging entries
+before retry. Cache schema and `project-memory:*` identifiers are unchanged;
+the bundle-version change requires a disposable-cache rebuild. API v1, ledger
+schema v1, pack v2, retrieval behavior and ontology activation are unchanged.
+
 Version 2.10.0 delivers the ontology adoption (`docs/ONTOLOGY_ADOPTION.md`).
 It is additive and off by default, with one change announced in 2.9.0: the CLI
 option `retention-migrate --no-snapshot` is removed, so the command always

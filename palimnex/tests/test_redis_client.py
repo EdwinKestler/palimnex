@@ -101,6 +101,40 @@ class RedisClientBoundaryTests(unittest.TestCase):
         with self.assertRaisesRegex(core.RedisError, "command count"):
             client.execute_many(commands)
 
+    def test_indivisible_request_may_exceed_batch_target_within_hard_limit(self) -> None:
+        client = core.RedisClient("redis://127.0.0.1:6379/0")
+        connection = mock.MagicMock()
+        manager = mock.MagicMock()
+        manager.__enter__.return_value = connection
+        manager.__exit__.return_value = False
+        response = io.BytesIO(b"+OK\r\n")
+
+        with mock.patch.object(core, "PIPELINE_BATCH_BYTES", 128), mock.patch.object(
+            core, "MAX_REDIS_REQUEST_BYTES", 1_024
+        ), mock.patch.object(client, "_connect", return_value=manager), mock.patch.object(
+            core, "_DeadlineSocketReader", return_value=response
+        ):
+            self.assertEqual(client.execute("ECHO", b"x" * 256), "OK")
+
+        payload = connection.sendall.call_args.args[0]
+        self.assertGreater(len(payload), 128)
+        self.assertLessEqual(len(payload), 1_024)
+
+    def test_indivisible_request_over_hard_limit_is_rejected_before_connect(self) -> None:
+        client = core.RedisClient("redis://127.0.0.1:6379/0")
+        with mock.patch.object(
+            core, "MAX_REDIS_REQUEST_BYTES", 512
+        ), mock.patch.object(
+            client,
+            "_connect",
+            side_effect=AssertionError("oversized request attempted a connection"),
+        ) as connector:
+            with self.assertRaisesRegex(
+                core.RedisError, "one Redis request exceeds the configured limit"
+            ):
+                client.execute("ECHO", b"x" * 512)
+        connector.assert_not_called()
+
     def test_resp_parser_enforces_aggregate_item_and_byte_limits(self) -> None:
         with mock.patch.object(core, "MAX_RESP_TOTAL_ITEMS", 3):
             self.assertEqual(

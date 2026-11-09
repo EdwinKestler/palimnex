@@ -31,7 +31,7 @@ from typing import Any
 from urllib.parse import parse_qs, quote, unquote, urlparse
 
 SCHEMA = "project-memory:v2"
-BUNDLE_VERSION = "2.10.0"
+BUNDLE_VERSION = "2.10.1"
 GRAPH_SCHEMA = "project-memory:code-graph:v3"
 GRAPH_RECORD_SCHEMA = "project-memory:graph-record:v1"
 CONTENT_ADDRESSED_GRAPH_BUNDLE_SERIES = ("2.3", "2.4")
@@ -215,6 +215,7 @@ MAX_PIPELINE_COMMANDS = 10_000
 MAX_PIPELINE_BYTES = 128 * 1024 * 1024
 PIPELINE_BATCH_COMMANDS = 200
 PIPELINE_BATCH_BYTES = 4 * 1024 * 1024
+MAX_REDIS_REQUEST_BYTES = 32 * 1024 * 1024
 SENSITIVE_DATA_SUFFIXES = {
     ".json",
     ".jsonl",
@@ -1327,6 +1328,8 @@ class RedisClient:
                 raise RedisError("Redis pipeline contains an empty command")
             parts = tuple(part if isinstance(part, bytes) else part.encode("utf-8") for part in command)
             request = self._request(parts)
+            if len(request) > MAX_REDIS_REQUEST_BYTES:
+                raise RedisError("one Redis request exceeds the configured limit")
             total_bytes += len(request)
             if total_bytes > MAX_PIPELINE_BYTES:
                 raise RedisError("Redis pipeline payload exceeds the configured limit")
@@ -1357,8 +1360,6 @@ class RedisClient:
                         request = encoded[position]
                         if batch and batch_bytes + len(request) > PIPELINE_BATCH_BYTES:
                             break
-                        if len(request) > PIPELINE_BATCH_BYTES:
-                            raise RedisError("one Redis request exceeds the pipeline batch limit")
                         batch.append(request)
                         batch_bytes += len(request)
                         position += 1

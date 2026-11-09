@@ -818,20 +818,78 @@ def _fenced_delete(
     return int(response)
 
 
+def _resp_bulk_size(value: str | bytes) -> int:
+    length = len(value if isinstance(value, bytes) else value.encode("utf-8"))
+    return 1 + len(str(length)) + 2 + length + 2
+
+
+def _resp_request_size(part_count: int, payload_size: int) -> int:
+    return 1 + len(str(part_count)) + 2 + payload_size
+
+
 def _fenced_write_batch(
     client: Any,
     root: Path,
     owner: str,
     entries: list[tuple[str, str | bytes]],
 ) -> None:
-    for start in range(0, len(entries), 50):
-        batch = entries[start : start + 50]
+    script = (
+        "if redis.call('get',KEYS[1]) ~= ARGV[1] then return 0 end "
+        "for i=2,#KEYS do redis.call('set',KEYS[i],ARGV[i]) end; return 1"
+    )
+    fixed_payload_size = sum(
+        _resp_bulk_size(value)
+        for value in (
+            "EVAL",
+            script,
+            f"{namespace(root)}:index-lock",
+            owner,
+        )
+    )
+    batches: list[tuple[int, int]] = []
+    start = 0
+    entries_payload_size = 0
+    entry_count = 0
+    for position, (key, value) in enumerate(entries):
+        entry_size = _resp_bulk_size(key) + _resp_bulk_size(value)
+        candidate_count = entry_count + 1
+        payload_size = (
+            fixed_payload_size
+            + _resp_bulk_size(str(candidate_count + 1))
+            + entries_payload_size
+            + entry_size
+        )
+        request_size = _resp_request_size(5 + candidate_count * 2, payload_size)
+        if entry_count and (
+            entry_count >= 50 or request_size > legacy.PIPELINE_BATCH_BYTES
+        ):
+            batches.append((start, position))
+            start = position
+            entries_payload_size = 0
+            entry_count = 0
+            candidate_count = 1
+            payload_size = (
+                fixed_payload_size
+                + _resp_bulk_size("2")
+                + entry_size
+            )
+            request_size = _resp_request_size(7, payload_size)
+        if request_size > legacy.MAX_REDIS_REQUEST_BYTES:
+            raise ValueError(
+                "one Palimnex v3 cache record exceeds the Redis request limit"
+            )
+        entries_payload_size += entry_size
+        entry_count += 1
+    if entry_count:
+        batches.append((start, len(entries)))
+
+    for start, end in batches:
+        batch = entries[start:end]
         keys = [key for key, _ in batch]
         values = [value for _, value in batch]
         response = client.execute(
             "EVAL",
-            "if redis.call('get',KEYS[1]) ~= ARGV[1] then return 0 end "
-            "for i=2,#KEYS do redis.call('set',KEYS[i],ARGV[i]) end; return 1",
+            script,
             str(len(keys) + 1),
             f"{namespace(root)}:index-lock",
             *keys,
@@ -849,15 +907,54 @@ def _fenced_hash_batch(
     hash_key: str,
     entries: dict[str, bytes],
 ) -> None:
+    script = (
+        "if redis.call('get',KEYS[1]) ~= ARGV[1] then return 0 end "
+        "for i=2,#ARGV,2 do redis.call('hset',KEYS[2],ARGV[i],ARGV[i+1]) end; return 1"
+    )
+    fixed_arguments: tuple[str | bytes, ...] = (
+        "EVAL",
+        script,
+        "2",
+        f"{namespace(root)}:index-lock",
+        hash_key,
+        owner,
+    )
+
+    fixed_payload_size = sum(_resp_bulk_size(value) for value in fixed_arguments)
     ordered = sorted(entries.items())
-    for start in range(0, len(ordered), 200):
+    batches: list[tuple[int, int]] = []
+    start = 0
+    payload_size = fixed_payload_size
+    field_count = 0
+    for position, (field, value) in enumerate(ordered):
+        pair_size = _resp_bulk_size(field) + _resp_bulk_size(value)
+        part_count = len(fixed_arguments) + (field_count + 1) * 2
+        request_size = _resp_request_size(part_count, payload_size + pair_size)
+        if field_count and (
+            field_count >= 200 or request_size > legacy.PIPELINE_BATCH_BYTES
+        ):
+            batches.append((start, position))
+            start = position
+            payload_size = fixed_payload_size
+            field_count = 0
+            part_count = len(fixed_arguments) + 2
+            request_size = _resp_request_size(part_count, payload_size + pair_size)
+        if request_size > legacy.MAX_REDIS_REQUEST_BYTES:
+            raise ValueError(
+                "one Palimnex v3 posting exceeds the Redis request limit"
+            )
+        payload_size += pair_size
+        field_count += 1
+    if field_count:
+        batches.append((start, len(ordered)))
+
+    for start, end in batches:
         arguments: list[str | bytes] = [owner]
-        for field, value in ordered[start : start + 200]:
+        for field, value in ordered[start:end]:
             arguments.extend((field, value))
         response = client.execute(
             "EVAL",
-            "if redis.call('get',KEYS[1]) ~= ARGV[1] then return 0 end "
-            "for i=2,#ARGV,2 do redis.call('hset',KEYS[2],ARGV[i],ARGV[i+1]) end; return 1",
+            script,
             "2",
             f"{namespace(root)}:index-lock",
             hash_key,
@@ -1069,7 +1166,14 @@ def _build_locked(
     started = time.monotonic()
     prefix = namespace(root)
     policy = index_policy_digest(root)
-    old_manifest = _load_manifest(client, _active_manifest_key(client, root), root)
+    active_manifest_key = _active_manifest_key(client, root)
+    old_manifest = _load_manifest(client, active_manifest_key, root)
+    prebuild_deleted = _collect_garbage(
+        client,
+        root,
+        owner=owner,
+        current_manifest_key=active_manifest_key,
+    )
     policy_reusable = bool(old_manifest and old_manifest.get("index_policy_digest") == policy)
     old_hashes = old_manifest.get("file_hashes", {}) if policy_reusable else {}
     old_chunks = old_manifest.get("file_chunks", {}) if policy_reusable else {}
@@ -1271,7 +1375,16 @@ def _build_locked(
         "activated_at": activated_at,
     }
     _fenced_set(client, root, owner, manifest_key, _compact_json(manifest))
-    generations[-1]["state"] = "complete"
+    generations[-1] = {
+        **generations[-1],
+        "state": "complete",
+        # Complete generations are self-describing through their validated
+        # manifest. Retaining the same key lists in the registry made the
+        # single fenced registry write grow with every retained generation.
+        "chunk_keys": [],
+        "graph_keys": [],
+        "posting_keys": [],
+    }
     _fenced_set(
         client,
         root,
@@ -1286,7 +1399,7 @@ def _build_locked(
         raise ValueError("repository changed during indexing; staged generation was not activated")
     _activate(client, root, owner, manifest_key)
     _refresh_lock(client, root, owner)
-    deleted = _collect_garbage(
+    deleted = prebuild_deleted + _collect_garbage(
         client, root, owner=owner, current_manifest_key=manifest_key
     )
     elapsed = round((time.monotonic() - started) * 1_000)
@@ -1313,7 +1426,7 @@ def _collect_garbage(
     root: Path,
     *,
     owner: str,
-    current_manifest_key: str,
+    current_manifest_key: str | None,
 ) -> int:
     registry = _registry(client, root)
     entries = [item for item in registry.get("generations", []) if isinstance(item, dict)]
@@ -1343,7 +1456,20 @@ def _collect_garbage(
             )[-MAX_UNLEASED_GRACE_GENERATIONS:]
         )
     retained_keys = {item.get("manifest_key") for item in retained}
-    retained = [item for item in entries if item.get("manifest_key") in retained_keys]
+    retained = [
+        (
+            {
+                **item,
+                "chunk_keys": [],
+                "graph_keys": [],
+                "posting_keys": [],
+            }
+            if item.get("state") == "complete"
+            else item
+        )
+        for item in entries
+        if item.get("manifest_key") in retained_keys
+    ]
     doomed_entries = [item for item in candidates if item.get("manifest_key") not in retained_keys]
     retained_manifests = [
         manifest
@@ -2093,9 +2219,9 @@ def _v3_owned_keys(client: Any, root: Path) -> list[str]:
         if manifest is None:
             raise ValueError("v3 retained generation is missing during migration measurement")
         keys.add(manifest_key)
-        keys.update(generation["chunk_keys"])
-        keys.update(generation["graph_keys"])
-        keys.update(generation["posting_keys"])
+        keys.update(manifest["chunk_keys"])
+        keys.update(manifest["file_graphs"].values())
+        keys.add(manifest["posting_hash_key"])
     if any(not isinstance(key, str) or not key.startswith(prefix + ":") for key in keys):
         raise ValueError("v3 baseline cannot prove ownership of its retained generations")
     return sorted(keys)

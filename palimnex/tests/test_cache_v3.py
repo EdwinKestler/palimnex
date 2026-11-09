@@ -236,6 +236,161 @@ class CacheV3Tests(unittest.TestCase):
             self.client.execute("GET", f"{cache_v3.namespace(self.root)}:active-generation")
         )
 
+    def test_posting_writes_are_batched_by_encoded_request_bytes(self) -> None:
+        class BoundedFakeRedis(FakeRedis):
+            request_sizes: list[int]
+
+            def __init__(self) -> None:
+                super().__init__()
+                self.request_sizes = []
+
+            def execute(self, command, *args):
+                if self._text(command).upper() == "EVAL":
+                    parts = tuple(
+                        value if isinstance(value, bytes) else str(value).encode("utf-8")
+                        for value in (command, *args)
+                    )
+                    size = len(legacy.RedisClient._request(parts))
+                    self.request_sizes.append(size)
+                    if size > legacy.PIPELINE_BATCH_BYTES:
+                        raise legacy.RedisError(
+                            "one Redis request exceeds the pipeline batch limit"
+                        )
+                return super().execute(command, *args)
+
+        client = BoundedFakeRedis()
+        owner = "a" * 32
+        lock_key = f"{cache_v3.namespace(self.root)}:index-lock"
+        hash_key = f"{cache_v3.namespace(self.root)}:postings:test"
+        client.values[lock_key] = owner.encode("utf-8")
+        entries = {
+            f"{index:064x}": bytes([index % 251]) * 180
+            for index in range(40)
+        }
+
+        with mock.patch.object(legacy, "PIPELINE_BATCH_BYTES", 1_024):
+            cache_v3._fenced_hash_batch(
+                client, self.root, owner, hash_key, entries
+            )
+
+        self.assertGreater(len(client.request_sizes), 1)
+        self.assertTrue(all(size <= 1_024 for size in client.request_sizes))
+        self.assertEqual(client.hashes[hash_key], entries)
+
+    def test_cache_record_writes_are_batched_by_encoded_request_bytes(self) -> None:
+        class BoundedFakeRedis(FakeRedis):
+            request_sizes: list[int]
+
+            def __init__(self) -> None:
+                super().__init__()
+                self.request_sizes = []
+
+            def execute(self, command, *args):
+                if self._text(command).upper() == "EVAL":
+                    parts = tuple(
+                        value if isinstance(value, bytes) else str(value).encode("utf-8")
+                        for value in (command, *args)
+                    )
+                    size = len(legacy.RedisClient._request(parts))
+                    self.request_sizes.append(size)
+                    if size > legacy.PIPELINE_BATCH_BYTES:
+                        raise legacy.RedisError(
+                            "one Redis request exceeds the pipeline batch target"
+                        )
+                return super().execute(command, *args)
+
+        client = BoundedFakeRedis()
+        owner = "a" * 32
+        prefix = cache_v3.namespace(self.root)
+        lock_key = f"{prefix}:index-lock"
+        client.values[lock_key] = owner.encode("utf-8")
+        entries = [
+            (f"{prefix}:chunk:test-{index:03d}", bytes([index % 251]) * 180)
+            for index in range(40)
+        ]
+
+        with mock.patch.object(legacy, "PIPELINE_BATCH_BYTES", 1_024):
+            cache_v3._fenced_write_batch(client, self.root, owner, entries)
+
+        self.assertGreater(len(client.request_sizes), 1)
+        self.assertTrue(all(size <= 1_024 for size in client.request_sizes))
+        self.assertEqual(
+            {key: client.values[key] for key, _ in entries},
+            dict(entries),
+        )
+
+    def test_posting_write_refuses_one_entry_larger_than_request_limit(self) -> None:
+        owner = "a" * 32
+        lock_key = f"{cache_v3.namespace(self.root)}:index-lock"
+        hash_key = f"{cache_v3.namespace(self.root)}:postings:test"
+        self.client.values[lock_key] = owner.encode("utf-8")
+
+        with mock.patch.object(legacy, "PIPELINE_BATCH_BYTES", 512), mock.patch.object(
+            legacy, "MAX_REDIS_REQUEST_BYTES", 700
+        ):
+            with self.assertRaisesRegex(
+                ValueError, "one Palimnex v3 posting exceeds"
+            ):
+                cache_v3._fenced_hash_batch(
+                    self.client,
+                    self.root,
+                    owner,
+                    hash_key,
+                    {"f" * 64: b"x" * 512},
+                )
+
+        self.assertNotIn(hash_key, self.client.hashes)
+
+    def test_retries_prune_abandoned_staging_generations(self) -> None:
+        cache_v3.build_index(self.client, self.root)
+        alpha = self.root / "docs/alpha.md"
+        alpha.write_text(
+            alpha.read_text(encoding="utf-8") + "changed for retry coverage\n",
+            encoding="utf-8",
+        )
+
+        registry_sizes = []
+        for _ in range(3):
+            with mock.patch.object(
+                cache_v3,
+                "_fenced_hash_batch",
+                side_effect=legacy.RedisError("injected posting write failure"),
+            ):
+                with self.assertRaisesRegex(
+                    legacy.RedisError, "injected posting write failure"
+                ):
+                    cache_v3.build_index(self.client, self.root)
+            registry = cache_v3._registry(self.client, self.root, required=True)
+            staged = [
+                generation
+                for generation in registry["generations"]
+                if generation["state"] == "staging"
+            ]
+            self.assertEqual(len(staged), 1)
+            registry_sizes.append(
+                len(self.client.values[f"{cache_v3.namespace(self.root)}:registry"])
+            )
+
+        self.assertLessEqual(max(registry_sizes) - min(registry_sizes), 8)
+        rebuilt = cache_v3.build_index(self.client, self.root)
+        self.assertGreater(rebuilt["metrics"]["garbage_collected_keys"], 0)
+        registry = cache_v3._registry(self.client, self.root, required=True)
+        self.assertFalse(
+            any(
+                generation["state"] == "staging"
+                for generation in registry["generations"]
+            )
+        )
+        self.assertTrue(
+            all(
+                not generation[field]
+                for generation in registry["generations"]
+                for field in ("chunk_keys", "graph_keys", "posting_keys")
+            )
+        )
+        status, passed = cache_v3.validate(self.client, self.root, deep=True)
+        self.assertTrue(passed, status)
+
     def test_reader_lease_prevents_generation_gc_then_release_allows_it(self) -> None:
         with mock.patch.object(cache_v3, "GENERATION_RETENTION", 1), mock.patch.object(
             cache_v3, "GENERATION_GRACE_MS", 0
@@ -712,10 +867,19 @@ class CacheV3Tests(unittest.TestCase):
         expected = {f"{prefix}:active-generation", f"{prefix}:registry"}
         referenced = Counter()
         for generation in complete:
-            expected.add(generation["manifest_key"])
-            for field in ("chunk_keys", "graph_keys", "posting_keys"):
-                expected.update(generation[field])
-                referenced.update(generation[field])
+            manifest_key = generation["manifest_key"]
+            manifest = cache_v3._load_manifest(
+                self.client, manifest_key, self.root
+            )
+            self.assertIsNotNone(manifest)
+            generation_keys = [
+                *manifest["chunk_keys"],
+                *manifest["file_graphs"].values(),
+                manifest["posting_hash_key"],
+            ]
+            expected.add(manifest_key)
+            expected.update(generation_keys)
+            referenced.update(generation_keys)
         self.assertTrue(
             any(count > 1 for count in referenced.values()),
             "controlled retained generations should share immutable records",

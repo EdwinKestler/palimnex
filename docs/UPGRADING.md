@@ -142,6 +142,16 @@ when the versions differ or cannot be read, and a warning when they match.
 | 2.8.0 → 2.8.1 | Documentation and release-workflow corrections; version change invalidates the cache, so reindex | Unchanged schema v1; pack v2 unchanged | No other migration required |
 | 2.8.1 → 2.9.0 | `ledger-migrate` framework; `retention-migrate` routed through it | Ledger schemas unchanged; new transient `<ledger>.migration-intent` during an unfinished migration | `--no-snapshot` and SDK `snapshot=False` deprecated; copied bundle deprecated; see below |
 | 2.9.0 → 2.10.0 | Additive ontology-adoption surfaces; version change invalidates the cache, so reindex | Ledger schema v1 and event kinds unchanged; no migration | `retention-migrate --no-snapshot` removed; new influence is opt-in and off by default; feedback has a downgrade hazard below |
+| 2.10.0 → 2.10.1 | Large cache-v3 writes are byte-aware; version change invalidates the cache, so reindex | Unchanged schema v1 and event kinds; no migration | Retrieval behavior and storage identifiers are unchanged |
+
+### 2.10.0 → 2.10.1
+
+Install 2.10.1 and rebuild the disposable cache with `palimnex index
+--incremental`. The patch prevents large posting groups, generation manifests,
+and accumulated retry records from exceeding Redis request batching bounds.
+It also removes abandoned staged generations before a retry. The ledger,
+encrypted packs, API v1, cache-v3 schema identifiers, retrieval results and
+ontology activation state are unchanged.
 
 ### 2.9.0 → 2.10.0
 

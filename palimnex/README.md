@@ -1,12 +1,15 @@
-# Portable Palimnex v2.10.0 bundle and Python SDK
+# Portable Palimnex v2.10.1 bundle and Python SDK
 
-Status: version 2.10.0 package implementation; see `docs/SDK.md` for public API v1
+Status: version 2.10.1 package implementation; see `docs/SDK.md` for public API v1
 and publication requirements. This includes explicit local retention and
 authorized-erasure functionality; it
 does not activate a live retention policy, migrate or delete a live ledger, or
 claim deletion from external copies.
 Existing SQLite schema v1, Redis cache v3 and encrypted pack v2 formats remain
 the compatibility baseline.
+
+Version 2.10.1 makes large cache-v3 indexing writes byte-aware and bounds
+retry cleanup without changing retrieval results or storage identifiers.
 
 Version 2.10.0 adds the reviewed concept registry, retrieval coverage and
 `explain-search`, ontology and semantic shadow evaluations, fail-closed opt-in

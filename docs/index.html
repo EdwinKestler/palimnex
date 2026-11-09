@@ -47,7 +47,7 @@
           <a class="button button-secondary" href="https://github.com/EdwinKestler/palimnex/blob/main/docs/SDK.md">Read the SDK</a>
         </div>
         <dl class="hero-stats" aria-label="Project status">
-          <div><dt>Package / API</dt><dd>2.10.0 / v1</dd></div>
+          <div><dt>Package / API</dt><dd>2.10.1 / v1</dd></div>
           <div><dt>Frozen gate</dt><dd>20 / 20</dd></div>
           <div><dt>Recall@5</dt><dd>1.0</dd></div>
         </dl>
@@ -374,7 +374,7 @@
         <p>Install the published release, then run from your repository root. <code>init --write</code> creates the configuration and ignore rules, the guarded launcher keeps Redis private, and <code>ledger-init</code> is a one-time local write that creates the durable ledger. Contributing to Palimnex? Use the <a href="https://github.com/EdwinKestler/palimnex#quick-start-this-repository">source-checkout gate</a>.</p>
         <div class="doc-links">
           <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/INSTALL.md"><strong>Install guide</strong><small>Package, configuration, Redis, first run and teardown →</small></a>
-          <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/UPGRADING.md"><strong>Upgrading</strong><small>2.9.0 → 2.10.0: reindex, removed option, downgrade care →</small></a>
+          <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/UPGRADING.md"><strong>Upgrading</strong><small>2.10.0 → 2.10.1: large-cache reliability and reindex →</small></a>
           <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/SDK.md"><strong>SDK and extensions</strong><small>Python API, audit graph, optional Semantica →</small></a>
           <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/RUNBOOK.md"><strong>Operator runbook</strong><small>Day-to-day commands and failure recovery →</small></a>
           <a href="https://github.com/EdwinKestler/palimnex/blob/main/docs/CONFIGURATION.md"><strong>Configuration</strong><small>Fields, defaults, security, and activation →</small></a>
@@ -385,7 +385,7 @@
       </div>
       <div class="terminal" aria-label="Quick start terminal commands">
         <div class="terminal-bar"><span></span><span></span><span></span><b>palimnex — bash</b></div>
-        <pre><code><span class="prompt">$</span> pipx install "palimnex[crypto]==2.10.0"
+        <pre><code><span class="prompt">$</span> pipx install "palimnex[crypto]==2.10.1"
 <span class="prompt">$</span> palimnex init --write
 <span class="prompt">$</span> palimnex redis start
 <span class="prompt">$</span> palimnex index --incremental

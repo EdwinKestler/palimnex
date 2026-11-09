@@ -3,6 +3,27 @@
 All notable portable-bundle changes are recorded here. Bundle versions describe executable and
 operator-facing behavior; cache and graph schemas are versioned independently.
 
+## 2.10.1 - 2026-11-08
+
+Palimnex 2.10.1 is a cache-reliability patch for large admitted repositories.
+It does not change retrieval scoring, API v1, ledger schema v1, pack v2, cache
+v3 identifiers, or any ontology behavior. Reindex the disposable cache after
+upgrading because the bundle version changes.
+
+- Changed v3 chunk, graph, and posting writes from fixed-count-only groups to
+  exact RESP-byte-aware groups. Ordinary grouped sends remain bounded at 4 MiB;
+  an indivisible atomic command has a separate 32 MiB hard limit.
+- Compact complete-generation registry entries now defer to their validated
+  manifests instead of duplicating every owned key. Index retries prune
+  abandoned staging generations before writing a replacement, preventing
+  failed large builds from growing the registry without bound.
+- Added regression coverage for aggregate posting payloads above the grouping
+  limit, a single oversized record, repeated failed retries, atomic requests
+  larger than the grouping target, and ownership-safe cleanup.
+- Re-pinned the approved concept registry to the changed cache source without
+  changing any concept or alias. Ontology influence remains off by default and
+  is not activated by this release.
+
 ## 2.10.0 - 2026-11-08
 
 Palimnex 2.10.0 adds the reviewed ontology-adoption surfaces: the concept

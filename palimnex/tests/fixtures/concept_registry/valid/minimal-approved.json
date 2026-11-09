@@ -18,7 +18,7 @@
         {
           "scheme": "repo",
           "source_id": "README.md",
-          "version": "d7eece575ee705c45e984631a8d1e070ecda90922b76dc914eb203d454ffdccd",
+          "version": "b928d91ce9db000b60dbac86eedcc1b05c09872440cf92035b623d200d871c10",
           "range": {
             "unit": "lines",
             "start": 3,
@@ -33,7 +33,7 @@
       }
     }
   ],
-  "registry_digest": "bd66364bfe5e16c4db693014cc4763145786ac76bf020754d7789ab3193fc3b8",
+  "registry_digest": "3561316a63dcbc76303e4ed554ab9c1055453cc99a0886dd3e50b3d56065ebf4",
   "authority": "historical_only",
   "authorizes_actions": false
 }

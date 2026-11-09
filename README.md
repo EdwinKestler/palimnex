@@ -11,7 +11,9 @@ development now belongs here. No live Redis data, SQLite ledger, credentials,
 wallet material, atomic-swap implementation, or repository-specific rollback
 snapshot was copied.
 
-The Python distribution version is `2.10.0`, with public SDK and extension API v1.
+The Python distribution version is `2.10.1`, with public SDK and extension API v1.
+Version 2.10.1 fixes large cache-v3 indexing and bounded retry cleanup without
+changing retrieval results, public APIs, or storage identifiers.
 Version 2.10.0 adds additive ontology-adoption evidence, evaluation, explicit
 feedback and opt-in retrieval-influence surfaces; production retrieval remains
 unchanged unless an owner enables ontology influence.
@@ -29,13 +31,13 @@ Semantica projection, pack identity and MCP.
 Install the exact published release from PyPI:
 
 ```bash
-pipx install "palimnex[crypto]==2.10.0"
+pipx install "palimnex[crypto]==2.10.1"
 ```
 
 Or install the same release directly from its Git tag:
 
 ```bash
-pipx install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.10.0"
+pipx install "palimnex[crypto] @ git+https://github.com/EdwinKestler/palimnex@v2.10.1"
 ```
 
 Before the first run, add `.palimnex/`, `*.pmem` and `*.key` to the

@@ -1,4 +1,4 @@
-# Palimnex 2.10.1 release-candidate report
+# Palimnex 2.10.1 release report
 
 Date: 2026-11-08 (America/Guatemala)
 
@@ -6,10 +6,10 @@ Date: 2026-11-08 (America/Guatemala)
 
 - Source commit: `0d01565` (`Fix large-corpus Redis indexing`)
 - Pull request: <https://github.com/EdwinKestler/palimnex/pull/27>
-- CI run: <https://github.com/EdwinKestler/palimnex/actions/runs/42560592169>
+- Final PR CI run: <https://github.com/EdwinKestler/palimnex/actions/runs/42562051353>
 - Version: `2.10.1`
-- Release status at this report: candidate only; no tag, PyPI publication, or
-  GitHub release yet
+- Release status: merged as `eac999a`, tagged `v2.10.1`, published on PyPI,
+  independently installed and verified, and released on GitHub
 
 ## Outcome
 
@@ -59,6 +59,6 @@ did not write its ledger or tracked files.
 - Palimnex cache: consulted and rebuilt during validation
 - Optional ontology, semantic, feedback-shadow, and graph-explorer work: not
   activated or implemented by this patch
-- Publication remains the controlled merge, annotated tag, `publish.yml`,
-  PyPI verification, and GitHub-release transaction described in
-  `docs/RELEASING.md`
+- Publication completed through the controlled merge, annotated tag,
+  `publish.yml`, PyPI verification, and GitHub-release transaction described
+  in `docs/RELEASING.md`; see `PUBLICATION.md` for the live evidence

@@ -6,7 +6,8 @@ calculation never changes the result returned by `retrieve_sources`, `search`,
 `context`, or `explain-search`. Promotion to retrieval influence requires a
 separate owner approval and is not represented by this contract.
 
-The public Python surface is `palimnex.ontology_shadow`:
+The versioned 2.10 module contract is `palimnex.ontology_shadow`; it is not an
+addition to the public `Palimnex` SDK v1 class:
 
 - `ontology_channel(registry, query, chunks, *, root, resolvers=None)` returns
   a frozen `OntologyChannel` whose ranking contains indexes into `chunks`;

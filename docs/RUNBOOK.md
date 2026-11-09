@@ -427,7 +427,36 @@ metrics only. Both files must be bounded regular non-symlink paths inside the
 repository and are opened with no-follow semantics. A passing metrics file does
 not install or enable a provider.
 
-## 13. Gate
+## 13. Ontology evidence and reviewed feedback
+
+Ordinary inspection is read-only:
+
+```bash
+python3 palimnex.py explain-search "retrieval channel fusion" --limit 5
+python3 palimnex.py evaluate-ontology-shadow --limit 5
+python3 palimnex.py evaluate-ontology-promotion \
+  --registry ontology/concept-registry.v1.json --limit 5
+python3 palimnex.py ontology-status
+python3 palimnex.py evaluate-semantic-shadow
+python3 palimnex.py feedback-report --include-history
+```
+
+The approved registry is loaded directly and excluded from ordinary indexing.
+Coverage is not correctness, and neither a `promotable` evaluation nor registry
+presence authorizes activation. The current Palimnex configuration keeps
+ontology influence off. Enabling it is a separately reviewed owner edit that
+must follow `docs/ONTOLOGY_INFLUENCE.md` and bind complete, freshly generated
+promotion evidence. Evidence v1 has no corpus fingerprint, so rerun it after
+any indexed-corpus change. Roll back with `ontology_influence.mode: off`.
+
+Feedback writes are explicit owner ledger actions. The `feedback-record`,
+`feedback-correct`, and `feedback-withdraw` syntax and privacy limits are in
+`docs/RETRIEVAL_FEEDBACK.md`; recording feedback never changes ranking. The
+Phase 4 semantic-shadow result is held and cannot configure or promote a
+provider. Configuration fields and refusal behavior are in
+`docs/CONFIGURATION.md`.
+
+## 14. Gate
 
 ```bash
 ./scripts/palimnex_check.sh
@@ -439,7 +468,7 @@ GitHub Actions runs the same script on pull requests and pushes to `main`.
 That job installs Redis, `cryptography`, and `jsonschema`, uses a temporary
 Unix socket, and makes no model call.
 
-## 14. Code rollback without memory loss
+## 15. Code rollback without memory loss
 
 1. Stop creating session events.
 2. Run `ledger-status`.

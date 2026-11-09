@@ -10,6 +10,11 @@ interfaces require a new API major version; additive methods do not. Check
 Plugins are supplied explicitly; Palimnex does not auto-import installed entry
 points or fetch plugins.
 
+The 2.10 ontology modules and feedback module expose versioned documents and
+CLI behavior described in their dedicated contracts, but they are not new
+methods on the public `Palimnex` API v1 class and are not added to the supported
+extension-surface list above.
+
 ## Install and open
 
 To adopt Palimnex in another repository, install an exact published version
@@ -271,8 +276,8 @@ tool listing and invocation, plus read-only and session restrictions.
 
 ## Publication and release boundary
 
-Version 2.8.0 is published on PyPI through Trusted Publishing with provenance
-attestations for its wheel and source distribution. The manual `publish.yml`
+Published releases have used PyPI Trusted Publishing with provenance
+attestations since 2.8.0; 2.10.0 is the current published line. The manual `publish.yml`
 workflow accepts an existing reviewed release tag,
 checks that the package and runtime versions match, reruns the gate, checks
 types, builds wheel/sdist and tests the installed wheel outside the checkout.
@@ -284,6 +289,10 @@ The PyPI Trusted Publisher is bound to project `palimnex`, GitHub owner
 upload token is needed. Review and authorize each release tag separately, then
 manually dispatch the selected version. A local build is never evidence that a
 future version has been published.
+
+The complete candidate, merge, tag, publication, installed-artifact
+verification, GitHub release, failure-recovery, and closure procedure is in
+[`RELEASING.md`](RELEASING.md).
 
 References: [Python packaging metadata](https://packaging.python.org/en/latest/specifications/pyproject-toml/)
 and the [official MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk).

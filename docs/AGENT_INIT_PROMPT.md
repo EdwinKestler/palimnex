@@ -60,8 +60,13 @@ Mandatory session initialization:
        docs/SDK.md
        docs/RUNBOOK.md
        docs/INSTALL.md
+       docs/CONFIGURATION.md
        docs/UPGRADING.md
        docs/RETENTION.md
+       docs/MIGRATIONS.md
+       docs/CONCEPT_REGISTRY.md, docs/COVERAGE_RECEIPT.md, and
+         docs/ONTOLOGY_INFLUENCE.md when working on ontology behavior
+       docs/RELEASING.md when preparing or reviewing a release
        docs/V26.md
        docs/PROVENANCE.md
   4. Inspect without changing Git state:

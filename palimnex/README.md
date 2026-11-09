@@ -8,6 +8,14 @@ claim deletion from external copies.
 Existing SQLite schema v1, Redis cache v3 and encrypted pack v2 formats remain
 the compatibility baseline.
 
+Version 2.10.0 adds the reviewed concept registry, retrieval coverage and
+`explain-search`, ontology and semantic shadow evaluations, fail-closed opt-in
+ontology influence, and reviewed retrieval feedback records. Influence remains
+off unless an owner binds a current approved registry and fresh promotion
+evidence in `.palimnex.json`; feedback has no ranking effect. See
+`docs/CONCEPT_REGISTRY.md`, `docs/ONTOLOGY_INFLUENCE.md`, and
+`docs/RETRIEVAL_FEEDBACK.md`.
+
 To adopt Palimnex in another repository, follow `docs/INSTALL.md`: install
 the published package at an exact version (or from its pinned release tag),
 add the `.gitignore` lines for
@@ -42,7 +50,8 @@ Draft 2020-12 schema-conformance tests.
 
 Release and schema compatibility are recorded in [CHANGELOG.md](CHANGELOG.md).
 This repository's full design and operator guide are
-`docs/DESIGN.md` and `docs/RUNBOOK.md`.
+`docs/DESIGN.md` and `docs/RUNBOOK.md`; configuration fields are in
+`docs/CONFIGURATION.md`.
 
 ## Configuration
 
@@ -93,6 +102,25 @@ Advance an existing v2 deployment only after `migration-shadow` passes over a
 fresh equal-corpus v2 baseline. If you started a new repository with `off`,
 run `clear` while still in `off` mode to delete the plaintext v2 cache, then
 switch to `on` and run `index --incremental`.
+
+## Ontology and reviewed feedback
+
+```bash
+python3 palimnex.py explain-search "retrieval channel fusion" --limit 5
+python3 palimnex.py evaluate-ontology-shadow --limit 5
+python3 palimnex.py evaluate-ontology-promotion \
+  --registry ontology/concept-registry.v1.json --limit 5
+python3 palimnex.py ontology-status
+python3 palimnex.py evaluate-semantic-shadow
+python3 palimnex.py feedback-report --include-history
+```
+
+An adopted repository needs its own reviewed, project-bound registry; the
+registry shipped in the Palimnex checkout cannot be reused as another
+project's approval. Promotion evidence v1 does not bind a corpus fingerprint,
+so regenerate and review its complete output immediately before activation and
+after every indexed-corpus change. `mode: off` is the rollback. Feedback write
+commands require an explicit owner action and write only historical evidence.
 
 ## Redis endpoints
 

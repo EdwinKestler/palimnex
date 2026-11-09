@@ -118,6 +118,11 @@ overwrites an existing `.palimnex.json`, refuses a symlinked `.gitignore`, and
 does not create a ledger or start Redis. Review the patterns, then commit
 `.palimnex.json`.
 
+The complete field, default, precedence, and security reference is
+[`CONFIGURATION.md`](CONFIGURATION.md). In particular, review corpus admission
+and digest-pinned privacy exceptions there rather than copying another
+repository's configuration.
+
 With 2.7.0, create `.palimnex.json` at the repository root yourself and
 commit it:
 
@@ -180,6 +185,10 @@ Field notes:
 - `redis_socket_path` and `durable_ledger_path` must be repository-relative.
   Both live under `.palimnex/`, which section 3 ignores.
 - `redis_url_envs` is optional. It defaults to `["PALIMNEX_URL"]`.
+- `content_scan_allowlist_sha256` is an optional, security-sensitive list of
+  exact lowercase content digests that bypass index-time privacy findings.
+  Leave it empty unless each payload has been reviewed and documented; see
+  [`CONFIGURATION.md`](CONFIGURATION.md).
 - Never put credentials in this file.
 - Evaluation settings are optional; leave them out unless you follow
   section 8.

@@ -4,7 +4,9 @@ The Palimnex project site is a dependency-free static page at `docs/index.html`.
 It uses repository-local CSS and the existing documentation; it makes no model,
 analytics, font, CDN, or database request. The page describes source discovery,
 durable memory, authorized erasure, the replicable audit graph, and the optional
-Semantica projection extra.
+Semantica projection extra. It also identifies the 2.10 ontology and reviewed
+feedback surfaces as optional, non-authorizing capabilities and links to their
+operational contracts.
 
 ## Local preview
 

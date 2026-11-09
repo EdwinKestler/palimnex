@@ -19,7 +19,7 @@ five results. Its best expected-path chunk is now fifth. This leaves no
 positional margin: one new non-expected chunk above it would move the expected
 path to rank 6 and fail the critical case.
 
-The constraints in [DESIGN.md](../DESIGN.md#10-frozen-evaluation-baseline-and-ranking-interpretation)
+The constraints in [DESIGN.md](../DESIGN.md#10-evaluation-and-semantic-hold)
 apply. Documentation must not be reworded to avoid relevant vocabulary, and
 current winners must not be added to `expected_paths` merely to make the case
 pass.

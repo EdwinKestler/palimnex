@@ -437,6 +437,28 @@ erasure treats a mandatory store `not_configured`, `unsupported`, or `failed`
 as an error; sanitized receipt digests append to the retention control chain
 as `adapter_receipt`. This does not claim forensic erasure. See `docs/SDK.md`.
 
+## 10.2 Additive ontology evidence and reviewed feedback
+
+Version 2.10 adds a reviewed, source-bound concept registry outside the
+ordinary source index; deterministic coverage receipts; ontology and semantic
+shadow evaluations; fail-closed opt-in ontology influence; and reviewed
+retrieval-feedback records. With `ontology_influence` missing, `off`, or
+`shadow`, production retrieval and v1 documents remain unchanged. Enabled
+influence is disclosed through new v2 context and explain-search documents and
+changes only `retrieve_sources` and its direct consumers. Cache-backed
+`search`, `symbols`, `impact`, and `evaluate` remain compatibility sentinels.
+
+Registry presence and a `promotable` report are evidence, not activation
+authority. Activation requires an owner configuration that binds the current
+approved registry and exact saved promotion-evidence bytes. Evidence v1 does
+not bind a corpus fingerprint, so it must be regenerated and reviewed after
+any indexed-corpus change and immediately before activation. The local semantic
+experiment remains held, and feedback records have no ranking effect.
+
+See `docs/CONCEPT_REGISTRY.md`, `docs/COVERAGE_RECEIPT.md`,
+`docs/ONTOLOGY_INFLUENCE.md`, `docs/SEMANTIC_SHADOW.md`, and
+`docs/RETRIEVAL_FEEDBACK.md` for the versioned contracts and rollback rules.
+
 ## 11. Compatibility and rollback
 
 The root entrypoint and these v2 commands remain accepted:

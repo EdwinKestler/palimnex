@@ -46,8 +46,8 @@ and exit gate `artifacts/ontology/phase-0/exit-gate.json`; Phase 1
 `artifacts/ontology/closure/exit-gate.json`.
 
 The influence-promotion approval authorizes an opt-in ontology retrieval
-influence for `retrieve_sources` and its direct consumers (`context`,
-`explain-search`, SDK calls), controlled by `.palimnex.json`
+influence for `retrieve_sources` and its direct consumers (`context` and
+`explain-search`), controlled by `.palimnex.json`
 `ontology_influence.mode` (`off` | `shadow` | `enabled`; missing means `off`),
 disclosed through new versioned results (`project-memory:context:v2`,
 `palimnex:explain-search:v2`), an `evaluate-ontology-promotion` command that
@@ -98,7 +98,7 @@ Postgres, pgvector, Next.js, text-to-SQL, hosted-model, or Kubernetes stack.
 
 ## Reviewed baseline and provenance
 
-The Palimnex baseline is release line `2.9.0`:
+The Palimnex baseline when this proposal was reviewed was release line `2.9.0`:
 
 - repository files and Git are authoritative for current source;
 - SQLite is authoritative for accepted historical memory;
@@ -668,7 +668,7 @@ provider data. Those surfaces require their own documented controls.
 | Phase 2 coordinator decisions | R10, R11, the byte-budget attribution fix and independent truncation flags confirmed at the Phase 2 exit gate |
 | Phase 3 gate meaning (R12) | "Critical cases remain green" means production retrieval stays byte-identical and the shadow causes no critical regression (confirmed 2026-11-06) |
 | Influence activation | Opt-in `.palimnex.json` `ontology_influence.mode` (`off`, `shadow`, `enabled`; missing means `off`). `enabled` binds the approved registry digest and the promotion evidence (path and digest). Missing, corrupt, stale, ambiguous or privacy-refused registry data, or mismatched evidence, is an explicit error, never a silent fallback. Rollback is `mode: off`. Registry presence is data, not operational authority (owner decision 2026-11-06) |
-| Influence surfaces | Only `retrieve_sources` and its direct consumers (`context`, `explain-search`, SDK calls); cache-backed `search`, `symbols`, `impact` and `palimnex evaluate` unchanged and kept as the compatibility sentinel. Influenced results are disclosed through new versioned contracts; `context:v1` is never silently changed. Promotion testing covers the local and cache backends (owner decision 2026-11-06) |
+| Influence surfaces | Only `retrieve_sources` and its direct consumers (`context` and `explain-search`); cache-backed `search`, `symbols`, `impact` and `palimnex evaluate` unchanged and kept as the compatibility sentinel. These module functions are not additions to the public `Palimnex` SDK v1 class. Influenced results are disclosed through new versioned contracts; `context:v1` is never silently changed. Promotion testing covers the local and cache backends (owner decision 2026-11-06) |
 | Phase 4 provider | Deterministic in-process provider over the existing hashed embedding, with test doubles for malformed dimensions, NaN/Inf, timeouts and failures; a distinct provider ID, revision, dimensions and implementation digest; no model download, package installation, network or persistent vector store. A real local model is a later, separately approved experiment (owner decision 2026-11-06) |
 | Phase 4 thresholds | Fixed before testing: no critical or per-case regression; Recall@5 not reduced on any protected suite; at least +0.02 MRR or Recall@5 on the frozen semantic cohort, with at least one more passing cohort case; p95 at most 1.5x the paired baseline under a fixed benchmark protocol; no new forbidden hits; abstention, ambiguity, source-drift and privacy-canary gates; deterministic results; bound provider identity. Requires a new versioned evaluation contract; the semantic v1 helper (+0.05, 2x) is unchanged. A passing report means promotable only (owner decision 2026-11-06) |
 | Phase 5 scope | This round builds reviewed retrieval feedback records only; feedback shadow and evaluation come in a later round once enough reviewed records exist; the semantic cache is skipped; static graph exploration is deferred at lower priority (owner decision 2026-11-07) |
@@ -723,9 +723,12 @@ own approval and starts from recorded evidence, not from this plan:
 
 - **Enable ontology influence** (owner configuration decision): set
   `.palimnex.json` `ontology_influence.mode` to `enabled` with the approved
-  registry digest and the promotion evidence path and digest, regenerating the
-  evidence first if any bound file or influence module has changed since
-  `artifacts/ontology/closure/integration/promotion-evidence.json`; verify
+  registry digest and the promotion evidence path and digest. Regenerate and
+  review the complete evidence immediately before activation and after any
+  indexed-corpus change; promotion evidence v1 does not bind a corpus
+  fingerprint. Do not reuse
+  `artifacts/ontology/closure/integration/promotion-evidence.json` merely
+  because registry-bound and implementation files are unchanged. Verify
   with `palimnex ontology-status` and `explain-search`; roll back with
   `mode: off` (`docs/ONTOLOGY_INFLUENCE.md`).
 - **Feedback shadow evaluation**: once enough reviewed feedback records exist

@@ -15,7 +15,8 @@ uses the deterministic ranking described in
 ## Compatibility boundary
 
 Influence changes only `retrieve_sources` and its direct consumers, including
-assembled context, `explain-search`, and the corresponding SDK calls. The
+assembled context and `explain-search`. These module functions are not new
+methods on the public `Palimnex` SDK v1 class. The
 cache-backed `search`, `symbols`, `impact`, and `palimnex evaluate` surfaces are
 unchanged. Shadow evaluation still measures an uninfluenced baseline.
 
@@ -75,6 +76,15 @@ An enabled setting has this shape:
 5. Run `palimnex ontology-status`. Activation succeeds only if every binding
    still matches current source and the evidence binds the current
    implementation digest.
+
+Run steps 2-5 immediately before every activation. Promotion evidence v1
+proves that its source snapshot stayed stable during evaluation, but the saved
+document does not contain a corpus fingerprint and activation cannot compare
+it with the current corpus. Regenerate and review the complete output after
+**any indexed-corpus change**, including documentation, even when the registry
+bindings, frozen fixtures, and influence implementation are unchanged. Do not
+bind a filtered, reformatted, or partial diagnostic; bind the SHA-256 of the
+exact complete saved bytes.
 
 The implementation digest is SHA-256 over canonical JSON containing the source
 digests of `palimnex.concepts`, `palimnex.ontology_shadow`,

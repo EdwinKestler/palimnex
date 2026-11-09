@@ -81,7 +81,8 @@ historical evidence, never authorization to execute external actions.
 
 - `palimnex.py` — repository-root CLI.
 - `palimnex/` — engine, schemas, fixtures, and tests.
-- `docs/` — design, operations, retention, SDK contracts, and the Pages site.
+- `docs/` — design, configuration, operations, retention, ontology, SDK, and
+  release contracts, plus the Pages site.
 - `scripts/palimnex_redis.sh` — owner-only Unix-socket Redis launcher.
 - `.palimnex.json` — this repository's safe local configuration.
 - `LICENSE` — MIT license.
@@ -89,10 +90,14 @@ historical evidence, never authorization to execute external actions.
 - `docs/index.html` — dependency-free GitHub Pages architecture site.
 
 See [the installation guide](docs/INSTALL.md), [the upgrade guide](docs/UPGRADING.md),
-[the SDK guide](docs/SDK.md), [the operator runbook](docs/RUNBOOK.md),
+[the configuration reference](docs/CONFIGURATION.md), [the SDK guide](docs/SDK.md),
+[the operator runbook](docs/RUNBOOK.md),
 [retention policy](docs/RETENTION.md), [compatibility policy](docs/COMPATIBILITY.md),
-[maintainer initialization prompt](docs/AGENT_INIT_PROMPT.md),
-and [extraction record](docs/PROVENANCE.md).
+[ontology influence guide](docs/ONTOLOGY_INFLUENCE.md),
+[release runbook](docs/RELEASING.md), [maintainer initialization prompt](docs/AGENT_INIT_PROMPT.md),
+and [extraction record](docs/PROVENANCE.md). Contributors should also read
+[CONTRIBUTING.md](CONTRIBUTING.md); sensitive reports follow
+[SECURITY.md](SECURITY.md).
 
 The Pages source can be previewed locally and published from `docs/` by an
 authorized maintainer. See [the Pages guide](docs/PAGES.md) for the workflow
